@@ -4,6 +4,8 @@ YUDISIUM_INPUT = yudisium.tex
 YUDISIUM_OUTPUT = yudisium.pdf
 PAPER_INPUT = paper.tex
 PAPER_OUTPUT = paper.pdf
+PROPOSAL_INPUT = proposal.tex
+PROPOSAL_OUTPUT = proposal.pdf
 
 BAKFILES := $(shell find . -iname "*.bak*")
 TEXFILES := $(shell find . -iname "*.tex")
@@ -31,6 +33,12 @@ paper:
 	@mkdir -p build
 	@latexmk -synctex=1 -interaction=nonstopmode -file-line-error -pdf -bibtex -outdir=../build -cd src/$(PAPER_INPUT)
 	@cp build/$(PAPER_OUTPUT) output
+
+proposal:
+	@mkdir -p output
+	@mkdir -p build
+	@latexmk -synctex=1 -interaction=nonstopmode -file-line-error -pdf -bibtex -outdir=../build -cd src/$(PROPOSAL_INPUT)
+	@cp build/$(PROPOSAL_OUTPUT) output
 
 format:
 	@latexindent -l -s -sl -w $(TEXFILES) $(STYFILES) $(BIBFILES)

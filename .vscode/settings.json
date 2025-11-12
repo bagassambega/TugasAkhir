@@ -3,6 +3,10 @@
   "latex-workshop.latex.recipe.default": "lastUsed",
   "latex-workshop.latex.recipes": [
     {
+      "name": "latex_itb_ta Proposal",
+      "tools": ["latex_itb_make_proposal", "latex_itb_move_proposal"]
+    },
+    {
       "name": "latex_itb_ta Thesis",
       "tools": ["latex_itb_make_thesis", "latex_itb_move_thesis"]
     },
@@ -16,6 +20,21 @@
     }
   ],
   "latex-workshop.latex.tools": [
+    {
+      "name": "latex_itb_make_proposal",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-bibtex",
+        "-outdir=../build",
+        "-cd",
+        "./proposal.tex"
+      ],
+      "env": {}
+    },
     {
       "name": "latex_itb_make_thesis",
       "command": "latexmk",
@@ -65,6 +84,12 @@
       "name": "latex_itb_move_thesis",
       "command": "cp",
       "args": ["-f", "%OUTDIR%/thesis.pdf", "%DIR%/../output/thesis.pdf"],
+      "env": {}
+    },
+    {
+      "name": "latex_itb_move_proposal",
+      "command": "cp",
+      "args": ["-f", "%OUTDIR%/proposal.pdf", "%DIR%/../output/proposal.pdf"],
       "env": {}
     },
     {
