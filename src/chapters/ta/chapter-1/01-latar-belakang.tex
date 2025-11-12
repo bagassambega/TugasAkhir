@@ -1,3 +1,30 @@
 \section{Latar Belakang}
 
-Rekam medis merupakan
+Kesehatan merupakan salah satu aspek fundamental dan termasuk dalam hak asasi yang harus dimiliki oleh manusia 
+\parencite{standarnormanomor4kesehatankomnasham}. Hal in dijamin oleh negara melalui penyelenggaraan kesehatan dan diatur melalui perundang-undangan yang menyatakan 
+bahwa negara menjamin hak setiap warga negara untuk mewujudkan kehidupan yang baik, sehat, serta sejahtera lahir dan batin \parencite{uunomor17tahun2023}.
+
+Penyelenggaraan pelayanan kesehatan di suatu wilayah atau suatu negara memerlukan mekanisme pencatatan pelayanan kesehatan dan informasi medis pasien yang disebut sebagai rekam medis. 
+Penyelenggaraan pelayanan kesehatan yang dinamis dan membutuhkan kolaborasi antar-fasilitas pelayanan kesehatan mendorong terciptanya sistem 
+rekam medis berbasis digital atau biasa disebut Rekam Medis Elektronik (RME).
+Untuk memenuhi kebutuhan tersebut, Pemerintah Republik Indonesia sudah membangun sistem rekam medis elektronik terintegrasi yang dinamakan SatuSehat, dan diatur melalui Peraturan 
+Menteri Kesehatan Nomor 24 Tahun 2022.
+
+Sistem rekam medis elektronik memerlukan sistem keamanan dan akses kontrol yang komprehensif karena berkaitan dengan data dan privasi pasien. Berdasarkan Peraturan 
+Menteri Kesehatan Nomor 24 Tahun 2022, isi rekam medis adalah milik pasien dan harus dijaga kerahasiaannya \parencite{permenkes2022rekam}. Berbagai penelitian dan pengembangan 
+sudah dilakukan untuk melindungi kerahasiaan dan integritas sistem rekam medis elektronik, salah satunya dengan teknologi \textit{Distributed Ledger Technology} (DLT).
+
+Salah satu sistem rekam medis elektronik yang sudah mengimplementasikan teknologi DLT dalam sistemnya adalah MedRec yang dikembangkan oleh MIT. Sistem ini mengimplementasikan 
+teknologi \textit{blockchain} dan \textit{capability based access control} (CapBAC) yang disimpan sebagai smart contract untuk mengatur pihak-pihak yang dapat mengakses rekam medis \parencite{medrec}. 
+Namun implementasi \textit{blockchain} pada sistem rekam medis elektronik memberikan tantangan baru berupa tambahan \textit{latency} saat mengakses data karena menggunakan konsensus 
+\textit{Proof-of-Work}, sehingga rata-rata dibutuhkan waktu hingga 10 detik untuk menetapkan menetapkan kontrak baru dan merespons.
+
+Solusi lainnya yang diberikan adalah DecMed, implementasi sistem rekam medis elektronik berbasis IOTA yang dikembangkan oleh I Putu Bakta Hari Sudewa, mahasiswa S1 Teknik Informatika 
+Institut Teknologi Bandung angkatan 2021. Penggunaan IOTA memberikan penyelesaian permasalahan sistem rekam medis elektronik berbasis \textit{blockcchain} yang memiliki komputasi mahal.
+Implementasi DecMed sendiri menggunakan mekanisme akses kontrol \textit{capability based access control} (CapBAC) yang dikombinasikan dengan \textit{proxy re-encryption} dan 
+\textit{revoke time}.
+
+Implementasi DecMed juga masih menyisakan kelemahan dalam sistemnya, di antaranya manajemen pemulihan aksea yang rumit karena pasien akan diberikan 12 frasa pemulihan dan harus menyimpan
+keseluruhan frasa, dan juga waktu pencabutan akses yang statis dan tidak bisa diganti oleh pasien setelah ditetapkan. Untuk mengatasi kedua masalah ini, diusulkan penggunaan 
+User Managed Access (UMA) sebagai mekanisme \textit{authorization} dan juga implementasi \textit{consent portal} bagi pasien yang dapat memberikan kemudahan bagi pengguna untuk melakukan
+manajemen akses rekam medisnya kepada pihak lain.
