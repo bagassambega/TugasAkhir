@@ -44,7 +44,7 @@ Berdasarkan analisis masalah di atas, sistem yang dikembangkan harus memenuhi ke
     \item \textbf{Manajemen Kebijakan Asinkronus:} Sistem harus memungkinkan pasien untuk mendefinisikan kebijakan akses (\textit{policy}) kapan saja dan di mana saja tanpa harus menunggu permintaan dari tenaga medis.
     \item \textbf{Granularitas Akses:} Sistem harus mendukung pembuatan kebijakan akses berdasarkan identitas individu, grup tenaga medis, atribut fasyankes, atau peran hierarkis.
     \item \textbf{Integrasi SATUSEHAT:} Sistem harus menggunakan SATUSEHAT sebagai \textit{Authorization Server} (AS) terpusat untuk autentikasi dan manajemen kebijakan.
-    \item \textbf{Mekanisme Rujukan:} Sistem harus mendukung transfer hak akses antar tenaga medis melalui mekanisme kode rujukan yang aman.
+    % \item \textbf{Mekanisme Rujukan:} Sistem harus mendukung transfer hak akses antar tenaga medis melalui mekanisme kode rujukan yang aman.
     \item \textbf{Interoperabilitas Fasyankes:} Sistem RME di fasyankes (\textit{Resource Server}) harus dapat mendaftarkan sumber daya data pasien ke AS pusat secara otomatis.
 \end{enumerate}
 
@@ -64,7 +64,7 @@ Sistem ini mengadopsi aktor-aktor standar dalam protokol UMA 2.0 yang dipetakan 
 
 \subsection{Rancangan Alur Fungsional Utama}
 
-\subsubsection{1. Pendaftaran dan Manajemen Identitas}
+\subsubsection{Pendaftaran dan Manajemen Identitas}
 Berbeda dengan sistem DecMed yang menggunakan \textit{seed phrase}, pendaftaran pasien pada sistem ini disesuaikan dengan data kependudukan Indonesia.
 \begin{itemize}
     \item \textbf{Pasien:} Mendaftar menggunakan NIK, Nama Ibu Kandung, Foto KTP, dan membuat PIN pengaman. Data ini digunakan untuk verifikasi dan mekanisme \textit{lupa password}.
@@ -72,7 +72,7 @@ Berbeda dengan sistem DecMed yang menggunakan \textit{seed phrase}, pendaftaran 
     \item \textbf{Fasyankes:} Terdaftar sesuai mekanisme regulasi SATUSEHAT.
 \end{itemize}
 
-\subsubsection{2. Pendaftaran Sumber Daya (Resource Registration)}
+\subsubsection{Pendaftaran Sumber Daya (Resource Registration)}
 Agar kebijakan akses dapat dikelola secara terpusat oleh AS (SATUSEHAT) meskipun data tersebar di berbagai RS (Simedik), dilakukan mekanisme pendaftaran sumber daya:
 \begin{enumerate}
     \item Simedik (RS) melakukan autentikasi ke SATUSEHAT (AS) untuk mendapatkan \textit{Protection API Token} (PAT).
@@ -80,7 +80,7 @@ Agar kebijakan akses dapat dikelola secara terpusat oleh AS (SATUSEHAT) meskipun
     \item SATUSEHAT mengembalikan \texttt{resource\_id} unik yang menghubungkan kebijakan di pusat dengan data di daerah.
 \end{enumerate}
 
-\subsubsection{3. Mekanisme Pembuatan Kebijakan Akses (Consent Creation)}
+\subsubsection{Mekanisme Pembuatan Kebijakan Akses (Consent Creation)}
 Sistem menyediakan tiga metode bagi pasien untuk memberikan akses, mengatasi masalah sinkronisasi kehadiran:
 
 \begin{enumerate}
@@ -89,17 +89,17 @@ Sistem menyediakan tiga metode bagi pasien untuk memberikan akses, mengatasi mas
     \item \textbf{Persetujuan Reaktif (On-Demand):} Jika belum ada kebijakan yang dibuat, tenaga medis dapat memicu permintaan akses. AS akan mengirimkan notifikasi kepada pasien untuk meminta persetujuan (mirip mekanisme OAuth standar), namun ini hanya opsi terakhir jika metode asinkronus tidak tersedia.
 \end{enumerate}
 
-\subsubsection{4. Mekanisme Rujukan}
-Untuk mendukung kesinambungan perawatan antar-dokter, dirancang mekanisme rujukan berbasis kode:
-\begin{enumerate}
-    \item Dokter Pengirim (A) membuat rujukan pada sistem Simedik.
-    \item Sistem menghasilkan Kode Rujukan unik yang terkait dengan data pasien tersebut.
-    \item Dokter Penerima (B) memasukkan Kode Rujukan tersebut pada sistemnya.
-    \item Sistem (RS) mengirimkan kode tersebut ke AS. AS memvalidasi apakah Dokter B memenuhi kriteria kebijakan rujukan (misal: memiliki spesialisasi yang sesuai).
-    \item Jika valid, akses diberikan tanpa perlu interaksi ulang dari pasien.
-\end{enumerate}
+% \subsubsection{Mekanisme Rujukan}
+% Untuk mendukung kesinambungan perawatan antar-dokter, dirancang mekanisme rujukan berbasis kode:
+% \begin{enumerate}
+%     \item Dokter Pengirim (A) membuat rujukan pada sistem Simedik.
+%     \item Sistem menghasilkan Kode Rujukan unik yang terkait dengan data pasien tersebut.
+%     \item Dokter Penerima (B) memasukkan Kode Rujukan tersebut pada sistemnya.
+%     \item Sistem (RS) mengirimkan kode tersebut ke AS. AS memvalidasi apakah Dokter B memenuhi kriteria kebijakan rujukan (misal: memiliki spesialisasi yang sesuai).
+%     \item Jika valid, akses diberikan tanpa perlu interaksi ulang dari pasien.
+% \end{enumerate}
 
-\subsubsection{5. Logika Akses Tulis (Write Access Rules)}
+\subsubsection{Logika Akses Tulis (Write Access Rules)}
 Untuk menjaga integritas data sesuai regulasi, sistem menerapkan aturan waktu:
 \begin{itemize}
     \item Tenaga medis memiliki akses tulis (\textit{write}) untuk memperbarui rekam medis hingga $2 \times 24$ jam setelah data dibuat.
@@ -107,5 +107,5 @@ Untuk menjaga integritas data sesuai regulasi, sistem menerapkan aturan waktu:
     \item Untuk melanjutkan pembaharuan data setelah pencabutan atau setelah lewat 48 jam, sistem mewajibkan persetujuan ulang dari pasien atau eskalasi izin melalui Kepala Fasyankes.
 \end{itemize}
 
-\subsection{Integrasi dengan Blockchain}
-Meskipun logika otorisasi dikelola oleh UMA (SATUSEHAT), integritas data rekam medis dan jejak audit (\textit{audit trail}) akses tetap dicatat pada jaringan \textit{blockchain} (mengadopsi basis DecMed). Hal ini memastikan bahwa meskipun AS (SATUSEHAT) diretas atau mengalami kegagalan, riwayat akses dan keaslian data medis tetap dapat diverifikasi secara independen (\textit{auditability}).
+% \subsection{Integrasi dengan Blockchain}
+% Meskipun logika otorisasi dikelola oleh UMA (SATUSEHAT), integritas data rekam medis dan jejak audit (\textit{audit trail}) akses tetap dicatat pada jaringan \textit{blockchain} (mengadopsi basis DecMed). Hal ini memastikan bahwa meskipun AS (SATUSEHAT) diretas atau mengalami kegagalan, riwayat akses dan keaslian data medis tetap dapat diverifikasi secara independen (\textit{auditability}).
