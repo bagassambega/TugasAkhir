@@ -2,6 +2,10 @@
 
 Tujuan utama penulisan bab ini adalah untuk menguraikan rencana penyelesaian masalah implementasi dari judul TA
 
+%        alurnya bro
+% jelasin gimana rancangan solusi bisa menyelesaikan dan berkorelasi dengan kondisi decmed kak hari saat ini
+% jelasin di bab ini perbedaan gimana implementasi UMA ini berbeda dengan yang Kak Hari, misalnya aktor2nya mapping nya gimana
+% di bab 3 soalnya jelasin apa aja fitur yang mau diubah atau ditambah, refer juga ke bab 1 yang jelasin apa aja kekurangannya
 
 \section{Analisis Masalah}
 
@@ -23,15 +27,15 @@ Sistem terdahulu (DecMed) menggunakan \textit{Capability-Based Access Control} (
 
 Kebutuhan di lapangan menuntut adanya kebijakan akses yang lebih granular dan berbasis atribut (\textit{Attribute-Based}), seperti:
 \begin{itemize}
-    \item Memberikan akses kepada seluruh tenaga medis di "Poli Jantung" pada "Fasyankes X".
+    \item Memberikan akses kepada seluruh tenaga medis di Poli X pada Fasyankes Y.
     \item Memberikan akses berdasarkan hierarki, misalnya hanya kepada "Kepala Apotek".
     \item Membatasi akses berdasarkan peran (\textit{role}) spesifik dalam durasi tertentu.
 \end{itemize}
 
-\subsection{Kompleksitas Manajemen Pemulihan Akun}
-Pada sistem DecMed, keamanan akun sangat bergantung pada penyimpanan mandiri 12 frasa pemulihan (\textit{seed phrase}) oleh pasien. Jika frasa ini hilang, akses terhadap rekam medis pasien akan hilang permanen karena sifat desentralisasi murni.
+% \subsection{Kompleksitas Manajemen Pemulihan Akun}
+% Pada sistem DecMed, keamanan akun sangat bergantung pada penyimpanan mandiri 12 frasa pemulihan (\textit{seed phrase}) oleh pasien. Jika frasa ini hilang, akses terhadap rekam medis pasien akan hilang permanen karena sifat desentralisasi murni.
 
-Dalam konteks integrasi nasional dengan SATUSEHAT, mekanisme ini dianggap terlalu berisiko dan memiliki \textit{usability} yang rendah bagi masyarakat awam. Diperlukan mekanisme pemulihan yang lebih familiar namun tetap aman, menggunakan verifikasi identitas kependudukan (NIK, Nama Ibu Kandung, dan verifikasi biometrik/foto KTP).
+% Dalam konteks integrasi nasional dengan SATUSEHAT, mekanisme ini dianggap terlalu berisiko dan memiliki \textit{usability} yang rendah bagi masyarakat awam. Diperlukan mekanisme pemulihan yang lebih familiar namun tetap aman, menggunakan verifikasi identitas kependudukan (NIK, Nama Ibu Kandung, dan verifikasi biometrik/foto KTP).
 
 \subsection{Batasan Regulasi Akses Tulis (Write Access)}
 Regulasi medis menetapkan bahwa data klinis yang telah diinput dapat diperbarui (\textit{update}) dalam kurun waktu maksimal $2 \times 24$ jam. Sistem perlu mengakomodasi aturan logika bisnis ini di mana akses tulis (\textit{write}) tenaga medis otomatis berlaku selama periode tersebut, namun tetap menghormati hak pasien jika terjadi pencabutan akses (\textit{revocation}) secara tiba-tiba, yang kemudian memerlukan persetujuan ulang atau eskalasi ke kepala fasilitas pelayanan kesehatan (fasyankes).
