@@ -40,17 +40,17 @@ Kebutuhan di lapangan menuntut adanya kebijakan akses yang lebih granular dan be
 \subsection{Batasan Regulasi Akses Tulis (Write Access)}
 Regulasi medis menetapkan bahwa data klinis yang telah diinput dapat diperbarui (\textit{update}) dalam kurun waktu maksimal $2 \times 24$ jam. Sistem perlu mengakomodasi aturan logika bisnis ini di mana akses tulis (\textit{write}) tenaga medis otomatis berlaku selama periode tersebut, namun tetap menghormati hak pasien jika terjadi pencabutan akses (\textit{revocation}) secara tiba-tiba, yang kemudian memerlukan persetujuan ulang atau eskalasi ke kepala fasilitas pelayanan kesehatan (fasyankes).
 
-\section{Analisis Kebutuhan}
+% \section{Analisis Kebutuhan}
 
-Berdasarkan analisis masalah di atas, sistem yang dikembangkan harus memenuhi kebutuhan fungsional sebagai berikut:
+% Berdasarkan analisis masalah di atas, sistem yang dikembangkan harus memenuhi kebutuhan fungsional sebagai berikut:
 
-\begin{enumerate}
-    \item \textbf{Manajemen Kebijakan Asinkronus:} Sistem harus memungkinkan pasien untuk mendefinisikan kebijakan akses (\textit{policy}) kapan saja dan di mana saja tanpa harus menunggu permintaan dari tenaga medis.
-    \item \textbf{Granularitas Akses:} Sistem harus mendukung pembuatan kebijakan akses berdasarkan identitas individu, grup tenaga medis, atribut fasyankes, atau peran hierarkis.
-    \item \textbf{Integrasi SATUSEHAT:} Sistem harus menggunakan SATUSEHAT sebagai \textit{Authorization Server} (AS) terpusat untuk autentikasi dan manajemen kebijakan.
-    % \item \textbf{Mekanisme Rujukan:} Sistem harus mendukung transfer hak akses antar tenaga medis melalui mekanisme kode rujukan yang aman.
-    \item \textbf{Interoperabilitas Fasyankes:} Sistem RME di fasyankes (\textit{Resource Server}) harus dapat mendaftarkan sumber daya data pasien ke AS pusat secara otomatis.
-\end{enumerate}
+% \begin{enumerate}
+%     \item \textbf{Manajemen Kebijakan Asinkronus:} Sistem harus memungkinkan pasien untuk mendefinisikan kebijakan akses (\textit{policy}) kapan saja dan di mana saja tanpa harus menunggu permintaan dari tenaga medis.
+%     \item \textbf{Granularitas Akses:} Sistem harus mendukung pembuatan kebijakan akses berdasarkan identitas individu, grup tenaga medis, atribut fasyankes, atau peran hierarkis.
+%     \item \textbf{Integrasi SATUSEHAT:} Sistem harus menggunakan SATUSEHAT sebagai \textit{Authorization Server} (AS) terpusat untuk autentikasi dan manajemen kebijakan.
+%     % \item \textbf{Mekanisme Rujukan:} Sistem harus mendukung transfer hak akses antar tenaga medis melalui mekanisme kode rujukan yang aman.
+%     \item \textbf{Interoperabilitas Fasyankes:} Sistem RME di fasyankes (\textit{Resource Server}) harus dapat mendaftarkan sumber daya data pasien ke AS pusat secara otomatis.
+% \end{enumerate}
 
 \section{Gambaran Solusi dan Rancangan}
 

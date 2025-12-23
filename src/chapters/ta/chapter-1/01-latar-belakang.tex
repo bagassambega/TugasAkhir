@@ -2,21 +2,34 @@
 
 \sloppy
 
-SATUSEHAT merupakan ekosistem pertukaran data kesehatan yang menghubungkan sistem informasi atau aplikasi dari seluruh anggota ekosistem digital kesehatan Indonesia termasuk fasyankes, regulator, penjamin, dan penyedia layanan digital \parencite{kemkesSATUSEHATEkosistem}.
-SATUSEHAT merupakan realisasi dari Peraturan Menteri Kesehatan Nomor 18 Tahun 2022 mengenai Penyelenggaraan Satu Data Bidang Kesehatan melalui Sistem Informasi Kesehatan \parencite{permenkes2022satusehat}.
+Penyelenggaraan tata kelola klinis di Indonesia saat ini mewajibkan setiap fasilitas pelayanan kesehatan (Fasyankes) untuk menyelenggarakan rekam medis elektronik (RME) secara mandiri sebagai basis dokumentasi medis pasien \autocite{permenkes2022rekam}.
+Kewajiban ini mengharuskan seluruh fasyankes, mulai dari tingkat pratama hingga tingkat lanjut, untuk melakukan transisi penuh dari rekam medis berbasis kertas menjadi sistem elektronik.
+Dengan demikian, arsitektur data kesehatan nasional bertumpu pada ribuan sistem RME yang dikelola oleh masing-masing entitas penyedia layanan kesehatan \autocite{kemkesBerita}.
 
-Penyelenggaraan pelayanan kesehatan di suatu negara memerlukan mekanisme pencatatan pelayanan kesehatan dan informasi medis pasien yang disimpan dalam bentuk rekam medis. 
-Penyelenggaraan pelayanan kesehatan yang dinamis dan membutuhkan kolaborasi antar-fasilitas pelayanan kesehatan mendorong terciptanya sistem rekam medis berbasis digital atau biasa disebut Rekam Medis Elektronik (RME).
-Untuk memenuhi kebutuhan tersebut, Pemerintah Republik Indonesia sudah membangun sistem rekam medis elektronik terintegrasi yang dinamakan SatuSehat, dan diatur melalui Peraturan Menteri Kesehatan Nomor 24 Tahun 2022.
+% Penyelenggaraan tata kelola klinis di Indonesia saat ini mewajibkan setiap fasilitas pelayanan kesehatan (fasyankes) untuk menyelenggarakan rekam medis elektronik (RME) secara mandiri sebagai basis dokumentasi medis pasien \autocite{permenkes2022rekam}.
 
-Sistem rekam medis elektronik memerlukan sistem keamanan dan akses kontrol yang komprehensif karena berkaitan dengan data dan privasi pasien. 
-Berdasarkan Peraturan Menteri Kesehatan Nomor 24 Tahun 2022, isi rekam medis adalah milik pasien dan harus dijaga kerahasiaannya \parencite{permenkes2022rekam}. 
-Berbagai penelitian dan pengembangan sudah dilakukan untuk melindungi kerahasiaan dan integritas sistem rekam medis elektronik, salah satunya dengan teknologi \textit{Distributed Ledger Technology} (DLT).
+Agar data yang tersebar di berbagai sistem RME tersebut dapat dipertukarkan untuk kesinambungan pelayanan, pemerintah menetapkan bahwa setiap sistem elektronik milik fasyankes harus memiliki kemampuan interoperabilitas melalui platform SATUSEHAT \autocite{permenkes2022satusehat}.
+SATUSEHAT merupakan ekosistem pertukaran data kesehatan yang menghubungkan sistem informasi atau aplikasi dari seluruh anggota ekosistem digital kesehatan Indonesia termasuk fasyankes, regulator, penjamin, dan penyedia layanan digital \autocite{kemkesSATUSEHATEkosistem}.
 
-Salah satu sistem rekam medis elektronik yang sudah mengimplementasikan teknologi DLT dalam sistemnya adalah MedRec yang dikembangkan oleh MIT.\@
-Sistem ini mengimplementasikan teknologi \textit{blockchain} dan \textit{capability based access control} (CapBAC) yang disimpan sebagai smart contract untuk mengatur pihak-pihak yang dapat mengakses rekam medis \parencite{medrec}. 
-Namun implementasi \textit{blockchain} pada sistem rekam medis elektronik memberikan tantangan baru berupa tambahan \textit{latency} saat mengakses data karena menggunakan konsensus 
-\textit{Proof-of-Work}, sehingga rata-rata dibutuhkan waktu hingga 10 detik untuk menetapkan menetapkan kontrak baru dan merespons.
+Secara arsitektur, SATUSEHAT didesain sebagai \textit{National Health Data Platform} yang berfungsi sebagai hub integrasi tunggal dan integrasi secara terpusat. 
+Meskipun penyimpanan fisik data klinis (RME) tetap berada di masing-masing fasyankes, namun mekanisme pertukaran data, indeks pasien, dan manajemen persetujuan (\textit{consent management}) dikelola secara terpusat oleh Kementerian Kesehatan \autocite{cetakbirukemenkes}.
+
+SATUSEHAT mengadopsi standar FHIR (\textit{Fast Healthcare Interoperability Resources}) untuk interoperabilitas data \autocite{kemkesSATUSEHATEkosistem}. 
+FHIR sendiri adalah standar dan regulasi pertukaran data rekam medis yang dibuat oleh HL7 dan sudah diadopsi oleh World Health Organization (WHO) \autocite{fhirspec}.
+Meskipun FHIR adalah standar internasional yang agnostik terhadap arsitektur (bisa digunakan secara sentral maupun terdistribusi), implementasi di Indonesia sangat bergantung pada server FHIR terpusat.
+
+% Penyelenggaraan pelayanan kesehatan di suatu negara memerlukan mekanisme pencatatan pelayanan kesehatan dan informasi medis pasien yang disimpan dalam bentuk rekam medis. 
+% Penyelenggaraan pelayanan kesehatan yang dinamis dan membutuhkan kolaborasi antar-fasilitas pelayanan kesehatan mendorong terciptanya sistem rekam medis berbasis digital atau biasa disebut Rekam Medis Elektronik (RME).
+% Untuk memenuhi kebutuhan tersebut, Pemerintah Republik Indonesia sudah membangun sistem rekam medis elektronik terintegrasi yang dinamakan SatuSehat, dan diatur melalui Peraturan Menteri Kesehatan Nomor 24 Tahun 2022.
+
+% Sistem rekam medis elektronik memerlukan sistem keamanan dan akses kontrol yang komprehensif karena berkaitan dengan data dan privasi pasien. 
+% Berdasarkan Peraturan Menteri Kesehatan Nomor 24 Tahun 2022, isi rekam medis adalah milik pasien dan harus dijaga kerahasiaannya \autocite{permenkes2022rekam}. 
+% Berbagai penelitian dan pengembangan sudah dilakukan untuk melindungi kerahasiaan dan integritas sistem rekam medis elektronik, salah satunya dengan teknologi \textit{Distributed Ledger Technology} (DLT).
+
+% Salah satu sistem rekam medis elektronik yang sudah mengimplementasikan teknologi DLT dalam sistemnya adalah MedRec yang dikembangkan oleh MIT.
+% Sistem ini mengimplementasikan teknologi \textit{blockchain} dan \textit{capability based access control} (CapBAC) yang disimpan sebagai smart contract untuk mengatur pihak-pihak yang dapat mengakses rekam medis \autocite{medrec}. 
+% Namun implementasi \textit{blockchain} pada sistem rekam medis elektronik memberikan tantangan baru berupa tambahan \textit{latency} saat mengakses data karena menggunakan konsensus 
+% \textit{Proof-of-Work}, sehingga rata-rata dibutuhkan waktu hingga 10 detik untuk menetapkan menetapkan kontrak baru dan merespons.
 
 Solusi lainnya yang diberikan adalah DecMed, implementasi sistem rekam medis elektronik berbasis IOTA yang dikembangkan oleh I Putu Bakta Hari Sudewa, mahasiswa S1 Teknik Informatika 
 Institut Teknologi Bandung angkatan 2021. Penggunaan IOTA memberikan penyelesaian permasalahan sistem rekam medis elektronik berbasis \textit{blockcchain} yang memiliki komputasi mahal.
