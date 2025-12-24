@@ -1,0 +1,48 @@
+\section{Analisis Masalah}
+
+\subsection{Analisis Sistem DecMed dan Regulasi Rekam Medis}
+
+Sistem DecMed yang diajukan oleh Hari Sudewa \autocite{haridecmed} merupakan sistem rekam medis elektronik berbasis IOTA yang menggunakan kerangka akses kontrol CapBAC dan 
+
+% Berdasarkan studi terhadap sistem DecMed (Sudewa, 2025) dan kondisi implementasi SATUSEHAT di Indonesia, teridentifikasi beberapa permasalahan utama terkait mekanisme kontrol akses yang perlu diselesaikan:
+
+% \subsection{Keterbatasan Mekanisme Persetujuan Sinkron}
+% Pada sistem berbasis OAuth 2.0 standar atau mekanisme \textit{smart contract} dasar seperti pada DecMed, pemberian akses seringkali bersifat sinkron. Pasien (sebagai pemilik data) harus berada dalam keadaan daring (\textit{online}) atau hadir secara fisik untuk memindai kode QR atau menyetujui permintaan akses (\textit{access request}) dari tenaga medis pada saat kejadian.
+
+% Hal ini menimbulkan masalah ketersediaan (\textit{availability}) apabila:
+% \begin{itemize}
+%     \item Pasien tidak membawa gawai atau gawai kehabisan daya saat pemeriksaan.
+%     \item Pasien tidak memiliki koneksi internet yang stabil.
+%     \item Pasien dalam kondisi tidak dapat mengoperasikan gawai namun belum masuk kategori gawat darurat (misalnya lansia atau pasien dengan keterbatasan fisik).
+% \end{itemize}
+% Dalam kondisi tersebut, proses pelayanan medis dapat terhambat karena tenaga medis tidak dapat memperoleh otorisasi akses tepat waktu.
+
+% \subsection{Granularitas dan Fleksibilitas Kebijakan Akses}
+% Sistem terdahulu (DecMed) menggunakan \textit{Capability-Based Access Control} (CapBAC) dengan waktu pencabutan (\textit{revoke time}) yang cenderung statis. Setelah akses diberikan, pasien sulit untuk mengubah parameter akses secara dinamis tanpa melakukan transaksi pencabutan penuh. Selain itu, definisi kebijakan akses seringkali terbatas pada individu per individu (satu dokter spesifik).
+
+% Kebutuhan di lapangan menuntut adanya kebijakan akses yang lebih granular dan berbasis atribut (\textit{Attribute-Based}), seperti:
+% \begin{itemize}
+%     \item Memberikan akses kepada seluruh tenaga medis di Poli X pada Fasyankes Y.
+%     \item Memberikan akses berdasarkan hierarki, misalnya hanya kepada "Kepala Apotek".
+%     \item Membatasi akses berdasarkan peran (\textit{role}) spesifik dalam durasi tertentu.
+% \end{itemize}
+
+% \subsection{Kompleksitas Manajemen Pemulihan Akun}
+% Pada sistem DecMed, keamanan akun sangat bergantung pada penyimpanan mandiri 12 frasa pemulihan (\textit{seed phrase}) oleh pasien. Jika frasa ini hilang, akses terhadap rekam medis pasien akan hilang permanen karena sifat desentralisasi murni.
+
+% Dalam konteks integrasi nasional dengan SATUSEHAT, mekanisme ini dianggap terlalu berisiko dan memiliki \textit{usability} yang rendah bagi masyarakat awam. Diperlukan mekanisme pemulihan yang lebih familiar namun tetap aman, menggunakan verifikasi identitas kependudukan (NIK, Nama Ibu Kandung, dan verifikasi biometrik/foto KTP).
+
+% \subsection{Batasan Regulasi Akses Tulis (Write Access)}
+% Regulasi medis menetapkan bahwa data klinis yang telah diinput dapat diperbarui (\textit{update}) dalam kurun waktu maksimal $2 \times 24$ jam. Sistem perlu mengakomodasi aturan logika bisnis ini di mana akses tulis (\textit{write}) tenaga medis otomatis berlaku selama periode tersebut, namun tetap menghormati hak pasien jika terjadi pencabutan akses (\textit{revocation}) secara tiba-tiba, yang kemudian memerlukan persetujuan ulang atau eskalasi ke kepala fasilitas pelayanan kesehatan (fasyankes).
+
+% \section{Analisis Kebutuhan}
+
+% Berdasarkan analisis masalah di atas, sistem yang dikembangkan harus memenuhi kebutuhan fungsional sebagai berikut:
+
+% \begin{enumerate}
+%     \item \textbf{Manajemen Kebijakan Asinkronus:} Sistem harus memungkinkan pasien untuk mendefinisikan kebijakan akses (\textit{policy}) kapan saja dan di mana saja tanpa harus menunggu permintaan dari tenaga medis.
+%     \item \textbf{Granularitas Akses:} Sistem harus mendukung pembuatan kebijakan akses berdasarkan identitas individu, grup tenaga medis, atribut fasyankes, atau peran hierarkis.
+%     \item \textbf{Integrasi SATUSEHAT:} Sistem harus menggunakan SATUSEHAT sebagai \textit{Authorization Server} (AS) terpusat untuk autentikasi dan manajemen kebijakan.
+%     % \item \textbf{Mekanisme Rujukan:} Sistem harus mendukung transfer hak akses antar tenaga medis melalui mekanisme kode rujukan yang aman.
+%     \item \textbf{Interoperabilitas Fasyankes:} Sistem RME di fasyankes (\textit{Resource Server}) harus dapat mendaftarkan sumber daya data pasien ke AS pusat secara otomatis.
+% \end{enumerate}
