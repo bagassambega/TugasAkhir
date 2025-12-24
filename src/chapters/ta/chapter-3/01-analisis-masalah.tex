@@ -1,39 +1,47 @@
 \section{Analisis Masalah}
 
-Sistem DecMed yang diajukan oleh I Putu Bakta Hari Sudewa \autocite{haridecmed} merupakan sistem rekam medis elektronik berbasis IOTA yang menggunakan kerangka akses kontrol.\@
-Akses kontrol memungkinkan pemberian akses terhadap data kepada pihak secara spesifik dan dapat dibatasi oleh waktu yang ditentukan pasien.
-Namun implementasi ini menyisakan beberapa keterbatasan, yaitu pasien harus memberikan persetujuan akses data secara langsung, dan pasien tidak dapat mengelola data apa yang akan dibagikan secara spesifik dan apa saja izin akses yang diberikan.
+Sistem DecMed yang diajukan oleh I Putu Bakta Hari Sudewa \autocite{haridecmed} merupakan sistem rekam medis elektronik berbasis IOTA yang menggunakan kerangka akses kontrol sederhana.\@
+Akses kontrol pada DecMed memungkinkan pemberian akses terhadap data kepada pihak secara spesifik dan dapat dibatasi oleh waktu yang ditentukan pasien.
+Namun, implementasi ini menyisakan beberapa keterbatasan yang menghambat penerapan di lingkungan klinis nyata.
 
+Tanpa \textit{authorization framework} yang memadai, sistem DecMed menghadapi tantangan dalam skenario klinis kompleks.
+Contohnya, saat pasien dirujuk antar-fasyankes, pasien harus secara manual memberikan akses kepada dokter penerima rujukan dengan mengetahui identitas spesifiknya terlebih dahulu \autocite{haridecmed}.
+Jika pasien dalam kondisi darurat atau tidak dapat mengakses gawainya, proses rujukan akan terhambat karena tidak ada mekanisme delegasi akses berbasis atribut atau kode rujukan.
+Selain itu, sistem tidak mendukung akses berbasis peran dengan granularitas tinggi, sehingga pasien harus memberikan akses individual dengan tingkat sama ke semua anggota tim medis, melanggar prinsip \textit{least privilege}.
+
+Tanpa \textit{consent portal}, pasien menghadapi kesulitan mengelola persetujuan akses secara efektif sesuai prinsip transparansi dan kontrol yang diamanatkan UU PDP.
+Sistem DecMed mengharuskan pasien memberikan persetujuan secara sinkronus setiap kali ada permintaan akses \autocite{haridecmed}, sehingga pasien kehilangan fleksibilitas untuk mendefinisikan kebijakan akses secara proaktif untuk perawatan jangka panjang.
+Selain itu, sistem tidak menyediakan antarmuka untuk memilih secara granular jenis data yang dibagikan (misalnya membagikan data alergi tetapi tidak data sensitif seperti riwayat penyakit mental), sehingga pasien tidak dapat menjalankan hak kontrol penuh atas data pribadi mereka. 
 
 % Hal ini tidak sesuai dengan Permenkes Nomor 24 Tahun 2022 tentang Rekam Medis Elektronik dan UU PDP yang menyatakan bahwa setiap aktor di dalam sistem rekam medis memiliki akses kontrol yang berbeda-beda, dan pemrosesan data pribadi memerlukan legalitas, jenis dan relevansi dari data pribadi yang bersangkutan.
 
-Berdasarkan analisis sistem yang sudah dilakukan, ditemukan beberapa masalah dan keterbatasan sebagai berikut,
+% Berdasarkan analisis sistem yang sudah dilakukan, ditemukan beberapa masalah dan keterbatasan sebagai berikut,
 
-\begin{enumerate}
-    \item Akses kontrol pada DecMed belum memberikan keleluasaan bagi pasien untuk mengelola persetujuan terhadap jenis data dan jenis izin akses data pribadinya.
-    \item Pasien harus memberikan persetujuan akses data secara langsung, dan jika pasien tidak dapat mengakses gawainya, maka data pasien tidak dapat diberikan.
-\end{enumerate}
+% \begin{enumerate}
+%     \item Akses kontrol pada DecMed belum memberikan keleluasaan bagi pasien untuk mengelola persetujuan terhadap jenis data dan jenis izin akses data pribadinya.
+%     \item Pasien harus memberikan persetujuan akses data secara langsung, dan jika pasien tidak dapat mengakses gawainya, maka data pasien tidak dapat diberikan.
+% \end{enumerate}
 
 
-Berdasarkan masalah yang sudah disebutkan pada subbab \@\ref{subsec:identifikasi-masalah-3}, disusun kebutuhan solusi yang perlu diimplementasikan pada tabel \@\ref{table:analisis-kebutuhan},
+% Berdasarkan masalah yang sudah disebutkan pada subbab \@\ref{subsec:identifikasi-masalah-3}, disusun kebutuhan solusi yang perlu diimplementasikan pada tabel \@\ref{table:analisis-kebutuhan},
 
 % Tabel kebutuhan
-\begin{table}[ht]
-    \centering
-    \caption{Kebutuhan Solusi untuk Sistem}
-    \begin{tabular}{|p{5cm}|p{9cm}|} % chktex 44
-        \hline % chktex 44
-        	\textbf{Kategori} & \textbf{Deskripsi} \\
-        \hline % chktex 44
-        Manajemen Persetujuan Akses Data (Consent Management) & Sistem harus menyediakan consent portal yang memungkinkan pasien memberikan, mengubah, dan mencabut persetujuan akses data secara mandiri, granular (berdasarkan jenis data dan izin), dan asinkron. \\
-        \hline % chktex 44
-        Kontrol Akses Berbasis \textit{Authorization Framework} & Sistem harus mengimplementasikan \textit{authorization framework} untuk mengatur hak akses yang mendukung pemberian akses berdasarkan atribut (role, departemen, fasyankes, hierarki), spesifik persona, data yang diberikan dan waktu. \\
-        \hline % chktex 44
-        Integrasi dengan Sistem RME Terdesentralisasi (DecMed) & Consent portal dan \textit{authorization framework} harus dapat diintegrasikan dengan DecMed dan bersifat terdesentralisasi. \\
-        \hline % chktex 44
-        Audit dan Monitoring & Sistem harus menyediakan log aktivitas akses dan perubahan persetujuan yang dapat diaudit. \\
-        \hline % chktex 44
-    \end{tabular}
-\end{table}\label{table:analisis-kebutuhan}
+% \begin{table}[ht]
+%     \centering
+%     \caption{Kebutuhan Solusi untuk Sistem}
+%     \begin{tabular}{|p{5cm}|p{9cm}|} % chktex 44
+%         \hline % chktex 44
+%         	\textbf{Kategori} & \textbf{Deskripsi} \\
+%         \hline % chktex 44
+%         Manajemen Persetujuan Akses Data (Consent Management) & Sistem harus menyediakan consent portal yang memungkinkan pasien memberikan, mengubah, dan mencabut persetujuan akses data secara mandiri, granular (berdasarkan jenis data dan izin), dan asinkron. \\
+%         \hline % chktex 44
+%         Kontrol Akses Berbasis \textit{Authorization Framework} & Sistem harus mengimplementasikan \textit{authorization framework} untuk mengatur hak akses yang mendukung pemberian akses berdasarkan atribut (role, departemen, fasyankes, hierarki), spesifik persona, data yang diberikan dan waktu. \\
+%         \hline % chktex 44
+%         Integrasi dengan Sistem RME Terdesentralisasi (DecMed) & Consent portal dan \textit{authorization framework} harus dapat diintegrasikan dengan DecMed dan bersifat terdesentralisasi. \\
+%         \hline % chktex 44
+%         Audit dan Monitoring & Sistem harus menyediakan log aktivitas akses dan perubahan persetujuan yang dapat diaudit. \\
+%         \hline % chktex 44
+%     \end{tabular}
+% \end{table}\label{table:analisis-kebutuhan}
 
 

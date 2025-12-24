@@ -22,24 +22,23 @@ Setiap fasyankes akan menyimpan data rekam medis pasien yang ada di fasyankes te
 	\caption{Perbandingan Singkat Framework Otorisasi}\label{table:perbandingan-framework}
 	\begin{tabular}{|p{3.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|} % chktex 44
 		\hline % chktex 44
-			\textbf{Fitur / Kriteria} & \textbf{XACML} & \textbf{SAML 2.0} & \textbf{OAuth 2.0} & \textbf{UMA 2.0} \\
+			\textbf{Fitur / Kriteria} & \textbf{SAML 2.0} & \textbf{OAuth 2.0} & \textbf{UMA 2.0} \\
 		\hline % chktex 44
-		Fokus Utama & ABAC kompleks & SSO, federasi & User ke aplikasi & User ke pihak lain \\
+		Fokus Utama & SSO, federasi & User ke aplikasi & User ke pihak lain \\
 		\hline % chktex 44
-		Model Persetujuan & Admin sistem & Federasi institusi & User ke app & User ke individu \\
+		Model Persetujuan & Federasi institusi & User ke app & User ke individu \\
 		\hline % chktex 44
-		Granularitas Akses & Sangat tinggi & Rendah & Sedang & Sangat tinggi \\
+		Granularitas Akses & Rendah & Sedang & Sangat tinggi \\
 		\hline % chktex 44
-		Format Data & XML & XML & JSON/JWT & JSON/JWT \\
+		Policy Asinkronus & Tidak ada & Tidak baku & Ada \\
 		\hline % chktex 44
-		Policy Asinkronus & Bisa, rumit & Tidak ada & Tidak baku & Ada \\
-		\hline % chktex 44
-		Fleksibilitas Kebijakan & Kaku & Kaku & Statis & Dinamis \\
+		Fleksibilitas Kebijakan & Kaku & Statis & Dinamis \\
 		\hline % chktex 44
 	\end{tabular}
 \end{table}
 
-Consent portal pasien akan dibentuk sebagai client terpisah dan berperan sebagai antarmuka pendefinisian policy (PAP, Policy Administration Point).
+Consent portal pasien akan dibentuk sebagai client terpisah dan berperan sebagai komponen pendefinisian policy (PAP, Policy Administration Point).
+Consent portal akan memberikan definisi dan opsi bagi pasien untuk menentukan data yang akan dikontrol aksesnya, pihak yang diizinkan dan tipe akses apa yang diberikan.
 Consent portal pasien dapat diakses setelah pasien terautentikasi menggunakan mekanisme autentikasi OpenID Connect (OIDC) 2.0 yang berjalan di atas UMA2.0.
 Metadata policy yang sudah didefinisikan akan disimpan di off-chain storage dan mekanisme validasi akan dijalankan di on-chain via smart contract.
 Saat seseorang berkeinginan untuk mengakses data pasien, smart contract akan memeriksa claim dari peminta akses dengan melihat metadata yang disimpan di off-chain storage.

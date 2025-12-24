@@ -2,16 +2,41 @@
 
 Tujuan dari Tugas Akhir ini adalah sebagai berikut:
 \begin{enumerate}
-\item Merancang dan mengimplementasikan \textit{authorization framework} pada sistem rekam medis elektronik terdesentralisasi berbasis IOTA (DecMed) untuk meningkatkan keamanan, privasi, dan kontrol akses data pasien.
-\item Mengembangkan dan mengintegrasikan consent portal yang memungkinkan pasien mengelola persetujuan akses data secara granular, asinkronus, dan terinformasi sesuai kebutuhan dan regulasi perlindungan data pribadi di Indonesia.
+% \item Merancang dan mengimplementasikan \textit{authorization framework} pada sistem rekam medis elektronik terdesentralisasi berbasis IOTA (DecMed) untuk meningkatkan keamanan, privasi, dan kontrol akses data pasien.
+% \item Mengembangkan dan mengintegrasikan \textit{consent portal} yang memungkinkan pasien mengelola persetujuan akses data secara granular, asinkronus, dan terinformasi sesuai kebutuhan dan regulasi perlindungan data pribadi di Indonesia.
 % \item Mengevaluasi dan membandingkan efektivitas framework otorisasi UMA dengan mekanisme akses kontrol sebelumnya (misal: CapBAC) pada aspek usability, SLA approval, auditability, revoke time, dan fleksibilitas pemberian akses.
-% \item Menganalisis dampak penerapan framework otorisasi UMA dan consent portal terhadap mitigasi risiko single point of failure, serangan siber, serta pemenuhan regulasi perlindungan data pribadi di Indonesia.
+% \item Menganalisis dampak penerapan framework otorisasi UMA dan \textit{consent portal} terhadap mitigasi risiko single point of failure, serangan siber, serta pemenuhan regulasi perlindungan data pribadi di Indonesia.
+    \item Menganalisis dan merancang penerapan \textit{authorization framework} pada sistem rekam medis elektronik terdesentralisasi berbasis IOTA (DecMed) guna meningkatkan aspek keamanan, privasi, dan kontrol akses data pasien.
+
+    \item Merancang dan mengembangkan \textit{consent portal} yang memungkinkan pasien untuk mengelola persetujuan akses data secara granular dan terinformasi dengan mengacu pada kesesuaian terhadap regulasi perlindungan data pribadi yang berlaku di Indonesia.
+
+    \item Mengimplementasikan dan mengevaluasi rancangan \textit{authorization framework} dan \textit{consent portal} secara terdesentralisai ke dalam sistem rekam medis elektronik berbasis IOTA (DecMed).
+\end{enumerate}
+
+Keterukuran keberhasilan Tugas Akhir ini bisa dilihat dari ketercapaian parameter berikut:
+
+\begin{enumerate}
+    \item \textbf{Kemampuan Pasien untuk Mengelola Akses Granular}: Pasien mampu mengelola izin aksesnya secara granular, yaitu membatasi waktu, tujuan, subjek, dan objek yang diberikan akses
+    
+    \item \textbf{Kemampuan Pasien untuk Memberikan Akses secara Asinkronus}: Pasien mampu memberikan izin kepada pihak lain tanpa perlu memminta izin secara sinkronus kepada pasien.
+    
+    \item \textbf{Seluruh Komponen Terdesentralisasi}: Tidak ada \textit{single point of failure}
+
+    % \item \textbf{Rancangan dan Implementasi Authorization Framework}: Tersusunnya rancangan \textit{authorization framework} yang mendukung otorisasi asinkronus dan akses granular.
+
+    % \item \textbf{Rancangan Consent Portal Pasien}: Tersusunnya rancangan antarmuka \textit{consent portal} yang memungkinkan pasien mendefinisikan kebijakan akses secara granular (per jenis data, per izin, per pihak), melihat \textit{audit trail} akses, dan mencabut persetujuan secara fleksibel.
+
+    % \item \textbf{Implementasi dan Integrasi dengan DecMed}: Terimplementasinya \textit{authorization framework} dan \textit{consent portal} yang terintegrasi dengan sistem DecMed berbasis IOTA, dengan \textit{authorization server} terdesentralisasi menggunakan \textit{smart contract} dan mekanisme registrasi \textit{resource} dari fasyankes.
+
+    % \item \textbf{Validasi Fungsional Sistem}: Sistem dapat menjalankan skenario otorisasi sesuai kasus yang diidentifikasi (rujukan medis antar-fasyankes, akses berbasis peran, manajemen persetujuan proaktif, dan granularitas jenis data) tanpa memerlukan interaksi langsung dari pasien untuk setiap permintaan akses.
+
+    % \item \textbf{Kesesuaian Regulasi}: Rancangan dan implementasi memenuhi prinsip perlindungan data pribadi sesuai UU Nomor 27 Tahun 2022 tentang Perlindungan Data Pribadi dan Permenkes Nomor 24 Tahun 2022 tentang Rekam Medis, khususnya dalam aspek transparansi, kontrol pasien, dan \textit{auditability}.
 \end{enumerate}
 
 % Ukuran keberhasilan:
 % \begin{itemize}
 % \item Sistem dapat mengelola pemberian dan pencabutan akses data pasien secara granular dan asinkronus.
-% \item Consent portal dapat digunakan pasien untuk mengatur, memberikan, dan mencabut persetujuan akses data dengan mudah.
+% \item \textit{consent portal} dapat digunakan pasien untuk mengatur, memberikan, dan mencabut persetujuan akses data dengan mudah.
 % \item Hasil evaluasi menunjukkan framework UMA lebih unggul atau setara dalam aspek usability, SLA approval, auditability, dan revoke time dibandingkan mekanisme sebelumnya.
 % \item Sistem memenuhi persyaratan keamanan, privasi, dan regulasi perlindungan data pribadi sesuai Permenkes No. 24 Tahun 2022 dan UU PDP.
 % \end{itemize}
