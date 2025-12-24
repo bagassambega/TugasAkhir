@@ -1,9 +1,43 @@
-\section{IOTA}
-
-IOTA adalah salah satu teknologi terdesentralisasi berbasis \textit{decentralized ledger technology} (DLT, sistem manajemen dan penyimpanan transaksi).
+\section{IOTA dan Distributed Ledger Technology}
 
 \subsection{Distributed Ledger Technology (DLT)}
 
+Distributed Ledger Technology (DLT) adalah sistem pencatatan data terdistribusi di mana data transaksi disimpan secara simultan di berbagai node dalam jaringan, tanpa memerlukan otoritas terpusat untuk memvalidasi dan mengamankan transaksi \autocite{divya2018dlt}.
+DLT merupakan evolusi dari sistem database tradisional yang memberikan transparansi, keamanan, dan immutabilitas melalui mekanisme konsensus terdistribusi \autocite{karafiloski2017dlt}.
 
+Karakteristik utama DLT meliputi desentralisasi, di mana tidak ada satu entitas tunggal yang mengontrol seluruh sistem; transparansi, di mana semua peserta jaringan dapat mengakses dan memverifikasi data; immutabilitas, di mana data yang telah dicatat tidak dapat diubah atau dihapus; dan keamanan kriptografi, di mana data dilindungi menggunakan teknik kriptografi yang kuat \autocite{vujicic2018dltcomparison}.
+DLT telah banyak diadopsi dalam berbagai domain, termasuk keuangan, supply chain, dan kesehatan, karena kemampuannya untuk mengurangi kebutuhan akan intermediary dan meningkatkan kepercayaan antar pihak \autocite{hellani2021iotadlt}.
+
+Dalam konteks sistem kesehatan, DLT menawarkan solusi untuk masalah privasi, keamanan, dan interoperabilitas data medis dengan memungkinkan pasien memiliki kontrol penuh atas data mereka sambil tetap memastikan integritas dan ketersediaan data untuk penyedia layanan kesehatan yang berwenang \autocite{zhengdltcomparisonmedicalrecord}.
+
+\subsection{IOTA}
+
+IOTA adalah platform DLT berbasis Directed Acyclic Graph (DAG) yang dirancang khusus untuk ekosistem Internet of Things (IoT), dengan struktur data yang disebut Tangle \autocite{popov2018tangle}.
+Berbeda dengan blockchain tradisional yang menggunakan struktur blok linear dan memerlukan miners untuk validasi transaksi, IOTA menggunakan arsitektur DAG di mana setiap transaksi baru harus memvalidasi dua transaksi sebelumnya, menciptakan jaringan transaksi yang saling terhubung tanpa memerlukan blok atau miners \autocite{silvano2020iotahealth}.
+
+Desain utama IOTA berfokus pada skalabilitas, efisiensi energi, dan biaya transaksi nol \autocite{popov2018tangle}.
+Dalam Tangle, semakin banyak transaksi yang terjadi, semakin cepat dan aman jaringan menjadi, yang merupakan kebalikan dari blockchain tradisional yang mengalami bottleneck ketika volume transaksi meningkat \autocite{lee2020iotasurvey}.
+Mekanisme konsensus IOTA tidak memerlukan proof-of-work yang intensif seperti Bitcoin, melainkan menggunakan proof-of-work ringan yang hanya memerlukan komputasi minimal, sehingga cocok untuk perangkat IoT dengan sumber daya terbatas \autocite{silvano2020iotahealth}.
+
+IOTA juga menghilangkan biaya transaksi, yang merupakan keunggulan signifikan untuk aplikasi IoT yang melibatkan sejumlah besar transaksi mikro \autocite{popov2018tangle}.
+Fitur ini memungkinkan implementasi model bisnis baru seperti machine-to-machine payments dan data marketplace tanpa overhead biaya yang umumnya terkait dengan blockchain tradisional \autocite{shabandri2019iotamedical}.
+
+Dalam konteks sistem kesehatan, IOTA telah diusulkan sebagai solusi untuk manajemen rekam medis elektronik karena kemampuannya untuk menangani volume transaksi tinggi dengan latensi rendah, menyediakan audit trail yang immutable, dan memungkinkan kontrol akses granular tanpa biaya transaksi yang tinggi \autocite{haridecmed}.
+Arsitektur terdesentralisasi IOTA juga mengurangi risiko single point of failure dan meningkatkan ketahanan sistem terhadap serangan \autocite{shabandri2019iotamedical}.
 
 \subsection{IOTA Rebased}
+
+IOTA Rebased (juga dikenal sebagai IOTA 2.0) adalah evolusi signifikan dari protokol IOTA yang memperkenalkan mekanisme konsensus baru dan arsitektur yang didesain ulang untuk mencapai desentralisasi penuh tanpa Coordinator \autocite{iotafoundation2024}.
+Coordinator adalah komponen terpusat yang digunakan dalam versi awal IOTA untuk melindungi jaringan dari serangan, namun keberadaannya bertentangan dengan prinsip desentralisasi penuh \autocite{muller2022coordicide}.
+
+Desain utama IOTA Rebased didasarkan pada konsep Coordicide, yang menghilangkan Coordinator dan menggantinya dengan mekanisme konsensus terdistribusi yang sepenuhnya terdesentralisasi \autocite{muller2022coordicide}.
+IOTA Rebased memperkenalkan beberapa komponen kunci: Fast Probabilistic Consensus (FPC) sebagai mekanisme konsensus yang memungkinkan node mencapai kesepakatan secara cepat dan probabilistik; Mana sebagai sistem reputasi berbasis token yang mencegah spam dan serangan Sybil; Autopeering untuk pembentukan jaringan peer-to-peer yang dinamis dan tahan terhadap serangan eclipse \autocite{iotafoundation2024}.
+
+IOTA Rebased juga memperkenalkan konsep sharding horizontal untuk meningkatkan skalabilitas, di mana jaringan dapat dipartisi menjadi beberapa subnet yang beroperasi secara paralel sambil tetap mempertahankan interoperabilitas \autocite{iotafoundation2024}.
+Fitur smart contract yang fully programmable juga ditambahkan melalui IOTA Smart Contracts (ISC), yang memungkinkan pengembangan aplikasi terdesentralisasi yang kompleks dengan bahasa pemrograman seperti Solidity dan Rust \autocite{iotarebased2024}.
+
+Dalam hal keamanan, IOTA Rebased mengimplementasikan mekanisme finality yang lebih kuat, di mana transaksi dapat mencapai status final dalam waktu singkat (beberapa detik) dengan jaminan probabilistik yang tinggi \autocite{muller2022coordicide}.
+Hal ini sangat penting untuk aplikasi kritis seperti sistem kesehatan, di mana kepastian status transaksi diperlukan untuk keputusan medis yang tepat waktu.
+
+IOTA Rebased mempertahankan keunggulan utama IOTA, yaitu feeless transactions dan skalabilitas tinggi, sambil mengatasi kelemahan desentralisasi dari versi sebelumnya \autocite{iotafoundation2024}.
+Dengan arsitektur yang sepenuhnya terdesentralisasi, IOTA Rebased menjadi platform yang lebih robust dan dapat dipercaya untuk aplikasi enterprise, termasuk sistem manajemen rekam medis elektronik yang memerlukan tingkat keamanan, privasi, dan ketersediaan yang tinggi \autocite{iotarebased2024}.

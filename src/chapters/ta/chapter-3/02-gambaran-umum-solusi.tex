@@ -1,13 +1,13 @@
 \section{Gambaran Umum Solusi}
 
-Solusi yang diusulkan untuk mengatasi keterbatasan sistem DecMed ini adalah pengimplementasian \textit{authorization framework} dan pembuatan \textit{portal consent} untuk pasien.
+Solusi yang diusulkan untuk mengatasi keterbatasan sistem DecMed ini adalah pengimplementasian \textit{authorization framework} dan pembuatan \textit{consent portal} untuk pasien.
 Penggunaan \textit{authorization framework} bertujuan untuk mengatasi akses kontrol yang tidak memadai untuk kebutuhan otorisasi secara asinkronus dan pemberian akses granular terhadap data dan pihak yang meminta akses ke data tersebut.
-Sementara itu \textit{portal consent} dibuat untuk memberikan kemudahan dan keleluasaan bagi pasien untuk mengelola data dan akses secara granular dan informatif.
+Sementara itu \textit{consent portal} dibuat untuk memberikan kemudahan dan keleluasaan bagi pasien untuk mengelola data dan akses secara granular dan informatif.
 
 Berdasarkan kajian yang sudah dilakukan pada subbab \@\ref{subsec:authorization-framework-2}, alternatif \textit{authorization framework} yang dipilih adalah User Managed Access (UMA) 2.0.
 Tabel \@\ref{table:perbandingan-framework} menunjukkan perbandingan antar-\textit{authorization frameworks}.
 UMA2.0 dipilih karena mekanisme UMA 2.0 memungkinkan pembuatan kebijakan secara asinkronus dan dapat dieksekusi tanpa interaksi pasien.
-% Selain itu, sebagai ekstensi dari OAuth2.0, UMA juga memenuhi standar interoperabilitas FHIR yang 
+% Selain itu, sebagai ekstensi dari OAuth 2.0, UMA juga memenuhi standar interoperabilitas FHIR yang 
 Selain itu, pendefinisian \textit{policy} yang granular pada UMA2.0 membuat pasien memiliki keleluasaan terhadap pemberian akses untuk data dan izin spesifik dan pihak spesifik yang akan diberikan akses.
 Keuntungan UMA yang lainnya adalah pemisahan antara authorization server dan resources server, sehingga pengembangan kedua sistem bisa dijalankan secara terpisah dan pasien bisa mengatur kebijakan di authorization server, dan kebijakan itu berlaku untuk semua data medisnya yang tersebar di fasyankes-fasyankes berbeda.
 
@@ -39,8 +39,8 @@ Setiap fasyankes akan menyimpan data rekam medis pasien yang ada di fasyankes te
 	\end{tabular}
 \end{table}
 
-Portal consent pasien akan dibentuk sebagai client terpisah dan berperan sebagai antarmuka pendefinisian policy (PAP, Policy Administration Point).
-Portal consent pasien dapat diakses setelah pasien terautentikasi menggunakan mekanisme autentikasi OpenID Connect (OIDC) 2.0 yang berjalan di atas UMA2.0.
+Consent portal pasien akan dibentuk sebagai client terpisah dan berperan sebagai antarmuka pendefinisian policy (PAP, Policy Administration Point).
+Consent portal pasien dapat diakses setelah pasien terautentikasi menggunakan mekanisme autentikasi OpenID Connect (OIDC) 2.0 yang berjalan di atas UMA2.0.
 Metadata policy yang sudah didefinisikan akan disimpan di off-chain storage dan mekanisme validasi akan dijalankan di on-chain via smart contract.
 Saat seseorang berkeinginan untuk mengakses data pasien, smart contract akan memeriksa claim dari peminta akses dengan melihat metadata yang disimpan di off-chain storage.
 

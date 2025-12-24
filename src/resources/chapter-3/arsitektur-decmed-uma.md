@@ -70,19 +70,23 @@ flowchart TD
 ## Penjelasan Komponen
 
 ### Actors
+
 - **Resource Owner (Pasien)**: Pemilik data rekam medis yang mendefinisikan kebijakan akses
 - **Requesting Party (Dokter)**: Pihak yang meminta akses ke data rekam medis
 
 ### Layer Aplikasi Client
-- **Aplikasi Pasien/PAP**: Portal consent untuk pasien mengelola kebijakan akses
+
+- **Aplikasi Pasien/PAP**: Consent portal untuk pasien mengelola kebijakan akses
 - **Aplikasi Dokter**: Interface untuk tenaga medis mengakses data pasien
 
 ### Jaringan IOTA - Decentralized AS
+
 - **Smart Contract AS**: Authorization Server terdistribusi yang menjalankan Policy Decision Point (PDP)
 - **Node Validator**: Node-node yang melakukan konsensus untuk verifikasi kebijakan
 - **Event Log**: Ledger state yang menyimpan log akses dan keputusan otorisasi
 
 ### Resource Server & Enforcement
+
 - **PEP Gateway**: Policy Enforcement Point yang menegakkan keputusan otorisasi
 - **Encrypted Health Data**: Storage terenkripsi untuk data rekam medis
 

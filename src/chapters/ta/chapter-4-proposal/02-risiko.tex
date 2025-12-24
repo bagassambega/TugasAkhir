@@ -6,7 +6,7 @@ Berikut adalah lima risiko tertinggi yang mungkin dihadapi dalam pengerjaan Tuga
     \item \textbf{Kompleksitas Integrasi antara DecMed, UMA 2.0, dan SATUSEHAT}
     \begin{itemize}
         \item \textit{Deskripsi Risiko:} Integrasi tiga sistem dengan arsitektur berbeda (IOTA, OAuth-based UMA, dan platform terpusat SATUSEHAT) dapat menimbulkan kesulitan teknis dan inkonsistensi data.
-        \item \textit{Rencana Mitigasi:} Membuat proof of concept untuk setiap integrasi secara bertahap, menggunakan API wrapper untuk standardisasi komunikasi, dan melakukan pengujian integrasi secara iteratif.
+        \item \textit{Rencana Mitigasi:} Membuat \textit{proof of concept} untuk setiap integrasi secara bertahap, menggunakan API wrapper untuk standardisasi komunikasi, dan melakukan pengujian integrasi secara iteratif.
     \end{itemize}
     
     \item \textbf{Kurva Pembelajaran UMA 2.0 dan Kompleksitas Implementasi}
@@ -21,9 +21,9 @@ Berikut adalah lima risiko tertinggi yang mungkin dihadapi dalam pengerjaan Tuga
         \item \textit{Rencana Mitigasi:} Menggunakan arsitektur hybrid di mana IOTA hanya menyimpan hash dan metadata, sedangkan data penuh disimpan di storage terpisah; melakukan load testing untuk mengidentifikasi bottleneck sejak dini.
     \end{itemize}
     
-    \item \textbf{Penerimaan dan Usability Portal Consent oleh Pasien}
+    \item \textbf{Penerimaan dan Usability Consent portal oleh Pasien}
     \begin{itemize}
-        \item \textit{Deskripsi Risiko:} Portal consent yang terlalu kompleks dapat mengurangi adopsi pengguna, terutama untuk pasien dengan literasi digital rendah.
+        \item \textit{Deskripsi Risiko:} Consent portal yang terlalu kompleks dapat mengurangi adopsi pengguna, terutama untuk pasien dengan literasi digital rendah.
         \item \textit{Rencana Mitigasi:} Menerapkan prinsip user-centered design dengan melakukan user testing pada tahap prototype, menyederhanakan alur consent dengan visual yang intuitif, dan menyediakan panduan penggunaan yang jelas.
     \end{itemize}
     

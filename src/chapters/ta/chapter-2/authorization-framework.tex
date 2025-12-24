@@ -3,12 +3,230 @@
 \textit{Authorization framework} adalah sistem yang mendefinisikan arsitektur dan interaksi yang diperlukan untuk memberikan izin akses ke sumber daya \autocite{CONRAD2023295}.
 \textit{Authorization framework} tidak hanya mengelola kontrol akses terhadap \textit{resources}, namun juga menguraikan arsitektur referensi yang mencakup semua aktor yang terlibat dalam proses otorisasi dan model aliran data di antara mereka \autocite{jaimeauthorizationmodels}.
 
-Tidak ada pendefinisian yang pasti terkait 
+Beberapa authorization framework yang umum digunakan yaitu SAML2.0, OAuth 2.0, dan UMA2.0 \autocite{jaimandeepauthframework, termontuma}
 
-\subsection{Extended Control Access Markup Language (XACML)}
+% Jelaskan komponen apa saja yang umumnya ada pada authorization framework
 
-\subsection{Security Assertion Markup Language (SAML)}
+% \subsection{Extended Control Access Markup Language (XACML)}
 
-\subsection{OAuth2.0}
+\subsection{Security Assertion Markup Language (SAML) 2.0}
+
+Security Assertion Markup Language (SAML) 2.0 adalah standar berbasis XML untuk pertukaran data autentikasi dan otorisasi antara pihak-pihak yang berbeda, khususnya antara \textit{identity provider} (IdP) dan \textit{service provider} (SP) \autocite{samlspec}.
+SAML 2.0 dirancang untuk mendukung skenario \textit{Single Sign-On} (SSO), di mana pengguna dapat mengautentikasi satu kali di IdP dan kemudian mengakses berbagai layanan di SP tanpa harus mengautentikasi ulang \autocite{CONRAD2023295}.
+
+Desain utama SAML 2.0 berfokus pada federasi identitas dan \textit{assertion-based authentication}, di mana IdP mengeluarkan \textit{assertion} yang berisi pernyataan tentang identitas pengguna, atribut, dan keputusan otorisasi \autocite{samlspec}.
+\textit{Assertion} ini ditandatangani secara digital oleh IdP untuk memastikan integritas dan autentisitas, kemudian dikirimkan ke SP melalui browser pengguna.
+Dengan demikian, SAML 2.0 memungkinkan organisasi untuk mengelola identitas pengguna secara terpusat dan memberikan akses yang aman ke berbagai aplikasi tanpa harus mengelola kredensial terpisah untuk setiap aplikasi \autocite{CONRAD2023295}.
+
+\subsubsection{Peran dalam SAML 2.0}\label{subsubsec:peran-saml}
+
+Tabel~\ref{tab:saml-roles} menunjukkan pendefinisian tiga peran utama dalam SAML 2.0 yang terlibat dalam mekanisme autentikasi dan otorisasi federasi.
+
+\begin{table}[H]
+    \centering
+    \caption{Peran dalam SAML 2.0}\label{tab:saml-roles}
+    \begin{tabular}{|p{4cm}|p{9cm}|}
+        \hline
+        \textbf{Peran} & \textbf{Deskripsi} \\
+        \hline
+        Principal (User) & Entitas yang identitasnya sedang diverifikasi, biasanya adalah pengguna akhir yang mencoba mengakses layanan. \\
+        \hline
+        Identity Provider (IdP) & Entitas yang mengautentikasi pengguna dan mengeluarkan \textit{SAML assertion} yang berisi pernyataan tentang identitas, atribut, dan keputusan otorisasi pengguna. IdP bertanggung jawab untuk mengelola kredensial pengguna dan proses autentikasi. \\
+        \hline
+        Service Provider (SP) & Entitas yang menyediakan layanan atau sumber daya yang dilindungi. SP menerima dan memvalidasi \textit{SAML assertion} dari IdP untuk memberikan akses kepada pengguna tanpa harus mengelola kredensial pengguna secara langsung. \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Alur Protokol SAML 2.0}
+
+Gambar~\ref{fig:saml-flow} menunjukkan alur protokol SAML 2.0 yang melibatkan ketiga peran yang telah didefinisikan di sub-subbab~\ref{subsubsec:peran-saml}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{resources/chapter-2/saml-flow.png}
+    \caption{Alur Protokol SAML 2.0}\label{fig:saml-flow}
+\end{figure}
+
+Alur protokol SAML 2.0 (SP-Initiated SSO) terdiri dari enam fase utama sebagai berikut \autocite{samlspec}:
+
+\begin{enumerate}
+    \item \textbf{Service Access Attempt:} Pengguna (\textit{Principal}) mencoba mengakses sumber daya yang dilindungi di \textit{Service Provider}. SP memeriksa status autentikasi pengguna dan menemukan bahwa pengguna belum diautentikasi.
+    
+    \item \textbf{Authentication Request:} SP membuat \textit{SAML Authentication Request} dan mengarahkan pengguna ke \textit{Identity Provider} (IdP) bersama dengan \textit{SAMLRequest}. Pengalihan ini biasanya dilakukan melalui browser pengguna menggunakan HTTP redirect atau POST \autocite{samlspec}.
+    
+    \item \textbf{User Authentication:} IdP memeriksa apakah pengguna sudah memiliki sesi yang valid. Jika belum, IdP menampilkan halaman login dan meminta kredensial pengguna. Setelah pengguna mengirimkan kredensial, IdP memvalidasi kredensial tersebut. Jika pengguna sudah memiliki sesi yang valid, langkah autentikasi ini dapat dilewati (\textit{Single Sign-On}) \autocite{CONRAD2023295}.
+    
+    \item \textbf{Assertion Generation:} Setelah autentikasi berhasil, IdP membuat \textit{SAML Assertion} yang berisi pernyataan tentang identitas pengguna, atribut pengguna, dan keputusan autentikasi \autocite{samlspec}. \textit{Assertion} ini ditandatangani secara digital oleh IdP untuk memastikan integritas dan autentisitas. IdP kemudian mengarahkan pengguna kembali ke SP dengan membawa \textit{SAMLResponse} yang berisi \textit{assertion} tersebut.
+    
+    \item \textbf{Assertion Validation \& Session Establishment:} SP menerima \textit{SAMLResponse} dari browser pengguna. SP memvalidasi \textit{SAML Assertion}, termasuk memeriksa tanda tangan digital, kondisi validitas (seperti waktu kedaluwarsa), dan audience restriction \autocite{samlspec}. Jika validasi berhasil, SP mengekstrak atribut pengguna dari \textit{assertion} dan membuat sesi lokal untuk pengguna.
+    
+    \item \textbf{Resource Access:} Setelah sesi lokal terbentuk, SP memberikan akses kepada pengguna terhadap sumber daya yang diminta. Pengguna sekarang dapat mengakses layanan di SP tanpa perlu autentikasi ulang selama sesi masih berlaku.
+\end{enumerate}
+
+Alur ini memungkinkan \textit{Single Sign-On} (SSO), di mana pengguna hanya perlu autentikasi sekali di IdP dan dapat mengakses berbagai SP tanpa harus memasukkan kredensial berulang kali \autocite{CONRAD2023295}.
+SAML 2.0 juga mendukung skenario IdP-Initiated SSO, di mana proses dimulai dari IdP, serta berbagai \textit{bindings} (HTTP Redirect, HTTP POST, HTTP Artifact) untuk fleksibilitas implementasi \autocite{samlspec}.
+
+\subsection{OAuth 2.0}
+
+OAuth 2.0 adalah standar \textit{authorization framework} yang memungkinkan aplikasi pihak ketiga untuk memperoleh akses terbatas ke layanan web tanpa berbagi kredensial pemilik sumber daya \autocite{jaimeauthorizationmodels}.
+Desain utama OAuth 2.0 adalah pemisahan peran antara klien dan pemilik sumber daya (\textit{resource owner}), yang memungkinkan delegasi akses tanpa harus membagikan kredensial jangka panjang (seperti kata sandi) kepada klien \autocite{oauthspec}.
+
+Prinsip kerja OAuth 2.0 menggunakan mekanisme token, di mana \textit{client} mendapatkan \textit{access token} dari \textit{Authorization Server} setelah mendapatkan persetujuan dari \textit{Resource Owner}.
+Token ini digunakan untuk mengakses sumber daya yang dilindungi (protected resources) di \textit{Resource Server} tanpa perlu mengetahui kredensial pemilik sumber daya \autocite{oauthspec}.
+
+\subsubsection{Peran dalam OAuth 2.0}\label{subsubsec:peran-oauth}
+
+Tabel~\ref{tab:oauth-roles} menunjukkan pendefinisian empat peran/\textit{roles} dalam OAuth 2.0 yang terlibat dalam mekanisme pemberian akses terhadap \textit{protected resources}.
+
+\begin{table}[H]
+    \centering
+    \caption{Peran dalam OAuth 2.0}\label{tab:oauth-roles}
+    \begin{tabular}{|p{4cm}|p{9cm}|}
+        \hline
+        \textbf{Peran} & \textbf{Deskripsi} \\
+        \hline
+        Resource Owner & Entitas yang mampu memberikan akses ke sumber daya yang dilindungi. Ketika pemilik sumber daya adalah seseorang, disebut sebagai \textit{end-user}. \\
+        \hline
+        Resource Server & Server yang meng-\textit{host} sumber daya yang dilindungi (\textit{protected resources}), dan dapat menerima dan merespons permintaan akses terhadap \textit{protected resource} menggunakan \textit{access token}. \\
+        \hline
+        Client & Aplikasi yang membuat permintaan terhadap protected resources atas nama resource owner dan dengan otorisasinya. \\
+        \hline
+        Authorization Server & Server yang mengeluarkan \textit{access token} kepada \textit{client} setelah berhasil mengautentikasi \textit{resource owner} dan memperoleh otorisasi. \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Alur Protokol OAuth 2.0}
+
+Gambar~\ref{fig:oauth-flow} menunjukkan alur protokol OAuth 2.0 beserta keempat peran yang telah didefinisikan di sub-subbab~\ref{subsubsec:peran-oauth}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{resources/chapter-2/oauth-flow.png}
+    \caption{Alur Protokol OAuth 2.0. Sumber: Dokumentasi Penulis}\label{fig:oauth-flow}
+\end{figure}
+
+Alur protokol OAuth 2.0 terdiri dari enam tahap utama sebagai berikut:
+
+\begin{enumerate}
+    \item \textbf{Authorization Request:} \textit{Client} meminta otorisasi dari \textit{Resource Owner}. Permintaan otorisasi dapat dilakukan secara langsung kepada \textit{Resource Owner} atau tidak langsung lewat \textit{Authorization Server} sebagai perantara.
+    
+    \item \textbf{Authorization Grant:} \textit{Client} menerima \textit{authorization grant} (persetujuan dari resource owner), yang merupakan kredensial yang mewakili otorisasi \textit{Resource Owner}.
+    
+    \item \textbf{Access Token Request:} \textit{Client} meminta \textit{access token} dengan mengautentikasi diri ke \textit{Authorization Server} dan memberikan \textit{authorization grant}.
+    
+    \item \textbf{Access Token Response:} \textit{Authorization Server} mengautentikasi \textit{Client} dan memvalidasi \textit{authorization grant}. Jika valid, \textit{Authorization Server} memberikan \textit{access token}.
+    
+    \item \textbf{Protected Resource Request:} \textit{Client} meminta \textit{protected resource} dari \textit{Resource Server} dan mengautentikasi diri dengan memberikan \textit{access token}.
+    
+    \item \textbf{Protected Resource Response:} \textit{Resource Server} memvalidasi \textit{access token}, dan jika valid, menyetujui permintaan dengan memberikan \textit{protected resource}.
+\end{enumerate}
+
+% Alur ini memungkinkan delegasi akses yang aman tanpa membagikan kredensial pemilik sumber daya kepada aplikasi pihak ketiga, sekaligus memberikan kontrol penuh kepada \textit{Resource Owner} atas sumber daya yang diakses \autocite{oauthspec}.
+
 
 \subsection{User Managed Access 2.0 (UMA2.0)}
+
+User Managed Access 2.0 (UMA 2.0) adalah standar \textit{authorization framework} terfederasi yang menggunakan ekstensi tipe pemberian izin OAuth 2.0 \autocite{umaspec}.
+Terfederasi pada UMA2.0 adalah konsep konektivitas antara authorization server dan resources server yang longgar (loosely coupled) \autocite{umafederatedspec}.
+UMA 2.0 mendefinisikan bagaimana \textit{resource owner} dapat mengontrol akses terhadap \textit{protected resource} oleh klien yang digunakan oleh pihak pemohon (\textit{requesting party}) mana pun, di mana sumber daya tersebut berada di sejumlah \textit{resource server}, dan di mana \textit{authorization server} terpusat mengatur akses berdasarkan kebijakan pemilik sumber daya \autocite{umaspec}.
+
+Desain utama UMA 2.0 berfokus pada delegasi akses \textit{party-to-party}, di mana \textit{resource owner} dapat memberikan akses kepada individu atau entitas lain (\textit{requesting party}) secara granular dan asinkronus \autocite{umaspec}.
+Berbeda dengan OAuth 2.0 yang fokus pada delegasi akses \textit{user-to-application}, UMA 2.0 memungkinkan \textit{resource owner} untuk mendefinisikan kebijakan akses (\textit{policy}) terlebih dahulu tanpa harus menunggu permintaan akses, sehingga otorisasi dapat dilakukan secara asinkronus \autocite{jaimeauthorizationmodels}.
+
+\subsubsection{Korelasi dengan OAuth 2.0}
+
+UMA 2.0 merupakan ekstensi dari OAuth 2.0, sehingga memakai prinsip-prinsip dasar dan komponen yang sama dengan OAuth 2.0, misalnya mekanisme token dan pemisahan peran \autocite{umaspec}.
+Namun, UMA 2.0 menambahkan beberapa komponen dan mekanisme khusus untuk mendukung skenario otorisasi yang lebih kompleks \autocite{jaimeauthorizationmodels}, yaitu:
+
+\begin{itemize}
+    \item \textbf{Permission Ticket}: Token sementara yang merepresentasikan permintaan izin dari \textit{resource server} ke \textit{authorization server} \autocite{umaspec}.
+    \item \textbf{Requesting Party Token (RPT)}: Token khusus yang membawa izin yang telah dievaluasi berdasarkan kebijakan \textit{resource owner} \autocite{umaspec}.
+    \item \textbf{Claims Gathering}: Mekanisme untuk mengumpulkan atribut atau bukti identitas dari \textit{requesting party} untuk evaluasi kebijakan \autocite{umaspec}.
+    \item \textbf{Policy Management}: Kemampuan \textit{resource owner} untuk mendefinisikan, mengubah, dan mencabut kebijakan akses secara mandiri dan asinkronus \autocite{jaimeauthorizationmodels}.
+\end{itemize}
+
+Salah satu perbedaan antara OAuth 2.0 dan UMA 2.0 adalah pemisahan antara \textit{client} dan \textit{requesting party} \autocite{umaspec}.
+Dalam OAuth 2.0, \textit{access token} diberikan langsung kepada \textit{client} yang bertindak atas nama \textit{resource owner}, sehingga \textit{client} dan pengguna yang mengotorisasi adalah entitas yang sama atau memiliki kepercayaan langsung \autocite{oauthspec}.
+Sebaliknya, dalam UMA 2.0, \textit{client} bertindak atas nama \textit{requesting party} yang merupakan entitas terpisah dari \textit{resource owner} \autocite{umaspec}.
+Hal ini berarti requesting party bisa saja bukanlah mengatasnamakan resource owner.
+% RPT yang dikeluarkan oleh \textit{authorization server} tidak hanya mengotorisasi \textit{client}, tetapi secara eksplisit mencakup identitas dan \textit{claims} dari \textit{requesting party}, memungkinkan otorisasi \textit{party-to-party} yang lebih granular dan fleksibel \autocite{umafederatedspec}.
+
+UMA 2.0 juga memperkenalkan mekanisme registrasi \textit{resource server} \autocite{umaspec}.
+Dalam OAuth 2.0, \textit{resource server} bersifat statis dan tidak perlu mendaftarkan sumber daya secara eksplisit ke \textit{authorization server} \autocite{oauthspec}.
+Namun, dalam UMA 2.0, \textit{resource server} harus mendaftarkan setiap \textit{protected resource} ke \textit{authorization server} melalui Protection API, yang mengembalikan \textit{resource identifier} unik dan informasi \textit{endpoint} untuk \textit{permission ticket} \autocite{umaspec}.
+Mekanisme registrasi ini memungkinkan \textit{authorization server} untuk mengetahui semua sumber daya yang dilindungi dan mengaitkannya dengan kebijakan akses yang didefinisikan oleh \textit{resource owner}, sehingga otorisasi dapat dilakukan secara dinamis dan terfederasi tanpa memerlukan konfigurasi statis sebelumnya \autocite{umafederatedspec}.
+Dengan cara ini, \textit{resource server} dan \textit{authorization server} dapat beroperasi secara \textit{loosely coupled}, di mana \textit{resource server} dapat didistribusikan di berbagai lokasi atau organisasi berbeda sambil tetap menggunakan \textit{authorization server} terpusat yang sama untuk manajemen kebijakan \autocite{umaspec}.
+
+% Dengan ekstensi ini, UMA 2.0 dapat menangani skenario di mana \textit{resource owner} perlu memberikan kontrol akses granular kepada berbagai pihak tanpa harus selalu \textit{online} saat permintaan akses terjadi \autocite{umaspec}.
+
+\subsubsection{Peran dalam UMA 2.0}
+
+Tabel~\ref{tab:uma-roles} menunjukkan pendefinisian peran/\textit{roles} dalam \textit{authorization framework} UMA 2.0.
+
+\begin{table}[H]
+    \centering
+    \caption{Peran dalam UMA 2.0}\label{tab:uma-roles}
+    \begin{tabular}{|p{4cm}|p{9cm}|}
+        \hline
+        \textbf{Peran} & \textbf{Deskripsi} \\
+        \hline
+        Resource Owner & Entitas yang mampu memberikan akses ke protected resource dan mendefinisikan kebijakan akses. \textit{Sama dengan OAuth 2.0.} \\
+        \hline
+        Resource Server & Server yang meng-\textit{host} protected resource, mampu menerima dan merespons permintaan sumber daya menggunakan RPT. Pada UMA 2.0, \textit{resource server} juga bertanggung jawab untuk mendaftarkan sumber daya ke \textit{authorization server}. \\
+        \hline
+        Client & Aplikasi yang membuat permintaan protected resource atas nama \textit{requesting party}. \textit{Sama dengan OAuth 2.0.} \\
+        \hline
+        Authorization Server & Server yang mengelola kebijakan akses, mengeluarkan RPT kepada \textit{client}, dan mengevaluasi \textit{claims} dari \textit{requesting party} terhadap kebijakan yang telah didefinisikan \textit{resource owner}. \\
+        \hline
+        Requesting Party & Pihak yang meminta akses ke protected resource melalui \textit{client}. Ini adalah tambahan peran khusus dalam UMA 2.0 yang tidak ada di OAuth 2.0. \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Alur Protokol UMA 2.0}
+
+Gambar~\ref{fig:uma-flow} menunjukkan alur protokol abstrak UMA 2.0 yang melibatkan kelima peran yang telah didefinisikan sebelumnya.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{resources/chapter-2/uma-flow.png}
+    \caption{Alur Protokol UMA 2.0}\label{fig:uma-flow}
+\end{figure}
+
+Alur protokol UMA 2.0 terdiri dari lima fase utama sebagai berikut \autocite{umaspec}:
+
+\begin{enumerate}
+    \item \textbf{Resource Registration:} \textit{Resource Server} mendaftarkan \textit{protected resource} ke \textit{Authorization Server}. \textit{Authorization Server} mengembalikan \textit{resource ID} dan \textit{endpoint} untuk \textit{permission ticket} yang akan digunakan dalam proses otorisasi selanjutnya \autocite{umaspec}.
+    
+    \item \textbf{Policy Definition:} \textit{Resource Owner} mendefinisikan kebijakan akses (\textit{policy}) di \textit{Authorization Server}, menentukan siapa (\textit{who}), dapat mengakses apa (\textit{what}), dan kapan (\textit{when}) \autocite{jaimeauthorizationmodels}. \textit{Authorization Server} menyimpan kebijakan ini untuk pemeriksaan permohonan izin akses data nantinya.
+    
+    \item \textbf{Resource Access Attempt:} \textit{Requesting Party} mencoba mengakses \textit{resource} melalui \textit{Client}. \textit{Client} meminta \textit{resource} ke \textit{Resource Server} tanpa token. \textit{Resource Server} meminta \textit{permission ticket} dari \textit{Authorization Server} dan memberikannya ke \textit{Client} bersama lokasi \textit{Authorization Server} \autocite{umaspec}.
+    
+    \item \textbf{Claims Gathering \& Token Request:} \textit{Client} meminta \textit{claims} (bukti identitas/atribut) dari \textit{Requesting Party}. \textit{Client} kemudian meminta \textit{Requesting Party Token} (RPT) dari \textit{Authorization Server} dengan menyertakan \textit{permission ticket} dan \textit{claims} \autocite{umaspec}. \textit{Authorization Server} mengevaluasi kebijakan yang telah didefinisikan \textit{Resource Owner} terhadap \textit{claims} yang diberikan \autocite{jaimeauthorizationmodels}. Jika kebijakan terpenuhi, \textit{Authorization Server} mengeluarkan RPT. Jika \textit{claims} tidak cukup, \textit{Authorization Server} meminta \textit{claims} tambahan, dan proses diulang hingga kebijakan terpenuhi atau ditolak \autocite{umaspec}.
+    
+    \item \textbf{Resource Access with RPT:} \textit{Client} menggunakan RPT untuk mengakses \textit{protected resource} dari \textit{Resource Server}. \textit{Resource Server} memvalidasi RPT dengan \textit{Authorization Server}. Jika valid, \textit{Resource Server} memberikan \textit{protected resource} kepada \textit{Client}, yang kemudian diteruskan ke \textit{Requesting Party} \autocite{umaspec}.
+\end{enumerate}
+
+% \subsubsection{Arsitektur UMA 2.0}
+
+% Gambar~\ref{fig:uma-architecture} menunjukkan arsitektur UMA 2.0 dengan komponen-komponen utama dan interaksi antarkomponennya.
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.95\textwidth]{resources/chapter-2/uma-flow.png}
+%     \caption{Arsitektur UMA 2.0}\label{fig:uma-architecture}
+% \end{figure}
+
+% Arsitektur UMA 2.0 terdiri dari tiga layer utama \autocite{umaspec}:
+
+% \begin{enumerate}
+%     \item \textbf{Client Layer:} Layer ini berisi aplikasi yang digunakan oleh \textit{Requesting Party} untuk mengakses sumber daya.
+    
+%     \item \textbf{Resource Server Layer:} Layer ini terdiri dari \textit{Resource Server} yang menyimpan dan melindungi sumber daya (misalnya sistem RME) dan database sumber daya yang dilindungi.
+    
+%     \item \textbf{Authorization Server Layer:} Layer ini mengelola otorisasi, menyimpan kebijakan akses dalam \textit{Policy Store}, dan menyimpan registrasi sumber daya dalam \textit{Resource Registry} \autocite{jaimeauthorizationmodels}.
+% \end{enumerate}
+
+% Interaksi antarkomponen dalam arsitektur UMA 2.0 dibagi menjadi lima fase sesuai dengan alur protokol yang telah dijelaskan sebelumnya, dengan total 24 langkah interaksi yang memastikan bahwa setiap akses terhadap sumber daya telah diotorisasi sesuai kebijakan yang didefinisikan oleh \textit{Resource Owner} \autocite{umaspec}.

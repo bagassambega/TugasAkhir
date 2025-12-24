@@ -4,8 +4,32 @@ Menurut Peraturan Menteri Kesehatan Republik Indonesia Nomor 24 Tahun 2022, reka
 Lebih lanjut, rekam medis elektronik (RME) didefinisikan sebagai rekam medis yang dibuat dengan menggunakan sistem elektronik yang diperuntukkan bagi penyelenggaraan rekam medis \autocite{permenkes2022rekammedis}. 
 
 
+% Permenkes ini mewajibkan setiap fasilitas pelayanan kesehatan (fasyankes) untuk menyelenggarakan RME-nya masing-masing. 
+% Fasyankes yang dimaksud mencakup tempat praktik mandiri tenaga kesehatan, puskesmas, klinik, rumah sakit, apotek, laboratorium kesehatan, balai, dan fasyankes lain yang ditetapkan Menteri \autocite{permenkes2022rekammedis}.
 
-\begin{table}[ht]
+% Penyelenggaraan RME bertujuan untuk meningkatkan mutu pelayanan kesehatan, memberikan kepastian hukum, menjamin keamanan, kerahasiaan, keutuhan, dan ketersediaan data, serta mewujudkan sistem RME yang berbasis digital dan terintegrasi \autocite{permenkes2022rekammedis}.
+
+\subsection{Isi dan Aktor Rekam Medis}
+
+Permenkes No. 24 Tahun 2022 menegaskan bahwa dokumen rekam medis adalah milik fasyankes, sedangkan isi rekam medis adalah milik pasien. 
+Fasyankes bertanggung jawab atas kehilangan, kerusakan, pemalsuan, atau penggunaan data oleh pihak yang tidak berhak. 
+Isi rekam medis sendiri terdiri dari data administratif yang berisi data identitas dan data sosial pasien; dan data klinis pasien.
+Kegiatan penyelenggaraan rekam medis data pribadi dan data sosial pasien dapat dilakukan oleh tenaga perekam medis dan informasi kesehatan, sementara data klinis pasien hanya dapat dilakukan oleh tenaga medis yang memberikan pelayanan kesehatan \autocite{permenkes2022rekammedis}.
+
+Berdasarkan jenis datanya, data rekam medis terbagi menjadi beberapa jenis dataset \autocite{kepmenkesmetadatasatusehat},
+
+\begin{itemize}
+    \item Instalasi Gawat Darurat;
+    \item Rawat Jalan;
+    \item Rawat Inap;
+    \item Laboratorium; dan
+    \item Apotek
+\end{itemize}
+
+Aktor yang terlibat dan juga hak izin aksesnya berdasarkan Permenkes Nomor 24 Tahun 2022 dan Undang-Undang Perlindungan Data Pribadi dapat dilihat pada Tabel~\ref{table:aktor-rme} \autocite{permenkes2022rekammedis,uudatapribadi,kepmenkesmetadatasatusehat}.
+
+
+\begin{table}[H]
     \centering
     \caption{Aktor dan Hak/Izin Akses dalam Sistem Rekam Medis Elektronik}
     \begin{tabular}{|p{6cm}|p{8cm}|} % chktex 44
@@ -55,39 +79,11 @@ Lebih lanjut, rekam medis elektronik (RME) didefinisikan sebagai rekam medis yan
             \item Akses untuk integrasi data nasional
         \end{itemize} \\
         \hline % chktex 44
-        Kepolisian/Pengadilan & \begin{itemize}
-            \item Akses tanpa persetujuan pasien untuk kebutuhan hukum
-            \item Akses tanpa persetujuan pasien untuk kebutuhan keamanan nasional sesuai peraturan
-        \end{itemize} \\
-        \hline % chktex 44
     \end{tabular}
     \label{table:aktor-rme} % chktex 24
 \end{table}
 
-% Permenkes ini mewajibkan setiap fasilitas pelayanan kesehatan (fasyankes) untuk menyelenggarakan RME-nya masing-masing. 
-% Fasyankes yang dimaksud mencakup tempat praktik mandiri tenaga kesehatan, puskesmas, klinik, rumah sakit, apotek, laboratorium kesehatan, balai, dan fasyankes lain yang ditetapkan Menteri \autocite{permenkes2022rekammedis}.
 
-% Penyelenggaraan RME bertujuan untuk meningkatkan mutu pelayanan kesehatan, memberikan kepastian hukum, menjamin keamanan, kerahasiaan, keutuhan, dan ketersediaan data, serta mewujudkan sistem RME yang berbasis digital dan terintegrasi \autocite{permenkes2022rekammedis}.
-
-\subsection{Isi dan Aktor Rekam Medis}
-
-Permenkes No. 24 Tahun 2022 menegaskan bahwa dokumen rekam medis adalah milik fasyankes, sedangkan isi rekam medis adalah milik pasien. 
-Fasyankes bertanggung jawab atas kehilangan, kerusakan, pemalsuan, atau penggunaan data oleh pihak yang tidak berhak. 
-Isi rekam medis sendiri terdiri dari data administratif yang berisi data identitas dan data sosial pasien; dan data klinis pasien.
-Kegiatan penyelenggaraan rekam medis data pribadi dan data sosial pasien dapat dilakukan oleh tenaga perekam medis dan informasi kesehatan, sementara data klinis pasien hanya dapat dilakukan oleh tenaga medis yang memberikan pelayanan kesehatan \autocite{permenkes2022rekammedis}.
-
-Berdasarkan jenis datanya, data rekam medis terbagi menjadi beberapa jenis dataset \autocite{kepmenkesmetadatasatusehat},
-
-\begin{itemize}
-    \item Instalasi Gawat Darurat;
-    \item Rawat Jalan;
-    \item Rawat Inap;
-    \item Laboratorium; dan
-    \item Apotek
-\end{itemize}
-
-
-Aktor yang terlibat dan juga hak izin aksesnya berdasarkan Permenkes Nomor 24 Tahun 2022 dan Undang-Undang Perlindungan Data Pribadi dapat dilihat pada Tabel~\ref{table:aktor-rme} \autocite{permenkes2022rekammedis,uudatapribadi,kepmenkesmetadatasatusehat}.
 
 Permenkes Nomor 24 Tahun 2022 Pasal 6 ayat 1 menegaskan bahwa isi RME wajib dijaga kerahasiaannya oleh semua pihak yang terlibat, termasuk tenaga kesehatan, pimpinan fasyankes, tenaga pembiayaan, badan hukum fasyankes, mahasiswa yang bertugas, dan pihak lain yang memiliki akses \autocite{permenkes2022rekammedis}.
 Hal ini diperkuat dengan keberadaan Undang-Undang Nomor 27 Tahun 2022 mengenai Perlindungan Data Pribadi yang menyatakan bahwa data pribadi dan data sosial termasuk ke dalam data pribadi yang bersifat umum, dan data klinis termasuk ke dalam data pribadi yang bersifat spesifik \autocite{uudatapribadi}.
@@ -95,17 +91,19 @@ Hal ini diperkuat dengan keberadaan Undang-Undang Nomor 27 Tahun 2022 mengenai P
 Berdasarkan UU Perlindungan Data Pribadi pula, setiap subjek data pribadi berhak mendapatkan akses dan isi data pribadinya, menarik kembali persetujuan pemrosesan data pribadi, dan berhak membatasi pemrosesan data pribadi.
 Namun dalam kondisi darurat atau pasien tidak cakap untuk memberikan perizinan dapat diberikan kepada keluarga terdekat atau pengampunya \autocite{permenkes2022rekammedis}.
 
-
-\subsection{SATUSEHAT}
-
 Pemerintah menyelenggarakan SatuData Indonesia, yaitu kebijakan tata kelola data pemerintah untuk menghasilkan data yang akurat, mutakhir, terpadu, dapat dipertanggungjawabkan, mudah diakses, dan dapat dibagipakaikan antar instansi pusat dan daerah \autocite{perpressatudata}.
 Untuk menyelenggarakan SatuData dalam bidang kesehatan untuk sistem informasi kesehatan dan meningkatkan penerapan interoperabilitas data kesehatan yang terintegrasi, Kementerian Kesehatan membentuk SatuData bidang kesehatan yang selanjutnya disebut sebagai SATUSEHAT \autocite{permenkes2022satusehat}.
 
-Sebagai sarana interoperabilitas data medis antar-sistem pelayanan kesehatan, SATUSEHAT menerapkan standar HL7 FHIR dalam pengimplementasian standar data model dan \textit{Application Programming Interface} (API). 
-FHIR (\textit{Fast Healthcare Interoperability Resources}) merupakan standar standar global (internasional) yang menetapkan format data beserta elemen-elemennya (\textit{resources}) dan sebuah standar API untuk pertukaran informasi (interoperabilitas SATUSEHAT) \autocite{kemkesSATUSEHATEkosistem}.
 
-Untuk mengamankan pertukaran data melalui FHIR, SATUSEHAT mengadopsi standar OAuth2.0 untuk autentikasi dan otorisasi. 
-Ini berarti aplikasi atau sistem terdaftar harus mendapatkan access token untuk mengakses resource FHIR \autocite{kemkesSATUSEHATEkosistem}.
+\subsection{Consent Portal}
+
+
+
+% Sebagai sarana interoperabilitas data medis antar-sistem pelayanan kesehatan, SATUSEHAT menerapkan standar HL7 FHIR dalam pengimplementasian standar data model dan \textit{Application Programming Interface} (API). 
+% FHIR (\textit{Fast Healthcare Interoperability Resources}) merupakan standar standar global (internasional) yang menetapkan format data beserta elemen-elemennya (\textit{resources}) dan sebuah standar API untuk pertukaran informasi (interoperabilitas SATUSEHAT) \autocite{kemkesSATUSEHATEkosistem}.
+
+% Untuk mengamankan pertukaran data melalui FHIR, SATUSEHAT mengadopsi standar OAuth 2.0 untuk autentikasi dan otorisasi. 
+% Ini berarti aplikasi atau sistem terdaftar harus mendapatkan access token untuk mengakses resource FHIR \autocite{kemkesSATUSEHATEkosistem}.
 
 
 
