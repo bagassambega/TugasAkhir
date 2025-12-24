@@ -1,95 +1,32 @@
-\section{Latar Belakang}\label{subsec:latar-belakang}
+\section{Latar Belakang}
 
 \sloppy
 
-Penyelenggaraan tata kelola klinis di Indonesia saat ini mewajibkan setiap fasilitas pelayanan kesehatan (Fasyankes) untuk menyelenggarakan rekam medis elektronik (RME) secara mandiri sebagai basis dokumentasi medis pasien \autocite{permenkes2022rekammedis}.
-% Kewajiban ini mengharuskan seluruh fasyankes, mulai dari tingkat pratama hingga tingkat lanjut, untuk melakukan transisi penuh dari rekam medis berbasis kertas menjadi sistem elektronik.
-Dengan demikian, arsitektur data kesehatan nasional bertumpu pada ribuan sistem RME yang dikelola oleh masing-masing entitas penyedia layanan kesehatan \autocite{kemkesBerita}.
-Agar data yang tersebar di berbagai sistem RME tersebut dapat dipertukarkan untuk kesinambungan pelayanan, pemerintah menetapkan bahwa setiap sistem elektronik milik fasyankes harus memiliki kemampuan interoperabilitas melalui platform SATUSEHAT \autocite{permenkes2022satusehat}.
-% SATUSEHAT merupakan ekosistem pertukaran data kesehatan yang menghubungkan sistem informasi atau aplikasi dari seluruh anggota ekosistem digital kesehatan Indonesia termasuk fasyankes, regulator, penjamin, dan penyedia layanan digital \autocite{kemkesSATUSEHATEkosistem}.
+Kesehatan merupakan salah satu aspek fundamental dalam hak asasi manusia 
+\parencite{standarnormanomor4kesehatankomnasham}. Hal ini dijamin oleh negara melalui penyelenggaraan kesehatan dan diatur melalui perundang-undangan yang menyatakan 
+bahwa negara menjamin hak setiap warga negara untuk mewujudkan kehidupan yang baik, sehat, serta sejahtera lahir dan batin \parencite{uunomor17tahun2023}.
 
-Secara arsitektur, SATUSEHAT didesain sebagai \textit{National Health Data Platform} yang berfungsi sebagai hub integrasi tunggal dan integrasi secara terpusat. 
-% Meskipun penyimpanan fisik data klinis (RME) tetap berada di masing-masing fasyankes, namun mekanisme pertukaran data, indeks pasien, dan manajemen persetujuan (\textit{consent management}) dikelola secara terpusat oleh Kementerian Kesehatan \autocite{cetakbirukemenkes}.
-% Arsitektur tersentralisasi pada sistem rekam medis memberikan kemudahan dalam mekanisme interoperabilitas data, namun memberikan tantangan baru berupa \textit{single point of failure} \autocite{kumar2025decentralizedAIhealth}. 
-Masalah yang dihadapi oleh sistem rekam medis terpusat suatu modul atau komponen sistem mengalami kegagalan, maka seluruh sistem dapat mengalami kegagalan total \autocite{jin2020blockchainIPFSmedicalrecord}.
-Selain itu, sistem yang tersentralisasi juga menjadikan sistem rekam medis target utama serangan siber yang dapat melumpuhkan operasional rumah sakit dan membahayakan keselamatan pasien \autocite{kumar2025decentralizedAIhealth}.
+Penyelenggaraan pelayanan kesehatan di suatu wilayah atau suatu negara memerlukan mekanisme pencatatan pelayanan kesehatan dan informasi medis pasien yang disebut sebagai rekam medis. 
+Penyelenggaraan pelayanan kesehatan yang dinamis dan membutuhkan kolaborasi antar-fasilitas pelayanan kesehatan mendorong terciptanya sistem 
+rekam medis berbasis digital atau biasa disebut Rekam Medis Elektronik (RME).
+Untuk memenuhi kebutuhan tersebut, Pemerintah Republik Indonesia sudah membangun sistem rekam medis elektronik terintegrasi yang dinamakan SatuSehat, dan diatur melalui Peraturan 
+Menteri Kesehatan Nomor 24 Tahun 2022.
 
-Berbagai implementasi sistem rekam medis terdesentralisasi seperti blockchain, Ethereum, dan IOTA sudah digunakan untuk menciptakan sistem rekam medis yang terdesentralisasi \autocite{zhengdltcomparisonmedicalrecord}.
-Dari berbagai teknologi desentralisasi tersebut IOTA merupakan teknologi desentralisasi yang paling efisien karena tidak membutuhkan biaya (\textit{gas fee}) dan \textit{resources} yang tinggi dan juga terdesentralisasi penuh \autocite{zhengdltcomparisonmedicalrecord}.
+Sistem rekam medis elektronik memerlukan sistem keamanan dan akses kontrol yang komprehensif karena berkaitan dengan data dan privasi pasien. Berdasarkan Peraturan 
+Menteri Kesehatan Nomor 24 Tahun 2022, isi rekam medis adalah milik pasien dan harus dijaga kerahasiaannya \parencite{permenkes2022rekam}. Berbagai penelitian dan pengembangan 
+sudah dilakukan untuk melindungi kerahasiaan dan integritas sistem rekam medis elektronik, salah satunya dengan teknologi \textit{Distributed Ledger Technology} (DLT).
 
-Berdasarkan Permenkes Nomor 24 Tahun 2022 juga, sistem rekam medis elektronik berperan dalam mengelola data administratif dan data klinis pasien \autocite{permenkes2022rekammedis}. 
-Kedua data ini termasuk ke dalam data pribadi dan harus dijaga kerahasiaannya \autocite{uudatapribadi}.
-Oleh karena itu selain solusi desentralisasi, diperlukan juga suatu mekanisme pemeriksaan otorisasi untuk memastikan akses terhadap data pasien bisa dikelola dengan baik, yaitu dengan implementasi \textit{framework} otorisasi (\textit{authorization framework}) \autocite{kheng2022delegatedauthhealthrecord}.
-\textit{Authorization framework} adalah kerangka keamanan umum yang mencakup autentikasi dan otorisasi pengguna \autocite{ammarauthorizationframework}.
+Salah satu sistem rekam medis elektronik yang sudah mengimplementasikan teknologi DLT dalam sistemnya adalah MedRec yang dikembangkan oleh MIT.\@ Sistem ini mengimplementasikan 
+teknologi \textit{blockchain} dan \textit{capability based access control} (CapBAC) yang disimpan sebagai smart contract untuk mengatur pihak-pihak yang dapat mengakses rekam medis \parencite{medrec}. 
+Namun implementasi \textit{blockchain} pada sistem rekam medis elektronik memberikan tantangan baru berupa tambahan \textit{latency} saat mengakses data karena menggunakan konsensus 
+\textit{Proof-of-Work}, sehingga rata-rata dibutuhkan waktu hingga 10 detik untuk menetapkan menetapkan kontrak baru dan merespons.
 
-Selain pemeriksaan otorisasi, penggunaan dan pemrosesan data pribadi pasien juga memerlukan izin dan persetujuan dari pasien itu sendiri karena setiap pasien berhak atas kerahasiaan data pribadinya \autocite{uudatapribadi}.
-Persetujuan penggunaan data pasien dapat dikelola melalui portal perizinan (\textit{consent portal}) yang berisi mekanisme pengelolaan persetujuan secara konkrit dan terinformasi (\textit{informed consent}) \autocite{dara2020patientconsent}.
+Solusi lainnya yang diberikan adalah DecMed, implementasi sistem rekam medis elektronik berbasis IOTA yang dikembangkan oleh I Putu Bakta Hari Sudewa, mahasiswa S1 Teknik Informatika 
+Institut Teknologi Bandung angkatan 2021. Penggunaan IOTA memberikan penyelesaian permasalahan sistem rekam medis elektronik berbasis \textit{blockcchain} yang memiliki komputasi mahal.
+Implementasi DecMed sendiri menggunakan mekanisme akses kontrol \textit{capability based access control} (CapBAC) yang dikombinasikan dengan \textit{proxy re-encryption} dan 
+\textit{revoke time}.
 
-\textit{Consent portal} merupakan aspek esensial dalam suatu sistem karena sistem harus memberikan kontrol kepada pemilik data yang merupakan bagian dari privasi mereka dalam rangka pemenuhan regulasi perlindungan data pribadi \autocite{prasanthconsentmanagement}.
-% Persetujuan yang diberikan oleh pasien harus memberikan keleluasaan bagi pasien untuk mengatur kepada siapa data diberikan, data apa saja yang diberikan, dan bagaimana pasien mengelola pemberian/pencabutan akses terhadap data tersebut \autocite{kellygranularaccessdata,dara2020patientconsent}.
-Consent portal berperan sebagai mekanisme pendefinisian regulasi mengenai data, pihak dan akses apa saja yang bisa diberikan kepada pihak tertentu \autocite{kellygranularaccessdata,dara2020patientconsent}.
-% Lebih lanjut lagi, keleluasaan waktu pemberian persetujuan juga harus dipertimbangkan untuk mengatasi kasus saat pasien tidak dapat memberikan persetujuan \autocite{kheng2022delegatedauthhealthrecord}.
-
-% Penyelenggaraan pelayanan kesehatan di suatu negara memerlukan mekanisme pencatatan pelayanan kesehatan dan informasi medis pasien yang disimpan dalam bentuk rekam medis. 
-% Penyelenggaraan pelayanan kesehatan yang dinamis dan membutuhkan kolaborasi antar-fasilitas pelayanan kesehatan mendorong terciptanya sistem rekam medis berbasis digital atau biasa disebut Rekam Medis Elektronik (RME).
-% Untuk memenuhi kebutuhan tersebut, Pemerintah Republik Indonesia sudah membangun sistem rekam medis elektronik terintegrasi yang dinamakan SatuSehat, dan diatur melalui Peraturan Menteri Kesehatan Nomor 24 Tahun 2022.
-
-% Sistem rekam medis elektronik memerlukan sistem keamanan dan akses kontrol yang komprehensif karena berkaitan dengan data dan privasi pasien. 
-% Berdasarkan Peraturan Menteri Kesehatan Nomor 24 Tahun 2022, isi rekam medis adalah milik pasien dan harus dijaga kerahasiaannya \autocite{permenkes2022rekammedis}. 
-% Berbagai penelitian dan pengembangan sudah dilakukan untuk melindungi kerahasiaan dan integritas sistem rekam medis elektronik, salah satunya dengan teknologi \textit{Distributed Ledger Technology} (DLT).
-
-% Salah satu sistem rekam medis elektronik yang sudah mengimplementasikan teknologi DLT dalam sistemnya adalah MedRec yang dikembangkan oleh MIT.
-% Sistem ini mengimplementasikan teknologi \textit{blockchain} dan \textit{capability based access control} (CapBAC) yang disimpan sebagai smart contract untuk mengatur pihak-pihak yang dapat mengakses rekam medis \autocite{medrec}. 
-% Namun implementasi \textit{blockchain} pada sistem rekam medis elektronik memberikan tantangan baru berupa tambahan \textit{latency} saat mengakses data karena menggunakan konsensus 
-% \textit{Proof-of-Work}, sehingga rata-rata dibutuhkan waktu hingga 10 detik untuk menetapkan menetapkan kontrak baru dan merespons.
-
-
-Salah satu solusi untuk mengatasi permasalahan rekam medis tersentralisasi dan memberikan kerahasiaan data pasien adalah DecMed, implementasi sistem rekam medis elektronik berbasis IOTA yang dikembangkan oleh I Putu Bakta Hari Sudewa, mahasiswa S1 Teknik Informatika Institut Teknologi Bandung angkatan 2021. 
-Penggunaan IOTA memberikan penyelesaian permasalahan sistem rekam medis elektronik yang tersentralisasi namun tetap menggunakan sistem dengan operasi komputasi yang tidak mahal.
-Implementasi DecMed sendiri menggunakan mekanisme akses kontrol \textit{capability-based access control} untuk menjamin hanya pihak tertentu saja yang bisa mengakses data pasien, dan memungkinkan pasien memberikan akses kepada pihak secara spesifik dan bisa dicabut kapan saja.
-
-Namun, implementasi DecMed juga masih menyisakan kelemahan dalam sistemnya, di antaranya,
-\begin{itemize}
-    \item Pasien harus memberikan persetujuan akses data secara langsung (\textit{synchronous}) dengan melakukan \textit{scan} suatu QR code yang diberikan oleh fasyankes untuk memberikan izin akses terhadap datanya. 
-    Hal ini membuat pasien harus hadir secara langsung untuk memberikan akses dan pasien tidak dapat memberikan izin kepada pihak lain saat pasien tidak sadar atau tidak bisa untuk menggunakan perangkatnya.
-    % \item Sistem ini hanya mendefinisikan akses kontrol untuk aktor yang telah ditentukan sebelumnya (tenaga medis, tenaga administrasi, dll). 
-    % Menambahkan jenis pihak pemohon baru (misalnya, perusahaan asuransi, lembaga penelitian, layanan darurat) memerlukan modifikasi \textit{smart contract} dan aplikasi klien.
-    \item Tidak ada cara bagi klien untuk menentukan sumber daya apa yang akan diberikan dan izin apa saja yang diberikan kepada pihak lain. 
-    Pasien hanya memberikan persetujuan kepada pihak lain secara spesifik, namun tidak bisa mengelola izin pakai apa yang bisa dilakukan oleh pihak tersebut, seperti \textit{read}, \textit{write}, dan kapabilitas lainnya.
-    
-\end{itemize}
-
-Berdasarakan dua permasalahan ini, Tugas Akhir mengusulkan penggunaan \textit{authorization framework} dan \textit{consent portal} bagi pasien dalam sistem rekam medis DecMed.
-\textit{Authorization framework} diimplementasikan untuk mengatasi akses kontrol yang tidak memadai untuk kebutuhan kompleks seperti otorisasi secara asinkronus, delegasi dan pemberian akses granular yang diperlukan dalam sistem terdistribusi modern \autocite{jaimeauthorizationmodels}.
-Selain itu, implementasi \textit{consent portal} bagi pasien juga dilakukan untuk memberikan kontrol yang lebih granular dan keleluasaan dalam penggunaannya \autocite{dara2020patientconsent}.
-
-
-% UMA memberikan kemampuan kepada pasien untuk memberikan izin secara asinkronus, mengelola data mana yang akan diatur aksesnya dan mengatur pihak yang akan mengakses data miliknya dan seluruh kapabilitasnya.
-
-% jelasin consent portal
-% hapus hukum yang general, lebih jelaskan yang terkait kepemilikan data di Indonesia punya rekam medis nya masing2 di fasyankes
-%jadiiin paragraf untuk kelemahan
-%mapping masalah ke latar belakang
-% di rumusan masalah tambahkan untuk apa
-% tambahin flow alur ke UMA mengapa bisa menyelesaikan Decmed  (bridging)
-% atau di bab 3 jelasin mapping UMA ke decmed, di bab awal. jelasin UMA bagusnya buat apa, lalu       mapping kenapa UMA bisa menyelesaikan masalah di DecMed
-
-
-% Kondisi rekam medis di Indonesia (SATUSEHAT)
-% yang saat ini sudah mau menyelesaikan baru Kak Hari, tapi yang kak hari masih kurang dari segi ...
-% nanti diselesaikan dengan UMA
-
-% ganti judul dengan DLT
-% cari paper yang sudah bisa menyelesaikan masalah ... dengan UMA, nanti dikaitkan dengan yang Kak Hari
-% emangnya bisa langsung implementasi UMA? jadi jelaskan juga tantangan dan analisis apa aja yang perlu dilakuin sebelum implementasi, ga ujug2 cuman implementasi
-% jelasin penyesuaian framework UMA ke sistem ini juga
-
-% pakai decentralized untuk autorisasi dan jelasin tradeoff nya. tapi menjaga degree tetep biar ga terpusat
-
-% semua istilah kaya SLA approval, auditability, dsb sebutin briefly di pendahuluan
-
-% tujuan dan ukuran keberhasilan harus sejumlah dengan rumusan masalah
-% tujuan utama dan khusus
-% kalau mau nambahin yang pendaftaran fasyankes ke sistem terpusat, maka masukin juga di bab 1 bab 2
-
-% jelasin kasus spesifiknya atau di bagian awal jelasinnya mekanisme otorisasi
+Implementasi DecMed juga masih menyisakan kelemahan dalam sistemnya, di antaranya manajemen pemulihan aksea yang rumit karena pasien akan diberikan 12 frasa pemulihan dan harus menyimpan
+keseluruhan frasa, dan juga waktu pencabutan akses yang statis dan tidak bisa diganti oleh pasien setelah ditetapkan. Untuk mengatasi kedua masalah ini, diusulkan penggunaan 
+User Managed Access (UMA) sebagai mekanisme \textit{authorization} dan juga implementasi \textit{consent portal} bagi pasien yang dapat memberikan kemudahan bagi pengguna untuk melakukan
+manajemen akses rekam medisnya kepada pihak lain.

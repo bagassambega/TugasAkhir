@@ -1,17 +1,22 @@
 \section{Analisis Masalah}
 
-Sistem DecMed yang diajukan oleh I Putu Bakta Hari Sudewa \autocite{haridecmed} merupakan sistem rekam medis elektronik berbasis IOTA yang menggunakan kerangka akses kontrol sederhana.\@
-Akses kontrol pada DecMed memungkinkan pemberian akses terhadap data kepada pihak secara spesifik dan dapat dibatasi oleh waktu yang ditentukan pasien.
-Namun, implementasi ini menyisakan beberapa keterbatasan yang menghambat penerapan di lingkungan klinis nyata.
+Sistem DecMed yang diajukan oleh I Putu Bakta Hari Sudewa \autocite{haridecmed} merupakan sistem rekam medis elektronik berbasis IOTA yang menggunakan kerangka akses kontrol.\@
+Masalah utama dalam DecMed adalah penerapan kontrol akses yang bersifat coarse-grained (kasar). 
+Sistem hanya membagi tipe data menjadi dua kategori besar: Administratif dan Klinis. 
 
-Tanpa \textit{authorization framework} yang memadai, sistem DecMed menghadapi tantangan dalam skenario klinis kompleks.
-Contohnya, saat pasien dirujuk antar-fasyankes, pasien harus secara manual memberikan akses kepada dokter penerima rujukan dengan mengetahui identitas spesifiknya terlebih dahulu \autocite{haridecmed}.
-Jika pasien dalam kondisi darurat atau tidak dapat mengakses gawainya, proses rujukan akan terhambat karena tidak ada mekanisme delegasi akses berbasis atribut atau kode rujukan.
-Selain itu, sistem tidak mendukung akses berbasis peran dengan granularitas tinggi, sehingga pasien harus memberikan akses individual dengan tingkat sama ke semua anggota tim medis, melanggar prinsip \textit{least privilege}.
+Dalam kasus nyata, pertimbangkan skenario di mana seorang pasien memiliki riwayat medis sensitif, seperti diagnosis psikiatri atau penyakit menular (misalnya HIV), bercampur dengan data umum seperti golongan darah dan riwayat vaksinasi. 
+Pada arsitektur DecMed saat ini, mekanisme kontrol akses cenderung bersifat \textit{all-or-nothing}. 
+Artinya, jika pasien memberikan akses kepada dokter gigi untuk melihat riwayat pengobatan, dokter tersebut secara tidak sengaja juga mendapatkan akses ke catatan psikiatri pasien.
 
-Tanpa \textit{consent portal}, pasien menghadapi kesulitan mengelola persetujuan akses secara efektif sesuai prinsip transparansi dan kontrol yang diamanatkan UU PDP.
-Sistem DecMed mengharuskan pasien memberikan persetujuan secara sinkronus setiap kali ada permintaan akses \autocite{haridecmed}, sehingga pasien kehilangan fleksibilitas untuk mendefinisikan kebijakan akses secara proaktif untuk perawatan jangka panjang.
-Selain itu, sistem tidak menyediakan antarmuka untuk memilih secara granular jenis data yang dibagikan (misalnya membagikan data alergi tetapi tidak data sensitif seperti riwayat penyakit mental), sehingga pasien tidak dapat menjalankan hak kontrol penuh atas data pribadi mereka. 
+Masalah kedua adalah ketidakmampuan DecMed menangani pemberian akses secara asinkronus. 
+Dalam suatu kasus, seorang pasien mungkin tiba di Unit Gawat Darurat (UGD) dalam keadaan tidak sadar (koma) atau tidak memiliki akses ke perangkatnya (misalnya handphone-nya hilang atau tangannya tidak bisa menggenggam gawai). 
+Dokter UGD memerlukan akses segera ke data alergi obat dan golongan darah untuk menyelamatkan nyawa pasien. 
+Pada sistem desentralisasi murni yang mengandalkan pemberian izin dari pemilik data secara real-time untuk otorisasi, akses ini mustahil dilakukan karena pasien tidak dapat memberikan consent (persetujuan) saat itu juga. 
+
+
+% Akses kontrol memungkinkan pemberian akses terhadap data kepada pihak secara spesifik dan dapat dibatasi oleh waktu yang ditentukan pasien.
+% Namun implementasi ini menyisakan beberapa keterbatasan, yaitu pasien harus memberikan persetujuan akses data secara langsung, dan pasien tidak dapat mengelola data apa yang akan dibagikan secara spesifik dan apa saja izin akses yang diberikan.
+% Banyak kasus yang menunjukkan bahwa 
 
 % Hal ini tidak sesuai dengan Permenkes Nomor 24 Tahun 2022 tentang Rekam Medis Elektronik dan UU PDP yang menyatakan bahwa setiap aktor di dalam sistem rekam medis memiliki akses kontrol yang berbeda-beda, dan pemrosesan data pribadi memerlukan legalitas, jenis dan relevansi dari data pribadi yang bersangkutan.
 

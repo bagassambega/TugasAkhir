@@ -9,10 +9,10 @@ Berikut adalah lima risiko tertinggi yang mungkin dihadapi dalam pengerjaan Tuga
         \item \textit{Rencana Mitigasi:} Membuat \textit{proof of concept} untuk setiap integrasi secara bertahap, menggunakan API wrapper untuk standardisasi komunikasi, dan melakukan pengujian integrasi secara iteratif.
     \end{itemize}
     
-    \item \textbf{Kurva Pembelajaran UMA 2.0 dan Kompleksitas Implementasi}
+    \item \textbf{Kompleksitas Implementasi Desentralisasi UMA 2.0}
     \begin{itemize}
-        \item \textit{Deskripsi Risiko:} UMA 2.0 merupakan protokol yang kompleks dengan dokumentasi terbatas, sehingga dapat memperlambat tahap implementasi.
-        \item \textit{Rencana Mitigasi:} Mengalokasikan waktu khusus untuk studi mendalam UMA 2.0 di awal proyek, menggunakan library atau framework yang sudah tersedia (seperti Keycloak), dan berkonsultasi dengan komunitas pengembang UMA.
+        \item \textit{Deskripsi Risiko:} UMA 2.0 merupakan protokol yang kompleks dengan dokumentasi terbatas, dan pada awalnya bersifat tersentralisasi.
+        \item \textit{Rencana Mitigasi:} Mengalokasikan waktu khusus untuk studi mendalam UMA 2.0 di awal pengerjaan dan menggunakan smart contract.
     \end{itemize}
     
     \item \textbf{Performa dan Skalabilitas IOTA untuk Rekam Medis}
@@ -21,15 +21,15 @@ Berikut adalah lima risiko tertinggi yang mungkin dihadapi dalam pengerjaan Tuga
         \item \textit{Rencana Mitigasi:} Menggunakan arsitektur hybrid di mana IOTA hanya menyimpan hash dan metadata, sedangkan data penuh disimpan di storage terpisah; melakukan load testing untuk mengidentifikasi bottleneck sejak dini.
     \end{itemize}
     
-    \item \textbf{Penerimaan dan Usability Consent portal oleh Pasien}
+    \item \textbf{Overengineered Consent Portal untuk Pasien}
     \begin{itemize}
-        \item \textit{Deskripsi Risiko:} Consent portal yang terlalu kompleks dapat mengurangi adopsi pengguna, terutama untuk pasien dengan literasi digital rendah.
-        \item \textit{Rencana Mitigasi:} Menerapkan prinsip user-centered design dengan melakukan user testing pada tahap prototype, menyederhanakan alur consent dengan visual yang intuitif, dan menyediakan panduan penggunaan yang jelas.
+        \item \textit{Deskripsi Risiko:} Consent portal yang terlalu kompleks dapat mengurangi performa aplikasi.
+        \item \textit{Rencana Mitigasi:} Menerapkan prinsip user-centered design dengan melakukan user testing pada tahap prototype dan menghilanngkan redundansi.
     \end{itemize}
     
-    \item \textbf{Kerentanan Keamanan pada Sistem Terdesentralisasi}
+    \item \textbf{Keterbatasan Lingkungan Uji}
     \begin{itemize}
-        \item \textit{Deskripsi Risiko:} Sistem terdesentralisasi rentan terhadap serangan seperti man-in-the-middle, replay attack, atau kompromi pada private key pasien.
-        \item \textit{Rencana Mitigasi:} Mengimplementasikan enkripsi end-to-end, menggunakan mekanisme multi-factor authentication, menerapkan token expiration dan refresh mechanism, serta melakukan security audit dan penetration testing sebelum deployment.
+        \item \textit{Deskripsi Risiko:} Sistem terdesentralisasi sulit untuk di-test dan dijalankan di sistem lokal dengan spesifikasi rendah.
+        \item \textit{Rencana Mitigasi:} Menggunakan free testnet dan IPFS storage untuk testing.
     \end{itemize}
 \end{enumerate}
