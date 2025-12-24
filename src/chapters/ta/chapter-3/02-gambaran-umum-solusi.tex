@@ -1,61 +1,108 @@
 \section{Gambaran Umum Solusi}
 
-Solusi yang diusulkan adalah implementasi \textit{User-Managed Access} (UMA) 2.0 \textit{Consent Portal} yang terintegrasi dengan teknologi \textit{Distributed Ledger Technology} (DLT) sebagai lapisan penyimpanan data yang \textit{immutable}.
+Solusi yang diusulkan untuk mengatasi keterbatasan sistem DecMed ini adalah pengimplementasian \textit{authorization framework} dan pembuatan \textit{portal consent} untuk pasien.
+Penggunaan \textit{authorization framework} bertujuan untuk mengatasi akses kontrol yang tidak memadai untuk kebutuhan otorisasi secara asinkronus dan pemberian akses granular terhadap data dan pihak yang meminta akses ke data tersebut.
+Sementara itu \textit{portal consent} dibuat untuk memberikan kemudahan dan keleluasaan bagi pasien untuk mengelola data dan akses secara granular dan informatif.
 
-\subsection{Arsitektur Sistem UMA}
-Sistem ini mengadopsi aktor-aktor standar dalam protokol UMA 2.0 yang dipetakan ke dalam ekosistem kesehatan Indonesia:
+Berdasarkan kajian yang sudah dilakukan pada subbab \@\ref{subsec:authorization-framework-2}, alternatif \textit{authorization framework} yang dipilih adalah User Managed Access (UMA) 2.0.
+Tabel \@\ref{table:perbandingan-framework} menunjukkan perbandingan antar-\textit{authorization frameworks}.
+UMA2.0 dipilih karena mekanisme UMA 2.0 memungkinkan pembuatan kebijakan secara asinkronus dan dapat dieksekusi tanpa interaksi pasien.
+% Selain itu, sebagai ekstensi dari OAuth2.0, UMA juga memenuhi standar interoperabilitas FHIR yang 
+Selain itu, pendefinisian \textit{policy} yang granular pada UMA2.0 membuat pasien memiliki keleluasaan terhadap pemberian akses untuk data dan izin spesifik dan pihak spesifik yang akan diberikan akses.
+Keuntungan UMA yang lainnya adalah pemisahan antara authorization server dan resources server, sehingga pengembangan kedua sistem bisa dijalankan secara terpisah dan pasien bisa mengatur kebijakan di authorization server, dan kebijakan itu berlaku untuk semua data medisnya yang tersebar di fasyankes-fasyankes berbeda.
 
-\begin{itemize}
-    \item \textbf{Resource Owner (RO):} Pasien (misalnya: Budi). Pihak yang memiliki kendali penuh atas kebijakan akses rekam medis.
-    \item \textbf{Resource Server (RS):} Sistem Manajemen Rekam Medis milik Fasyankes (misalnya: Simedik). Tempat fisik data rekam medis disimpan dan dilindungi.
-    \item \textbf{Authorization Server (AS):} SATUSEHAT (Kementerian Kesehatan). Pihak yang mengeluarkan token otorisasi, melakukan autentikasi pengguna, dan menyimpan kebijakan akses yang didefinisikan pasien.
-    \item \textbf{Requesting Party (RqP):} Tenaga medis (Dokter, Perawat) atau Fasyankes lain yang membutuhkan akses ke data pasien.
-\end{itemize}
+Untuk tetap menjaga desentralisasi sistem, implementasi Authorization Server juga akan dibuat terdesentralisasi dan berbentuk smart contract.
+Selain Authorization Server, Resources Server dan Resources Storage juga akan tetap terdesentralisasi.
+Hal ini menyesuaikan regulasi sistem rekam medis di Indonesia yang menyatakan bahwa objek dokumen data rekam medis adalah milik fasyankes.
+Setiap fasyankes akan menyimpan data rekam medis pasien yang ada di fasyankes tersebut, dan juga menyimpan shardings data dari rekam medis pasien lainnya.
 
-\subsection{Rancangan Alur Fungsional Utama}
 
-\subsubsection{Pendaftaran dan Manajemen Identitas}
-Berbeda dengan sistem DecMed yang menggunakan \textit{seed phrase}, pendaftaran pasien pada sistem ini disesuaikan dengan data kependudukan Indonesia.
-\begin{itemize}
-    \item \textbf{Pasien:} Mendaftar menggunakan NIK, Nama Ibu Kandung, Foto KTP, dan membuat PIN pengaman. Data ini digunakan untuk verifikasi dan mekanisme \textit{lupa password}.
-    \item \textbf{Tenaga Medis:} Didaftarkan oleh administrator fasyankes masing-masing.
-    \item \textbf{Fasyankes:} Terdaftar sesuai mekanisme regulasi SATUSEHAT.
-\end{itemize}
+\begin{table}[htbp]
+	\centering
+	\caption{Perbandingan Singkat Framework Otorisasi}\label{table:perbandingan-framework}
+	\begin{tabular}{|p{3.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|} % chktex 44
+		\hline % chktex 44
+			\textbf{Fitur / Kriteria} & \textbf{XACML} & \textbf{SAML 2.0} & \textbf{OAuth 2.0} & \textbf{UMA 2.0} \\
+		\hline % chktex 44
+		Fokus Utama & ABAC kompleks & SSO, federasi & User ke aplikasi & User ke pihak lain \\
+		\hline % chktex 44
+		Model Persetujuan & Admin sistem & Federasi institusi & User ke app & User ke individu \\
+		\hline % chktex 44
+		Granularitas Akses & Sangat tinggi & Rendah & Sedang & Sangat tinggi \\
+		\hline % chktex 44
+		Format Data & XML & XML & JSON/JWT & JSON/JWT \\
+		\hline % chktex 44
+		Policy Asinkronus & Bisa, rumit & Tidak ada & Tidak baku & Ada \\
+		\hline % chktex 44
+		Fleksibilitas Kebijakan & Kaku & Kaku & Statis & Dinamis \\
+		\hline % chktex 44
+	\end{tabular}
+\end{table}
 
-\subsubsection{Pendaftaran Sumber Daya (Resource Registration)}
-Agar kebijakan akses dapat dikelola secara terpusat oleh AS (SATUSEHAT) meskipun data tersebar di berbagai RS (Simedik), dilakukan mekanisme pendaftaran sumber daya:
-\begin{enumerate}
-    \item Simedik (RS) melakukan autentikasi ke SATUSEHAT (AS) untuk mendapatkan \textit{Protection API Token} (PAT).
-    \item Simedik menggunakan PAT untuk mendaftarkan rekam medis pasien (sebagai \textit{resource}) ke SATUSEHAT.
-    \item SATUSEHAT mengembalikan \texttt{resource\_id} unik yang menghubungkan kebijakan di pusat dengan data di daerah.
-\end{enumerate}
+Portal consent pasien akan dibentuk sebagai client terpisah dan berperan sebagai antarmuka pendefinisian policy (PAP, Policy Administration Point).
+Portal consent pasien dapat diakses setelah pasien terautentikasi menggunakan mekanisme autentikasi OpenID Connect (OIDC) 2.0 yang berjalan di atas UMA2.0.
+Metadata policy yang sudah didefinisikan akan disimpan di off-chain storage dan mekanisme validasi akan dijalankan di on-chain via smart contract.
+Saat seseorang berkeinginan untuk mengakses data pasien, smart contract akan memeriksa claim dari peminta akses dengan melihat metadata yang disimpan di off-chain storage.
 
-\subsubsection{Mekanisme Pembuatan Kebijakan Akses (Consent Creation)}
-Sistem menyediakan tiga metode bagi pasien untuk memberikan akses, mengatasi masalah sinkronisasi kehadiran:
 
-\begin{enumerate}
-    \item \textbf{Persetujuan Asinkronus (Proaktif):} Pasien mengakses \textit{Consent Portal} dari rumah untuk membuat kebijakan akses (\textit{policy}). Contoh: "Saya mengizinkan Dokter Budi dan seluruh Dokter Spesialis Penyakit Dalam di RS Harapan untuk mengakses data saya mulai tanggal sekian sampai sekian". Definisi ini menggunakan \textit{claims gathering} pada UMA untuk memvalidasi atribut tenaga medis.
-    \item \textbf{Persetujuan Saat Pendaftaran (On-Arrival):} Saat pasien mendaftar di loket fasyankes, sistem menampilkan formulir persetujuan (\textit{consent form}) pada anjungan pendaftaran atau aplikasi pasien untuk memberikan akses kepada fasyankes tersebut guna menyimpan dan mengelola data medis kunjungan saat itu.
-    \item \textbf{Persetujuan Reaktif (On-Demand):} Jika belum ada kebijakan yang dibuat, tenaga medis dapat memicu permintaan akses. AS akan mengirimkan notifikasi kepada pasien untuk meminta persetujuan (mirip mekanisme OAuth standar), namun ini hanya opsi terakhir jika metode asinkronus tidak tersedia.
-\end{enumerate}
 
-% \subsubsection{Mekanisme Rujukan}
-% Untuk mendukung kesinambungan perawatan antar-dokter, dirancang mekanisme rujukan berbasis kode:
+
+% Solusi yang diusulkan adalah implementasi \textit{User-Managed Access} (UMA) 2.0 \textit{Consent Portal} yang terintegrasi dengan teknologi \textit{Distributed Ledger Technology} (DLT) sebagai lapisan penyimpanan data yang \textit{immutable}.
+
+% \subsection{Arsitektur Sistem UMA}
+% Sistem ini mengadopsi aktor-aktor standar dalam protokol UMA 2.0 yang dipetakan ke dalam ekosistem kesehatan Indonesia:
+
+% \begin{itemize}
+%     \item \textbf{Resource Owner (RO):} Pasien (misalnya: Budi). Pihak yang memiliki kendali penuh atas kebijakan akses rekam medis.
+%     \item \textbf{Resource Server (RS):} Sistem Manajemen Rekam Medis milik Fasyankes (misalnya: Simedik). Tempat fisik data rekam medis disimpan dan dilindungi.
+%     \item \textbf{Authorization Server (AS):} SATUSEHAT (Kementerian Kesehatan). Pihak yang mengeluarkan token otorisasi, melakukan autentikasi pengguna, dan menyimpan kebijakan akses yang didefinisikan pasien.
+%     \item \textbf{Requesting Party (RqP):} Tenaga medis (Dokter, Perawat) atau Fasyankes lain yang membutuhkan akses ke data pasien.
+% \end{itemize}
+
+% \subsection{Rancangan Alur Fungsional Utama}
+
+% \subsubsection{Pendaftaran dan Manajemen Identitas}
+% Berbeda dengan sistem DecMed yang menggunakan \textit{seed phrase}, pendaftaran pasien pada sistem ini disesuaikan dengan data kependudukan Indonesia.
+% \begin{itemize}
+%     \item \textbf{Pasien:} Mendaftar menggunakan NIK, Nama Ibu Kandung, Foto KTP, dan membuat PIN pengaman. Data ini digunakan untuk verifikasi dan mekanisme \textit{lupa password}.
+%     \item \textbf{Tenaga Medis:} Didaftarkan oleh administrator fasyankes masing-masing.
+%     \item \textbf{Fasyankes:} Terdaftar sesuai mekanisme regulasi SATUSEHAT.
+% \end{itemize}
+
+% \subsubsection{Pendaftaran Sumber Daya (Resource Registration)}
+% Agar kebijakan akses dapat dikelola secara terpusat oleh AS (SATUSEHAT) meskipun data tersebar di berbagai RS (Simedik), dilakukan mekanisme pendaftaran sumber daya:
 % \begin{enumerate}
-%     \item Dokter Pengirim (A) membuat rujukan pada sistem Simedik.
-%     \item Sistem menghasilkan Kode Rujukan unik yang terkait dengan data pasien tersebut.
-%     \item Dokter Penerima (B) memasukkan Kode Rujukan tersebut pada sistemnya.
-%     \item Sistem (RS) mengirimkan kode tersebut ke AS. AS memvalidasi apakah Dokter B memenuhi kriteria kebijakan rujukan (misal: memiliki spesialisasi yang sesuai).
-%     \item Jika valid, akses diberikan tanpa perlu interaksi ulang dari pasien.
+%     \item Simedik (RS) melakukan autentikasi ke SATUSEHAT (AS) untuk mendapatkan \textit{Protection API Token} (PAT).
+%     \item Simedik menggunakan PAT untuk mendaftarkan rekam medis pasien (sebagai \textit{resource}) ke SATUSEHAT.
+%     \item SATUSEHAT mengembalikan \texttt{resource\_id} unik yang menghubungkan kebijakan di pusat dengan data di daerah.
 % \end{enumerate}
 
-\subsubsection{Logika Akses Tulis (Write Access Rules)}
-Untuk menjaga integritas data sesuai regulasi, sistem menerapkan aturan waktu:
-\begin{itemize}
-    \item Tenaga medis memiliki akses tulis (\textit{write}) untuk memperbarui rekam medis hingga $2 \times 24$ jam setelah data dibuat.
-    \item Jika pasien mencabut akses (\textit{revoke}) sebelum 48 jam, akses tulis tenaga medis terhenti.
-    \item Untuk melanjutkan pembaharuan data setelah pencabutan atau setelah lewat 48 jam, sistem mewajibkan persetujuan ulang dari pasien atau eskalasi izin melalui Kepala Fasyankes.
-\end{itemize}
+% \subsubsection{Mekanisme Pembuatan Kebijakan Akses (Consent Creation)}
+% Sistem menyediakan tiga metode bagi pasien untuk memberikan akses, mengatasi masalah sinkronisasi kehadiran:
 
-% \subsection{Integrasi dengan Blockchain}
-% Meskipun logika otorisasi dikelola oleh UMA (SATUSEHAT), integritas data rekam medis dan jejak audit (\textit{audit trail}) akses tetap dicatat pada jaringan \textit{blockchain} (mengadopsi basis DecMed). Hal ini memastikan bahwa meskipun AS (SATUSEHAT) diretas atau mengalami kegagalan, riwayat akses dan keaslian data medis tetap dapat diverifikasi secara independen (\textit{auditability}).
+% \begin{enumerate}
+%     \item \textbf{Persetujuan Asinkronus (Proaktif):} Pasien mengakses \textit{Consent Portal} dari rumah untuk membuat kebijakan akses (\textit{policy}). Contoh: "Saya mengizinkan Dokter Budi dan seluruh Dokter Spesialis Penyakit Dalam di RS Harapan untuk mengakses data saya mulai tanggal sekian sampai sekian". Definisi ini menggunakan \textit{claims gathering} pada UMA untuk memvalidasi atribut tenaga medis.
+%     \item \textbf{Persetujuan Saat Pendaftaran (On-Arrival):} Saat pasien mendaftar di loket fasyankes, sistem menampilkan formulir persetujuan (\textit{consent form}) pada anjungan pendaftaran atau aplikasi pasien untuk memberikan akses kepada fasyankes tersebut guna menyimpan dan mengelola data medis kunjungan saat itu.
+%     \item \textbf{Persetujuan Reaktif (On-Demand):} Jika belum ada kebijakan yang dibuat, tenaga medis dapat memicu permintaan akses. AS akan mengirimkan notifikasi kepada pasien untuk meminta persetujuan (mirip mekanisme OAuth standar), namun ini hanya opsi terakhir jika metode asinkronus tidak tersedia.
+% \end{enumerate}
+
+% % \subsubsection{Mekanisme Rujukan}
+% % Untuk mendukung kesinambungan perawatan antar-dokter, dirancang mekanisme rujukan berbasis kode:
+% % \begin{enumerate}
+% %     \item Dokter Pengirim (A) membuat rujukan pada sistem Simedik.
+% %     \item Sistem menghasilkan Kode Rujukan unik yang terkait dengan data pasien tersebut.
+% %     \item Dokter Penerima (B) memasukkan Kode Rujukan tersebut pada sistemnya.
+% %     \item Sistem (RS) mengirimkan kode tersebut ke AS. AS memvalidasi apakah Dokter B memenuhi kriteria kebijakan rujukan (misal: memiliki spesialisasi yang sesuai).
+% %     \item Jika valid, akses diberikan tanpa perlu interaksi ulang dari pasien.
+% % \end{enumerate}
+
+% \subsubsection{Logika Akses Tulis (Write Access Rules)}
+% Untuk menjaga integritas data sesuai regulasi, sistem menerapkan aturan waktu:
+% \begin{itemize}
+%     \item Tenaga medis memiliki akses tulis (\textit{write}) untuk memperbarui rekam medis hingga $2 \times 24$ jam setelah data dibuat.
+%     \item Jika pasien mencabut akses (\textit{revoke}) sebelum 48 jam, akses tulis tenaga medis terhenti.
+%     \item Untuk melanjutkan pembaharuan data setelah pencabutan atau setelah lewat 48 jam, sistem mewajibkan persetujuan ulang dari pasien atau eskalasi izin melalui Kepala Fasyankes.
+% \end{itemize}
+
+% % \subsection{Integrasi dengan Blockchain}
+% % Meskipun logika otorisasi dikelola oleh UMA (SATUSEHAT), integritas data rekam medis dan jejak audit (\textit{audit trail}) akses tetap dicatat pada jaringan \textit{blockchain} (mengadopsi basis DecMed). Hal ini memastikan bahwa meskipun AS (SATUSEHAT) diretas atau mengalami kegagalan, riwayat akses dan keaslian data medis tetap dapat diverifikasi secara independen (\textit{auditability}).
