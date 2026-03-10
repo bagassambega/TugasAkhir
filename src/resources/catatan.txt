@@ -1,0 +1,22 @@
+Rumusan masalah
+
+Bagaimana mengembangkan authorization framework
+
+Ga perlu bahas SATUSEHAT dan DLT sama sekali
+* Perlu ada bridging kenapa tiba2 terdesentralisasi
+* Jadi SATUSEHAT saat ini datanya disimpen di RS masing2, SATUSEHAT cuman
+jadi sarana interoperabilitas aja
+* Perlu ada sistem terpusat yang nyimpen data tapi dijaga multi-stakeholder
+* Supaya ada auditability dan menghindari kepercayaan ke third party, hanya
+ke sistem
+
+* Tambahin contoh kasus yang memperkuat masalah
+* Tambahin contoh kasus yang memperkuat apa itu granularity
+* Jelasin misalkan dokter mata kan ga butuh data lain kaya jantung dsb
+cari referensi biar jelasin dokter spesialis X cuman butuh dokter spesialis X
+* Perbedaan isi dokumen
+* Kenapa harus UMA banget, kan ada CPABE, ABAC, CapBAC,masalahnya kurang spesifik
+karena masalah yang ini masih terlalu general bisa diselesain yang lain
+* Jelasin kenapa UMA menang banget dibandingkan alternatif lain
+* Jelasin kenapa bisa muncul diagram sequence itu, jangan tiba2
+dari pendefinisian tokoh langsung ke diagram
