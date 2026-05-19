@@ -1,7 +1,12 @@
 \section{Aplikasi Patient Generated Health Data}
 
+Pengumpulan PGHD biasanya difasilitasi oleh platform agregator data pada perangkat seluler dan wearable. Salah satu contoh utama adalah Google Fit yang menyediakan API Android dan REST untuk mengakses metrik sensor, menyusun data source, dataset, dan session, serta mengelola sinkronisasi data dari perangkat pengguna \parencite{Google_Fit_2025}.
+
 \subsection{Google Fit}
+Google Fit menjadi ilustrasi penting karena alur datanya cocok dijadikan sumber PGHD sebelum pemetaan ke FHIR. Data mentah dari sensor dapat ditampung, dinormalisasi, lalu diteruskan ke pipeline integrasi yang lebih besar \parencite{Google_Fit_2025,HL7_FHIR_2025}.
 
 \subsection{Fitbit}
+Fitbit merepresentasikan sumber data wearable yang umum pada skenario pengumpulan PGHD. Dalam rancangan ini, keluaran wearable seperti langkah, detak jantung, dan kualitas tidur diasumsikan perlu disesuaikan terlebih dahulu ke format interoperabel sebelum disimpan ke ekosistem DecMed \parencite{Mars_Scott_2022,Khatiwada_Yang_Lin_Blobel_2024}.
 
 \subsection{Samsung Health}
+Samsung Health memiliki pola penggunaan yang serupa, yaitu menghasilkan data pemantauan aktivitas dan biometrik yang dapat menjadi kandidat PGHD. Tantangan utamanya adalah menyatukan format vendor yang beragam ke representasi klinis yang konsisten \parencite{Mars_Scott_2022,Omoloja_Vundavalli_2021}.

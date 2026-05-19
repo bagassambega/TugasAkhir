@@ -1,1 +1,5 @@
 \section{Analisis Solusi}
+
+Untuk menjawab persoalan tersebut, beberapa pendekatan dievaluasi. Unggah langsung secara sinkronus ditolak karena terlalu rentan terhadap gangguan jaringan. Sinkronisasi satu-per-satu dengan penyimpanan lokal memang lebih aman, tetapi masih boros sumber daya. Pendekatan yang paling sesuai adalah offline-first dengan batching agar data dapat dikumpulkan secara lokal lalu dikirim secara efisien saat jaringan tersedia kembali \parencite{Khatiwada_Yang_Lin_Blobel_2024,Omoloja_Vundavalli_2021}.
+
+Di sisi interoperabilitas, pemetaan ke HL7 FHIR menjadi pilihan karena sumber daya seperti Observation dan QuestionnaireResponse cocok untuk merepresentasikan PGHD biometrik maupun pelaporan pasien \parencite{HL7_FHIR_2025,Firely_2025}. Untuk provenance, penambatan ke IOTA Rebased memberi dukungan terhadap smart contract dan pencatatan metadata yang lebih tepercaya \parencite{IOTA_Rebased_2025,IOTA_Manifesto_2025}.

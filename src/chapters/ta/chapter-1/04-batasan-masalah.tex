@@ -3,5 +3,11 @@
 Batasan masalah yang diambil dalam tugas akhir ini adalah,
 
 \begin{enumerate}
-    \item Pengumpulan data PGHD disimulasikan melalui \textit{mocking payload} pada aplikasi klien berbasis perangkat seluler (\textit{mobile phone}).
+    \item Pengumpulan data PGHD pada perangkat seluler dilakukan menggunakan API sensor yang tersedia pada sistem operasi Android, tanpa melibatkan integrasi langsung dengan perangkat medis khusus.
+
+    \item Data dari perangkat \textit{wearable} tidak diambil dari perangkat fisik secara langsung, melainkan disimulasikan dalam aplikasi dan dikirimkan ke perangkat seluler melalui mekanisme komunikasi \textit{Bluetooth Low Energy} (BLE).
+
+    \item Penelitian difokuskan pada perancangan dan implementasi \textit{pipeline} integrasi data, termasuk mekanisme enkripsi, penyimpanan, dan validasi, tanpa mencakup pengembangan perangkat keras maupun validasi klinis terhadap data yang dihasilkan.
+
+    \item Mekanisme keamanan yang dikaji terbatas pada enkripsi data dan verifikasi \textit{digital signature} untuk menjamin integritas dan \textit{provenance} data, tanpa membahas secara mendalam skenario serangan lanjutan di luar cakupan tersebut.
 \end{enumerate}

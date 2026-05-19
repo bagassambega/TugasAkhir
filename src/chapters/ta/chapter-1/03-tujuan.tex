@@ -1,17 +1,23 @@
 \section{Tujuan dan Ukuran Keberhasilan}
 
-Tujuan dari skripsi ini adalah mengembangkan \textit{prototype integration pipeline} perangkat lunak untuk mengakomodasi aliran Patient-Generated Health Data (PGHD) secara asinkron ke dalam arsitektur InterPlanetary File System (IPFS) dan IOTA pada ekosistem DecMed.
-Pengembangan ini mencakup arsitektur \textit{offline-first state management} dan mekanisme \textit{batching} pada sisi klien pasien menyesuaikan dengan kemampuan komputasi pada perangkat seluler.
-Selain itu, sistem ini dirancang untuk menjamin \textit{data provenance} melalui rekayasa struktur metadata kriptografis di dalam \textit{smart contract} IOTA, yang berfungsi untuk memvalidasi integritas dan sifat \textit{non-repudiation} dari setiap entri PGHD.
+Tujuan dari skripsi ini adalah merancang dan mengimplementasikan prototipe \textit{integration pipeline} Patient-Generated Health Data (PGHD) ke dalam ekosistem DecMed yang mampu menangani aliran data secara asinkron, aman, dan terverifikasi.
 
-% data provenance: keaslian asal usul
+Secara khusus, penelitian ini bertujuan untuk:
+
+\begin{enumerate}
+    \item Mengembangkan arsitektur pipeline integrasi PGHD berbasis penyimpanan hibrid IPFS dan IOTA dengan mekanisme enkripsi di sisi klien.
+    
+    \item Merancang dan mengimplementasikan mekanisme offline-first state management dan batching pada aplikasi klien pasien untuk memastikan pengelolaan data yang efisien dan tahan terhadap gangguan konektivitas.
+    
+    \item Mengembangkan mekanisme verifikasi provenance data PGHD berbasis digital signature pada smart contract IOTA untuk menjamin integritas dan non-repudiation data.
+\end{enumerate}
 
 Keterukuran keberhasilan Tugas Akhir ini bisa dilihat dari ketercapaian parameter berikut:
 
 \begin{enumerate}
-    \item Payload PGHD yang diambil mampu dienkripsi di sisi klien, dapat diunggah ke IPFS \textit{cluster} hingga menghasilkan Content Identifier (CID) yang valid, dan CID tersebut berhasil dikirimkan sebagai \textit{transaction} ke jaringan IOTA.
+    \item \textit{Payload} PGHD yang diambil mampu dienkripsi di sisi klien, dapat diunggah ke IPFS \textit{cluster} hingga menghasilkan Content Identifier (CID) yang valid, dan CID tersebut berhasil dikirimkan sebagai \textit{transaction} ke jaringan IOTA.
 
-    \item Saat aplikasi berjalan secara luring, data stabil tersimpan di basis data lokal (phone memory). Saat daring, sistem mampu mengirimkan data secara batching tanpa terjadinya jeda perenderan antarmuka atau \textit{performance drop}.
+    \item Saat aplikasi berjalan secara luring, data stabil tersimpan di basis data lokal (\textit{phone memory}). Saat daring, sistem mampu mengirimkan data secara \textit{batching} tanpa adanya \textit{data loss} ataupun duplikasi dan penurunan performa signifikan pada aplikasi klien.
     
-    \item Evaluasi \textit{smart contract} dapat mengembalikan/menolak transaksi ketika sistem di-\textit{inject} dengan \textit{payload} yang \textit{digital signature} gagal diverifikasi atau berasal dari entitas yang tidak terdaftar di DecMed.
+    \item Evaluasi \textit{smart contract} dapat menolak data dengan \textit{signature} yang tidak valid dan menjamin sifat \textit{non-repudiation} terhadap data PGHD.
 \end{enumerate}

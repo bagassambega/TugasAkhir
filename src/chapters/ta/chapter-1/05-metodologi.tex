@@ -3,51 +3,9 @@
 
 Metodologi yang digunakan dalam Tugas Akhir ini terdiri dari beberapa tahapan utama yang dipecah menjadi sub-tahapan deskriptif sebagai berikut:
 
-% Pada tahapan ini, dilakukan eksplorasi dan pengumpulan informasi terkait perkembangan sistem rekam medis elektronik yang sudah
-%     ada dan mengidentifikasi kelemahannya. Permasalahan-permasalahan yang ditemukan kemudian diidentifikasi dan diolah
-%     menjadi kebutuhan-kebutuhan yang perlu diselesaikan.
-    
-%     \item \textbf{Perancangan Arsitektur dan Desain Sistem} \newline
-%     Berdasarkan kebutuhan-kebutuhan yang sudah didefinisikan, dilakukan analisis dan perancangan sistem yang dapat
-%     menjawab kebutuhan-kebutuhan tersebut.
-    
-%     \item \textbf{Pengembangan Prototipe Sistem} \newline
-%     Sistem yang sudah dirancang pada tahap sebelulnya diimplementasikan dengan menggunakan teknologi yang sesuai dengan 
-%     kebutuhan dan hasil rancangan.
-    
-%     \item \textbf{Pengujian dan Evaluasi} \newline
-%     Hasil implementasi prototipe sistem diuji untuk memastikan kesesuaian tujuan dengan implementasi dan seluruh kebutuhan
-%     sudah berhasil terpenuhi.
-
-% \end{enumerate}
-
-% kurang spesifik, bikin poin2 untuk menjelaskan langkah detail
-
-
 \begin{enumerate}
-    \item \textbf{Studi Literatur dan Analisis Sistem Saat Ini}
-    \begin{enumerate}
-        \item \textbf{Analisis Sistem DecMed}: Pada tahapan ini, dilakukan eksplorasi dan pengumpulan informasi terkait DecMed, termasuk arsitektur, mekanisme akses kontrol, alur pemberian dan pencabutan akses, dan \textit{tech-stack} yang digunakan oleh sistem DecMed saat ini.
-        \item \textbf{Analisis Authorization Framework}: Melakukan studi literatur dan analisis mengenai \textit{authorization framework} secara umum, termasuk prinsip kerja, komponen utama (autentikasi, otorisasi, \textit{consent management}), serta penerapannya di sistem rekam medis elektronik dan sistem terdistribusi lainnya.
-    \end{enumerate}
-
-    \item \textbf{Perancangan Arsitektur dan Desain Sistem}
-    \begin{enumerate}
-        \item \textbf{Perumusan Spesifikasi Kebutuhan}: Menyusun spesifikasi kebutuhan sistem berdasarkan hasil identifikasi masalah dan tujuan penelitian.
-        \item \textbf{Desain Arsitektur Sistem}: Mendesain arsitektur sistem rekam medis elektronik terdesentralisasi yang mengintegrasikan \textit{authorization framework} dan \textit{consent portal}.
-        \item \textbf{Pembuatan Model Alur Otorisasi dan Consent}: Menyusun model alur otorisasi, pemberian dan pencabutan akses, serta pengelolaan persetujuan pasien secara granular dan asinkronus.
-    \end{enumerate}
-
-    \item \textbf{Pengembangan Prototipe Sistem}
-    \begin{enumerate}
-        \item \textbf{Implementasi Prototipe}: Mengimplementasikan prototipe sistem sesuai desain yang telah dirumuskan menggunakan teknologi yang sesuai.
-        \item \textbf{Integrasi Komponen}: Melakukan integrasi antara komponen \textit{authorization framework} dan \textit{consent portal} dengan sistem DecMed.
-        \item \textbf{Penyusunan Skenario Pengujian}: Menyusun skenario penggunaan dan pengujian untuk memastikan seluruh fitur berjalan sesuai kebutuhan.
-    \end{enumerate}
-
-    \item \textbf{Pengujian dan Evaluasi}
-    \begin{enumerate}
-        \item \textbf{Pengujian Fungsionalitas}: Melakukan pengujian fungsionalitas sistem, termasuk pemberian dan pencabutan akses, pengelolaan persetujuan, dan keamanan data.
-        \item \textbf{Analisis Hasil Evaluasi}: Menganalisis hasil pengujian dan evaluasi untuk menilai pencapaian tujuan dan ukuran keberhasilan yang telah ditetapkan.
-    \end{enumerate}
+    \item \textbf{Studi Literatur dan Analisis Sistem Berjalan:} Tahap ini berfokus pada eksplorasi komprehensif terhadap arsitektur dasar DecMed, mencakup mekanisme \textit{Capability-Based Access Control} (CapBAC), alur \textit{Proxy Re-Encryption} (PRE), dan tumpukan teknologi desentralisasi yang digunakan \parencite{Purnama_2025,Akbulut_2026,Qin_2016}. Analisis mendalam juga dilakukan terhadap kerangka otorisasi, standar integrasi PGHD seperti FHIR dan platform agregator (Google Fit) \parencite{HL7_FHIR_2025,Google_Fit_2025}, serta arsitektur IOTA Rebased \parencite{IOTA_Rebased_2025}.
+    \item \textbf{Perancangan Arsitektur dan Desain Sistem:} Berdasarkan analisis permasalahan, spesifikasi kebutuhan sistem dirumuskan. Desain arsitektur direkayasa untuk mengintegrasikan \textit{offline-first state management} pada klien, \textit{pipeline} pemetaan data JSON ke FHIR, serta pemodelan alur otorisasi persetujuan secara granular dan asinkronus yang memanfaatkan \textit{smart contract} untuk penjaminan \textit{provenance} \parencite{IOTA_Rebased_2025,IOTA_Manifesto_2025}.
+    \item \textbf{Pengembangan Prototipe Sistem:} Rancangan arsitektur diimplementasikan ke dalam bentuk kode sumber yang nyata. Ini mencakup konfigurasi basis data lokal terenkripsi, sinkronisasi latar belakang menggunakan API seluler, eksekusi pemetaan data otomatis menggunakan alat transformasi JSON, integrasi dengan klaster IPFS, dan penerapan \textit{MoveVM smart contract} pada jaringan uji IOTA Rebased.
+    \item \textbf{Pengujian dan Evaluasi:} Prototipe yang telah diintegrasikan dengan infrastruktur DecMed akan diuji melalui serangkaian skenario pengujian fungsional dan keamanan. Pengujian berfokus pada simulasi injeksi akses ilegal, efisiensi mekanisme \textit{batching}, validasi resiliensi luring-ke-daring, dan integritas kriptografis dari data yang ditransmisikan, guna memastikan seluruh indikator keberhasilan tercapai dengan baik.
 \end{enumerate}

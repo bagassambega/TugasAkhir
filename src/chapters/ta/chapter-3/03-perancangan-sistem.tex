@@ -1,1 +1,7 @@
 \section{Perancangan Sistem}
+
+Rancangan sistem berpusat pada aplikasi seluler pasien sebagai edge client. Alur utamanya adalah: akuisisi data dari platform agregator, transformasi ke FHIR, enkripsi sisi klien, penyimpanan lokal saat offline, batching untuk pengiriman, unggah ke IPFS, lalu pencatatan CID dan metadata provenance ke IOTA Rebased \parencite{Google_Fit_2025,HL7_FHIR_2025,Akbulut_2026,Qin_2016}.
+
+Skema state management offline-first menyimpan antrean data secara lokal dengan status yang jelas agar sinkronisasi dapat dilanjutkan tanpa kehilangan data. Sementara itu, struktur metadata smart contract menyimpan identitas pasien, CID IPFS, fingerprint perangkat, dan tanda tangan digital agar provenance dapat divalidasi \parencite{Purnama_2025,IOTA_Rebased_2025}.
+
+Dengan desain tersebut, DecMed dapat menangani PGHD secara aman, terukur, dan tetap mempertahankan integritas data pasien dari sisi klien hingga on-chain \parencite{Mars_Scott_2022,Akbulut_2026}.
