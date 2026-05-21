@@ -1,11 +1,17 @@
+\section{Metodologi}\label{sec:metodologi}
 
-\section{Metodologi}
-
-Metodologi yang digunakan dalam Tugas Akhir ini terdiri dari beberapa tahapan utama yang dipecah menjadi sub-tahapan deskriptif sebagai berikut:
+Metodologi yang digunakan dalam Tugas Akhir ini terdiri dari empat tahap utama sebagai berikut:
 
 \begin{enumerate}
-    \item \textbf{Studi Literatur dan Analisis Sistem Berjalan:} Tahap ini berfokus pada eksplorasi komprehensif terhadap arsitektur dasar DecMed, mencakup mekanisme \textit{Capability-Based Access Control} (CapBAC), alur \textit{Proxy Re-Encryption} (PRE), dan tumpukan teknologi desentralisasi yang digunakan \parencite{Purnama_2025,Akbulut_2026,Qin_2016}. Analisis mendalam juga dilakukan terhadap kerangka otorisasi, standar integrasi PGHD seperti FHIR dan platform agregator (Google Fit) \parencite{HL7_FHIR_2025,Google_Fit_2025}, serta arsitektur IOTA Rebased \parencite{IOTA_Rebased_2025}.
-    \item \textbf{Perancangan Arsitektur dan Desain Sistem:} Berdasarkan analisis permasalahan, spesifikasi kebutuhan sistem dirumuskan. Desain arsitektur direkayasa untuk mengintegrasikan \textit{offline-first state management} pada klien, \textit{pipeline} pemetaan data JSON ke FHIR, serta pemodelan alur otorisasi persetujuan secara granular dan asinkronus yang memanfaatkan \textit{smart contract} untuk penjaminan \textit{provenance} \parencite{IOTA_Rebased_2025,IOTA_Manifesto_2025}.
-    \item \textbf{Pengembangan Prototipe Sistem:} Rancangan arsitektur diimplementasikan ke dalam bentuk kode sumber yang nyata. Ini mencakup konfigurasi basis data lokal terenkripsi, sinkronisasi latar belakang menggunakan API seluler, eksekusi pemetaan data otomatis menggunakan alat transformasi JSON, integrasi dengan klaster IPFS, dan penerapan \textit{MoveVM smart contract} pada jaringan uji IOTA Rebased.
-    \item \textbf{Pengujian dan Evaluasi:} Prototipe yang telah diintegrasikan dengan infrastruktur DecMed akan diuji melalui serangkaian skenario pengujian fungsional dan keamanan. Pengujian berfokus pada simulasi injeksi akses ilegal, efisiensi mekanisme \textit{batching}, validasi resiliensi luring-ke-daring, dan integritas kriptografis dari data yang ditransmisikan, guna memastikan seluruh indikator keberhasilan tercapai dengan baik.
+  \item \textbf{Studi Literatur dan Analisis Sistem Berjalan.}
+        Tahap ini mencakup kajian mendalam terhadap arsitektur DecMed yang sudah ada, kerangka kerja integrasi PGHD ke sistem klinis, pendekatan \textit{offline-first} pada aplikasi \textit{mobile}, serta mekanisme keamanan berbasis kriptografi untuk \textit{data provenance}. Selain itu, dilakukan analisis kesenjangan (\textit{gap analysis}) antara kapabilitas DecMed saat ini dan kebutuhan untuk mengakomodasi aliran PGHD secara kontinu. Tahap ini menjadi dasar perumusan kebutuhan yang menjawab seluruh rumusan masalah penelitian.
+
+  \item \textbf{Perancangan Arsitektur dan Desain Sistem.}
+        Berdasarkan analisis kesenjangan dan kebutuhan yang dirumuskan pada tahap sebelumnya, dilakukan perancangan arsitektur \textit{pipeline} integrasi PGHD, desain mekanisme \textit{offline-first} dengan \textit{batching} di sisi klien, serta desain skema metadata dan \textit{smart contract} untuk validasi \textit{provenance} di jaringan IOTA\@.
+
+  \item \textbf{Implementasi Prototipe.}
+        Rancangan arsitektur diimplementasikan ke dalam bentuk kode sumber. Tahap ini mencakup implementasi aplikasi klien Android dengan \textit{local database} dan mekanisme sinkronisasi, integrasi dengan \textit{cluster} IPFS, serta penerapan \textit{smart contract} berbasis MoveVM pada jaringan uji IOTA Rebased.
+
+  \item \textbf{Pengujian dan Evaluasi.} 
+        Prototipe diuji melalui serangkaian skenario pengujian fungsional dan keamanan berbasis \textit{black-box testing}. Pengujian berfokus pada validasi ketiga indikator keberhasilan: keberhasilan \textit{pipeline} integrasi \textit{end-to-end}, ketahanan mekanisme \textit{offline-first} terhadap kondisi luring, serta kebenaran verifikasi \textit{provenance} oleh \textit{smart contract}.
 \end{enumerate}
