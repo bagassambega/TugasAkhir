@@ -1,0 +1,35 @@
+\subsection{Analisis Kebutuhan Offline First dan Batching Mechanism}
+
+Ini menjawab RM2 di level analisis. Gunakan literatur offline-first:
+
+\begin{enumerate}
+    \item Paper / artikel arsitektur offline-first untuk sistem enterprise \& healthcare:
+    \begin{itemize}
+        \item full data sync vs action queue.
+
+        \item case study field apps healthcare/banking.
+    \end{itemize}
+
+    \item Kaitkan dengan PGHD:
+    \begin{itemize}
+        \item pasien mungkin di area sinyal buruk; data harus tetap terkumpul.
+        
+        \item offline-first bukan fitur tambahan, tapi requirement.
+    \end{itemize}
+\end{enumerate}
+
+Hal yang bisa kamu diskusikan:
+\begin{enumerate}
+    \item Dua pendekatan offline-first: full sync (local mirror server state) vs action queue (antrian data/write).
+    
+    \item Untuk kasusmu (PGHD → mostly write-heavy: log data sensor): action queue / event log (data queuing dan batching) lebih cocok, tidak perlu full mirror state dari server.
+\end{enumerate}
+
+Dari sini kamu turunkan kebutuhan:
+\begin{enumerate}
+    \item O1: harus ada local storage (DB) untuk log PGHD,
+    
+    \item O2: harus ada mekanisme penjadwalan pengiriman (batch) ketika koneksi tersedia,
+    
+    \item O3: harus ada mekanisme penanganan kegagalan (retry, penanda status).
+\end{enumerate}

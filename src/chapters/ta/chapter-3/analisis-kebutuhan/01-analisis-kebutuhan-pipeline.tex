@@ -1,0 +1,39 @@
+\subsection{Analisis Kebutuhan Pipeline PGHD}
+
+Fokus: menjawab RM1 di level analisis. Topik yang bisa dibahas:
+
+\begin{enumerate}
+    \item Dari literatur PGHD–EHR: PGHD punya karakteristik:
+    \begin{itemize}
+        \item heterogen (berbagai sumber: smartphone, wearable, self-report),
+        
+        \item time-series, kontinyu, sering high-frequency.
+    \end{itemize}
+
+    \item Dari literatur edge / IoMT:
+    \begin{itemize}
+        \item tidak efisien mengirim semua raw data ke server/ledger.
+        
+        \item banyak sistem desain data aggregation pipeline di edge (phone) lalu hanya mengirim fitur/summary/deret waktu terstruktur.
+    \end{itemize}
+
+    \item Kebutuhan pipeline di kasusmu:
+    \begin{itemize}
+        \item mengumpulkan data dari sensor Android + data wearable (simulasi),
+        
+        \item melakukan transformasi raw → fitur (steps, HR, dsb.),
+        
+        \item enkripsi di sisi klien,
+        
+        \item upload ke IPFS, kirim CID + metadata ke IOTA.
+    \end{itemize}
+\end{enumerate}
+
+Di akhir, kamu bisa merumuskan kebutuhan fungsional pipeline, misalnya:
+\begin{enumerate}
+    \item P1: pipeline harus mampu meng-handle ingestion data sensor multi-sumber,
+    
+    \item P2: pipeline harus mendukung enkripsi end-to-end,
+    
+    \item P3: pipeline harus memetakan data ke schema yang konsisten (mis. FHIR-like).
+\end{enumerate}

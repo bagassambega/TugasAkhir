@@ -1,0 +1,40 @@
+\subsection{Analisis Kebutuhan Keamanan dan Data Provenance}
+
+Ini menjawab RM3.
+
+Referensi yang bisa digunakan:
+\begin{itemize}
+    \item Review data provenance di healthcare: pentingnya chain-of-custody, integritas, dan keterlacakan.
+    
+    \item Paper blockchain untuk PGHD / marketplace PGHD: blockchain digunakan untuk menjamin provenance dan auditable trail.
+    
+    \item Review blockchain untuk patient data security: transparansi, immutability, encryption, access control.
+\end{itemize}
+
+Hal yang kamu analisis:
+\begin{itemize}
+    \item Risiko jika PGHD tidak ada provenance:
+    \begin{itemize}
+        \item klinisi tidak percaya data,
+        
+        \item potensi manipulasi (user/spoofed device).
+    \end{itemize}
+    
+    \item Keperluan:
+    \begin{itemize}
+        \item mengikat setiap entri PGHD ke identity kriptografis pasien,
+        
+        \item signature harus diverifikasi di smart contract IOTA (MoveVM),
+        
+        \item ledger hanya menyimpan hash/metadata, bukan data plaintext (privasi).
+    \end{itemize}
+\end{itemize}
+
+Output analisis kebutuhan:
+\begin{enumerate}
+    \item N1: setiap entri PGHD memiliki patient id, timestamp, device/source metadata, dan signature,
+    
+    \item N2: smart contract harus bisa memverifikasi signature dan memastikan patient id terdaftar dalam DecMed,
+    
+    \item N3: ledger record harus immutable dan dapat diaudit.
+\end{enumerate}
