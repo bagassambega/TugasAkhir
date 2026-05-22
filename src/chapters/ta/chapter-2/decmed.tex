@@ -1,5 +1,76 @@
-\section{DecMed}
+\subsection{DecMed}
 
-DecMed adalah kerangka kerja manajemen RME terdesentralisasi yang dirancang untuk mengurangi sentralisasi kontrol data dan memberi pasien kendali lebih besar atas data kesehatannya. Arsitektur ini mengombinasikan CapBAC, PRE, IPFS, dan IOTA untuk menjaga integritas, kerahasiaan, dan ketersediaan data \parencite{Mars_Scott_2022,Akbulut_2026,Qin_2016,AfyaRepo_2024}.
+\subsubsection{Definisi dan Tujuan Teknis DecMed}
 
-Dalam pengembangan yang dibahas pada tugas akhir ini, DecMed diperluas agar dapat menampung PGHD secara lebih efektif. Ekstensi tersebut menuntut pipeline yang mampu mengubah data sensor menjadi format interoperabel, mengenkripsinya di sisi klien, menyimpannya secara terdesentralisasi, dan menambatkan provenance ke jaringan IOTA Rebased \parencite{Purnama_2025,IOTA_Rebased_2025}.
+DecMed merupakan sebuah kerangka kerja manajemen rekam medis elektronik terdesentralisasi yang dibangun di atas platform \emph{Distributed Ledger Technology} (DLT) IOTA, dengan fokus utama pada perancangan mekanisme kontrol akses yang granular, dapat didelegasikan, dan dapat dicabut, serta penyediaan jejak audit yang sukar dimanipulasi \parencite{Purnama_2026,Hari_2025}. 
+Berbeda dengan pendekatan sistem RME tradisional yang menempatkan kontrol akses sebagai komponen tambahan pada masing-masing institusi, DecMed memanfaatkan ledger IOTA sebagai \emph{governance layer} yang menyimpan objek akses (\emph{capability}), metadata, dan log akses secara terdistribusi sekaligus memisahkan penyimpanan data klinis besar ke penyimpanan off-chain \parencite{Purnama_2026,Hari_2025}. 
+
+Secara teknis, DecMed mengintegrasikan tiga komponen utama: \emph{Capability-Based Access Control} (CapBAC) sebagai model kontrol akses, \emph{Proxy Re-Encryption} (PRE) sebagai mekanisme delegasi kunci enkripsi, dan kombinasi IOTA-IPFS sebagai lapisan penyimpanan on-chain/off-chain \parencite{Purnama_2026,Hari_2025}.
+Smart contract DecMed diimplementasikan menggunakan bahasa Move di atas IOTA Rebased, sehingga logika akses, pembuatan dan pencabutan capability, serta pencatatan metadata klinis dapat dieksekusi secara deterministik pada ledger dengan throughput tinggi dan latensi rendah \parencite{Purnama_2026,Elevating_2025_iota_ehealth}. 
+Dengan demikian, DecMed memosisikan DLT bukan sekadar sebagai media penyimpanan data, tetapi sebagai infrastruktur untuk \emph{law-by-code} yang mengatur dan memverifikasi seluruh keputusan akses terhadap RME \parencite{Purnama_2026}. 
+
+\subsubsection{Arsitektur Tiga Lapis: Client, Proxy, dan Storage}
+
+Arsitektur DecMed dibagi menjadi tiga lapis utama, yaitu \emph{Client Layer}, \emph{Proxy Layer}, dan \emph{Storage Layer} \parencite{Purnama_2026,Hari_2025}. 
+Client Layer terdiri dari tiga jenis aplikasi: client pasien berbasis mobile, client personel fasilitas pelayanan kesehatan (fasyankes) berbasis desktop, dan client untuk otoritas pengelola yang digunakan untuk registrasi fasilitas serta personel \parencite{Purnama_2026,Hari_2025}. 
+Masing-masing client diimplementasikan menggunakan framework Tauri dan SvelteKit, dengan fungsi utama sebagai antarmuka interaksi aktor, sekaligus pengelola identitas kriptografis dan kunci lokal \parencite{Hari_2025}. 
+
+Proxy Layer berperan sebagai lapisan middleware keamanan yang mengimplementasikan mekanisme PRE, validasi token akses, orkestrasi permintaan ke smart contract di IOTA, dan interaksi dengan IPFS \parencite{Purnama_2026,Hari_2025}. 
+Komponen utama pada lapisan ini adalah \emph{PRE server} yang diimplementasikan dengan Rust dan Axum, serta \emph{IOTA Gas Station} yang digunakan untuk melakukan transaksi bersponsor sehingga aktor sistem tidak perlu mengelola token secara langsung \parencite{Purnama_2026,Elevating_2025_iota_ehealth}. 
+
+Storage Layer dibagi menjadi penyimpanan on-chain dan off-chain \parencite{Purnama_2026,Hari_2025}. 
+Penyimpanan on-chain merujuk pada ledger IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026,Hari_2025}. 
+Penyimpanan off-chain terdiri atas kluster IPFS untuk menyimpan bagian klinis RME yang telah dienkripsi dan Redis untuk menyimpan data sementara terkait PRE seperti nonce, kfrag, dan metadata kriptografis lainnya \parencite{Purnama_2026,Hari_2025}. 
+
+\subsubsection{Model Identitas dan Manajemen Akun}
+
+Identitas kriptografis pada DecMed dibangun dengan memanfaatkan frasa pemulihan (\emph{mnemonic}) BIP-39 dan PIN sebagai faktor autentikasi lokal \parencite{Purnama_2026, Hari_2025}. 
+Pada sisi pasien, client membangkitkan 12 kata frasa pemulihan dan menggunakannya bersama data identitas sebagai passphrase untuk menghasilkan seed 64 byte yang kemudian digunakan untuk membangkitkan pasangan kunci dan alamat pada IOTA, serta pasangan kunci PRE \parencite{Hari_2025}. 
+Sebagian seed dan pasangan kunci IOTA dienkripsi dengan AES-GCM menggunakan PIN dan disimpan pada secure storage perangkat, sehingga autentikasi sehari-hari dapat dilakukan cukup dengan PIN tanpa harus mengekspos frasa pemulihan \parencite{Hari_2025}. 
+
+Manajemen akun personel fasyankes menggunakan mekanisme CID dan \emph{activation key} yang dibangkitkan melalui smart contract dan disebarkan secara bertingkat \parencite{Purnama_2026,Hari_2025}. 
+CID dan kunci aktivasi digunakan untuk mengaktivasi client personel fasyankes, dan selanjutnya berperan sebagai \emph{witness} kriptografis pada setiap \emph{move call} yang dilakukan oleh client tersebut \parencite{Purnama_2026,Hari_2025}. 
+Proses login pasien dan personel fasyankes pada dasarnya merekonstruksi seed dan kunci dari frasa pemulihan dan PIN, kemudian melakukan \emph{inspect call} ke smart contract untuk memastikan akun yang bersesuaian telah terdaftar tanpa mengeluarkan gas fee \parencite{Purnama_2026,Hari_2025}. 
+
+\subsubsection{Capability-Based Access Control di atas IOTA}
+
+Mekanisme kontrol akses dalam DecMed berbasis CapBAC, di mana hak akses terhadap data RME direpresentasikan sebagai objek capability yang disimpan pada ledger IOTA \parencite{Purnama_2026,Hari_2025}. 
+Studi perbandingan antara RBAC, ABAC, dan CapBAC menunjukkan bahwa CapBAC memenuhi kebutuhan granularitas tinggi, dukungan lingkungan terdistribusi, kemudahan delegasi dan pencabutan akses, serta logika validasi yang relatif sederhana \parencite{Purnama_2026}. 
+Objek capability DecMed diimplementasikan sebagai struktur \texttt{HospitalPersonnelAccessData} dalam module Move \texttt{decmedstdstructhospitalpersonnelaccessdata}, yang memuat atribut jenis data yang diakses, durasi akses (\texttt{exp}), metadata, dan indeks entri RME yang terkait \parencite{Hari_2025}. 
+
+Pasien memberikan akses dengan memindai QR code milik personel fasyankes untuk memperoleh \texttt{iotaaddress} dan \texttt{prepublickey}, lalu memverifikasi data administratif publik personel tersebut dari ledger \parencite{Purnama_2026,Hari_2025}. 
+Setelah pasien menyetujui, client pasien membangkitkan kunci PRE tambahan, melakukan penandatanganan nonce, mengirim metadata PRE ke proxy, dan akhirnya memanggil method \texttt{createaccess} pada smart contract DecMed untuk menyimpan capability ke ledger melalui transaksi bersponsor \parencite{Purnama_2026,Hari_2025}. 
+Setiap kali proxy akan melakukan proses PRE untuk permintaan baca atau tulis, proxy memanggil method \texttt{getmedicalrecord}, \texttt{getadministrativedata}, atau method terkait lainnya pada smart contract untuk memverifikasi bahwa capability yang relevan masih ada, belum kedaluwarsa, dan cocok dengan peran serta tipe akses yang diminta \parencite{Purnama_2026,Hari_2025}. 
+
+\subsubsection{Mekanisme Proxy Re-Encryption dan Alur Akses Data}
+
+DecMed memanfaatkan PRE untuk memisahkan enkripsi awal oleh pemilik data dan kemampuan pihak lain untuk mendekripsi, tanpa perlu membagikan kunci enkripsi awal kepada pihak ketiga \parencite{Purnama_2026,Hari_2025}. 
+Pada saat pasien memberikan akses, client pasien membangkitkan seed PRE baru, menghasilkan pasangan kunci PRE, dan membangun \texttt{kfrag} menggunakan kunci PRE pasien, kunci PRE administratif, dan kunci PRE penandatangan \parencite{Purnama_2026}. 
+Metadata yang terdiri atas \texttt{encfirsthalfseed}, \texttt{firsthalfseedcapsule}, \texttt{kfrag}, \texttt{medprepublickey}, dan kunci publik terkait lainnya disimpan pada Redis dengan \emph{Time To Live} (TTL) yang selaras dengan durasi akses maksimum, sementara capability yang mereferensikan akses tersebut disimpan pada IOTA \parencite{Purnama_2026,Hari_2025}. 
+
+Alur akses baca oleh tenaga kesehatan dimulai ketika client tenaga kesehatan memilih salah satu entri akses dari daftar \emph{read access} yang diperoleh melalui \emph{inspect call} ke method \texttt{getreadaccess} pada smart contract \parencite{Purnama_2026,Hari_2025}. 
+Client kemudian mengirim permintaan GET \texttt{medical-record} ke proxy disertai access token JWT yang memuat klaim role dan tipe akses \parencite{Purnama_2026,Hari_2025}. 
+Proxy memverifikasi token, mengambil metadata klinis dan administratif dari IOTA, mengambil data klinis terenkripsi dari IPFS menggunakan CID, mengambil metadata PRE dari Redis, dan menjalankan PRE untuk menghasilkan \texttt{cfrag} yang memungkinkan client tenaga kesehatan merekonstruksi kunci AES guna mendekripsi data RME \parencite{Purnama_2026,Hari_2025}. 
+
+Alur pembuatan entri RME baru oleh tenaga kesehatan melibatkan enkripsi data klinis dengan AES-GCM di sisi client, enkripsi kunci AES dan nonce menggunakan kunci PRE pasien, serta pengiriman \texttt{encmedicaldata}, \texttt{encaeskeynonce}, dan \texttt{capsule} ke proxy melalui endpoint POST \texttt{medical-record} \parencite{Purnama_2026,Hari_2025}. 
+Proxy menyimpan data klinis terenkripsi di IPFS dan mendapatkan CID, lalu menyusun metadata klinis berupa CID, \texttt{encaeskeynonce}, \texttt{capsule}, dan timestamp operasi (\texttt{createdat}) sebelum menyimpannya sebagai objek \texttt{patientmedicalmetadata} pada ledger menggunakan transaksi bersponsor \texttt{createmedicalrecord} \parencite{Purnama_2026,Hari_2025}. 
+Proses edit entri RME baru dilakukan dengan pola yang serupa melalui endpoint PUT \texttt{medical-record} dan method \texttt{updatemedicalrecord} di smart contract, dengan pembatasan bahwa hanya satu entri baru yang boleh dibuat per sesi akses update dan edit hanya boleh dilakukan oleh tenaga kesehatan pembuat entri tersebut dalam rentang waktu tertentu \parencite{Purnama_2026,Hari_2025}. 
+
+\subsubsection{Evaluasi Mekanisme Akses dan Penegakan Kebijakan}
+
+Evaluasi terhadap smart contract DecMed dilakukan dengan unit test Move pada berbagai skenario akses ilegal yang dinotasikan dengan T-SC-ILL01 hingga T-SC-ILL11 \parencite{Hari_2025,Purnama_2026}. 
+Skenario tersebut mencakup percobaan akses bagian klinis oleh petugas administratif, akses setelah waktu kedaluwarsa, penambahan atau pengeditan entri tanpa capability yang sesuai, serta percobaan pembuatan entri RME lebih dari sekali untuk sesi akses yang sama \parencite{Purnama_2026,Hari_2025}. 
+Setiap skenario diharapkan menghasilkan kode kesalahan spesifik, seperti \texttt{EInvalidAccessType}, \texttt{EAccessExpired}, \texttt{EAccessNotFound}, dan \texttt{EMedicalRecordCreationLimit}, dan hasil unit test menunjukkan bahwa smart contract berhasil menolak seluruh skenario akses ilegal tersebut \parencite{Purnama_2026,Hari_2025}. 
+
+Pengujian sistem end-to-end memperlihatkan bahwa seluruh kebutuhan fungsional, seperti registrasi akun, aktivasi client, pemberian dan pencabutan akses, pembuatan dan pengeditan entri RME, serta penayangan log akses, dapat dijalankan sesuai spesifikasi \parencite{Hari_2025}. 
+Selain itu, pengujian nonfungsional memastikan bahwa sistem menolak akses terhadap data RME yang dilakukan tanpa persetujuan pasien atau di luar durasi yang telah ditentukan, dan semua akses yang sah tercatat secara immutable pada ledger IOTA \parencite{Hari_2025}. 
+
+\subsubsection{Ringkasan dan Bridging ke Kebutuhan PGHD}
+
+Dari perspektif arsitektur teknis, DecMed menyediakan beberapa komponen kunci yang relevan untuk integrasi \emph{patient-generated health data} (PGHD) ke dalam ekosistem RME terdistribusi \parencite{Purnama_2026,Hari_2025}. 
+Pertama, model CapBAC di atas IOTA memungkinkan representasi hak akses yang granular terhadap unit data tertentu, dibatasi oleh durasi dan bagian data, sehingga secara konseptual dapat diperluas dari entri RME klinis ke berbagai jenis PGHD seperti data sensor wearables atau aplikasi kesehatan \parencite{Purnama_2026}. 
+Kedua, pola penyimpanan hybrid yang menyimpan data terenkripsi pada IPFS atau repositori off-chain lain dan hanya menyimpan hash, CID, serta metadata integritas pada ledger selaras dengan pendekatan yang disarankan untuk data IoT dan PGHD pada literatur IOTA untuk e-health \parencite{Elevating_2025_iota_ehealth}. 
+
+Ketiga, kombinasi PRE dan identitas kriptografis pasien memungkinkan pasien bertindak sebagai pusat kendali distribusi kunci untuk data yang mereka hasilkan, sehingga paradigma yang sama dapat diterapkan ketika sumber data bukan hanya kunjungan klinis tetapi juga perangkat yang mengumpulkan PGHD secara kontinu \parencite{Purnama_2026,Akbulut_2020_iota_phr}. 
+Dengan ketersediaan client pasien, proxy PRE, smart contract CapBAC, dan infrastruktur IOTA-IPFS, integrasi PGHD ke dalam kerangka DecMed pada prinsipnya tinggal memerlukan perluasan model data dan capability untuk memasukkan jenis sumber data baru, serta definisi metadata \emph{data provenance} yang sesuai \parencite{Purnama_2026,Elevating_2025_iota_ehealth}. 
+Bagian berikutnya dari studi literatur akan membahas konsep dan tantangan PGHD serta kebutuhan \emph{data provenance} yang harus dipenuhi agar integrasi PGHD ke dalam DecMed tetap menjaga kerahasiaan, integritas, dan keterlacakannya.
