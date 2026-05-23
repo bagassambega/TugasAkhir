@@ -1,34 +1,30 @@
 \section{Penelitian Terkait}
 
-Penelitian terkait tesis ini dapat dikelompokkan ke dalam tiga garis besar: 
-(1) pemanfaatan IOTA Tangle untuk pengelolaan rekam medis dan data kesehatan, 
-(2) pemodelan keunggulan dan peluang IOTA dalam manajemen data kesehatan, 
-serta (3) kerangka Internet of (Health) Things yang menggabungkan keamanan dan data provenance untuk meningkatkan kepercayaan terhadap data dari perangkat medis terhubung. 
-Subbab ini mengulas tiga karya utama yang menjadi landasan bagi perancangan DecMed sebagai sistem rekam medis elektronik terdesentralisasi yang mengintegrasikan \textit{patient-generated health data} (PGHD) dengan jaminan keamanan dan provenance.
+Akbulut dkk.\ mengusulkan sebuah sistem manajemen akses rekam medis pribadi (\textit{personal health records}, PHR) yang privat dan aman dengan memanfaatkan IOTA Tangle sebagai infrastruktur \textit{distributed ledger} \parencite{Akbulut_2020_iota_phr}.
+Melalui analisis terhadap solusi-solusi yang ada, studi ini mengidentifikasi sejumlah komponen kunci yang kemudian diintegrasikan, antara lain IOTA Tangle, protokol IPFS, \textit{proxy re-encryption}, API, serta mekanisme \textit{access control} yang berpusat pada pasien \parencite{Akbulut_2020_iota_phr}.
+Kerangka tersebut diimplementasikan dalam empat prototipe aplikasi (aplikasi janji temu berbasis web, aplikasi pasien, aplikasi dokter, dan aplikasi perangkat IoT medis jarak jauh), dan menunjukkan bahwa kombinasi IOTA, penyimpanan terdistribusi, serta enkripsi dapat menghasilkan sistem PHR yang memberikan \textit{traceability} dan kontrol akses yang kuat tanpa bergantung pada otoritas terpusat \parencite{Akbulut_2020_iota_phr}.
+Penelitian ini menjadi landasan penting bagi DecMed karena membuktikan bahwa kombinasi IOTA-IPFS-\textit{proxy re-encryption} feasible secara teknis untuk skenario data kesehatan dan dapat diadaptasi ke konteks rekam medis elektronik yang lebih luas.
 
-Akbulut dkk.\ mengusulkan sebuah sistem manajemen akses rekam medis pribadi (\textit{personal health records}, PHR) yang privat dan aman dengan memanfaatkan IOTA Tangle sebagai infrastruktur \textit{distributed ledger} \parencite{Akbulut_2020_iota_phr}. 
-Melalui analisis terhadap solusi-solusi yang ada, studi ini mengidentifikasi sejumlah komponen kunci yang kemudian diintegrasikan dalam sebuah kerangka terpadu, antara lain IOTA Tangle, protokol IPFS, \textit{proxy re-encryption}, API, serta mekanisme \textit{access control} yang berpusat pada pasien \parencite{Akbulut_2020_iota_phr}. 
-Kerangka tersebut diimplementasikan dalam empat prototipe aplikasi (aplikasi janji temu berbasis web, aplikasi pasien, aplikasi dokter, dan aplikasi perangkat IoT medis jarak jauh) yang bersama-sama mendemonstrasikan bagaimana pasien dapat memiliki kendali penuh atas data medis mereka, sekaligus memastikan bahwa rekam medis yang tersimpan memiliki sifat immutable, dapat dilacak, aman, dan dapat dipercaya \parencite{Akbulut_2020_iota_phr}. 
+Terkait integrasi PGHD dengan sistem rekam medis elektronik konvensional, Tiase dkk.\ melakukan \textit{scoping review} yang memetakan berbagai pendekatan integrasi PGHD ke dalam EHR \parencite{Tiase2020-PGHD_EHR_Integration}.
+Studi ini mengidentifikasi bahwa sebagian besar implementasi masih berada pada tahap uji coba atau skala terbatas, dengan variasi bentuk integrasi mulai dari tampilan laporan statis, \textit{flowsheet}, hingga antarmuka terstandar berbasis HL7 dan FHIR \parencite{Tiase2020-PGHD_EHR_Integration}.
+Temuan utama menunjukkan bahwa integrasi PGHD yang efektif menuntut ketersediaan PGHD di dalam EHR dalam konteks yang sama dengan data klinis lain, dukungan standar interoperabilitas, dan penyesuaian alur kerja klinis agar tenaga kesehatan benar-benar menggunakan PGHD dalam pengambilan keputusan \parencite{Tiase2020-PGHD_EHR_Integration}.
+Cohen dkk.\ melalui Project HealthDesign mendemonstrasikan contoh konkret integrasi ODL dan PGHD ke alur klinis rawat jalan dengan berbagai tingkat integrasi dashboard, protokol zona risiko, dan interaksi perawat-pasien \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+Secara keseluruhan, penelitian-penelitian ini menegaskan bahwa integrasi PGHD ke RME konvensional bergantung pada desain antarmuka, standar pertukaran data, dan adaptasi alur kerja, tetapi belum menyentuh aspek DLT\@.
 
-Kontribusi utama penelitian ini adalah menunjukkan bahwa kombinasi IOTA Tangle, penyimpanan terdistribusi, dan enkripsi dapat menghasilkan sistem manajemen PHR yang memberikan \textit{traceability} dan kontrol akses yang kuat, tanpa bergantung pada otoritas terpusat \parencite{Akbulut_2020_iota_phr}. 
-Meskipun fokusnya tidak secara eksplisit pada PGHD sebagai kategori tersendiri, arsitektur yang diusulkan sangat relevan dengan tesis ini karena menunjukkan pola integrasi perangkat IoT medis, pengelolaan kunci dan hak akses, serta pemanfaatan IOTA untuk menjamin integritas dan keterlacakan data kesehatan. 
-Konsep-konsep tersebut menjadi dasar bagi perancangan DecMed sebagai sistem EMR terdesentralisasi berbasis IOTA yang memungkinkan pasien mengelola hak akses terhadap data klinis maupun PGHD.
+Ahmed dkk.\ mengkaji pendekatan \textit{data provenance} di domain kesehatan dan menyoroti tren pemanfaatan teknologi blockchain dan IPFS untuk menjamin keandalan jejak data \parencite{Ahmed_2023_Data_Provenance}.
+Penelitian tersebut mengklasifikasikan teknik-teknik provenance menjadi empat kategori utama (log, kriptografi, blockchain, dan ontologi) dan mencatat bahwa solusi berbasis blockchain banyak diusulkan untuk skenario di mana integritas dan jejak operasi harus dapat diaudit di lingkungan terdistribusi \parencite{Ahmed_2023_Data_Provenance}.
 
-Rydningen dkk.\ melakukan studi pemetaan sistematis mengenai kelebihan dan peluang pemanfaatan IOTA Tangle dalam manajemen data kesehatan \parencite{rydningen_iota_mapping_2022}. 
-Melalui tinjauan literatur yang terstruktur, studi ini memetakan berbagai skenario penggunaan IOTA pada domain kesehatan, termasuk integrasi PHR dengan EHR, pertukaran data kesehatan lintas organisasi, dan penggunaan Tangle untuk menjamin integritas serta autentikasi data dari perangkat IoT \parencite{rydningen_iota_mapping_2022}. 
-Hasil pemetaan menunjukkan bahwa IOTA menawarkan sejumlah keunggulan yang menarik untuk domain kesehatan, seperti ketiadaan biaya transaksi (feeless), skalabilitas, kemampuan menangani volume transaksi tinggi, dan dukungan yang baik untuk integrasi dengan perangkat IoT yang memiliki keterbatasan sumber daya \parencite{rydningen_iota_mapping_2022}. 
+Secara umum, penelitian-penelitian di atas menunjukkan bahwa:
+\begin{enumerate}
+  \item Kombinasi IOTA, penyimpanan terdistribusi, dan kriptografi telah dieksplorasi untuk PHR dan arsitektur e-health terdistribusi \parencite{Akbulut_2020_iota_phr,Elevating_2025_iota_ehealth},
+  \item Integrasi PGHD ke sistem RME konvensional memerlukan standar interoperabilitas dan adaptasi alur kerja, tetapi saat ini masih didominasi pendekatan terpusat tanpa DLT \parencite{Tiase2020-PGHD_EHR_Integration,Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR},
+  \item Teknologi blockchain dan DLT mulai digunakan untuk menjamin provenance dan integritas data kesehatan, namun fokus eksplisit pada PGHD dan integrasinya ke RME berbasis IOTA masih sangat terbatas \parencite{Ahmed_2023_Data_Provenance}.
+\end{enumerate}
 
-Studi ini juga mengidentifikasi sejumlah tantangan, antara lain kebutuhan akan desain arsitektur yang selaras dengan regulasi proteksi data, integrasi dengan standar interoperabilitas kesehatan, serta mekanisme tata kelola yang menjamin keandalan node dan jaringan Tangle \parencite{rydningen_iota_mapping_2022}. 
-Bagi tesis ini, hasil pemetaan Rydningen dkk.\ menyediakan justifikasi konseptual mengapa IOTA layak dipilih sebagai basis \textit{distributed ledger} untuk DecMed: karakteristik teknis IOTA selaras dengan kebutuhan integrasi PGHD yang berfrekuensi tinggi dari ekosistem IoMT, sementara sifat feeless dan skalabel mengurangi hambatan operasional untuk pencatatan provenance dan transaksi akses data dalam jumlah besar.
-
-Selain karya yang secara khusus berfokus pada IOTA, penelitian yang berkaitan dengan data provenance dan keamanan pada Internet of (Health) Things juga memberikan fondasi penting bagi desain modul keamanan DecMed. 
-Salah satu contoh yang relevan adalah kerangka Internet of Health Things yang memadukan blockchain dengan federated learning untuk menyediakan keamanan dan provenance yang ditingkatkan \parencite{rahman_secure_provenance_iht_2020}. 
-Dalam kerangka ini, blockchain digunakan untuk mengelola provenance data dan model federated learning yang terdistribusi, sementara berbagai teknik kriptografi diterapkan untuk menjaga kerahasiaan data kesehatan dan melindungi privasi pasien selama proses pelatihan terdistribusi \parencite{rahman_secure_provenance_iht_2020}. 
-
-Penelitian tersebut menekankan bahwa agar data dari perangkat IoHT dapat dimanfaatkan secara luas, penyedia layanan dan pemangku kepentingan lain membutuhkan bukti provenance yang kuat untuk menilai keaslian, integritas, dan jalur propagasi data sebelum data tersebut digunakan dalam analitik atau pengambilan keputusan klinis \parencite{rahman_secure_provenance_iht_2020}. 
-Meskipun menggunakan blockchain alih-alih IOTA, prinsip desain yang dikemukakan—yaitu perlunya pencatatan provenance yang aman, auditable, dan terlindungi dari pemalsuan—langsung relevan dengan tujuan tesis ini untuk mengintegrasikan PGHD secara aman ke dalam sistem EMR terdesentralisasi. 
-Dalam konteks DecMed, ide-ide tersebut diterjemahkan ke dalam pemanfaatan IOTA Tangle sebagai lapisan pencatatan operasi atas PGHD, yang dipadukan dengan mekanisme kriptografi dan model data provenance untuk menyediakan jejak auditable dari perangkat hingga rekam medis elektronik.
-
-Secara umum, penelitian-penelitian di atas menunjukkan bahwa kombinasi IOTA dan DLT lain dengan perangkat IoT/IoMT telah dieksplorasi untuk manajemen rekam medis, PHR, dan kerangka IoHT yang aman. 
-Namun, belum banyak kajian yang secara eksplisit memfokuskan pada integrasi PGHD ke dalam sistem rekam medis elektronik berbasis IOTA dengan penekanan simultan pada data provenance, integritas data, dan pengaturan akses yang berpusat pada pasien. 
-Tesis ini memposisikan diri untuk mengisi celah tersebut dengan merancang dan mengimplementasikan DecMed sebagai sistem EMR berbasis IOTA yang mengintegrasikan PGHD, memodelkan provenance dari sisi IoMT hingga EMR, serta mengevaluasi dampak desain tersebut terhadap aspek keamanan, transparansi, dan kendali pasien atas datanya.
+Tesis ini memposisikan diri untuk mengisi celah tersebut dengan merancang dan mengimplementasikan DecMed sebagai sistem RME berbasis IOTA yang:
+\begin{enumerate}
+  \item Mengintegrasikan PGHD ke dalam rekam medis elektronik melalui kombinasi IOTA dan IPFS,
+  \item Memodelkan data provenance dari sisi perangkat dan sistem eksternal hingga entri RME,
+  \item Menyediakan mekanisme integritas data dan kontrol akses yang berpusat pada pasien di atas infrastruktur buku besar terdistribusi.
+\end{enumerate}
+Pendekatan ini diharapkan dapat memperluas karya-karya sebelumnya dengan memadukan prinsip integrasi PGHD dari literatur RME konvensional dengan karakteristik teknis IOTA dan DLT yang telah dibuktikan layak untuk domain kesehatan.
