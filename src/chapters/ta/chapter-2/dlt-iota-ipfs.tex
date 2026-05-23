@@ -1,0 +1,49 @@
+\section{IOTA, dan IPFS}\label{subsec:studi-literatur-dlt-iota-ipfs}
+
+\subsection{\textit{Distributed Ledger Technology} (DLT)}
+
+\textit{Distributed Ledger Technology} (DLT) merupakan paradigma komputasi terdistribusi yang menyimpan catatan transaksi pada sebuah \textit{ledger} (\textit{ledger}) yang direplikasi di banyak \textit{node} dan diperbarui melalui mekanisme konsensus terdistribusi, sehingga tidak terdapat satu otoritas pusat yang mengendalikan keseluruhan sistem \parencite{Savadatti_2025_dlt_overview}.
+DLT memanfaatkan kriptografi seperti fungsi \textit{hash} dan \textit{digital signature} untuk menjamin integritas data, sehingga setiap upaya modifikasi terhadap catatan transaksi dapat dideteksi oleh jaringan \parencite{Savadatti_2025_dlt_overview}.
+Arsitektur yang terdistribusi menghilangkan \textit{single point of failure} yang umum pada sistem terpusat dan meningkatkan toleransi gangguan, karena setiap \textit{node} menyimpan salinan \textit{ledger} dan berpartisipasi dalam proses validasi \parencite{Savadatti_2025_dlt_overview}.
+
+DLT menggunakan berbagai mekanisme konsensus yang telah dikembangkan dengan karakteristik dan \textit{trade-off} berbeda, mulai dari Proof-of-Work (PoW) yang memberikan tingkat keamanan tinggi namun boros energi, hingga alternatif seperti Proof-of-Stake (PoS), Practical Byzantine Fault Tolerance (PBFT), Delegated Proof-of-Stake (DPoS), dan Proof-of-Authority (PoA) yang berupaya meningkatkan efisiensi dan \textit{throughput} dengan asumsi kepercayaan tertentu \parencite{Savadatti_2025_dlt_overview}.
+Selain pendekatan berbasis rantai blok linear seperti pada blockchain, terdapat pula struktur DLT lain seperti \textit{Directed Acyclic Graph} (DAG) yang digunakan oleh IOTA, yang dirancang untuk meningkatkan paralelisme dan kapasitas pemrosesan transaksi, khususnya pada skenario IoT berskala besar \parencite{Savadatti_2025_dlt_overview}.
+Di berbagai domain seperti keuangan, rantai pasok, energi, administrasi publik, dan kesehatan, DLT dimanfaatkan untuk meningkatkan keamanan data, transparansi, serta ketertelusuran, dengan tingkat kesesuaian yang bergantung pada karakteristik konsensus, skalabilitas, serta kebutuhan privasi di setiap domain \parencite{Savadatti_2025_dlt_overview}.
+
+\subsection{IOTA dan Evolusi IOTA}
+
+IOTA dikembangkan sebagai platform DLT yang secara khusus ditujukan untuk ekosistem IoT, dengan tujuan mendukung transaksi mikro \textit{machine-to-machine} yang aman, skalabel, dan bebas biaya transaksi \parencite{FromTangleToRebased_2025}.
+Versi awal IOTA menggunakan struktur DAG yang disebut \textit{Tangle}, di mana setiap transaksi baru (\textit{tip}) harus mereferensikan dan memvalidasi sedikitnya dua transaksi sebelumnya sebelum transaksi baru tersebut dapat ditambahkan ke \textit{ledger} \parencite{FromTangleToRebased_2025,TheTangle_Popov_2017}.
+Pendekatan ini dirancang untuk mengatasi keterbatasan skala blockchain tradisional dengan cara membuat setiap transaksi baru ikut menyumbang proses validasi, sehingga \textit{throughput} jaringan diharapkan meningkat seiring bertambahnya aktivitas \parencite{FromTangleToRebased_2025}.
+
+Meskipun demikian, Tangle generasi awal masih menghadapi beberapa keterbatasan.
+Untuk menjamin finalitas dan mencegah serangan, IOTA menggunakan komponen terpusat bernama \textit{Coordinator} yang menerbitkan blok khusus (\textit{milestones}) sebagai sumber kebenaran transaksi \parencite{FromTangleToRebased_2025}.
+Keberadaan \textit{Coordinator} ini membantu meningkatkan keamanan pada tahap awal, tetapi sekaligus menimbulkan \textit{single point of failure} dan mengurangi tingkat desentralisasi yang menjadi tujuan utama DLT \parencite{FromTangleToRebased_2025}.
+Selain itu, Tangle generasi awal juga menghadapi tantangan terkait serangan spam, kompleksitas \textit{tip selection}, dan kesulitan mencapai jaminan finalitas yang jelas dalam kondisi jaringan yang padat \parencite{FromTangleToRebased_2025}.
+
+Sebagai respon terhadap keterbatasan tersebut, IOTA 2.0 dirancang secara konseptual untuk mencapai \textit{Coordicide}, yaitu penghapusan \textit{Coordinator} sehingga jaringan dapat beroperasi secara benar-benar terdesentralisasi \parencite{FromTangleToRebased_2025}.
+Secara prinsip, IOTA 2.0 berupaya menyelesaikan masalah ketergantungan pada \textit{Coordinator} dan memberikan finalitas yang lebih kuat tanpa mengorbankan sifat feeless dan skalabilitas untuk IoT \parencite{FromTangleToRebased_2025}.
+Namun, kompleksitas rancangan, tantangan implementasi, serta lamanya siklus pengembangan menyebabkan IOTA 2.0 tidak pernah sepenuhnya direalisasikan di lingkungan produksi, sehingga fondasi protokol kemudian beralih ke arsitektur baru bernama IOTA Rebased \parencite{FromTangleToRebased_2025}.
+
+Secara arsitektural, IOTA Rebased mengganti \textit{Tangle} dengan DAG Mysticeti dan memperkenalkan model \textit{ledger} berorientasi objek yang dioperasikan melalui \textit{smart contract} berbasis Move Virtual Machine (MoveVM) \parencite{FromTangleToRebased_2025}.
+Selain itu, IOTA Rebased menggunakan mekanisme konsensus Delegated Proof-of-Stake (DPoS) melalui protokol Mysticeti untuk mencapai \textit{throughput} tinggi dan finalitas subdetik \parencite{FromTangleToRebased_2025}.\
+Arsitektur IOTA Rebased dapat dilihat melalui ilustrasi di Gambar~\ref{fig:iota-rebased-architecture}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{resources/chapter-2/iota-rebased-architecture.jpg}
+  \caption{Arsitektur IOTA Rebased \parencite{FromTangleToRebased_2025}.}\label{fig:iota-rebased-architecture}
+\end{figure}
+
+Perubahan ini menghadirkan kemampuan pemrograman yang lebih banyak dan dukungan \textit{smart contract} yang lebih kompleks, tetapi juga memperkenalkan biaya transaksi berbasis \textit{gas fee} dan kebutuhan \textit{staking} serta spesifikasi perangkat keras validator yang relatif tinggi \parencite{FromTangleToRebased_2025}.
+Jika dibandingkan dengan IOTA 2.0 yang menargetkan DAG tanpa biaya dan tanpa pemimpin untuk IoT, IOTA Rebased mengedepankan performa dan ekonomi jaringan yang berkelanjutan, dengan konsekuensi berkurangnya kesesuaian langsung untuk skenario mikrotransaksi bernilai sangat kecil di perangkat IoT yang sangat terbatas \parencite{FromTangleToRebased_2025}.
+
+\subsection{InterPlanetary File System (IPFS)}
+
+\textit{InterPlanetary File System} (IPFS) adalah protokol dan jaringan \textit{peer-to-peer} untuk penyimpanan dan distribusi konten secara terdistribusi dengan mekanisme \textit{content-addressed} alih-alih berbasis lokasi seperti HTTP \parencite{Benet_2014_ipfs}.
+Pada IPFS, setiap objek atau berkas diidentifikasi dengan \textit{content identifier} (CID) yang diperoleh dengan menerapkan fungsi \textit{hash} terhadap isi berkas, sehingga setiap perubahan terhadap isi berkas akan menghasilkan CID yang berbeda dan memberikan jaminan integritas konten secara inheren \parencite{Benet_2014_ipfs}.
+Objek-objek di IPFS disusun dalam bentuk DAG yang menghubungkan blok-blok data dan referensinya, sedangkan distribusi dan pencarian konten antar \textit{node} dilakukan dengan kombinasi protokol \textit{gossip} dan \textit{distributed hash table} (DHT) \parencite{Benet_2014_ipfs}.
+
+IPFS sendiri tidak menyediakan konsensus global seperti pada DLT, melainkan berfungsi sebagai lapisan penyimpanan terdistribusi yang dapat dikombinasikan dengan DLT atau blockchain untuk menyimpan \textit{hash} atau CID sebagai \textit{anchor} yang tidak dapat diubah pada \textit{ledger} \parencite{Benet_2014_ipfs}.
+Pola integrasi yang umum adalah menyimpan data berukuran besar atau bersifat sensitif di IPFS (dengan atau tanpa enkripsi), sementara \textit{ledger} hanya menyimpan pointer berupa CID dan metadata penting lain, sehingga biaya dan ukuran \textit{ledger} dapat ditekan sekaligus mempertahankan integritas dan jejak audit end-to-end \parencite{Benet_2014_ipfs}.
+Dalam berbagai arsitektur yang menggabungkan DLT dengan IPFS, DLT biasanya dimanfaatkan sebagai \textit{control plane} untuk manajemen identitas, kontrol akses, dan pencatatan transaksi, sedangkan IPFS berperan sebagai \textit{data plane} untuk penyimpanan dan distribusi konten berukuran besar \parencite{Benet_2014_ipfs}.
