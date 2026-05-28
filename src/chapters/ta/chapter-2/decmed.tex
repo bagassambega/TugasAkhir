@@ -21,36 +21,6 @@ Sementara arsitektur DecMed sendiri dibagi menjadi tiga lapis utama, yaitu \emph
 Penyimpanan \textit{on-chain} merujuk pada \textit{ledger} IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026,Hari_2025}. 
 Penyimpanan \textit{off-chain} terdiri atas kluster IPFS untuk menyimpan bagian klinis RME yang telah dienkripsi dan Redis untuk menyimpan data sementara terkait PRE seperti \textit{nonce}, kfrag, dan metadata kriptografis lainnya \parencite{Purnama_2026,Hari_2025}. 
 
-\subsection{Model Identitas dan Manajemen Akun}
-
-Identitas kriptografis pada DecMed dibangun dengan memanfaatkan frasa pemulihan (\emph{mnemonic}) BIP-39 dan PIN sebagai faktor autentikasi lokal \parencite{Purnama_2026, Hari_2025}. 
-Pada sisi pasien, \textit{client} membangkitkan 12 kata frasa pemulihan dan menggunakannya bersama data identitas sebagai \textit{passphrase} untuk menghasilkan \textit{seed} 64 byte yang kemudian digunakan untuk membangkitkan pasangan kunci dan alamat pada IOTA, serta pasangan kunci PRE \parencite{Hari_2025}. 
-Sebagian \textit{seed} dan pasangan kunci IOTA dienkripsi dengan AES-GCM menggunakan PIN dan disimpan pada \textit{secure storage} perangkat, sehingga autentikasi sehari-hari dapat dilakukan cukup dengan PIN tanpa harus mengekspos frasa pemulihan \parencite{Hari_2025}. 
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{resources/chapter-2/patient_signup.png}
-	\caption{Alur Registrasi/Pembuatan Akun Pasien \parencite{Hari_2025}}\label{fig:patient-signup-decmed}
-\end{figure}
-
-Proses \textit{login} pasien dan personel fasyankes pada dasarnya merekonstruksi \textit{seed} dan kunci dari frasa pemulihan dan PIN, kemudian melakukan \emph{inspect call} ke \textit{smart contract} untuk memastikan akun yang bersesuaian telah terdaftar tanpa mengeluarkan \textit{gas fee} \parencite{Purnama_2026,Hari_2025}. 
-Alur registrasi akun pasien dapat dilihat melalui Gambar~\ref{fig:patient-signup-decmed} dan masuk akun dapat dilihat melalui Gambar~\ref{fig:patient-signin-decmed}\@.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{resources/chapter-2/patient_signin.png}
-	\caption{Alur Masuk Akun Pasien \parencite{Hari_2025}}\label{fig:patient-signin-decmed}
-\end{figure}
-
-\subsection{Mekanisme Akses Kontrol}
-
-Mekanisme kontrol akses dalam DecMed berbasis CapBAC, di mana hak akses terhadap data RME direpresentasikan sebagai objek \textit{capability} yang disimpan pada \textit{ledger} IOTA \parencite{Purnama_2026,Hari_2025}. 
-Objek \textit{capability} DecMed diimplementasikan sebagai struktur \texttt{HospitalPersonnelAccessData} dalam module Move \texttt{decmedstdstructhospitalpersonnelaccessdata}, yang memuat atribut jenis data yang diakses, durasi akses (\texttt{exp}), metadata, dan indeks entri RME yang terkait \parencite{Hari_2025}. 
-
-Pasien memberikan akses dengan memindai QR code milik personel fasyankes untuk memperoleh \texttt{iotaaddress} dan \texttt{prepublickey}, lalu memverifikasi data administratif publik personel tersebut dari \textit{ledger} \parencite{Purnama_2026,Hari_2025}. 
-Setelah pasien menyetujui, \textit{client} pasien membangkitkan kunci PRE tambahan, melakukan penandatanganan \textit{nonce}, mengirim metadata PRE ke \textit{proxy}, dan akhirnya memanggil method \texttt{createaccess} pada \textit{smart contract} DecMed untuk menyimpan \textit{capability} ke \textit{ledger} melalui transaksi bersponsor \parencite{Purnama_2026,Hari_2025}. 
-Setiap kali \textit{proxy} akan melakukan proses PRE untuk permintaan baca atau tulis, \textit{proxy} memanggil method \texttt{getmedicalrecord}, \texttt{getadministrativedata}, atau method terkait lainnya pada \textit{smart contract} untuk memverifikasi bahwa \textit{capability} yang relevan masih ada, belum kedaluwarsa, dan cocok dengan peran serta tipe akses yang diminta \parencite{Purnama_2026,Hari_2025}. 
-
 \subsection{Mekanisme Proxy Re-Encryption dan Alur Akses Data}
 
 DecMed memanfaatkan PRE untuk memisahkan enkripsi awal oleh pemilik data dan kemampuan pihak lain untuk mendekripsi, tanpa perlu membagikan kunci enkripsi awal kepada pihak ketiga \parencite{Purnama_2026,Hari_2025}. 
