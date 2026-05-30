@@ -5,8 +5,8 @@ Berbeda dengan pendekatan sistem RME tradisional yang menempatkan kontrol akses 
 
 \subsection{Arsitektur DecMed}
 
-Secara teknis, DecMed mengintegrasikan tiga komponen utama: \emph{Capability-Based Access Control} (CapBAC) sebagai model kontrol akses, \emph{Proxy Re-Encryption} (PRE) sebagai mekanisme delegasi kunci enkripsi, dan kombinasi IOTA-IPFS sebagai lapisan penyimpanan \textit{on-chain}/\textit{off-chain} \parencite{Purnama_2026,Hari_2025}.
-Sementara arsitektur DecMed sendiri dibagi menjadi tiga lapis utama, yaitu \emph{Client Layer}, \emph{Proxy Layer}, dan \emph{Storage Layer} \parencite{Purnama_2026,Hari_2025} seperti diilustrasikan dalam Gambar~\ref{fig:decmed-architecture}. 
+Secara teknis, arsitektur DecMed dibagi menjadi tiga lapis utama, yaitu \emph{Client Layer}, \emph{Proxy Layer}, dan \emph{Storage Layer} \parencite{Purnama_2026,Hari_2025} seperti diilustrasikan dalam Gambar~\ref{fig:decmed-architecture}. 
+Decmed sendiri mendefinisikan dua tipe data, data administratif (identitas pasien seperti NIK, nama, dan pekerjaan) dan data klinis.
 
 \begin{figure}[htbp]
 	\centering
@@ -21,16 +21,267 @@ Sementara arsitektur DecMed sendiri dibagi menjadi tiga lapis utama, yaitu \emph
 Penyimpanan \textit{on-chain} merujuk pada \textit{ledger} IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026,Hari_2025}. 
 Penyimpanan \textit{off-chain} terdiri atas kluster IPFS untuk menyimpan bagian klinis RME yang telah dienkripsi dan Redis untuk menyimpan data sementara terkait PRE seperti \textit{nonce}, kfrag, dan metadata kriptografis lainnya \parencite{Purnama_2026,Hari_2025}. 
 
-\subsection{Mekanisme Proxy Re-Encryption dan Alur Akses Data}
+Aktor dalam sistem DecMed secara garis besar dibagi menjadi pasien, tenaga rekam medis, tenaga kesehatan, dan kementerian kesehatan. 
+Pembagian aktivitas dan aksi yang dapat dilakukan oleh masing-masing aktor tercantum dalam Tabel~\ref{decmed-actor-privileges}. 
 
-DecMed memanfaatkan PRE untuk memisahkan enkripsi awal oleh pemilik data dan kemampuan pihak lain untuk mendekripsi, tanpa perlu membagikan kunci enkripsi awal kepada pihak ketiga \parencite{Purnama_2026,Hari_2025}. 
-Pada saat pasien memberikan akses, \textit{client} pasien membangkitkan \textit{seed} PRE baru, menghasilkan pasangan kunci PRE, dan membangun \texttt{kfrag} menggunakan kunci PRE pasien, kunci PRE administratif, dan kunci PRE penandatangan \parencite{Purnama_2026}. 
-Metadata yang terdiri atas \texttt{encfirsthalfseed}, \texttt{firsthalfseedcapsule}, \texttt{kfrag}, \texttt{medprepublickey}, dan kunci publik terkait lainnya disimpan pada Redis dengan \emph{Time To Live} (TTL) yang selaras dengan durasi akses maksimum, sementara \textit{capability} yang mereferensikan akses tersebut disimpan pada IOTA \parencite{Purnama_2026,Hari_2025}. 
 
-Alur akses baca oleh tenaga kesehatan dimulai ketika \textit{client} tenaga kesehatan memilih salah satu entri akses dari daftar \emph{read access} yang diperoleh melalui \emph{inspect call} ke method \texttt{getreadaccess} pada \textit{smart contract} \parencite{Purnama_2026,Hari_2025}. 
-\textit{Client} kemudian mengirim permintaan GET \texttt{medical-record} ke \textit{proxy} disertai \textit{access token} JWT yang memuat klaim role dan tipe akses \parencite{Purnama_2026,Hari_2025}. 
-\textit{Proxy} memverifikasi token, mengambil metadata klinis dan administratif dari IOTA, mengambil data klinis terenkripsi dari IPFS menggunakan CID, mengambil metadata PRE dari Redis, dan menjalankan PRE untuk menghasilkan \texttt{cfrag} yang memungkinkan \textit{client} tenaga kesehatan merekonstruksi kunci AES guna mendekripsi data RME \parencite{Purnama_2026,Hari_2025}. 
+\begin{table}[htbp]
+	\centering
+	\caption{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025}}\label{decmed-actor-privileges}
+	\renewcommand{\arraystretch}{1.25}
+	\setlength{\tabcolsep}{8pt}
+	\rowcolors{2}{white}{white}
+	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
+		\rowcolor[HTML]{DDEBF7}
+		\textbf{Aktor} & \textit{Privileges} \\
+		\midrule
+		Pasien & \begin{minipage}[t]{\linewidth}
+			\begin{itemize}
+				\item Membaca data RME yang ia miliki,
+				\item Memberikan akses baca dan tulis terhadap data RME yang ia miliki,
+				\item Mencabut akses baca dan tulis terhadap data RME yang ia miliki, dan
+				\item Membaca log akses terhadap data RME yang ia miliki.
+			\end{itemize}
+		\end{minipage} \\
+		\midrule
+		Tenaga kesehatan & \begin{minipage}[t]{\linewidth}
+			\begin{itemize}
+				\item Membaca data RME (bagian administratif dan klinis) milik pasien setelah diberikan akses oleh pasien,
+				\item Menambahkan data RME baru (hanya bagian klinis) milik pasien setelah diberikan akses oleh pasien, dan
+				\item Mengedit data RME baru (hanya bagian klinis) yang sebelumnya telah dibuat pada kunjungan yang sama setelah diberikan akses oleh pasien.
+\end{itemize}
+\end{minipage} \\
+\midrule
+Petugas rekam medis & \begin{minipage}[t]{\linewidth}
+	\begin{itemize}
+		\item Membaca data RME (hanya bagian administratif) milik pasien setelah diberikan akses oleh pasien
+	\end{itemize}
+\end{minipage} \\
+\midrule
+Admin fasyankes & \begin{minipage}[t]{\linewidth}
+	\begin{itemize}
+		\item Menambahkan personel fasyankes, dan
+		\item Membuat kunci aktivasi untuk personel fasyankes.
+	\end{itemize}
+\end{minipage} \\
+\midrule
+Kementerian kesehatan & \begin{minipage}[t]{\linewidth}
+	\begin{itemize}
+		\item Menambahkan fasyankes sekaligus admin dari fasyankes tersebut, dan
+		\item Membuat kunci aktivasi untuk admin fasyankes.
+	\end{itemize}
+\end{minipage} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-Alur pembuatan entri RME baru oleh tenaga kesehatan melibatkan enkripsi data klinis dengan AES-GCM di sisi \textit{client}, enkripsi kunci AES dan \textit{nonce} menggunakan kunci PRE pasien, serta pengiriman \texttt{encmedicaldata}, \texttt{encaeskeynonce}, dan \texttt{capsule} ke proxy melalui endpoint POST \texttt{medical-record} \parencite{Purnama_2026,Hari_2025}. 
-\textit{Proxy} menyimpan data klinis terenkripsi di IPFS dan mendapatkan CID, lalu menyusun metadata klinis berupa CID, \texttt{encaeskeynonce}, \texttt{capsule}, dan timestamp operasi (\texttt{createdat}) sebelum menyimpannya sebagai objek \texttt{patientmedicalmetadata} pada \textit{ledger} menggunakan transaksi bersponsor \texttt{createmedicalrecord} \parencite{Purnama_2026,Hari_2025}. 
-Proses edit entri RME baru dilakukan dengan pola yang serupa melalui endpoint PUT \texttt{medical-record} dan method \texttt{updatemedicalrecord} di \textit{smart contract}, dengan pembatasan bahwa hanya satu entri baru yang boleh dibuat per sesi akses update dan edit hanya boleh dilakukan oleh tenaga kesehatan pembuat entri tersebut dalam rentang waktu tertentu \parencite{Purnama_2026,Hari_2025}. 
+DecMed sudah mendefinisikan mekanisme-mekanisme penting dalam sistem rekam medis seperti registrasi dan login akun, pemberian akses rekam medis kepada personel fasyankes, dan penambahan rekam medis elektronik oleh tenaga medis.
+
+\subsection{Mekanisme Pendaftaran Akun}
+
+Untuk mulai menggunakan sistem rekam medis DecMed, baik pasien maupun personal fasilitas pelayanan kesehatan harus mendaftarkan akunnya terlebih dahulu.
+Mekanisme pendaftaran akun pasien adalah,
+
+\begin{enumerate}
+	\item Pasien membuat 6 digit PIN dan konfirmasi 6 digit PIN
+	\item Client membangkitkan 12 frasa pemulihan (\verb|seed_words|) (BIP39). 
+	Frasa ini tidak disimpan permanen sehingga harus disimpan, jika hilang tidak bisa dibuat lagi.
+	\item Pasien input NIK dan konfirmasi NIK\@.
+	\item Client \textit{generate seed} berukuran 64 bytes yang berasal dari \verb|seed_words|/frasa pemulihan digabungkan dengan NIK\@.
+	\item 64 bytes \textit{seed} digunakan untuk membangkitkan \verb|iota_key_pair| dan \verb|iota_address|. 
+	\verb|iota_address| berfungsi sebagai alamat unik yang merepresentasikan identitas akun pengguna di dalam jaringan IOTA\@. 
+	\verb|iota_key_pair| berfungsi sebagai pasangan kunci standar (publik dan privat) IOTA yang digunakan untuk mengotorisasi serta menandatangani (\textit{signing}) transaksi saat berinteraksi dengan jaringan \textit{smart contract} IOTA\@.
+	\item 32 bytes awal dari \textit{seed} digunakan untuk membangkitkan \verb|pre_secret_key| dan \verb|pre_public_key|.
+	\item Data administratif yang bersifat \textit{private} dienkripsi memakai AES-GCM menghasilkan \verb|enc_private_administrative_data|. 
+	Enkripsi ini membutuhkan key (\verb|aes_key|) dan nonce (\verb|aes_nonce|). Key dan nonce di-\textit{generate} acak oleh client.
+	AES key (\verb|aes_key|) dan AES nonce (\verb|aes_nonce|) juga dienkripsi menggunakan \verb|pre_public_key| pasien, menghasilkan pasangan \verb|encrypted_aes_key_nonce| dan \verb|capsule|.
+	AES-GCM merupakan algoritma kriptografis simetrik sehingga kunci untuk melakukan enkripsi akan sama dengan kunci untuk melakukan dekripsi.
+	\item Semua elemen ini (\verb|capsule|, pasangan kunci dan nonce AES yang telah dienkripsi (\verb|encrypted_aes_key_nonce|), \verb|enc_private_administrative_data|, dan data administratif yang bersifat publik (\verb|public_administrative_data|)) dikumpulkan sebagai objek \textit{administrative\_metadata} dan disimpan pada \textit{ledger} IOTA sebagai metadata administratif\@.
+	\item Client menginisiasi transaksi bersponsor untuk menyimpan \verb|administrative_metadata| pada IOTA\@. 
+	Nama transaksi yang dipakai adalah \texttt{signup} untuk pendaftaran awal dan \verb|update_administrative_data| untuk melengkapi atau memperbarui data administratif. 
+	Transaksi ini dijalankan melalui \textit{gas station} server sehingga client tidak perlu mengeluarkan biaya gas.
+	\item Setelah \texttt{signup} selesai, \verb|iota_key_pair| dan 32 bytes awal dari \verb|seed| dienkripsi pada sisi client menggunakan AES-GCM, di mana kunci enkripsi adalah 6 digit PIN pasien dan \textit{nonce} dibangkitkan secara acak. 
+	Perlu dicatat bahwa \textit{nonce} untuk enkripsi \verb|iota_key_pair| berbeda dari \textit{nonce} untuk enkripsi setengah bagian awal \verb|seed|.
+	Hasil enkripsi disimpan sebagai \verb|enc_iota_key_pair| dan \verb|enc_first_half_seed|.
+	\item Selanjutnya, data administratif pasien (publik dan privat), \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|iota_address|, \verb|pre_public_key|, serta \verb|iota_key_pair_nonce| dan \verb|first_half_seed_nonce| disimpan di penyimpanan aman perangkat (\textit{secure storage}).
+\end{enumerate}
+
+Pendaftaran akun personel fasilitas pelayanan kesehatan mengikuti langkah yang serupa dengan pendaftaran pasien, dengan beberapa perbedaan.
+identifikasi personel menggunakan \verb|CID| (Content Identifier), bukan \verb|NIK|, dan CID harus diaktivasi dulu oleh admin fasyankes. 
+Secara teknis, semua artefak administratif (termasuk \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|pre_public_key|, dan \textit{nonce} terkait) disiapkan oleh \textit{client} personel dan kemudian disimpan pada IOTA melalui transaksi bersponsor yang sama seperti pada pendaftaran pasien.
+
+\subsection{Mekanisme Login Akun}
+
+Setelah pasien atau personel fasyankes memiliki akun, mereka dapat melakukan login untuk mengakses operasi-operasi yang diizinkan pada tabel~\ref{decmed-actor-privileges}.
+
+\begin{enumerate}
+\item Pasien/personal fasyankes memasukkan 6 digit PIN (untuk membongkar \textit{secure storage}), konfirmasi 6 digit PIN, frasa pemulihan (\verb|seed_words|), dan \verb|NIK|. 
+Pada mekanisme login, PIN tidak harus sama dengan PIN pada pendaftaran, karena PIN bersifat lokal pada perangkat dan hanya hidup di memori selama sesi autentikasi. 
+PIN tidak disimpan di server manapun.
+\item Client merekonstruksi \verb|seed| (64 bytes) dari kombinasi \verb|seed_words| dan \verb|NIK|. 
+Kemudian dari \verb|seed| diregenerasi \verb|iota_key_pair|, \verb|iota_address|, serta \verb|pre_secret_key|/\verb|pre_public_key|. 
+Karena proses regenerasi deterministik, hasilnya konsisten antar perangkat yang menggunakan kombinasi frasa pemulihan dan \verb|NIK| yang sama.
+\item Client melakukan pemeriksaan pendaftaran terhadap jaringan IOTA menggunakan mekanisme \textit{inspect transaction} (tanpa biaya gas) untuk memastikan apakah \verb|iota_address| yang dihasilkan telah terdaftar.
+\item Jika pemeriksaan menunjukkan akun terdaftar, client akan menyiapkan kembali artefak yang harus disimpan secara lokal: \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|iota_address|, \verb|pre_public_key|, \verb|iota_key_pair_nonce|, dan \verb|first_half_seed_nonce|. 
+Untuk menyimpan ulang artefak yang terenkripsi, client menggunakan PIN sebagai kunci simetris AES (PIN digunakan sebagai key dan nonce di-generate oleh \textit{client}).
+\item Setelah login berhasil, data administratif pasien (baik publik maupun privat), bersama artefak terenkripsi dan nonce yang terkait (seperti pada tahap pendaftaran), disimpan atau diperbarui pada \textit{secure storage}.
+\end{enumerate}
+
+\subsection{Mekanisme Pemberian Akses Baca dan Tulis Rekam Medis ke Tenaga Kesehatan}\label{mekanisme-pemberian-akses}
+
+Tenaga kesehatan memerlukan pemberian akses dari pasien untuk mengakses dan melakukan penambahan data klinis rekam medis \parencite{Hari_2025}.
+
+\begin{enumerate}
+	\item Pasien melakukan scan QR code milik tenaga kesehatan. 
+	Kode QR itu berisi data \verb|iota_address| dan \verb|pre_public_key| milik tenaga kesehatan.
+	\item \verb|iota_address| dan \verb|pre_public_key| dari tenaga kesehatan digunakan untuk memperoleh data administratif publik milik tenaga kesehatan yang tersimpan pada jaringan IOTA\@. 
+	Tujuannya agar pasien dapat mengonfirmasi kode QR yang dimiliki memang benar merupakan milik tenaga kesehatan dari fasyankes yang bersesuaian menggunakan mekanisme \textit{inspect transaction}.
+	\item Data administratif publik tenaga kesehatan yang diperoleh dari jaringan IOTA selanjutnya ditampilkan oleh client pasien.
+	Pasien akan mendapatkan dialog konfirmasi untuk menyetujui memberikan akses.
+	\item Jika pasien menyetujui pemberian akses, maka client akan melakukan HTTP request \texttt{POST /nonce}  ke proxy re-encryption server. 
+	Request tersebut dilakukan dengan tujuan untuk memverifikasi apakah \verb|iota_address| yang diberikan sudah terdaftar sebagai pasien dan memperoleh 64 bytes nonce untuk mekanisme autentikasi pasien selanjutnya.
+	Nonce disimpan di Redis selama 3 menit dan hanya bisa digunakan sekali.
+	\item Setelah client pasien menerima nonce, client pasien akan membangkitkan \textit{seed} acak baru berukuran 64 bytes. 
+	\textit{Seed} tersebut selanjutnya digunakan untuk membangkitkan \verb|med_pre_secret_key| dan \verb|med_pre_public_key|. 
+	\verb|med_pre_secret_key| dan \verb|med_pre_public_key| tersebut digunakan sebagai kunci dalam mekanisme proxy re-encryption agar tenaga kesehatan dapat mendekripsi \verb|aes_key| dan \verb|aes_nonce| dari data klinis pasien. 
+	\item 32 bytes awal \textit{seed} kemudian dienkripsi dengan menggunakan \verb|pre_public_key| milik tenaga kesehatan (\verb|medical_personnel_pre_public_key|). 
+	Hasil dari proses enkripsi tersebut adalah \verb|enc_first_half_seed_med| dan \verb|first_half_seed_med_capsule|. 
+	Kedua \textit{half seed} ini berbeda dengan \textit{half seed} milik pasien, karena \textit{half seed} ini berasal dari \textit{seed medical} yang di-generate khusus untuk akses tenaga kesehatan saat ini.
+	Nilai-nilai ini akan memungkinkan client tenaga kesehatan untuk merekonstruksi \verb|med_pre_secret_key| secara lokal tanpa pernah melihat seed turunan dalam bentuk \textit{plaintext} di jaringan.
+	\item Client akan membangkitkan \verb|med_signer_pre_secret_key| dan \verb|med_signer_pre_public_key| acak yang juga digunakan untuk proses proxy re-encryption.
+	Signer ini akan digunakan nantinya untuk memverifikasi cfrag di proses proxy re-encryption (fragment re-encryption yang akan digunakan untuk \textit{reconstruct} decryption key di sisi tenaga kesehatan).
+	\item Client kemudian melakukan komputasi \verb|kfrag| dengan menggunakan \verb|pre_public_key| milik pasien, \verb|med_pre_public_key|, dan \verb|med_signer_pre_secret_key|. 
+	\verb|med_kfrag| adalah fragment dari pre-encryption key yang digunakan untuk mengenkapsulasi \verb|capsule| dan menghasilkan \verb|med_cfrag|. 
+	\verb|med_cfrag| adalah fragment yang ketika dikombinasikan dengan \textit{private key} tenaga kesehatan akan dapat mendekripsi nilai \verb|aes_key| dan \verb|aes_nonce| nantinya, tanpa membutuhkan \textit{private key} pasien.
+	\item Client pasien membuat \textit{signature} dengan menandatangani nonce menggunakan \verb|pre_secret_key| pasien.
+	\textit{Signature} ini membuktikan bahwa request berikutnya benar berasal dari pasien yang menerima nonce tersebut.
+	\item Proxy memverifikasi \textit{signature} terhadap nonce yang tersimpan di Redis menggunakan \verb|patient_pre_public_key|.
+	Jika valid, proxy menghapus nonce dari Redis (once-only).
+	Proxy kemudian melakukan \textit{move call} ke IOTA untuk memastikan bahwa \verb|medical_personnel_iota_address| benar terdaftar sebagai MedicalPersonnel.
+	\item Jika role valid, proxy membangkitkan dua access token JWT\@:
+	\begin{itemize}
+		\item token baca (\textit{read}) dengan role \verb|MedicalPersonnel|, purpose dengan value \verb|Read|, dan waktu kedaluarsa 15 menit.
+		\item token tulis/edit (\textit{update}) dengan role \verb|MedicalPersonnel|, purpose dengan value \verb|Update| dan waktu kedaluarsa 2 jam.
+	\end{itemize}
+	\item Proxy menyimpan material PRE klinis berikut ke Redis dengan TTL 2 jam: \verb|enc_first_half_seed_med|, \verb|first_half_seed_med_capsule|, \verb|patient_pre_public_key|, \verb|med_kfrag|, dan \verb|med_signer_pre_public_key|.
+	\item Kedua \textit{access token} (\verb|Read| dan \verb|Update|) dikirim ke client pasien sebagai respons \verb|POST /keys|.
+	\item Client pasien membuat dua buah akses metadata (\verb|capability|) untuk tenaga kesehatan, satu untuk read dan satu untuk update. 
+	Akses metadata ini berisi \textit{access token} (untuk \textit{read} atau \textit{update}), nama pasien, \verb|iota_address| pasien, dan \verb|patient_pre_public_key|.
+	\item Kedua akses metadata tersebut dienkripsi menggunakan \verb|medical_personnel_pre_public_key|, sehingga hanya dapat didekripsi oleh tenaga kesehatan dengan \verb|medical_personnel_pre_secret_key| yang sesuai.
+	\item Client pasien kemudian menyimpan akses metadata tersebut pada jaringan IOTA dengan menginisialisasi transaksi bersponsor (sponsored tx: \verb|create_access|).
+\end{enumerate}
+
+\subsection{Mekanisme Akses Rekam Medis oleh Tenaga Kesehatan}
+
+Tenaga kesehatan dapat mengakses data administratif dan data klinis pasien setelah pasien memberikan \textit{capability} bertipe baca \parencite{Hari_2025}.
+
+\begin{enumerate}
+    \item Tenaga kesehatan membuka halaman akses pada client personel fasyankes.
+    Client kemudian menginisialisasi transaksi bersponsor \verb|cleanup_read_access| melalui \textit{gas station} server.
+    Transaksi ini bertujuan untuk membersihkan entri akses baca yang telah kedaluwarsa pada jaringan IOTA\@.
+    
+    \item Setelah transaksi \verb|cleanup_read_access| berhasil dieksekusi, client melakukan \textit{query} terhadap seluruh akses baca yang dimiliki oleh tenaga kesehatan.
+    Query dilakukan melalui \textit{move call} ke jaringan IOTA pada mode \textit{inspect transaction}.
+    Fungsi \textit{smart contract} yang dipanggil akan mengembalikan seluruh akses metadata bertipe Read yang dimiliki oleh tenaga kesehatan.
+    
+    \item Setiap akses metadata yang diperoleh kemudian didekripsi pada sisi client tenaga kesehatan menggunakan \verb|medical_personnel_pre_secret_key| (ingat kembali di subbab~\ref{mekanisme-pemberian-akses} akses metadata dienkripsi memakai \verb|pre_public_key| tenaga kesehatan).
+    Dari metadata yang berhasil didekripsi, client memperoleh informasi seperti nama pasien, \verb|patient_iota_address|, \verb|access_token_read|, dan \verb|patient_pre_public_key|.
+    
+    \item Nama pasien dari masing-masing akses metadata ditampilkan dalam bentuk daftar pada halaman akses.
+    Tenaga kesehatan kemudian dapat memilih salah satu pasien yang ingin diakses data rekam medisnya.
+    
+    \item Setelah pasien dipilih, client tenaga kesehatan mengirim request \verb|GET /medical-record| ke \textit{proxy re-encryption server}.
+    Request tersebut memuat \verb|patient_iota_address| dan \verb|index| sebagai parameter \textit{query}, serta \verb|access_token_read| pada header autentikasi bertipe Bearer.
+    Parameter \verb|index| berfungsi sebagai identitas entri rekam medis pasien yang ingin dibaca karena satu pasien dapat memiliki beberapa entri rekam medis, sedangkan client hanya menampilkan satu entri dalam satu waktu.
+
+    \item Proxy kemudian memvalidasi \verb|access_token_read|.
+    Token dianggap valid jika belum kedaluwarsa, memiliki klaim \verb|role = MedicalPersonnel|, dan memiliki klaim \verb|purpose = Read|.
+    
+    \item Setelah token valid, proxy memvalidasi parameter query yang diberikan, lalu mengambil material PRE yang sebelumnya telah disimpan pada Redis pada saat pemberian akses oleh pasien.
+    Material tersebut mencakup \verb|enc_first_half_seed|, \verb|first_half_seed_capsule|, \verb|med_pre_public_key|, \verb|patient_pre_public_key|, \verb|kfrag|, dan \verb|signer_pre_public_key|.
+    
+    \item Proxy selanjutnya melakukan \textit{move call} ke jaringan IOTA pada mode \textit{inspect transaction} untuk memperoleh metadata administratif dan metadata klinis milik pasien.
+    \textit{Move call} ini memanggil method \verb|getmedicalrecord| yang sekaligus memvalidasi bahwa tenaga kesehatan memang memiliki akses baca yang sah terhadap data pasien tersebut.
+    Validasi masa berlaku akses memanfaatkan \textit{Clock} pada jaringan IOTA\@.
+    
+    \item Dari jaringan IOTA, proxy memperoleh metadata administratif pasien, termasuk \verb|enc_private_administrative_data|, \verb|enc_aes_key_nonce| untuk data administratif, dan \verb|aes_key_nonce_capsule| untuk data administratif.
+    Proxy juga memperoleh metadata klinis pasien, termasuk \verb|CID|, \verb|enc_aes_key_nonce| untuk data klinis, \verb|aes_key_nonce_capsule| untuk data klinis, serta metadata lain yang terkait dengan entri rekam medis tersebut.
+    
+    \item Selanjutnya, proxy melakukan proses \textit{re-encryption} terhadap \verb|enc_aes_key_nonce| yang diperoleh dari metadata.
+    Proses ini melibatkan \verb|kfrag| yang tersimpan di Redis dan \verb|aes_key_nonce_capsule| dari metadata, dengan hasil berupa \verb|cfrag|.
+    Nilai \verb|cfrag| ini nantinya digunakan oleh client tenaga kesehatan untuk memperoleh \verb|aes_key| dan \verb|aes_nonce| tanpa membutuhkan \verb|pre_secret_key| utama milik pasien.
+    
+    \item Selain melakukan \textit{re-encryption}, proxy juga mengambil \verb|enc_medical_data| (data kinis rekam medis pasien yang terenkripsi, akan dijelaskan lebih lanjut di subbab~\ref{penambahan-rekam-medis}) milik pasien dari IPFS menggunakan \verb|CID| yang diperoleh dari metadata klinis.
+    
+    \item Setelah semua data berhasil dikumpulkan, proxy mengirimkan respons ke client tenaga kesehatan.
+    Respons tersebut memuat \verb|cfrag|, \verb|med_pre_public_key|, \verb|first_half_seed_capsule|, \verb|enc_first_half_seed|, \verb|enc_private_administrative_data|, \verb|enc_medical_data|, \verb|enc_aes_key_nonce| untuk administratif, \verb|enc_aes_key_nonce| untuk klinis, \verb|patient_pre_public_key|, \verb|aes_key_nonce_capsule|, dan \verb|signer_pre_public_key|.
+    
+    \item Pada sisi client tenaga kesehatan, \verb|enc_first_half_seed| didekripsi menggunakan \verb|medical_personnel_pre_secret_key| dan \verb|first_half_seed_capsule|.
+    Hasil dekripsi berupa 32 byte seed turunan yang kemudian digunakan untuk membangkitkan \verb|med_pre_secret_key| dan \verb|med_pre_public_key|.
+    
+    \item Selanjutnya, client tenaga kesehatan menggunakan \verb|med_pre_secret_key| bersama material PRE lain, yaitu \verb|cfrag|, \verb|aes_key_nonce_capsule|, \verb|enc_aes_key_nonce|, dan \verb|signer_pre_public_key|, untuk memperoleh \verb|aes_key| dan \verb|aes_nonce| yang digunakan dalam enkripsi data administratif dan data klinis pasien.
+    
+    \item Setelah \verb|aes_key| dan \verb|aes_nonce| diperoleh, client mendekripsi \verb|enc_private_administrative_data| menjadi data administratif pasien dan \verb|enc_medical_data| menjadi data klinis pasien.
+    
+    \item Data administratif dan data klinis yang telah berhasil didekripsi kemudian ditampilkan pada halaman detail akses client tenaga kesehatan.
+    Pada halaman ini, tenaga kesehatan juga dapat menavigasi entri rekam medis pasien menggunakan tombol \textit{next} atau \textit{previous}, karena entri klinis ditampilkan satu per satu berdasarkan waktu pembuatannya.
+\end{enumerate}
+
+\subsection{Mekanisme Penambahan Rekam Medis oleh Tenaga Kesehatan}\label{penambahan-rekam-medis}
+
+Ketika tenaga kesehatan diberikan akses oleh pasien, tenaga kesehatan akan memiliki \verb|pre_public_key| milik pasien yang berasal dari akses metadata.
+Setelah melakukan pemeriksaan terhadap pasien, tenaga kesehatan dapat menambahkan entri rekam medis baru apabila sebelumnya telah memperoleh akses tulis dari pasien.
+Pada DecMed, penambahan entri rekam medis baru hanya dapat dilakukan menggunakan \textit{access token} bertipe Update yang masih berlaku dan dibatasi maksimal satu kali untuk setiap \textit{grant} akses Update yang diberikan \parencite{Hari_2025}.
+
+\begin{enumerate}
+    \item Sebelum dapat menambahkan entri rekam medis baru, tenaga kesehatan harus terlebih dahulu memperoleh akses tulis dari pasien.
+    Akses ini direpresentasikan oleh \verb|access_token_update| yang memuat klaim \verb|role = MedicalPersonnel| dan \verb|purpose = Update| dengan waktu kedaluwarsa sekitar 2 jam.
+    
+    \item Pada halaman detail akses tulis, client personel fasyankes menampilkan form penambahan entri rekam medis baru apabila tenaga kesehatan belum pernah membuat entri baru untuk grant akses tersebut.
+    
+    \item Tenaga kesehatan kemudian mengisi form data klinis pasien sesuai hasil pemeriksaan yang dilakukan.
+    Client selanjutnya memvalidasi seluruh input data klinis yang dimasukkan sebelum proses penyimpanan dilanjutkan.
+    
+    \item Setelah data klinis dinyatakan valid, client tenaga kesehatan membangkitkan \verb|aes_key| dan \verb|aes_nonce| secara acak.
+    Kedua nilai ini digunakan dalam algoritma AES-GCM untuk mengenkripsi data klinis pasien.
+    
+    \item Proses enkripsi dengan AES-GCM menghasilkan \verb|enc_medical_data| sebagai bentuk terenkripsi dari data klinis pasien.
+    
+    \item Selanjutnya, \verb|aes_key| dan \verb|aes_nonce| yang digunakan untuk mengenkripsi data klinis tersebut dienkripsi kembali menggunakan \verb|patient_pre_public_key|.
+    Proses enkripsi PRE ini menghasilkan \verb|enc_aes_key_nonce| dan \verb|capsule|.
+    
+    \item Dengan demikian, meskipun entri rekam medis baru dibuat oleh tenaga kesehatan, pasangan \verb|aes_key| dan \verb|aes_nonce| tetap dibungkus menggunakan kunci publik PRE milik pasien.
+    Mekanisme ini memastikan bahwa kontrol kriptografis utama atas data klinis baru tetap berada pada domain pasien.
+    
+    \item Client tenaga kesehatan kemudian mengirim request \verb|POST /medical-record| ke \textit{proxy re-encryption server}.
+    Request tersebut menggunakan header autentikasi Bearer yang memuat \verb|access_token_update| serta request body yang berisi \verb|patient_iota_address|, \verb|enc_medical_data|, \verb|enc_aes_key_nonce|, dan \verb|capsule|.
+    
+    \item Proxy terlebih dahulu memvalidasi Bearer token yang dikirimkan pada header request.
+    Request dianggap valid jika dan hanya jika token belum kedaluwarsa, memiliki klaim \verb|role = MedicalPersonnel|, dan memiliki klaim \verb|purpose = Update|.
+    
+    \item Setelah token dinyatakan valid, proxy memvalidasi request body yang diberikan oleh client tenaga kesehatan.
+    
+    \item Jika request body valid, proxy menyimpan \verb|enc_medical_data| ke IPFS\@.
+    Dari proses penyimpanan tersebut, proxy memperoleh sebuah \verb|CID| yang merepresentasikan lokasi data klinis terenkripsi pada IPFS\@.
+    
+    \item Selain memperoleh \verb|CID|, proxy juga merekam timestamp saat proses penambahan entri dilakukan.
+    Timestamp ini digunakan sebagai waktu pembuatan entri rekam medis baru.
+    
+    \item Proxy kemudian membentuk \textit{medical metadata} yang sedikitnya terdiri atas \verb|CID|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan timestamp pembuatan (\verb|created_at|).
+    
+    \item Metadata klinis tersebut kemudian disimpan ke jaringan IOTA melalui transaksi bersponsor \verb|createmedicalrecord| dengan bantuan \textit{gas station} server.
+    Gas station server akan melanjutkan eksekusi transaksi tersebut ke jaringan IOTA sehingga client tidak perlu membayar gas fee secara langsung.
+    
+    \item Pada sisi \textit{smart contract}, DecMed akan memvalidasi bahwa tenaga kesehatan memang memiliki akses Update yang sah terhadap pasien yang bersangkutan.
+    Selain itu, \textit{smart contract} juga membatasi bahwa untuk satu grant akses Update yang sama, pembuatan entri rekam medis baru hanya dapat dilakukan maksimal satu kali.
+    
+    \item Jika batas tersebut dilanggar, proses akan gagal dan sistem akan mengembalikan error \verb|EMedicalRecordCreationLimit|.
+    Jika pasien yang dituju tidak pernah memberikan akses, proses akan gagal dengan error \verb|EAccessNotFound|.
+    Jika akses tulis telah melewati batas waktu, proses akan gagal dengan error \verb|EAccessExpired|.
+    
+    \item Setelah transaksi berhasil dieksekusi, entri rekam medis baru dinyatakan berhasil ditambahkan.
+    Data klinis yang terenkripsi tersimpan pada IPFS, sedangkan metadata klinis dan informasi kontrol aksesnya tersimpan pada jaringan IOTA\@.
+    
+    \item Setelah entri baru berhasil dibuat, tenaga kesehatan tidak dapat lagi menambahkan entri baru kedua pada grant akses Update yang sama.
+    Selama durasi akses Update masih berlaku, tenaga kesehatan hanya dapat melakukan edit terhadap entri yang baru saja dibuat tersebut.
+\end{enumerate}
