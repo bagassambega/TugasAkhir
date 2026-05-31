@@ -24,16 +24,16 @@ Perkembangan perangkat \textit{wearable} memungkinkan pengumpulan data fisiologi
 Data tersebut memberikan perspektif longitudinal yang tidak dapat diperoleh hanya dari rekam medis berbasis kunjungan klinis \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 Dengan demikian, integrasi PGHD berpotensi mengubah DecMed menjadi sistem yang lebih \textit{patient-centric} dan proaktif.
 
-Namun, integrasi PGHD ke dalam arsitektur DecMed tidaklah trivial dan menghadirkan sejumlah tantangan teknis.
-Tantangan pertama adalah heterogenitas format data dari perangkat \textit{wearable}, yang umumnya menggunakan format \textit{proprietary}, sehingga memerlukan standardisasi ke dalam format interoperabel seperti \textit{Fast Healthcare Interoperability Resources} (FHIR) \parencite{Abedian_2025_Garmin_FHIR_PGHD_Integration,HL7_FHIR_2025}.
+Namun, integrasi PGHD ke dalam arsitektur DecMed memberikan sejumlah tantangan.
+Tantangan pertama adalah heterogenitas format data dari perangkat \textit{wearable}, yang umumnya menggunakan format \textit{proprietary}, sehingga memerlukan standardisasi \parencite{Abedian_2025_Garmin_FHIR_PGHD_Integration,HL7_FHIR_2025}.
 Tantangan kedua adalah kebutuhan akan arsitektur \textit{offline-first}, mengingat perangkat pasien tidak selalu terhubung ke jaringan secara stabil, sehingga diperlukan mekanisme penyimpanan lokal dan sinkronisasi bertahap \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 Tantangan ketiga adalah karakteristik data PGHD yang bersifat \textit{time-series} dengan frekuensi tinggi, yang tidak efisien jika langsung disimpan secara \textit{on-chain}, sehingga diperlukan mekanisme \textit{batching} dan pemanfaatan IPFS sebagai penyimpanan utama \parencite{Wen_2024_Performance_Blockchain}.
 
-Selain itu, terdapat tantangan krusial terkait otentisitas dan \textit{provenance} data.
+Selain itu, terdapat tantangan terkait otentisitas dan mekanisme untuk menjamin \textit{non-repudiation} data.
 Karena PGHD berasal langsung dari pasien, data tersebut tidak memiliki tingkat kepercayaan yang sama dengan data klinis yang dicatat oleh tenaga kesehatan \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
 Kurangnya mekanisme verifikasi asal-usul data menjadi salah satu hambatan utama dalam pemanfaatan PGHD untuk pengambilan keputusan klinis \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
-Oleh karena itu, diperlukan pendekatan berbasis kriptografi—seperti \textit{digital signature} menggunakan identitas kriptografis pasien—untuk menjamin bahwa data yang dikirim benar-benar berasal dari sumber yang sah dan tidak mengalami manipulasi \parencite{Ahmed_2023_Data_Provenance}.
+Oleh karena itu, diperlukan pendekatan berbasis kriptografi untuk menjamin bahwa data yang dikirim benar-benar berasal dari sumber yang sah dan tidak mengalami manipulasi \parencite{Ahmed_2023_Data_Provenance}.
 
-Berdasarkan permasalahan tersebut, penelitian ini bertujuan untuk merancang ekstensi pipeline integrasi PGHD pada ekosistem DecMed.
-Pipeline yang diusulkan mencakup mekanisme pengumpulan data secara \textit{offline-first}, proses \textit{batching} untuk efisiensi transmisi, standardisasi data ke dalam format FHIR, enkripsi di sisi klien, serta validasi \textit{provenance} melalui \textit{smart contract} pada jaringan IOTA.
+Berdasarkan permasalahan tersebut, penelitian ini bertujuan untuk merancang ekstensi \textit{pipeline} integrasi PGHD pada ekosistem DecMed.
+\textit{Pipeline} yang diusulkan mencakup mekanisme pengumpulan data secara \textit{offline-first}, proses \textit{batching} untuk efisiensi transmisi, standardisasi data, enkripsi di sisi klien, serta validasi integritas dan \textit{non-repudiation} PGHD pada sistem DecMed\@.
 Dengan demikian, penelitian ini diharapkan dapat memperluas kapabilitas DecMed dari sistem yang bersifat \textit{provider-centric} menjadi platform kesehatan yang mampu mengakomodasi data kontinu yang dihasilkan langsung oleh pasien.

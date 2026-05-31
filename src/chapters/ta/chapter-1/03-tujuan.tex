@@ -9,7 +9,7 @@ Secara khusus, penelitian ini bertujuan untuk:
     
     \item Merancang dan mengimplementasikan mekanisme \textit{offline-first state management} dan \textit{batching} pada aplikasi klien pasien untuk memastikan pengelolaan data yang efisien dan tahan terhadap gangguan konektivitas.
     
-    \item Mengembangkan mekanisme verifikasi \textit{provenance} data PGHD berbasis \textit{digital signature} pada \textit{smart contract} IOTA untuk menjamin integritas dan \textit{non-repudiation} data.
+    \item Mengembangkan mekanisme verifikasi data PGHD untuk menjamin integritas dan \textit{non-repudiation} data.
 \end{enumerate}
 
 Keterukuran keberhasilan Tugas Akhir ini bisa dilihat dari ketercapaian parameter berikut:
@@ -19,5 +19,5 @@ Keterukuran keberhasilan Tugas Akhir ini bisa dilihat dari ketercapaian paramete
 
     \item Saat aplikasi berjalan secara luring, data stabil tersimpan di basis data lokal. Saat daring, sistem mampu mengirimkan data secara \textit{batching} tanpa adanya \textit{data loss} ataupun duplikasi dan penurunan performa signifikan pada aplikasi klien, yang didefinisikan dengan waktu respon dalam rentang waktu 5 detik untuk \textit{input event} dan 20 detik untuk \textit{broadcast receiver} \parencite{Android_keep_your_app_responsive}.
 
-    \item Evaluasi \textit{smart contract} dapat menerima data dengan \textit{signature} yang valid, menolak data dengan \textit{signature} yang tidak valid dan menjamin sifat \textit{non-repudiation} terhadap data PGHD\@.
+    \item Mekanisme verifikasi yang diimplementasikan mampu menerima data dengan \textit{signature} yang valid, menolak data dengan \textit{signature} yang tidak valid, dan menjamin sifat \textit{non-repudiation} terhadap data PGHD\@.
 \end{enumerate}

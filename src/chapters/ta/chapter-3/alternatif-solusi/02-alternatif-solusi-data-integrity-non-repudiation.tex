@@ -1,0 +1,57 @@
+\subsection{Alternatif Mekanisme Data Integrity dan Non-Repudiation}
+
+Terdapat beberapa pendekatan kriptografi yang dapat dipertimbangkan untuk menjamin integritas data dan \textit{non-repudiation} pada entri PGHD dalam ekosistem DecMed.
+Parameter-parameter berikut digunakan sebagai dasar perbandingan mekanisme, mengikuti pola evaluasi yang diterapkan pada komponen lain di DecMed:
+
+\begin{enumerate}
+    \item \textbf{Jaminan \textit{non-repudiation}.} 
+    Kemampuan mekanisme untuk membuktikan secara kriptografis bahwa data dibuat oleh entitas tertentu, sehingga entitas tersebut tidak dapat menyangkal kepengarangan data tersebut (\textit{non-repudiation}).
+    \item \textbf{Jaminan integritas data.} 
+    Kemampuan mekanisme untuk mendeteksi setiap modifikasi tidak sah terhadap data setelah data ditandatangani \textit{data integrity}.
+    \item \textbf{Kebutuhan infrastruktur terpusat.} 
+    Apakah mekanisme memerlukan entitas terpusat seperti CA (\textit{Certificate Authority}) atau \textit{key server} terpercaya yang bertentangan dengan prinsip desentralisasi dan \textit{trustless} di DecMed.
+    \item \textbf{Kesesuaian dengan keypair yang sudah ada pada DecMed.}
+    Apakah mekanisme dapat memanfaatkan \textit{keypair} kriptografis pasien (\verb|iota_key_pair|) yang sudah dibangkitkan pada proses registrasi akun DecMed, sehingga tidak memerlukan manajemen kunci tambahan.
+    \item \textbf{Kesesuaian verifikasi pada smart contract.} 
+    Kemampuan mekanisme untuk diverifikasi secara \textit{on-chain} oleh \textit{smart contract} DecMed pada jaringan IOTA Rebased (MoveVM).
+\end{enumerate}
+
+Tabel~\ref{tab:perbandingan-mekanisme-security} menyajikan perbandingan keempat mekanisme berdasarkan parameter evaluasi yang telah ditetapkan.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Perbandingan mekanisme integritas data dan \textit{non-repudiation}}\label{tab:perbandingan-mekanisme-security}
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{8pt}
+    \rowcolors{2}{white}{white}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth} >{\centering\arraybackslash}p{0.14\textwidth} >{\centering\arraybackslash}p{0.14\textwidth} >{\centering\arraybackslash}p{0.14\textwidth} >{\centering\arraybackslash}p{0.14\textwidth} >{\centering\arraybackslash}p{0.14\textwidth}} % chktex 44
+        \rowcolor[HTML]{DDEBF7}
+        \textbf{Mekanisme} & \textbf{P1} & \textbf{P2} & \textbf{P3} & \textbf{P4} & \textbf{P5} \\
+        \midrule
+        Hash saja (SHA-256) & Ya & Tidak & Tidak & Tidak & Tidak \\
+        \midrule
+        MAC / HMAC & Ya & Tidak & Tidak & Tidak & Tidak \\
+        % \midrule
+        % PKI + Digital Signature & Ya & Ya & Ya & Tidak & Parsial \\
+        \midrule
+        Digital Signature & Ya & Ya & Tidak & Ya & Ya \\
+        \bottomrule
+    \end{tabularx}
+\bigskip
+
+\noindent
+\small Keterangan: P1~=~Jaminan integritas data; P2~=~Jaminan \textit{non-repudiation};
+P3~=~Membutuhkan infrastruktur terpusat; P4~=~Kompatibel dengan keypair DecMed;
+P5~=~Dapat diverifikasi \textit{on-chain}.
+\end{table}
+
+Berdasarkan perbandingan pada Tabel~\ref{tab:perbandingan-mekanisme-security}, mekanisme \textit{digital signature} memakai pasangan kunci publik-privat (\textit{keypair}) pasien dipilih sebagai mekanisme yang akan diimplementasikan. %chktex 8
+Pilihan ini didasarkan pada beberapa pertimbangan.
+
+Pertama, hash kriptografis yang berdiri sendiri tidak dapat memenuhi kebutuhan \textit{non-repudiation} karena tidak mengikat identitas pengirim pada data.
+Penyerang yang memodifikasi data dapat pula mengganti nilai hash secara bersamaan \parencite{banerjee2025blockchain}. 
+Kedua, mekanisme MAC/HMAC bergantung pada kunci simetris yang dimiliki bersama oleh kedua pihak, sehingga tidak dapat memberikan jaminan \textit{non-repudiation}: mana pun dari kedua pihak dapat menghasilkan MAC yang valid \parencite{NIST_glossary_nonrepudiation}. 
+Ketiga, mekanisme PKI bergantung pada otoritas sertifikasi (\textit{Certificate Authority}) terpusat yang bertentangan dengan prinsip desentralisasi DecMed dan menambahkan ketergantungan infrastruktur yang tidak ada pada sistem saat ini.
+
+Digital signature berbasis \textit{keypair} asimetris pasien merupakan pilihan yang paling sesuai karena memenuhi seluruh parameter: memberikan jaminan integritas dan \textit{non-repudiation} sekaligus, tidak bergantung pada infrastruktur terpusat apapun, memanfaatkan \texttt{iota\_key\_pair} yang sudah ada pada ekosistem DecMed tanpa memerlukan manajemen kunci tambahan, dan dapat diverifikasi secara \textit{on-chain} oleh smart contract di jaringan IOTA Rebased \parencite{NIST_FIPS186-5, lei2023analysis, banerjee2025blockchain}. 
+Proses penandatanganan dilakukan di sisi klien pasien menggunakan kunci privat (\texttt{iota\_private\_key}), sedangkan verifikasi dilakukan oleh smart contract DecMed menggunakan kunci publik pasien yang telah terdaftar on-chain pada saat registrasi akun.
