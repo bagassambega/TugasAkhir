@@ -16,15 +16,16 @@ Penelitian tersebut mengklasifikasikan teknik-teknik provenance menjadi empat ka
 
 Secara umum, penelitian-penelitian di atas menunjukkan bahwa:
 \begin{enumerate}
-  \item Kombinasi IOTA, penyimpanan terdistribusi, dan kriptografi telah dieksplorasi untuk PHR dan arsitektur e-health terdistribusi \parencite{Akbulut_2020_iota_phr,Elevating_2025_iota_ehealth},
-  \item Integrasi PGHD ke sistem RME konvensional memerlukan standar interoperabilitas dan adaptasi alur kerja, tetapi saat ini masih didominasi pendekatan terpusat tanpa DLT \parencite{Tiase2020-PGHD_EHR_Integration,Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR},
-  \item Teknologi blockchain dan DLT mulai digunakan untuk menjamin provenance dan integritas data kesehatan, namun fokus eksplisit pada PGHD dan integrasinya ke RME berbasis IOTA masih sangat terbatas \parencite{Ahmed_2023_Data_Provenance}.
+    \item Kombinasi IOTA, penyimpanan terdistribusi, dan kriptografi telah dieksplorasi untuk PHR dan arsitektur \textit{e-health} terdistribusi \parencite{Ahmed_2023_Data_Provenance,Akbulut_2020_iota_phr},
+    \item Integrasi PGHD ke sistem RME konvensional memerlukan standar interoperabilitas dan adaptasi alur kerja, tetapi saat ini masih didominasi pendekatan terpusat tanpa DLT \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Tiase2020-PGHD_EHR_Integration},
+    \item Teknologi \textit{blockchain} dan DLT mulai digunakan untuk menjamin integritas data dan kepercayaan terhadap sumber data di domain kesehatan, namun fokus eksplisit pada PGHD dan integrasinya ke RME berbasis IOTA masih sangat terbatas \parencite{Ahmed_2023_Data_Provenance}.
 \end{enumerate}
 
-Tesis ini memposisikan diri untuk mengisi celah tersebut dengan merancang dan mengimplementasikan DecMed sebagai sistem RME berbasis IOTA yang:
+Tesis ini memposisikan diri untuk mengisi celah tersebut dengan merancang dan mengimplementasikan ekstensi DecMed sebagai sistem RME berbasis IOTA yang:
 \begin{enumerate}
-  \item Mengintegrasikan PGHD ke dalam rekam medis elektronik melalui kombinasi IOTA dan IPFS,
-  \item Memodelkan data provenance dari sisi perangkat dan sistem eksternal hingga entri RME,
-  \item Menyediakan mekanisme integritas data dan kontrol akses yang berpusat pada pasien di atas infrastruktur buku besar terdistribusi.
+    \item Mengintegrasikan PGHD ke dalam rekam medis elektronik melalui kombinasi IOTA dan IPFS,
+    \item Merancang pipeline pengiriman PGHD yang memastikan data hanya dapat berasal dari pasien yang terautentikasi secara kriptografis, serta
+    \item Menyediakan mekanisme verifikasi integritas data dan \textit{non-repudiation} PGHD yang berpusat pada pasien di atas infrastruktur \textit{distributed ledger}.
 \end{enumerate}
-Pendekatan ini diharapkan dapat memperluas karya-karya sebelumnya dengan memadukan prinsip integrasi PGHD dari literatur RME konvensional dengan karakteristik teknis IOTA dan DLT yang telah dibuktikan layak untuk domain kesehatan.
+
+Pendekatan ini diharapkan dapat memperluas penelitian sebelumnya dengan menyatukan prinsip integrasi PGHD dari literatur RME konvensional dengan karakteristik teknis IOTA dan DLT\@.

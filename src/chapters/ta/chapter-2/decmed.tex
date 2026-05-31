@@ -94,9 +94,9 @@ Mekanisme pendaftaran akun pasien adalah,
 	\item 32 bytes awal dari \textit{seed} digunakan untuk membangkitkan \verb|pre_secret_key| dan \verb|pre_public_key|.
 	\item Data administratif yang bersifat \textit{private} dienkripsi memakai AES-GCM menghasilkan \verb|enc_private_administrative_data|. 
 	Enkripsi ini membutuhkan key (\verb|aes_key|) dan nonce (\verb|aes_nonce|). Key dan nonce di-\textit{generate} acak oleh client.
-	AES key (\verb|aes_key|) dan AES nonce (\verb|aes_nonce|) juga dienkripsi menggunakan \verb|pre_public_key| pasien, menghasilkan pasangan \verb|encrypted_aes_key_nonce| dan \verb|capsule|.
+	AES key (\verb|aes_key|) dan AES nonce (\verb|aes_nonce|) juga dienkripsi menggunakan \verb|pre_public_key| pasien, menghasilkan pasangan \verb|enc_aes_key_nonce| dan \verb|capsule|.
 	AES-GCM merupakan algoritma kriptografis simetrik sehingga kunci untuk melakukan enkripsi akan sama dengan kunci untuk melakukan dekripsi.
-	\item Semua elemen ini (\verb|capsule|, pasangan kunci dan nonce AES yang telah dienkripsi (\verb|encrypted_aes_key_nonce|), \verb|enc_private_administrative_data|, dan data administratif yang bersifat publik (\verb|public_administrative_data|)) dikumpulkan sebagai objek \textit{administrative\_metadata} dan disimpan pada \textit{ledger} IOTA sebagai metadata administratif\@.
+	\item Semua elemen ini (\verb|capsule|, pasangan kunci dan nonce AES yang telah dienkripsi (\verb|enc_aes_key_nonce|), \verb|enc_private_administrative_data|, dan data administratif yang bersifat publik (\verb|public_administrative_data|)) dikumpulkan sebagai objek \textit{administrative\_metadata} dan disimpan pada \textit{ledger} IOTA sebagai metadata administratif\@.
 	\item Client menginisiasi transaksi bersponsor untuk menyimpan \verb|administrative_metadata| pada IOTA\@. 
 	Nama transaksi yang dipakai adalah \texttt{signup} untuk pendaftaran awal dan \verb|update_administrative_data| untuk melengkapi atau memperbarui data administratif. 
 	Transaksi ini dijalankan melalui \textit{gas station} server sehingga client tidak perlu mengeluarkan biaya gas.

@@ -1,0 +1,51 @@
+\subsubsection{Mekanisme Pengiriman PGHD oleh Pasien}\label{subsubsec:pengiriman-pghd}
+
+
+\begin{enumerate}
+    \item \textbf{Pembangkitan kunci penandatanganan PGHD.}
+    Pada saat registrasi akun pasien, selain pasangan kunci IOTA (\verb|iota_key_pair|) dan kunci proxy re-encryption (\verb|pre_public_key|) yang telah dibangkitkan oleh DecMed, klien pasien juga membangkitkan sepasang kunci publik dan kunci privat untuk penandatanganan PGHD menggunakan algoritma ECDSA, menghasilkan \verb|pghd_public_key| dan \verb|pghd_secret_key|. 
+    ECDSA dipilih karena ukuran kuncinya yang lebih kecil namun menawarkan tingkat keamanan yang ekuivalen dengan RSA, sehingga lebih hemat komputasi untuk perangkat pasien.
+    
+    \item \textbf{Publikasi kunci publik ke IOTA.}
+    Kunci publik \verb|pghd_public_key| dikirim dan disimpan pada ledger IOTA sebagai bagian dari metadata identitas pasien. 
+    Dengan demikian, komponen lain di ekosistem DecMed dapat memverifikasi \textit{digital signature} PGHD menggunakan \verb|pghd_public_key| tanpa bergantung pada penyimpanan kunci di sisi klien.
+    
+    \item \textbf{Pembentukan payload plaintext dan \textit{inner signature}.}
+    Ketika data PGHD akan dikirim, klien pasien terlebih dahulu membentuk payload PGHD dalam bentuk plaintext. 
+    Klien kemudian menghitung nilai \textit{hash} plaintext dengan fungsi SHA-256,
+    \[
+        h_{\text{plain}} = \mathrm{SHA256}(\texttt{pghd\_plaintext}),
+    \]
+    dan menghasilkan \textit{digital signature} \verb|pghd_inner_signature| dengan menandatangani \verb|h_plain| menggunakan \verb|pghd_secret_key| melalui algoritma ECDSA\@. 
+    Payload plaintext dan \verb|pghd_inner_signature| kemudian digabungkan ke dalam satu struktur data (field \verb|pghd_data| dan \verb|inner_signature|) sebelum dienkripsi.
+    
+    \item \textbf{Enkripsi payload PGHD.}
+    Struktur data gabungan yang berisi payload PGHD dan \verb|pghd_inner_signature| kemudian dienkripsi menggunakan algoritma AES-GCM dengan kunci simetris acak \verb|aes_key| dan \verb|aes_nonce|, menghasilkan ciphertext \verb|enc_pghd|. 
+    Selanjutnya, \verb|aes_key| dan \verb|aes_nonce| digabungkan dan dienkripsi menggunakan \verb|pre_public_key| milik pasien melalui mekanisme proxy re-encryption, menghasilkan pasangan \verb|enc_aes_key_nonce| dan \verb|capsule| serupa dengan mekanisme penambahan rekam medis oleh tenaga kesehatan.
+    
+    \item \textbf{Pembangkitan \textit{outer digital signature} atas ciphertext.}
+    Untuk menjamin integritas dan \textit{non-repudiation} terhadap ciphertext PGHD di jalur transmisi dan saat dicatat di ledger, klien pasien menghitung nilai \textit{hash} dari \verb|enc_pghd| dengan fungsi SHA-256:
+    \[
+        h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}).
+    \]
+    Nilai \verb|h_cipher| tersebut kemudian ditandatangani menggunakan kunci privat pasien \verb|pghd_secret_key| dengan algoritma ECDSA, sehingga diperoleh \textit{outer digital signature} \verb|pghd_outer_signature|.
+    
+    \item \textbf{Pengiriman ke proxy dan \textit{smart contract}.}
+    Klien pasien mengirimkan payload yang berisi \verb|enc_pghd|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan \verb|pghd_outer_signature| ke proxy. 
+    Proxy tidak melakukan dekripsi terhadap \verb|enc_pghd| maupun \verb|enc_aes_key_nonce|, melainkan meneruskan data tersebut ke \textit{smart contract} DecMed pada jaringan IOTA melalui pemanggilan fungsi \texttt{submit\_pghd}.
+    
+    \item \textbf{Verifikasi \textit{outer digital signature} di \textit{smart contract}.}
+    Setelah menerima permintaan, \textit{smart contract} akan,
+    \begin{enumerate}
+        \item memuat \verb|pghd_public_key| pasien dari state on-chain,
+        \item menghitung kembali nilai \verb|h_cipher| dari \verb|enc_pghd| menggunakan SHA-256, dan
+        \item memverifikasi \verb|pghd_outer_signature| dengan \verb|pghd_public_key| menggunakan algoritma ECDSA\@.
+    \end{enumerate}
+
+    Jika verifikasi gagal, transaksi dibatalkan dan metadata PGHD tidak disimpan di ledger, serta tidak ada instruksi untuk mengunggah \verb|enc_pghd| ke IPFS\@. 
+    Jika verifikasi berhasil, \textit{smart contract} menghasilkan entri metadata PGHD dan memicu komponen off-chain untuk mengunggah \verb|enc_pghd| ke IPFS\@.
+    
+    \item \textbf{Penyimpanan ciphertext di IPFS dan metadata di IOTA.}
+    Komponen off-chain yang memantau event dari \textit{smart contract} akan mengunggah \verb|enc_pghd| ke kluster IPFS dan memperoleh \textit{Content Identifier} (CID). 
+    CID tersebut kemudian dikaitkan dengan entri PGHD pada ledger IOTA bersama dengan \verb|enc_aes_key_nonce|, \verb|capsule|, \verb|pghd_outer_signature|, dan metadata lain (seperti timestamp dan tipe data).
+\end{enumerate}

@@ -1,40 +1,23 @@
-\subsection{Analisis Kebutuhan Keamanan dan Data Provenance}
+\subsection{Analisis Kebutuhan Keamanan dan \textit{Non-Repudiation}}\label{analisis-kebutuhan-keamanan}
 
-Ini menjawab RM3.
+Analisis kebutuhan keamanan berfokus pada menjawab rumusan masalah ketiga, yaitu bagaimana merancang mekanisme untuk memverifikasi integritas data PGHD dan memastikan PGHD berasal dari pasien dalam ekosistem DecMed.
 
-Referensi yang bisa digunakan:
-\begin{itemize}
-    \item Review data provenance di healthcare: pentingnya chain-of-custody, integritas, dan keterlacakan.
-    
-    \item Paper blockchain untuk PGHD / marketplace PGHD: blockchain digunakan untuk menjamin provenance dan auditable trail.
-    
-    \item Review blockchain untuk patient data security: transparansi, immutability, encryption, access control.
-\end{itemize}
+Berbeda dengan data klinis yang dicatat oleh tenaga kesehatan yang terverifikasi, PGHD dihasilkan secara mandiri oleh pasien tanpa pengawasan langsung dari penyedia layanan kesehatan, sehingga tidak secara otomatis memiliki tingkat kepercayaan yang setara \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}. 
+Tanpa mekanisme kriptografis yang secara eksplisit mengikat setiap entri PGHD ke identitas kriptografis pasien yang menghasilkannya, klinisi dan sistem tidak dapat membedakan data yang autentik dengan data yang berpotensi dimanipulasi atau dipalsukan sebelum masuk ke sistem. 
+Kajian terhadap penggunaan kriptografi dan \textit{blockchain} untuk keamanan data kesehatan menunjukkan bahwa pendekatan berbasis \textit{digital signature} diperlukan untuk membuktikan keaslian sumber data dan mendeteksi modifikasi tidak sah \parencite{Ahmed_2023_Data_Provenance,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 
-Hal yang kamu analisis:
-\begin{itemize}
-    \item Risiko jika PGHD tidak ada provenance:
-    \begin{itemize}
-        \item klinisi tidak percaya data,
-        
-        \item potensi manipulasi (user/spoofed device).
-    \end{itemize}
-    
-    \item Keperluan:
-    \begin{itemize}
-        \item mengikat setiap entri PGHD ke identity kriptografis pasien,
-        
-        \item signature harus diverifikasi di smart contract IOTA (MoveVM),
-        
-        \item ledger hanya menyimpan hash/metadata, bukan data plaintext (privasi).
-    \end{itemize}
-\end{itemize}
-
-Output analisis kebutuhan:
+Dari analisis tersebut, kebutuhan fungsional untuk mekanisme keamanan PGHD 
+dirumuskan sebagai berikut:
 \begin{enumerate}
-    \item N1: setiap entri PGHD memiliki patient id, timestamp, device/source metadata, dan signature,
-    
-    \item N2: smart contract harus bisa memverifikasi signature dan memastikan patient id terdaftar dalam DecMed,
-    
-    \item N3: ledger record harus immutable dan dapat diaudit.
+    \item[\textbf{S1}] Setiap entri PGHD harus disertai \textit{digital signature} 
+    yang dihasilkan menggunakan kunci privat pasien, sehingga integritas dan 
+    \textit{non-repudiation} data dapat dibuktikan secara kriptografis.
+    \item[\textbf{S2}] Sistem harus mampu memverifikasi \textit{digital signature} 
+    PGHD menggunakan kunci publik pasien yang terdaftar pada ekosistem DecMed, 
+    dan menolak entri dengan \textit{signature} yang tidak valid sebelum data 
+    disimpan ke IPFS.
+    \item[\textbf{S3}] Metadata verifikasi, yaitu \textit{signature} dan 
+    \textit{hash} data, harus disimpan secara \textit{immutable} pada ledger 
+    IOTA bersama dengan CID IPFS, sehingga jejak verifikasi dapat diaudit 
+    kapan pun oleh pihak yang berwenang.
 \end{enumerate}

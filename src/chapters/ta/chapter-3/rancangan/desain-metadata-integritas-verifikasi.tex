@@ -1,0 +1,15 @@
+\subsection{Mekanisme Verifikasi Integritas dan \textit{Non-Repudiation} Data}\label{rancangan-mekanisme-integritas-nonrepudiation}
+
+Struktur metadata yang disimpan secara \textit{on-chain} pada ledger IOTA untuk setiap entri PGHD dirancang sebagai berikut:
+\begin{itemize}
+    \item \verb|patient_id|: alamat IOTA pasien (\verb|iota_address|) sebagai identitas kriptografis yang unik,
+    \item \verb|cid|: Content Identifier IPFS yang merujuk ke \textit{payload} PGHD terenkripsi,
+    \item \verb|hash_pghd|: nilai hash SHA-256 dari \textit{plaintext} PGHD sebelum dienkripsi,
+    \item \verb|pghd_signature|: \textit{digital signature} yang dihasilkan dari penandatanganan \verb|hash_pghd| menggunakan kunci privat pasien,
+    \item \verb|timestamp|: waktu pengiriman data, dan
+    \item \verb|data_type|: kategori tipe PGHD (misalnya detak jantung, langkah kaki, saturasi oksigen).
+\end{itemize}
+
+\textit{Smart contract} pada jaringan IOTA Rebased bertugas memverifikasi \verb|pghd_signature| menggunakan \verb|pghd_public_key| pasien yang telah terdaftar \textit{on-chain} sejak proses registrasi akun. 
+Entri yang lolos verifikasi disimpan sebagai \textit{immutable record}, sedangkan entri yang tidak valid ditolak oleh kontrak. 
+Mekanisme ini menjamin bahwa seluruh data PGHD yang tersimpan dalam ekosistem DecMed dapat diatribusikan secara pasti kepada pasien yang mengklaimnya (\textit{non-repudiation}), dan tidak mengalami modifikasi sejak ditandatangani (integritas data).
