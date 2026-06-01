@@ -5,9 +5,6 @@
 \textit{Patient-generated health data} (PGHD) adalah data terkait kesehatan yang dibuat, dicatat, atau dikumpulkan oleh pasien, keluarga, atau pengasuh di luar lingkungan klinis untuk membantu mengatasi suatu \textit{health concern}, termasuk riwayat kesehatan, riwayat terapi, data biometrik, gejala, dan gaya hidup \parencite{Mars_Scott_2022_PGHD_Healthcare,Abdolkhani_2019_PGHD_Quality_Challenges}.
 PGHD dibedakan dari data klinis karena pasien, bukan tenaga kesehatan, memegang tanggung jawab utama untuk merekam data tersebut, dan pasien pula yang menentukan bagaimana data tersebut dibagikan kepada penyedia layanan kesehatan atau pihak lain \parencite{Mars_Scott_2022_PGHD_Healthcare,Abdolkhani_2019_PGHD_Quality_Challenges}.
 
-Perbedaan utama dengan \textit{clinical data} terletak pada pihak yang menginisiasi dan mengendalikan pengumpulan data: data klinis dikumpulkan tenaga kesehatan dengan prosedur dan alat terstandardisasi dan umumnya dianggap lebih andal, sedangkan PGHD bersifat \textit{patient-driven} dan memberikan cakupan kontekstual kehidupan sehari-hari \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Secara konseptual, PGHD memposisikan pasien sebagai aktor sentral dalam siklus data mulai dari akuisisi, penyimpanan, transmisi, analisis, hingga tindakan, baik untuk tujuan pribadi maupun klinis \parencite{Mars_Scott_2022_PGHD_Healthcare}.
-
 \subsection{Sumber dan Tipe PGHD}
 
 PGHD mencakup beragam jenis data, antara lain,
@@ -29,13 +26,8 @@ Akses terhadap PGHD di klinik rawat jalan dapat memberikan pemahaman yang lebih 
 PGHD juga menyebabkan peningkatan keterlibatan pasien, dukungan terhadap \textit{self-management} terutama pada penyakit kronis, dan perbaikan komunikasi serta \textit{shared decision making} \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 PGHD juga berpotensi menutup \textit{information gap} antara kunjungan, mendukung pencegahan, dan membantu personalisasi perawatan jika dapat diintegrasikan secara efektif ke dalam RME dan alur kerja klinis \parencite{Tiase2020-PGHD_EHR_Integration,Mars_Scott_2022_PGHD_Healthcare}.
 
-Di sisi lain, pemanfaatan PGHD menghadapi sejumlah tantangan utama.
-Dalam konteks \textit{remote patient monitoring} (RPM), adopsi PGHD masih rendah antara lain karena belum adanya pendekatan baku untuk manajemen dan penjaminan mutu data \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
+Di sisi lain, pemanfaatan PGHD menghadapi sejumlah tantangan.
+Dalam konteks \textit{remote patient monitoring}, adopsi PGHD masih rendah karena belum adanya pendekatan baku untuk manajemen dan penjaminan mutu data \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
 Selain itu, isu kualitas data yang diidentifikasi mencakup literasi digital pasien, akurasi dan reliabilitas perangkat \textit{wearable}, kesulitan interpretasi laporan, volume data yang besar, serta ketiadaan integrasi dengan sistem rekam medis elektronik \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
-Kendala integrasi teknis dan organisasional juga sering muncul, termasuk kebutuhan antarmuka dan standar interoperabilitas, kebutuhan sumber daya tambahan untuk pengembangan dan pemeliharaan integrasi, serta beban tambahan untuk mencocokkan data ke rekam pasien yang tepat \parencite{Tiase2020-PGHD_EHR_Integration,Mars_Scott_2022_PGHD_Healthcare}.
-
-Keamanan dan privasi juga menjadi perhatian utama dalam pengelolaan PGHD karena data ini sering dikumpulkan dan disimpan di luar infrastruktur klinis tradisional \parencite{Mars_Scott_2022_PGHD_Healthcare,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Banyak aplikasi kesehatan mengandalkan syarat dan ketentuan serta pernyataan privasi yang panjang dan sering tidak dibaca, sementara lokasi dan kepemilikan data pada server pihak ketiga meningkatkan risiko \textit{secondary use} dan penjualan data \parencite{Mars_Scott_2022_PGHD_Healthcare}.
-
-Oleh karenanya, dibutuhkan kontrol akses yang ketat, \textit{audit trail}, enkripsi data saat transit maupun saat tersimpan, pengamanan perangkat mobile dan \textit{Internet of Medical Things} (IoMT), serta asesmen risiko berkala untuk mengidentifikasi kerentanan \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Dalam integrasi ke RME, keputusan mengenai penyimpanan jangka panjang, kepemilikan data, dan tanggung jawab hukum atas PGHD perlu dipertimbangkan secara hati-hati, termasuk opsi mempertahankan PGHD sebagai bagian dari \textit{patient-owned record} untuk mengurangi kompleksitas legal dan memperkuat posisi pasien sebagai pemilik data \parencite{Tiase2020-PGHD_EHR_Integration,Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+Kendala integrasi teknis dan seperti kebutuhan antarmuka dan standar interoperabilitas, kebutuhan sumber daya tambahan untuk pengembangan dan pemeliharaan integrasi, serta beban tambahan untuk mencocokkan data ke rekam pasien yang tepat \parencite{Tiase2020-PGHD_EHR_Integration,Mars_Scott_2022_PGHD_Healthcare}.
+Masalah lainnya adalah keamanan dan privasi, karena data ini sering dikumpulkan dan disimpan di luar infrastruktur klinis tradisional \parencite{Mars_Scott_2022_PGHD_Healthcare,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.

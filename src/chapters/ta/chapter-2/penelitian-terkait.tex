@@ -1,31 +1,14 @@
-\section{Penelitian Terkait}
+\section{Penelitian Terkait}\label{studi-penelitian-terkait}
 
-Akbulut dkk.\ mengusulkan sebuah sistem manajemen akses rekam medis pribadi (\textit{personal health records}, PHR) yang privat dan aman dengan memanfaatkan IOTA Tangle sebagai infrastruktur \textit{distributed ledger} \parencite{Akbulut_2020_iota_phr}.
-Melalui analisis terhadap solusi-solusi yang ada, studi ini mengidentifikasi sejumlah komponen kunci yang kemudian diintegrasikan, antara lain IOTA Tangle, protokol IPFS, \textit{proxy re-encryption}, API, serta mekanisme \textit{access control} yang berpusat pada pasien \parencite{Akbulut_2020_iota_phr}.
-Kerangka tersebut diimplementasikan dalam empat prototipe aplikasi (aplikasi janji temu berbasis web, aplikasi pasien, aplikasi dokter, dan aplikasi perangkat IoT medis jarak jauh), dan menunjukkan bahwa kombinasi IOTA, penyimpanan terdistribusi, serta enkripsi dapat menghasilkan sistem PHR yang memberikan \textit{traceability} dan kontrol akses yang kuat tanpa bergantung pada otoritas terpusat \parencite{Akbulut_2020_iota_phr}.
-Penelitian ini menjadi landasan penting bagi DecMed karena membuktikan bahwa kombinasi IOTA-IPFS-\textit{proxy re-encryption} feasible secara teknis untuk skenario data kesehatan dan dapat diadaptasi ke konteks rekam medis elektronik yang lebih luas.
+Akbulut dan Tokdemir mengusulkan sebuah sistem manajemen akses \textit{personal health record} (PHR) berbasis IOTA yang menempatkan pasien sebagai pemilik dan pengendali utama terhadap rekam kesehatan pribadinya \parencite{Akbulut_2020_iota_phr}. 
+Sistem yang mereka rancang menggabungkan IOTA Tangle sebagai \textit{distributed ledger}, mekanisme enkripsi, dan kontrol akses untuk menjamin kerahasiaan, integritas, dan \textit{traceability} akses terhadap PHR\@.
+Sistem ini dievaluasi melalui prototipe dan menunjukkan peningkatan keamanan dan keandalan dibanding pendekatan RME terpusat \parencite{Akbulut_2020_iota_phr}.
 
-Terkait integrasi PGHD dengan sistem rekam medis elektronik konvensional, Tiase dkk.\ melakukan \textit{scoping review} yang memetakan berbagai pendekatan integrasi PGHD ke dalam EHR \parencite{Tiase2020-PGHD_EHR_Integration}.
-Studi ini mengidentifikasi bahwa sebagian besar implementasi masih berada pada tahap uji coba atau skala terbatas, dengan variasi bentuk integrasi mulai dari tampilan laporan statis, \textit{flowsheet}, hingga antarmuka terstandar berbasis HL7 dan FHIR \parencite{Tiase2020-PGHD_EHR_Integration}.
-Temuan utama menunjukkan bahwa integrasi PGHD yang efektif menuntut ketersediaan PGHD di dalam EHR dalam konteks yang sama dengan data klinis lain, dukungan standar interoperabilitas, dan penyesuaian alur kerja klinis agar tenaga kesehatan benar-benar menggunakan PGHD dalam pengambilan keputusan \parencite{Tiase2020-PGHD_EHR_Integration}.
-Cohen dkk.\ melalui Project HealthDesign mendemonstrasikan contoh konkret integrasi ODL dan PGHD ke alur klinis rawat jalan dengan berbagai tingkat integrasi dashboard, protokol zona risiko, dan interaksi perawat-pasien \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
-Secara keseluruhan, penelitian-penelitian ini menegaskan bahwa integrasi PGHD ke RME konvensional bergantung pada desain antarmuka, standar pertukaran data, dan adaptasi alur kerja, tetapi belum menyentuh aspek DLT\@.
+Tiase dkk.\ melakukan \textit{systematic scoping review} terhadap 19 studi yang melaporkan integrasi PGHD ke dalam RME untuk penggunaan klinis, dan menemukan bahwa sebagian besar implementasi masih berupa studi pilot di lingkungan rawat jalan dengan berbagai tipe PGHD seperti data biometrik dan aktivitas pasien, kuesioner, serta sejarah kesehatan \parencite{Tiase2020-PGHD_EHR_Integration}. 
+Review ini menunjukkan bahwa integrasi PGHD ke RME masih berada pada tahap awal, menghadapi tantangan terkait kebutuhan sumber daya, mekanisme penyampaian data ke RME (portal, middleware, standar data), serta penyesuaian alur kerja dan tampilan data agar PGHD benar-benar dapat dimanfaatkan dalam pengambilan keputusan klinis \parencite{Tiase2020-PGHD_EHR_Integration}.
 
-Ahmed dkk.\ mengkaji pendekatan \textit{data provenance} di domain kesehatan dan menyoroti tren pemanfaatan teknologi blockchain dan IPFS untuk menjamin keandalan jejak data \parencite{Ahmed_2023_Data_Provenance}.
-Penelitian tersebut mengklasifikasikan teknik-teknik provenance menjadi empat kategori utama (log, kriptografi, blockchain, dan ontologi) dan mencatat bahwa solusi berbasis blockchain banyak diusulkan untuk skenario di mana integritas dan jejak operasi harus dapat diaudit di lingkungan terdistribusi \parencite{Ahmed_2023_Data_Provenance}.
+Berdasarkan penelitian-penelitian tersebut, dapat disimpulkan bahwa IOTA telah dibuktikan sebagai infrastruktur \textit{distributed ledger} yang layak untuk manajemen akses RME dan penyediaan jejak akses yang tidak dapat diubah, tetapi belum secara spesifik dimanfaatkan untuk integrasi PGHD ke rekam medis elektronik dalam konteks DecMed. 
+Selain itu integrasi PGHD ke RME konvensional sudah mulai dieksplorasi dan menghadapi tantangan, namun masih didominasi arsitektur terpusat tanpa pemanfaatan DLT\@. \parencite{Akbulut_2020_iota_phr,Tiase2020-PGHD_EHR_Integration}.
 
-Secara umum, penelitian-penelitian di atas menunjukkan bahwa:
-\begin{enumerate}
-    \item Kombinasi IOTA, penyimpanan terdistribusi, dan kriptografi telah dieksplorasi untuk PHR dan arsitektur \textit{e-health} terdistribusi \parencite{Ahmed_2023_Data_Provenance,Akbulut_2020_iota_phr},
-    \item Integrasi PGHD ke sistem RME konvensional memerlukan standar interoperabilitas dan adaptasi alur kerja, tetapi saat ini masih didominasi pendekatan terpusat tanpa DLT \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Tiase2020-PGHD_EHR_Integration},
-    \item Teknologi \textit{blockchain} dan DLT mulai digunakan untuk menjamin integritas data dan kepercayaan terhadap sumber data di domain kesehatan, namun fokus eksplisit pada PGHD dan integrasinya ke RME berbasis IOTA masih sangat terbatas \parencite{Ahmed_2023_Data_Provenance}.
-\end{enumerate}
-
-Tesis ini memposisikan diri untuk mengisi celah tersebut dengan merancang dan mengimplementasikan ekstensi DecMed sebagai sistem RME berbasis IOTA yang:
-\begin{enumerate}
-    \item Mengintegrasikan PGHD ke dalam rekam medis elektronik melalui kombinasi IOTA dan IPFS,
-    \item Merancang pipeline pengiriman PGHD yang memastikan data hanya dapat berasal dari pasien yang terautentikasi secara kriptografis, serta
-    \item Menyediakan mekanisme verifikasi integritas data dan \textit{non-repudiation} PGHD yang berpusat pada pasien di atas infrastruktur \textit{distributed ledger}.
-\end{enumerate}
-
-Pendekatan ini diharapkan dapat memperluas penelitian sebelumnya dengan menyatukan prinsip integrasi PGHD dari literatur RME konvensional dengan karakteristik teknis IOTA dan DLT\@.
+Tugas akhir ini memposisikan diri untuk mengisi celah tersebut dengan merancang dan mengimplementasikan ekstensi DecMed sebagai sistem RME berbasis IOTA yang dapat mengintegrasikan PGHD ke dalam rekam medis elektronik melalui kombinasi IOTA dan IPFS\@.
+Tugas akhir ini akan merancang \textit{pipeline} pengiriman PGHD yang memastikan data hanya dapat berasal dari pasien yang terautentikasi secara kriptografis dan menyediakan mekanisme verifikasi integritas dan \textit{non-repudiation} PGHD yang berpusat pada pasien di atas infrastruktur \textit{distributed ledger}.
