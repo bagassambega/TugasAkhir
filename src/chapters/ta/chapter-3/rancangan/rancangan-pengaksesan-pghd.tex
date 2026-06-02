@@ -14,6 +14,14 @@
     Jika akses dinyatakan valid, proxy mengambil metadata PGHD yang bersangkutan dari ledger IOTA dan mengambil ciphertext PGHD \verb|enc_pghd| dari IPFS dengan menggunakan \verb|cid| yang tercatat pada metadata. 
     Pada tahap ini, integritas ciphertext sudah dijamin oleh \textit{outer signature} yang telah diverifikasi ketika data pertama kali dicatat di ledger.
     
+    \item \textbf{Verifikasi integritas ciphertext (\textit{Outer Verification}).}
+    Sebelum melakukan dekripsi, klien tenaga kesehatan wajib memastikan bahwa ciphertext \verb|enc_pghd| yang diunduh dari IPFS belum mengalami modifikasi (misalnya akibat serangan pada proxy atau node IPFS). 
+    Klien menghitung nilai SHA-256 dari \verb|enc_pghd| yang diunduh:
+    \[
+        h_{\text{download}} = \mathrm{SHA256}(\texttt{enc\_pghd}_{\text{downloaded}}).
+    \]
+    Nilai $h_{\text{download}}$ ini kemudian dibandingkan dengan \verb|h_cipher| yang didapatkan dari metadata IOTA yang \textit{immutable}. Jika nilai hash tidak cocok, klien akan langsung membatalkan proses dan memunculkan peringatan integritas data yang rusak.
+    
     \item \textbf{Proses proxy re-encryption.}
     Proxy melakukan proses proxy re-encryption terhadap \verb|enc_aes_key_nonce| dengan memanfaatkan \verb|capsule| dan \verb|kfrag| yang sebelumnya disimpan di Redis saat pasien memberikan akses kepada tenaga kesehatan. 
     Proses ini menghasilkan \verb|cfrag|, yaitu fragmen ciphertext yang dapat digunakan oleh klien tenaga kesehatan untuk memperoleh kunci AES yang dibutuhkan untuk mendekripsi \verb|enc_pghd|.

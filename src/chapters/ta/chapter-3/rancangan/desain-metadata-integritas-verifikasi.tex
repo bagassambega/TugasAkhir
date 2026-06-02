@@ -1,4 +1,4 @@
-\subsection{Mekanisme Verifikasi Integritas dan \textit{Non-Repudiation} Data}\label{rancangan-mekanisme-integritas-nonrepudiation}
+\subsection{Mekanisme Verifikasi Integritas dan \textit{Non-Repudiation} PGHD}\label{rancangan-mekanisme-integritas-nonrepudiation}
 
 Struktur metadata yang disimpan secara \textit{on-chain} pada ledger IOTA untuk setiap entri PGHD dirancang sebagai berikut:
 \begin{itemize}
@@ -7,13 +7,10 @@ Struktur metadata yang disimpan secara \textit{on-chain} pada ledger IOTA untuk 
     \item \verb|enc_aes_key_nonce|: ciphertext yang berisi gabungan kunci AES dan \textit{nonce} yang telah dienkripsi menggunakan \verb|pre_public_key| pasien melalui mekanisme proxy re-encryption,
     \item \verb|capsule|: artefak kriptografis proxy re-encryption yang diperlukan untuk merekonstruksi kunci AES di sisi klien yang berhak,
     \item \verb|pghd_outer_signature|: \textit{digital signature} yang dihasilkan dari penandatanganan nilai hash SHA-256 dari \verb|enc_pghd| menggunakan kunci privat pasien \verb|pghd_secret_key|,
+    \item \item \verb|h_cipher|: nilai hash SHA-256 dari ciphertext \verb|enc_pghd| yang dihitung oleh klien pasien,
     \item \verb|status|: status entri PGHD (\texttt{VALID} atau \texttt{INVALID}) yang digunakan untuk menandai apakah entri masih dapat digunakan oleh aplikasi,
-    \item \verb|timestamp|: waktu pengiriman atau pencatatan data ke dalam sistem, dan
-    \item \verb|data_type|: kategori tipe PGHD (misalnya detak jantung, langkah kaki, saturasi oksigen).
+    \item \verb|timestamp|: waktu pencatatan data ke dalam sistem.
 \end{itemize}
 
-\textit{Smart contract} pada jaringan IOTA Rebased bertugas memverifikasi \verb|pghd_outer_signature| menggunakan \verb|pghd_public_key| pasien yang telah terdaftar \textit{on-chain} sejak proses registrasi akun. 
-Entri PGHD hanya akan dicatat dan diteruskan untuk diunggah ke IPFS apabila verifikasi signature atas ciphertext \verb|enc_pghd| berhasil. 
-Jika verifikasi gagal, transaksi dibatalkan dan entri tidak disimpan pada ledger.
-Mekanisme ini menjamin bahwa seluruh ciphertext PGHD yang tercatat dalam ekosistem DecMed berasal dari pasien yang sah (\textit{non-repudiation}) dan tidak mengalami modifikasi selama proses transmisi maupun pencatatan di ledger (integritas pada tingkat ciphertext). 
-Selanjutnya, integritas dan \textit{non-repudiation} pada tingkat plaintext divalidasi di sisi tenaga kesehatan melalui verifikasi \textit{inner signature} yang disisipkan di dalam payload PGHD terenkripsi, sehingga \textit{end-to-end integrity} dari data yang dibaca klinisi dapat dipertahankan.
+Mekanisme ini menjamin bahwa \textit{hash} yang tercatat pada ledger adalah valid dan berasal dari pasien yang sah (\textit{non-repudiation}). 
+Selanjutnya, integritas dan \textit{non-repudiation} pada tingkat \textit{plaintext} divalidasi di sisi tenaga kesehatan melalui verifikasi \textit{inner signature} yang disisipkan di dalam payload PGHD yang terenkripsi.

@@ -24,28 +24,25 @@
     Selanjutnya, \verb|aes_key| dan \verb|aes_nonce| digabungkan dan dienkripsi menggunakan \verb|pre_public_key| milik pasien melalui mekanisme proxy re-encryption, menghasilkan pasangan \verb|enc_aes_key_nonce| dan \verb|capsule| serupa dengan mekanisme penambahan rekam medis oleh tenaga kesehatan.
     
     \item \textbf{Pembangkitan \textit{outer digital signature} atas ciphertext.}
-    Untuk menjamin integritas dan \textit{non-repudiation} terhadap ciphertext PGHD di jalur transmisi dan saat dicatat di ledger, klien pasien menghitung nilai \textit{hash} dari \verb|enc_pghd| dengan fungsi SHA-256:
+    Untuk menjamin integritas dan \textit{non-repudiation} tanpa membebani komputasi \textit{on-chain}, klien pasien menghitung nilai \textit{hash} dari \verb|enc_pghd| (yang dapat berukuran besar) secara lokal di memori klien menggunakan fungsi SHA-256:
     \[
         h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}).
     \]
-    Nilai \verb|h_cipher| tersebut kemudian ditandatangani menggunakan kunci privat pasien \verb|pghd_secret_key| dengan algoritma ECDSA, sehingga diperoleh \textit{outer digital signature} \verb|pghd_outer_signature|.
+    Nilai \verb|h_cipher| kemudian ditandatangani menggunakan kunci privat pasien \verb|pghd_secret_key| dengan algoritma ECDSA, sehingga diperoleh \textit{outer digital signature} \verb|pghd_outer_signature|.
     
-    \item \textbf{Pengiriman ke proxy dan \textit{smart contract}.}
-    Klien pasien mengirimkan payload yang berisi \verb|enc_pghd|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan \verb|pghd_outer_signature| ke proxy. 
-    Proxy tidak melakukan dekripsi terhadap \verb|enc_pghd| maupun \verb|enc_aes_key_nonce|, melainkan meneruskan data tersebut ke \textit{smart contract} DecMed pada jaringan IOTA melalui pemanggilan fungsi \texttt{submit\_pghd}.
+    \item \textbf{Pengunggahan off-chain dan pengiriman metadata ke \textit{smart contract}.}
+    Klien pasien mengirimkan payload lengkap (\verb|enc_pghd|, \verb|h_cipher|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan \verb|pghd_outer_signature|) ke proxy. 
+    Proxy bertindak sebagai perantara \textit{off-chain} dengan mengunggah \verb|enc_pghd| ke kluster IPFS terlebih dahulu untuk mendapatkan \textit{Content Identifier} (CID). 
+    Setelah CID diperoleh, proxy memanggil fungsi \texttt{submit\_pghd} pada \textit{smart contract} DecMed. 
+    Payload yang dikirimkan ke jaringan IOTA\@: CID, \verb|h_cipher|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan \verb|pghd_outer_signature|.
     
-    \item \textbf{Verifikasi \textit{outer digital signature} di \textit{smart contract}.}
-    Setelah menerima permintaan, \textit{smart contract} akan,
+    \item \textbf{Verifikasi \textit{outer digital signature} dan penyimpanan state di IOTA.}
+    Setelah menerima pemanggilan fungsi, \textit{smart contract} memproses metadata dengan langkah berikut:
     \begin{enumerate}
-        \item memuat \verb|pghd_public_key| pasien dari state on-chain,
-        \item menghitung kembali nilai \verb|h_cipher| dari \verb|enc_pghd| menggunakan SHA-256, dan
-        \item memverifikasi \verb|pghd_outer_signature| dengan \verb|pghd_public_key| menggunakan algoritma ECDSA\@.
+        \item memuat \verb|pghd_public_key| pasien dari state \textit{on-chain}, dan
+        \item memverifikasi \verb|pghd_outer_signature| terhadap nilai \verb|h_cipher| yang diterima sebagai parameter menggunakan algoritma ECDSA\@.
     \end{enumerate}
 
-    Jika verifikasi gagal, transaksi dibatalkan dan metadata PGHD tidak disimpan di ledger, serta tidak ada instruksi untuk mengunggah \verb|enc_pghd| ke IPFS\@. 
-    Jika verifikasi berhasil, \textit{smart contract} menghasilkan entri metadata PGHD dan memicu komponen off-chain untuk mengunggah \verb|enc_pghd| ke IPFS\@.
-    
-    \item \textbf{Penyimpanan ciphertext di IPFS dan metadata di IOTA.}
-    Komponen off-chain yang memantau event dari \textit{smart contract} akan mengunggah \verb|enc_pghd| ke kluster IPFS dan memperoleh \textit{Content Identifier} (CID). 
-    CID tersebut kemudian dikaitkan dengan entri PGHD pada ledger IOTA bersama dengan \verb|enc_aes_key_nonce|, \verb|capsule|, \verb|pghd_outer_signature|, dan metadata lain (seperti timestamp dan tipe data).
+    Jika verifikasi gagal, transaksi dibatalkan dan metadata tidak disimpan. Jika verifikasi berhasil, \textit{smart contract} secara permanen menyimpan kaitan antara CID IPFS, \verb|h_cipher|, dan metadata kriptografis lainnya pada ledger IOTA\@. 
+    \textit{Smart contract} sama sekali tidak berinteraksi dengan data \verb|enc_pghd|.
 \end{enumerate}
