@@ -1,40 +1,17 @@
-\subsection{Alternatif Arsitektur Integrasi PGHD - DecMed}
+\subsection{Alternatif Arsitektur Pengumpulan dan Pipeline PGHD-DecMed}\label{alternatif-arsitektur-pipeline-pghd}
 
-Apa yang bisa dibandingkan:
+Berdasarkan analisis permasalahan di atas, terdapat beberapa arsitektur yang dipertimbangkan.
+
+\subsubsection{Wearable Device}
+
+Data PGHD bisa diambil dari wearable device seperti smartwatch ataupun IoT device lainnya.
+Terdapat beberapa pertimbangan terkait keterlibatan dan integrasi wearable device.
 
 \begin{enumerate}
-    \item Integrasi PGHD → EHR langsung (server-centric)
-    \begin{itemize}
-        \item Studi AHRQ / JAMIA tentang integrasi PGHD ke EHR; PGHD biasanya dikumpulkan di server aplikasi khusus lalu di-push ke EHR.
-        
-        \item Kelebihan: sederhana, selaras EHR klasik.
-        
-        \item Kekurangan: tidak memanfaatkan DLT, tidak meng-address kebutuhan provenance desentral.
-    \end{itemize}
-
-    \item PGHD via FHIR server (SMART-on-FHIR, SMART Markers)
-    \begin{itemize}
-        \item SMART Markers: mengumpulkan PGHD melalui app lalu mengirim ke FHIR server yang terhubung ke EHR.
-        
-        \item Kelebihan: interoperabilitas tinggi, standar FHIR.
-        
-        \item Kekurangan: FHIR server biasanya infrastruktur terpusat; bukan DLT.
-    \end{itemize}
-
-    \item PGHD di atas blockchain / marketplace PGHD
-    \begin{itemize}
-        \item Contoh: decentralized marketplace for PGHD (public blockchain, fokus insentif).
-        
-        \item Kelebihan: provenance \& integritas kuat.
-        
-        \item Kekurangan: tidak fokus ke integrasi EMR rumah sakit tunggal seperti DecMed, overhead transaksi tinggi.
-    \end{itemize}
-
-    \item Pendekatan “PGHD sebagai ekstensi DecMed” (yang kamu pilih)
-    \begin{itemize}
-        \item Menggunakan IOTA \& IPFS yang sudah menjadi fondasi DecMed, PGHD menjadi tipe data baru yang mengalir ke storage yang sama (IPFS–IOTA), menggunakan CapBAC/PRE yang sudah ada untuk kontrol akses.
-        
-        \item Di sini kamu tunjukkan bahwa pilihan arsitekturmu bukan random, tapi: memanfaatkan kekuatan DecMed (DLT, IPFS, CapBAC), sambil mengambil praktik baik dari integrasi PGHD–EHR (FHIR, batching, edge processing).
-    \end{itemize}
+    \item Hanya menggunakan sensor bawaan Android (tanpa wearable).
+    \item Mengintegrasikan data dari wearable fisik ke Android.
+    \item Mensimulasikan wearable via BLE (tanpa perangkat fisik).
 \end{enumerate}
 
+Pada alternatif ini, pengumpulan data PGHD sepenuhnya dilakukan menggunakan API sensor yang tersedia di sistem operasi Android, yaitu Android Sensor API (akselerometer, giroskop, barometer, dsb.) dan Android Health Connect API (detak jantung, langkah kaki, tidur, saturasi oksigen, dll.). 
+Data wearable tidak diambil sama sekali dalam cakupan implementasi.

@@ -1,0 +1,163 @@
+\subsection{Alternatif Format dan Struktur PGHD}\label{analisis-alternatif-format-pghd}
+
+Berdasarkan dasar teori pada Subbab~\ref{standar-format-pghd} dan analisis masalah (subbab~\ref{analisis-permasalahan}), terdapat beberapa model dan pertimbangan yang bisa digunakan sebagai format data PGHD untuk DecMed.
+Tabel~\ref{tab:perbandingan-format-pghd} merangkum perbandingan antarmodel dan skema format data.
+Parameter yang perlu menjadi pertimbangan untuk memilih standar format PGHD di antaranya,
+
+\begin{enumerate}
+  \item \textbf{Ukuran payload}: besar payload JSON untuk satu atau sekumpulan pengukuran mempertimbangkan \textit{gas fee} IOTA, penyimpanan IPFS dan efisiensi pengiriman.
+  \item \textbf{Kesesuaian dengan Android}: tingkat kemudahan integrasi format dengan ekosistem Android (Health Connect API, Kotlin), termasuk apakah tersedia \textit{library} atau \textit{mapping} bawaan.
+  \item \textbf{Preservasi informasi klinis}: kemampuan format menyimpan nilai numerik, satuan, dan konteks temporal yang diperlukan untuk interpretasi klinis dan penelitian lanjutan.
+  \item \textbf{Kompleksitas implementasi}: mempertimbangkan batasan implementasi di Android (subbab~\ref{batasan-masalah}), beban pengembangan untuk membuat \textit{serializer/deserializer} dan validasi skema di sisi klien Android.
+  \item \textbf{Kemampuan \textit{batching}}: kesesuaian format untuk mengelompokkan banyak pengukuran ke dalam satu payload, sesuai dengan strategi batching periodik yang dipilih pada Subbab~\ref{alternatif-arsitektur-pipeline-pghd}.
+\end{enumerate}
+
+
+\begin{table}[!ht]
+  \centering
+  \caption{Perbandingan format data PGHD untuk pipeline DecMed}\label{tab:perbandingan-format-pghd}
+  \footnotesize  % smaller than \small
+  \setlength{\tabcolsep}{3.5pt}  % reduced spacing
+  \begin{tabular}{lp{2.2cm}p{2.2cm}p{1.8cm}p{2.2cm}p{1.8cm}}
+    \toprule
+    \textbf{Format} &
+    \textbf{Ukuran Payload} &
+    \textbf{Kesesuaian Android} &
+    \textbf{Preservasi Klinis} &
+    \textbf{Kompleksitas} &
+    \textbf{Batching} \\
+    \midrule
+    Apple HealthKit
+      & Moderat
+      & Tidak ada\textsuperscript{a}
+      & Tinggi
+      & Tinggi
+      & Tidak didukung \\[0.2cm]
+    Google Health Connect
+      & Moderat
+      & Sangat tinggi\textsuperscript{b}
+      & Tinggi
+      & Rendah
+      & Terbatas\textsuperscript{c} \\[0.2cm]
+    Open mHealth / IEEE~1752
+      & Rendah-sedang
+      & Sedang\textsuperscript{d}
+      & Tinggi
+      & Sedang
+      & Didukung (data series) \\[0.2cm]
+    HL7 FHIR (Kanta PHR)
+      & Tinggi\textsuperscript{e}
+      & Sedang\textsuperscript{f}
+      & Sangat tinggi
+      & Tinggi
+      & Tidak dioptimalkan \\[0.2cm]
+    \bottomrule
+    \multicolumn{6}{l}{\footnotesize\textsuperscript{a}Tidak tersedia di Android.} \\
+    \multicolumn{6}{l}{\footnotesize\textsuperscript{b}Native SDK Kotlin, dokumentasi resmi, dukungan WorkManager.} \\
+    \multicolumn{6}{l}{\footnotesize\textsuperscript{c}Batch melalui \texttt{insertRecords\(\)}, tetapi sebagai format penyimpanan akhir tidak dirancang untuk IPFS.} \\
+    \multicolumn{6}{l}{\footnotesize\textsuperscript{d}Tidak ada SDK Android, perlu implementasi manual.} \\
+    \multicolumn{6}{l}{\footnotesize\textsuperscript{e}Verbose karena elemen \texttt{coding}, \texttt{system}, \texttt{display}, dan metadata FHIR.} \\
+    \multicolumn{6}{l}{\footnotesize\textsuperscript{f}Tersedia HAPI FHIR library, tetapi ukuran \textit{dependency} besar.} \\
+  \end{tabular}
+\end{table}
+
+Berdasarkan perbandingan-perbandingan skema yang ada, Apple HealthKit tidak relevan untuk penelitian ini karena implementasi dilakukan di Android, sehingga tidak ada jalur pengambilan data dari HealthKit.
+
+Google Health Connect cocok dengan implementasi berbasis Android karena merupakan API resmi Google untuk akses data kesehatan di Android.
+Google Health Connect juga memiliki SDK Kotlin dan panduan penulisan data \parencite{android_hc_write,android_hc_dataformat}.
+Namun, format internalnya berbasis kelas Kotlin (\texttt{Record} dan subkelasnya) dan tidak secara langsung menghasilkan payload JSON yang dapat disimpan di IPFS \parencite{android_hc_dataformat}.
+Penggunaan Health Connect tetap bisa digunakan sebagai \textit{sumber data}, tetapi memerlukan konversi jika ingin digunakan sebagai format penyimpanan akhir di DecMed.
+
+Open mHealth dan IEEE~1752 memiliki kelebihan kesederhanaan dan standarisasi format data \parencite{openmhealth_1752_blog,ieee_1752_1_2021_standard}
+Namun, tidak tersedianya SDK Android berarti implementasi serialisasi, pengolahan data dan validasi skema harus dilakukan secara manual.
+
+HL7 FHIR di Kanta PHR memberikan interoperabilitas dan didukung standardisasi organisasi internasional, tetapi ukuran payload yang besar akibat metadata FHIR yang \textit{verbose} menjadi kendala signifikan untuk penyimpanan di IPFS dalam skala batch data time-series yang besar.
+Panduan HL7 PGHD juga menjelaskan bahwa banyak item PGHD konsumen belum sepenuhnya tercakup oleh kode internasional, dan saat ini masih menggunakan kode sementara.\parencite{hl7_2025_pghd_ig}
+
+Berdasarkan analisis di atas, akan digunakan format data hibrid menggunakan Google Health Connect sebagai sumber data di sisi Android, dan merancang format JSON \textit{custom} yang terinspirasi prinsip Open mHealth sebagai format payload yang disimpan di IPFS\@.
+
+% Alasan utama pemilihan ini adalah:
+% \begin{enumerate}
+%   \item Health Connect adalah antarmuka standar Android untuk data
+%     kesehatan; menggunakannya sebagai sumber data memastikan akses
+%     ke seluruh tipe data yang kompatibel dengan ekosistem Android secara
+%     seragam.\parencite{android_hc_write}
+%   \item Format JSON kustom yang terinspirasi Open mHealth mempertahankan
+%     prinsip desain utama standar tersebut (nilai + unit + metadata
+%     minimum dalam satu objek, \textit{timestamp} ISO~8601) tanpa overhead
+%     metadata FHIR yang tidak diperlukan untuk operasional
+%     pipeline.\parencite{openmhealth_1752_blog,ieee_1752_1_2021_standard}
+%   \item Desain kustom memungkinkan struktur batching yang dioptimalkan
+%     untuk pipeline DecMed, yaitu satu payload JSON yang memuat banyak
+%     pengukuran dalam satu jendela waktu, sehingga jumlah transaksi
+%     IPFS dan IOTA tetap terkendali.
+%   \item Di masa mendatang, payload JSON ini dapat dipetakan ke resource
+%     FHIR \texttt{Observation} dengan menambahkan lapisan transformasi,
+%     karena field utama (tipe, nilai, unit, waktu) selaras secara
+%     semantik dengan model FHIR.\parencite{hl7_2025_pghd_ig}
+% \end{enumerate}
+
+% \begin{table}[htbp]
+%   \centering
+%   \caption{Perbandingan format data PGHD untuk pipeline DecMed}
+%   \label{tab:perbandingan-format-pghd}
+%   \resizebox{\textwidth}{!}{%
+%   \begin{tabular}{lcccccc}
+%     \toprule
+%     \textbf{Format} &
+%     \textbf{Interopera-bilitas} &
+%     \textbf{Overhead Payload} &
+%     \textbf{Kesesuaian Android} &
+%     \textbf{Preservasi Klinis} &
+%     \textbf{Kompleksitas Impl.} &
+%     \textbf{Batching} \\
+%     \midrule
+%     Apple HealthKit
+%       & Rendah\textsuperscript{a}
+%       & Moderat
+%       & Tidak ada\textsuperscript{b}
+%       & Tinggi
+%       & Tinggi
+%       & Tidak didukung \\[0.2cm]
+%     Google Health Connect
+%       & Sedang\textsuperscript{c}
+%       & Moderat
+%       & Sangat tinggi\textsuperscript{d}
+%       & Tinggi
+%       & Rendah
+%       & Terbatas\textsuperscript{e} \\[0.2cm]
+%     Open mHealth / IEEE~1752
+%       & Tinggi\textsuperscript{f}
+%       & Rendah–sedang
+%       & Sedang\textsuperscript{g}
+%       & Tinggi
+%       & Sedang
+%       & Didukung (data series) \\[0.2cm]
+%     HL7 FHIR (Kanta PHR)
+%       & Sangat tinggi
+%       & Tinggi\textsuperscript{h}
+%       & Sedang\textsuperscript{i}
+%       & Sangat tinggi
+%       & Tinggi
+%       & Tidak dioptimalkan \\[0.2cm]
+%     JSON Kustom (DecMed)
+%       & Sedang\textsuperscript{j}
+%       & Rendah
+%       & Tinggi\textsuperscript{k}
+%       & Tinggi
+%       & Rendah
+%       & Dioptimalkan \\
+%     \bottomrule
+%     \multicolumn{7}{l}{\footnotesize\textsuperscript{a}Proprietary iOS.
+%     \textsuperscript{b}Tidak tersedia di Android.
+%     \textsuperscript{c}Hanya di ekosistem Android, tidak ada format pertukaran lintas sistem.} \\
+%     \multicolumn{7}{l}{\footnotesize\textsuperscript{d}Native SDK Kotlin, dokumentasi resmi, dukungan WorkManager.
+%     \textsuperscript{e}Batch melalui \texttt{insertRecords()}, tetapi sebagai format penyimpanan akhir tidak dirancang untuk IPFS.} \\
+%     \multicolumn{7}{l}{\footnotesize\textsuperscript{f}Standar IEEE terbuka, tersedia library OMH-to-FHIR.
+%     \textsuperscript{g}Tidak ada SDK Android resmi, perlu implementasi manual.} \\
+%     \multicolumn{7}{l}{\footnotesize\textsuperscript{h}Verbose karena elemen \texttt{coding}, \texttt{system}, \texttt{display}, dan metadata FHIR.
+%     \textsuperscript{i}Tersedia HAPI FHIR library, tetapi overhead dependensi besar.} \\
+%     \multicolumn{7}{l}{\footnotesize\textsuperscript{j}Dapat dipetakan ke FHIR atau OMH bila diperlukan.
+%     \textsuperscript{k}Serialisasi via \texttt{kotlinx.serialization} atau Gson tanpa dependensi besar.} \\
+%   \end{tabular}}
+% \end{table}

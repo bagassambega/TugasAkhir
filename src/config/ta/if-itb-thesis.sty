@@ -57,6 +57,32 @@
 \usepackage{xcolor, colortbl}
 \usepackage{setspace}
 \usepackage{listings}
+\lstdefinelanguage{Kotlin}{
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  keywordstyle=\bfseries\color{blue},
+  keywords={abstract, actual, as, break, by, catch, class, companion, continue, crossinline, data, do, dynamic, else, enum, expect, false, final, finally, for, fun, get, if, import, in, interface, internal, is, null, object, open, operator, out, override, package, private, public, return, set, super, suspend, tailrec, this, throw, true, try, typealias, typeof, val, var, vararg, when, where, while},
+  morestring=[b]",
+  sensitive=true
+}
+\lstdefinelanguage{Swift}{
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  keywordstyle=\bfseries\color{blue},
+  keywords={associatedtype, class, deinit, enum, extension, func, import, init, inout, let, operator, precedencegroup, protocol, struct, subscript, typealias, var, fileprivate, internal, private, public, open, defer, if, guard, do, catch, else, for, in, while, repeat, break, continue, fallthrough, return, as, throw, throws, rethrows, try, self, super, Any, AnyObject, AnyClass, nil, true, false},
+  morestring=[b]",
+  sensitive=true
+}
+\lstdefinelanguage{json}{
+  basicstyle=\normalfont\ttfamily\small,
+  showstringspaces=false,
+  breaklines=true,
+  string=[s]{"}{"},
+  stringstyle=\color{blue},
+  comment=[l]{:},
+  commentstyle=\color{black},
+}
+\lstset{basicstyle=\ttfamily\small,breaklines=true}
 \usepackage{amsmath}
 
 \graphicspath{{resources/}}   % letak direktori penyimpanan gambar

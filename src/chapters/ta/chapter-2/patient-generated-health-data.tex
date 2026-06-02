@@ -5,23 +5,12 @@
 \textit{Patient-generated health data} (PGHD) adalah data terkait kesehatan yang dibuat, dicatat, atau dikumpulkan oleh pasien, keluarga, atau pengasuh di luar lingkungan klinis untuk membantu mengatasi suatu \textit{health concern}, termasuk riwayat kesehatan, riwayat terapi, data biometrik, gejala, dan gaya hidup \parencite{Mars_Scott_2022_PGHD_Healthcare,Abdolkhani_2019_PGHD_Quality_Challenges}.
 PGHD dibedakan dari data klinis karena pasien, bukan tenaga kesehatan, memegang tanggung jawab utama untuk merekam data tersebut, dan pasien pula yang menentukan bagaimana data tersebut dibagikan kepada penyedia layanan kesehatan atau pihak lain \parencite{Mars_Scott_2022_PGHD_Healthcare,Abdolkhani_2019_PGHD_Quality_Challenges}.
 
-\subsection{Sumber dan Tipe PGHD}
-
-PGHD mencakup beragam jenis data, antara lain,
-\begin{itemize}
-    \item data fisiologis
-    \item data perilaku
-    \item data lingkungan
-    \item status mental, serta
-    \item pengalaman pasien terkait perawatan \parencite{Mars_Scott_2022_PGHD_Healthcare,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-\end{itemize}
-
 Sumber utama PGHD meliputi \textit{wearable} dan sensor (misalnya aktivitas fisik, detak jantung, pola tidur), perangkat pemantauan di rumah (tekanan darah, glukosa darah, saturasi oksigen, berat badan), aplikasi seluler untuk pencatatan diet, gejala, dan \textit{mood}, serta \textit{observations of daily living} (ODLs) yang merefleksikan pola dan realitas kehidupan sehari-hari \parencite{Mars_Scott_2022_PGHD_Healthcare}.
 ODL mencakup aspek seperti diet, aktivitas fisik, kualitas dan kuantitas tidur, episode nyeri, dan suasana hati yang dipilih pasien sebagai aspek relevan untuk dilacak dan kemudian digunakan untuk \textit{self-management} maupun untuk menginformasikan pengambilan keputusan klinis \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
 
 \subsection{Manfaat dan Tantangan PGHD}
 
-PGHD memiliki berbagai potensi manfaat bagi pasien maupun penyedia layanan kesehatan.
+PGHD memiliki berbagai manfaat bagi pasien maupun penyedia layanan kesehatan.
 Akses terhadap PGHD di klinik rawat jalan dapat memberikan pemahaman yang lebih dalam mengenai kondisi pasien, informasi yang lebih akurat terkait gejala dan pola dalam jangka waktu yang lebih panjang, serta visibilitas terhadap kondisi pasien di antara kunjungan yang memungkinkan penyesuaian rencana perawatan tanpa selalu memerlukan kunjungan tatap muka \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
 PGHD juga menyebabkan peningkatan keterlibatan pasien, dukungan terhadap \textit{self-management} terutama pada penyakit kronis, dan perbaikan komunikasi serta \textit{shared decision making} \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 PGHD juga berpotensi menutup \textit{information gap} antara kunjungan, mendukung pencegahan, dan membantu personalisasi perawatan jika dapat diintegrasikan secara efektif ke dalam RME dan alur kerja klinis \parencite{Tiase2020-PGHD_EHR_Integration,Mars_Scott_2022_PGHD_Healthcare}.
@@ -31,3 +20,226 @@ Dalam konteks \textit{remote patient monitoring}, adopsi PGHD masih rendah karen
 Selain itu, isu kualitas data yang diidentifikasi mencakup literasi digital pasien, akurasi dan reliabilitas perangkat \textit{wearable}, kesulitan interpretasi laporan, volume data yang besar, serta ketiadaan integrasi dengan sistem rekam medis elektronik \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
 Kendala integrasi teknis dan seperti kebutuhan antarmuka dan standar interoperabilitas, kebutuhan sumber daya tambahan untuk pengembangan dan pemeliharaan integrasi, serta beban tambahan untuk mencocokkan data ke rekam pasien yang tepat \parencite{Tiase2020-PGHD_EHR_Integration,Mars_Scott_2022_PGHD_Healthcare}.
 Masalah lainnya adalah keamanan dan privasi, karena data ini sering dikumpulkan dan disimpan di luar infrastruktur klinis tradisional \parencite{Mars_Scott_2022_PGHD_Healthcare,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+
+\subsection{Standar dan Format Data PGHD}\label{standar-format-pghd}
+
+Standardisasi model dan format pertukaran data PGHD sudah banyak dilakukan baik oleh organisasi internasional maupun pengembang aplikasi dan perangkat \parencite{hl7_2025_pghd_ig}.
+Model-model tersebut meliputi Apple HealthKit, Google Health Connect, Open mHealth, dan implementasi berbasis FHIR seperti Kanta PHR di Finlandia, yang masing-masing memiliki karakteristik struktur data, mekanisme penanganan satuan, dan tingkat standardisasi yang berbeda seperti terlihat pada gambar~\ref{fig:format-data-comparison} \parencite{hl7_2025_pghd_ig}.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{resources/chapter-2/format-data-comparison.png}
+	\caption{Perbandingan Format dan Standar Data \parencite{hl7_2025_pghd_ig}}\label{fig:format-data-comparison}
+\end{figure}
+
+
+\subsubsection{Apple HealthKit}\label{subsec:apple-healthkit}
+
+Apple HealthKit adalah framework pada platform iOS dan watchOS yang menyediakan repositori terpusat bagi aplikasi pihak ketiga untuk membaca dan menulis data kesehatan serta kebugaran pengguna.
+Seluruh interaksi data dilakukan melalui objek \verb|HKHealthStore| yang disimpan ke \textit{database} HealthKit \parencite{apple_2024_healthkit_saving}.
+
+Data dalam HealthKit direpresentasikan sebagai subkelas dari \verb|HKSample|, yang merupakan kelas abstrak dasar untuk seluruh tipe data kesehatan \parencite{apple_2024_healthkit_saving}.
+Terdapat dua kelas turunan utama yang relevan:
+\begin{itemize}
+  \item \verb|HKQuantitySample|: digunakan untuk data berupa nilai numerik beserta satuan, misalnya detak jantung (\textit{bpm}), jumlah langkah (\textit{count}), dan saturasi oksigen (\textit{percent}) \parencite{apple_2024_healthkit_saving}. 
+  Nilai disimpan dalam objek \verb|HKQuantity| yang menggabungkan nilai dan satuan melalui \verb|HKUnit|.
+  \item \verb|HKCategorySample|: digunakan untuk data kategorikal, misalnya jenis tidur atau kondisi simtom, dengan nilai berupa enumerasi \parencite{apple_2024_healthkit_saving}.
+\end{itemize}
+
+Berikut adalah contoh pembuatan sampel detak jantung dalam Swift menggunakan HealthKit:
+
+\begin{lstlisting}[language=swift,caption={Contoh penulisan data detak jantung pada Apple HealthKit},label={lst:healthkit-sample}]
+let heartRateType = HKQuantityType(.heartRate)
+let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
+let quantity = HKQuantity(unit: heartRateUnit, doubleValue: 72)
+let sample = HKQuantitySample(
+    type: heartRateType,
+    quantity: quantity,
+    start: startDate,
+    end: endDate
+)
+healthStore.save(sample) { success, error in ... }
+\end{lstlisting}
+
+% \begin{itemize}
+%   \item \textbf{Kelebihan}: Ekosistem yang matang dengan lebih dari
+%     100 tipe data; integrasi mendalam dengan sensor Apple Watch;
+%     manajemen izin granular yang jelas \parencite{hl7_2025_pghd_ig}.
+%   \item \textbf{Kekurangan}: Terbatas pada ekosistem Apple (iOS/watchOS);
+%     bersifat proprietary sehingga tidak dirancang sebagai format pertukaran
+%     lintas platform; tidak tersedia di Android \parencite{hl7_2025_pghd_ig}.
+% \end{itemize}
+
+% ----------------------------------------------------------------
+
+\subsubsection{Google Health Connect}\label{subsec:google-health-connect}
+
+Google Health Connect adalah platform Android yang menyediakan repositori terpusat bagi data kesehatan dan kebugaran di perangkat Android \parencite{android_2024_healthconnect,android_hc_write}.
+
+Setiap tipe data di Health Connect direpresentasikan sebagai subkelas dari antarmuka \verb|Record| \parencite{android_hc_dataformat}.
+Terdapat tiga jenis record berdasarkan dimensi waktu:
+\begin{itemize}
+  \item \textit{Instantaneous record}: pengukuran di satu titik waktu, misalnya \verb|HeartRateVariabilityRmssdRecord| dan \verb|BloodPressureRecord|.
+  \item \textit{Interval record}: pengukuran dalam rentang waktu, misalnya \verb|StepsRecord| dan \verb|SleepSessionRecord|
+  \item \textit{Series record}: kumpulan sampel dalam rentang waktu, misalnya \verb|HeartRateRecord| yang memuat daftar \verb|HeartRateRecord.Sample| \parencite{android_hc_write,android_hc_dataformat}.
+\end{itemize}
+
+Setiap record dilengkapi dengan metadata standar yang mencakup: \texttt{id} (diisi otomatis oleh Health Connect), \texttt{lastModifiedTime}, \texttt{dataOrigin} (package name aplikasi sumber), \texttt{device} (tipe, produsen, dan model perangkat), \texttt{clientRecordId} (ID yang diberikan aplikasi untuk keperluan sinkronisasi), dan \texttt{recordingMethod} (otomatis, aktif, atau manual) \parencite{android_hc_dataformat}.
+Waktu wajib disertai dengan informasi zona waktu (\verb|ZoneOffset|) agar data dapat direpresentasikan dalam waktu lokal pengguna \parencite{android_hc_dataformat}.
+
+Penulisan data dilakukan melalui \verb|healthConnectClient.insertRecords()|, sedangkan pembacaan menggunakan \verb|ReadRecordsRequest| dengan filter rentang waktu \parencite{android_hc_write}.
+Google merekomendasikan frekuensi penulisan maksimum setiap 15 menit untuk data harian seperti langkah dan kalori, dan setiap 5 detik untuk sampel detak jantung \parencite{android_hc_write}.
+Untuk tugas pembacaan di latar belakang, Health Connect mendukung penggunaan \verb|WorkManager| dengan \textit{constraint} baterai dan jaringan \parencite{android_hc_write}.
+
+Berikut adalah contoh penulisan data detak jantung (series) menggunakan Health Connect API dalam Kotlin:
+
+\begin{lstlisting}[language=kotlin,caption={Contoh penulisan data series detak jantung pada Google Health Connect},label={lst:health-connect-hr}]
+val heartRateRecord = HeartRateRecord(
+    startTime = startTime,
+    startZoneOffset = ZoneOffset.UTC,
+    endTime = endTime,
+    endZoneOffset = ZoneOffset.UTC,
+    samples = listOf(
+        HeartRateRecord.Sample(
+            time = startTime.plusSeconds(15),
+            beatsPerMinute = 80
+        ),
+        HeartRateRecord.Sample(
+            time = startTime.plusSeconds(30),
+            beatsPerMinute = 82
+        )
+    ),
+    metadata = Metadata(
+        device = Device(type = Device.TYPE_WATCH),
+        recordingMethod = Metadata.RECORDING_METHOD_AUTOMATICALLY_RECORDED
+    )
+)
+healthConnectClient.insertRecords(listOf(heartRateRecord))
+\end{lstlisting}
+
+% \begin{itemize}
+%   \item \textbf{Kelebihan}: Terintegrasi native di ekosistem Android;
+%     mendukung 40+ tipe data dengan struktur yang eksplisit; mendukung
+%     pembacaan latar belakang via WorkManager; metadata sumber perangkat
+%     terstandar \parencite{android_hc_dataformat,android_hc_write}.
+%   \item \textbf{Kekurangan}: Terbatas pada Android; format internal SDK
+%     berbasis kelas Kotlin/Java, bukan skema JSON terbuka sehingga tidak
+%     langsung dapat disimpan sebagai payload di IPFS\@; interoperabilitas
+%     lintas sistem terbatas \parencite{hl7_2025_pghd_ig,android_hc_dataformat}.
+% \end{itemize}
+
+% ----------------------------------------------------------------
+
+\subsubsection{Open mHealth / IEEE 1752}\label{subsec:open-mhealth}
+
+Open mHealth adalah inisiatif standar yang mendefinisikan skema JSON untuk merepresentasikan data kesehatan mobile.
+Standar ini kemudian diformalkan menjadi IEEE 1752.1-2021 \parencite{ieee_1752_1_2021_standard,openmhealth_1752_blog}. % chktex 8
+
+Setiap \textit{instance} data dalam IEEE 1752/Open mHealth terdiri dari dua bagian utama: \texttt{header} dan \texttt{body}.
+Header mendefinisikan metadata standar minimum yang mencakup lima kategori:
+\begin{itemize}
+  \item \texttt{Datapoint}: deskripsi tentang data point itu sendiri (jenis, skema, dan apakah diobservasi atau dihitung).
+  \item \texttt{Source}: asal sensor data.
+  \item \texttt{Acquisition/Processing}: cara data diperoleh dan diproses.
+  \item \texttt{Attribution}: aplikasi atau produk yang menyediakan data.
+  \item \texttt{Privacy}: siapa yang dapat mengakses data, kapan, dan untuk tujuan apa \parencite{ieee_1752_slides}.
+\end{itemize}
+
+\textit{Instance} data dapat berupa \texttt{data point} (satu pengukuran) atau \texttt{data series} (\textit{array} pengukuran dalam satu dokumen JSON yang sama) \parencite{ieee_1752_slides}.
+Skema untuk body berisi value dan unit, misalnya: \verb|"value": 72, "unit": "beats/min"| \parencite{openmhealth_schema}.
+
+Berikut adalah contoh \textit{instance} \texttt{data point} aktivitas fisik yang mengikuti skema Open mHealth/IEEE 1752:
+
+\begin{lstlisting}[language=json,caption={Contoh instans data point Open mHealth/IEEE 1752 untuk aktivitas fisik},label={lst:omh-datapoint}]
+{
+  "header": {
+    "id": "3d4fc1b0-e5a7-11e3-ac10-0800200c9a66",
+    "creation_date_time": "2025-12-20T10:01:05Z",
+    "schema_id": {
+      "namespace": "omh",
+      "name": "physical-activity",
+      "version": "2.0"
+    },
+    "acquisition_provenance": {
+      "source_name": "DecMed Android Client",
+      "modality": "sensed"
+    }
+  },
+  "body": {
+    "activity_name": "walking",
+    "step_count": 120,
+    "effective_time_frame": {
+      "time_interval": {
+        "start_date_time": "2025-12-20T10:00:00Z",
+        "end_date_time": "2025-12-20T10:01:00Z"
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+% \begin{itemize}
+%   \item \textbf{Kelebihan}: Format JSON terbuka dan lintas platform;
+%     standar IEEE sehingga memiliki legitimasi internasional; skema
+%     lebih ringan dibandingkan FHIR\@. \parencite{openmhealth_1752_blog,ieee_1752_1_2021_standard}.
+%   \item \textbf{Kekurangan}: Belum mencakup semua tipe data klinis;
+%     adopsi di sistem EHR produksi masih terbatas dibandingkan FHIR\@;
+%     membutuhkan lapisan konversi jika ingin diintegrasikan ke sistem
+%     FHIR \parencite{hl7_2025_pghd_ig}.
+% \end{itemize}
+
+% ----------------------------------------------------------------
+
+\subsubsection{Kanta PHR (HL7 FHIR)}\label{subsec:kanta-phr}
+
+Kanta PHR adalah layanan rekam kesehatan pribadi nasional di Finlandia yang dikelola oleh Kela (Lembaga Asuransi Sosial Finlandia).
+Kanta PHR mengimplementasikan HL7 FHIR sebagai standar pertukaran data utamanya \parencite{kanta_phr_specs}.
+
+Data ditulis dan dibaca melalui antarmuka FHIR RESTful API\@.
+Sebagian besar item PGHD dipetakan ke resource \verb|Observation| FHIR, di mana nilai pengukuran direpresentasikan menggunakan tipe \verb|Quantity| dengan kode standar internasional LOINC atau SNOMED CT yang tersedia saat ini \parencite{hl7_2025_pghd_ig,kanta_phr_specs}.
+
+Berikut adalah contoh struktur resource \verb|Observation| FHIR untuk data detak jantung:
+
+\begin{lstlisting}[language=json,caption={Contoh resource FHIR Observation untuk detak jantung (gaya Kanta PHR)},label={lst:fhir-observation}]
+{
+  "resourceType": "Observation",
+  "id": "heart-rate-example",
+  "status": "final",
+  "category": [{
+    "coding": [{
+      "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+      "code": "vital-signs"
+    }]
+  }],
+  "code": {
+    "coding": [{
+      "system": "http://loinc.org",
+      "code": "8867-4",
+      "display": "Heart rate"
+    }]
+  },
+  "subject": {
+    "reference": "Patient/example-patient"
+  },
+  "effectiveDateTime": "2025-12-20T10:01:05Z",
+  "valueQuantity": {
+    "value": 72,
+    "unit": "beats/min",
+    "system": "http://unitsofmeasure.org",
+    "code": "/min"
+  }
+}
+\end{lstlisting}
+
+
+% \begin{itemize}
+%   \item \textbf{Kelebihan}: Interoperabilitas tertinggi dengan ekosistem
+%     EHR klinis; didukung kode terminologi internasional (LOINC, SNOMED
+%     CT, UCUM); model consent dan otorisasi yang matang; dapat diintegrasikan
+%     ke sistem rekam medis rumah sakit \parencite{hl7_2025_pghd_ig,kanta_phr_specs}.
+%   \item \textbf{Kekurangan}: Payload JSON sangat verbose karena
+%     mencantumkan banyak elemen metadata FHIR\@; kurang efisien untuk data
+%     time-series berfrekuensi tinggi; cakupan kode LOINC/SNOMED untuk
+%     PGHD konsumen masih belum lengkap sehingga sebagian masih
+%     menggunakan kode sementara \parencite{hl7_2025_pghd_ig}.
+% \end{itemize}
