@@ -3,17 +3,18 @@
 Batasan masalah yang diambil dalam tugas akhir ini adalah,
 
 \begin{enumerate}
+  \item Implementasi klien PGHD hanya dilakukan pada platform Android. 
+  Aplikasi klien pasien dikembangkan sebagai aplikasi Android native yang memanfaatkan Google Health Connect sebagai salah satu sumber data kesehatan \parencite{android_hc_dataformat,android_hc_write}
+  
   \item Pengumpulan data PGHD pada perangkat seluler dilakukan menggunakan API sensor yang tersedia pada sistem operasi Android, tanpa melibatkan integrasi dengan perangkat medis bersertifikasi klinis.
   
-  \item Data dari perangkat \textit{wearable} tidak diambil dari perangkat fisik secara langsung, melainkan disimulasikan dalam aplikasi dan dikirimkan ke perangkat seluler melalui mekanisme komunikasi \textit{Bluetooth Low Energy} (BLE).
+  % \item Data dari perangkat \textit{wearable} tidak diambil dari perangkat fisik secara langsung, melainkan disimulasikan dalam aplikasi dan dikirimkan ke perangkat seluler melalui mekanisme komunikasi \textit{Bluetooth Low Energy} (BLE).
+
+  \item Evaluasi yang dilakukan bersifat fungsional, mencakup keberhasilan alur pengumpulan, penyimpanan lokal, enkripsi, unggah ke IPFS, pencatatan metadata di IOTA, serta verifikasi integritas dan \textit{non-repudiation}. 
   
   \item Penelitian difokuskan pada perancangan dan implementasi pipeline integrasi data, termasuk mekanisme enkripsi, penyimpanan, dan validasi, tanpa mencakup pengembangan perangkat keras maupun validasi klinis terhadap data yang dihasilkan.
-  
-  \item Pengujian sistem dilakukan pada jaringan uji (\textit{testnet}) IOTA Rebased dan tidak mencakup \textit{deployment} pada jaringan produksi (\textit{mainnet}) maupun evaluasi performa pada skala pengguna nyata.
   
   \item Penelitian ini merupakan ekstensi terhadap DecMed versi yang dideskripsikan pada \parencite{Purnama_2026} dan tidak mencakup modifikasi terhadap komponen inti DecMed yang sudah ada, seperti mekanisme CapBAC dan PRE\@.
   
   \item Mekanisme keamanan yang dikaji terbatas pada enkripsi data dan verifikasi untuk menjamin integritas dan \textit{non-repudiation} data, tanpa membahas secara mendalam skenario serangan lanjutan di luar cakupan tersebut.
-  
-  \item Pertimbangan dan penjelasan mendetail mengenai implementasi kriptografi tidak dibahas dalam Tugas Akhir ini.
 \end{enumerate}

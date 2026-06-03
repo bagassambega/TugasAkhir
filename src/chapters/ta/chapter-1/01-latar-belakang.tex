@@ -32,8 +32,14 @@ Tantangan ketiga adalah karakteristik data PGHD yang bersifat \textit{time-serie
 Selain itu, terdapat tantangan terkait otentisitas dan mekanisme untuk menjamin \textit{non-repudiation} data.
 Karena PGHD berasal langsung dari pasien, data tersebut tidak memiliki tingkat kepercayaan yang sama dengan data klinis yang dicatat oleh tenaga kesehatan \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
 Kurangnya mekanisme verifikasi asal-usul data menjadi salah satu hambatan utama dalam pemanfaatan PGHD untuk pengambilan keputusan klinis \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
-Oleh karena itu, diperlukan pendekatan berbasis kriptografi untuk menjamin bahwa data yang dikirim benar-benar berasal dari sumber yang sah dan tidak mengalami manipulasi \parencite{Ahmed_2023_Data_Provenance}.
+Oleh karena itu, diperlukan implementasi untuk menjamin bahwa data yang dikirim benar-benar berasal dari sumber yang sah dan tidak mengalami manipulasi \parencite{Ahmed_2023_Data_Provenance}.
 
-Berdasarkan permasalahan tersebut, penelitian ini bertujuan untuk merancang ekstensi \textit{pipeline} integrasi PGHD pada ekosistem DecMed.
-\textit{Pipeline} yang diusulkan mencakup mekanisme pengumpulan data secara \textit{offline-first}, proses \textit{batching} untuk efisiensi transmisi, standardisasi data, enkripsi di sisi klien, serta validasi integritas dan \textit{non-repudiation} PGHD pada sistem DecMed\@.
+Berdasarkan permasalahan tersebut, penelitian ini bertujuan untuk merancang \textit{pipeline} integrasi PGHD pada ekosistem DecMed.
+\textit{Pipeline} yang diusulkan mencakup mekanisme pengumpulan data secara \textit{offline-first}, proses \textit{batching} untuk efisiensi transmisi, standardisasi data, serta validasi integritas dan \textit{non-repudiation} PGHD pada sistem DecMed\@.
+
+Pengembangan klien PGHD pada penelitian ini difokuskan pada platform Android. 
+Per Mei 2026, Android merupakan sistem operasi ponsel pintar dengan pangsa pasar terbesar, mencapai sekitar 68\% secara global, jauh di atas iOS yang berada di kisaran 31\% \parencite{statcounterMobileOperating}.
+Selain faktor pangsa pasar, ekosistem Android menyediakan integrasi Health Connect sebagai API milik Google untuk membaca dan menulis data kesehatan dari berbagai aplikasi dan perangkat \parencite{android_2024_healthconnect}.
+Dengan mempertimbangkan faktor adopsi global, ketersediaan infrastruktur pengelolaan data kesehatan, dan keterbatasan ruang lingkup tugas akhir, implementasi klien PGHD pada penelitian ini dibatasi pada platform Android.
+
 Dengan demikian, penelitian ini diharapkan dapat memperluas kapabilitas DecMed dari sistem yang bersifat \textit{provider-centric} menjadi platform kesehatan yang mampu mengakomodasi data kontinu yang dihasilkan langsung oleh pasien.
