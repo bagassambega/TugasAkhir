@@ -1,4 +1,4 @@
-\subsection{Alternatif Arsitektur Pengumpulan dan Pipeline PGHD-DecMed}\label{alternatif-arsitektur-pipeline-pghd}
+\subsection{Alternatif Pipeline PGHD-DecMed}\label{alternatif-arsitektur-pipeline-pghd}
 
 Berdasarkan analisis permasalahan di atas, terdapat beberapa arsitektur yang dipertimbangkan.
 
@@ -80,3 +80,13 @@ Pengiriman berbasis waktu memberikan prediktabilitas konsumsi baterai dan jaring
 Selain itu, mekanisme event-based trigger juga rentan terhadap error pada perangkat ataupun anomali yang disebabkan faktor eksternal lainnya. % TODO: justifikasi referensi
 
 Durasi yang digunakan untuk mengirimkan data dari klien ke sistem DecMed adalah setiap 15 menit sekali seperti rekomendasi Google HealthConnect API \parencite{android_hc_write}.
+
+\subsubsection{Mekanisme Pengaksesan Data PGHD}
+
+Data PGHD saat kondisi gawat darurat atau rawat jalan atau rawat inap bisa diakses datanya terus menerus oleh tenaga kesehatan.
+Hal ini dikarenakan tenaga kesehatan selalu butuh data secara sekuensial dan terus menerus saat hal tersebut terjadi.
+
+Mekanisme teknis yang akan dimasukkan ke DecMed adalah nanti waktu kedaluarsa \verb|access_token_read| yang sudah dibentuk dari PRE dan diubah dari cfrag memiliki waktu kedaluwarsa tidak ada.
+Status gawat darurat, rawat jalan, rawat inap hanya bisa dicabut oleh tenaga kesehatan.
+
+Poin-poin dan penjelasan di atas butuh referensi untuk justifikasi.

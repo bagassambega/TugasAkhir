@@ -3,8 +3,8 @@
 \sloppy
 
 DecMed merupakan sebuah kerangka kerja manajemen rekam medis elektronik (RME) terdesentralisasi yang dibangun di atas \textit{Distributed Ledger Technology} (DLT) berbasis IOTA \parencite{Purnama_2026}.
-Sistem ini dirancang sebagai respons terhadap keterbatasan sistem RME konvensional yang masih terfragmentasi antar fasyankes dan belum memiliki mekanisme interoperabilitas yang aman, andal, serta menjaga kedaulatan data pasien secara penuh \parencite{Kuo_2017_DLT_EHR,Ekblaw_2016_Medrec,Purnama_2026}.
-Selain itu, pendekatan pertukaran data yang masih bergantung pada perantara terpusat juga menimbulkan risiko tambahan seperti \textit{single point of failure} dan potensi kebocoran data \parencite{Carlos_Ferreira2024_EHR_Enhancing_Interoperability_Security}.
+Sistem ini dirancang sebagai respons terhadap keterbatasan sistem RME konvensional yang masih terfragmentasi antar fasyankes dan belum memiliki mekanisme interoperabilitas yang aman, andal, serta menjaga kedaulatan data pasien secara penuh \parencite{Ekblaw_2016_Medrec,Purnama_2026}.
+Selain itu, pendekatan pertukaran data yang masih bergantung pada perantara terpusat juga menimbulkan risiko tambahan seperti \textit{single point of failure} dan potensi kebocoran data \parencite{Hari_2025,Purnama_2026}.
 Dengan memanfaatkan DLT, DecMed berupaya mengatasi permasalahan tersebut melalui arsitektur yang terdesentralisasi dan bersifat \textit{trustless}.
 
 Secara arsitektural, DecMed terdiri atas tiga komponen utama.
@@ -14,32 +14,32 @@ Ketiga, \textit{storage} sebagai mekanisme penyimpanan, dengan \textit{InterPlan
 Melalui kombinasi ini, DecMed mampu menyediakan mekanisme pengelolaan RME yang aman, terdesentralisasi, dan mendukung kontrol akses berbasis pasien.
 
 Meskipun demikian, implementasi DecMed saat ini masih bersifat \textit{provider-centric}.
-Data kesehatan pasien umumnya hanya masuk ke dalam sistem ketika terjadi interaksi dengan fasyankes, seperti kunjungan klinis atau pencatatan oleh tenaga medis \parencite{Mars_Scott_2022_PGHD_Healthcare}.
+Data kesehatan pasien hanya masuk ke dalam sistem ketika terjadi interaksi dengan fasyankes, seperti kunjungan klinis atau pencatatan oleh tenaga medis.
 Pola akuisisi data yang episodik ini menyebabkan sistem tidak mampu merepresentasikan kondisi kesehatan pasien secara kontinu di luar lingkungan klinis \parencite{Mars_Scott_2022_PGHD_Healthcare,Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
-Padahal, banyak kondisi kesehatan—terutama penyakit kronis—bersifat dinamis dan memerlukan pemantauan berkelanjutan untuk mendukung pengambilan keputusan klinis yang lebih akurat \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+Padahal, banyak kondisi kesehatan memerlukan pemantauan berkelanjutan untuk mendukung pengambilan keputusan klinis yang lebih akurat \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 
 Untuk mengatasi keterbatasan tersebut, diperlukan integrasi \textit{Patient-Generated Health Data} (PGHD) ke dalam ekosistem DecMed.
-PGHD merupakan data kesehatan yang dicatat dan dihasilkan secara mandiri oleh pasien, baik melalui input manual maupun melalui perangkat \textit{wearable} dan \textit{Internet of Medical Things} (IoMT) \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+PGHD merupakan data kesehatan yang dicatat dan dihasilkan secara mandiri oleh pasien, baik melalui input manual maupun melalui perangkat \textit{wearable} dan perangkat seluler (\textit{mobile}) \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
 Perkembangan perangkat \textit{wearable} memungkinkan pengumpulan data fisiologis secara \textit{real-time} dan berkelanjutan, seperti detak jantung, pola tidur, dan saturasi oksigen \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Data tersebut memberikan perspektif longitudinal yang tidak dapat diperoleh hanya dari rekam medis berbasis kunjungan klinis \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+Data PGHD memberikan informasi bagi tenaga kesehatan yang tidak dapat diperoleh hanya dari rekam medis berbasis kunjungan saja \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 Dengan demikian, integrasi PGHD berpotensi mengubah DecMed menjadi sistem yang lebih \textit{patient-centric} dan proaktif.
 
 Namun, integrasi PGHD ke dalam arsitektur DecMed memberikan sejumlah tantangan.
-Tantangan pertama adalah heterogenitas format data dari perangkat \textit{wearable}, yang umumnya menggunakan format \textit{proprietary}, sehingga memerlukan standardisasi \parencite{Abedian_2025_Garmin_FHIR_PGHD_Integration,HL7_FHIR_2025}.
-Tantangan kedua adalah kebutuhan akan arsitektur \textit{offline-first}, mengingat perangkat pasien tidak selalu terhubung ke jaringan secara stabil, sehingga diperlukan mekanisme penyimpanan lokal dan sinkronisasi bertahap \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Tantangan ketiga adalah karakteristik data PGHD yang bersifat \textit{time-series} dengan frekuensi tinggi, yang tidak efisien jika langsung disimpan secara \textit{on-chain}, sehingga diperlukan mekanisme \textit{batching} dan pemanfaatan IPFS sebagai penyimpanan utama \parencite{Wen_2024_Performance_Blockchain}.
+Tantangan pertama adalah kebutuhan akan arsitektur \textit{offline-first}, mengingat perangkat pasien tidak selalu terhubung ke jaringan secara stabil \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Tantangan kedua adalah karakteristik data PGHD yang berasal dari sensor perangkat bersifat \textit{time-series} dengan frekuensi tinggi yang tidak efisien jika terus menerus dikirim \parencite{Wen_2024_Performance_Blockchain}.
 
-Selain itu, terdapat tantangan terkait otentisitas dan mekanisme untuk menjamin \textit{non-repudiation} data.
-Karena PGHD berasal langsung dari pasien, data tersebut tidak memiliki tingkat kepercayaan yang sama dengan data klinis yang dicatat oleh tenaga kesehatan \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
-Kurangnya mekanisme verifikasi asal-usul data menjadi salah satu hambatan utama dalam pemanfaatan PGHD untuk pengambilan keputusan klinis \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
-Oleh karena itu, diperlukan implementasi untuk menjamin bahwa data yang dikirim benar-benar berasal dari sumber yang sah dan tidak mengalami manipulasi \parencite{Ahmed_2023_Data_Provenance}.
+Selain karakteristik dan volume datanya, integrasi PGHD juga memunculkan tantangan dari sisi keamanan dan kepercayaan data.
+Data kesehatan yang dihasilkan pasien bersifat sensitif dan memerlukan perlindungan yang mencakup aspek kerahasiaan (\textit{confidentiality}), integritas (\textit{integrity}), dan ketersediaan (\textit{availability}) \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Kerahasiaan data PGHD harus dijaga agar informasi kesehatan pasien tidak dapat diakses oleh pihak yang tidak berwenang \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
+Integritas data memastikan bahwa PGHD tidak mengalami modifikasi yang tidak sah selama transmisi maupun penyimpanan sehingga keputusan klinis yang diambil berdasarkan data PGHD dapat dipercaya \parencite{Ahmed_2023_Data_Provenance}.
 
-Berdasarkan permasalahan tersebut, penelitian ini bertujuan untuk merancang \textit{pipeline} integrasi PGHD pada ekosistem DecMed.
-\textit{Pipeline} yang diusulkan mencakup mekanisme pengumpulan data secara \textit{offline-first}, proses \textit{batching} untuk efisiensi transmisi, standardisasi data, serta validasi integritas dan \textit{non-repudiation} PGHD pada sistem DecMed\@.
+Aspek ketersediaan (\textit{availability}) data PGHD juga penting untuk diperhatikan karena PGHD yang bersumber dari perangkat sensor wearable bersifat \textit{time-series} dan dikirimkan secara kontinu dalam volume tinggi \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
+Pada sistem berbasis DLT seperti DecMed, lonjakan transaksi yang melebihi kapasitas jaringan dapat menyebabkan penurunan performa bahkan kondisi sistem tidak lagi dapat melayani permintaan yang sah (\textit{denial of service}/DoS) \parencite{Wen_2024_Performance_Blockchain}. 
 
-Pengembangan klien PGHD pada penelitian ini difokuskan pada platform Android. 
-Per Mei 2026, Android merupakan sistem operasi ponsel pintar dengan pangsa pasar terbesar, mencapai sekitar 68\% secara global, jauh di atas iOS yang berada di kisaran 31\% \parencite{statcounterMobileOperating}.
-Selain faktor pangsa pasar, ekosistem Android menyediakan integrasi Health Connect sebagai API milik Google untuk membaca dan menulis data kesehatan dari berbagai aplikasi dan perangkat \parencite{android_2024_healthconnect}.
-Dengan mempertimbangkan faktor adopsi global, ketersediaan infrastruktur pengelolaan data kesehatan, dan keterbatasan ruang lingkup tugas akhir, implementasi klien PGHD pada penelitian ini dibatasi pada platform Android.
+Di samping ketiga aspek CIA, kebutuhan akan \textit{data provenance} menjadi hal yang krusial dalam konteks PGHD\@. 
+\textit{Data provenance} adalah pencatatan asal-usul, riwayat pemrosesan, dan rantai kepemilikan data sejak data tersebut pertama kali dikumpulkan hingga digunakan \parencite{Ahmed_2023_Data_Provenance}. 
+Tanpa \textit{provenance} yang terdokumentasi dengan baik, tenaga kesehatan tidak dapat memverifikasi apakah suatu data PGHD benar-benar berasal dari pasien yang bersangkutan, kapan diukur, menggunakan perangkat apa, dan apakah telah mengalami transformasi selama pengiriman \parencite{Ahmed_2023_Data_Provenance}. 
+Ketidakmampuan menelusuri asal-usul data menjadi salah satu hambatan penggunaan PGHD secara klinis karena menurunkan kepercayaan tenaga kesehatan terhadap kualitas dan validitas data \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 
-Dengan demikian, penelitian ini diharapkan dapat memperluas kapabilitas DecMed dari sistem yang bersifat \textit{provider-centric} menjadi platform kesehatan yang mampu mengakomodasi data kontinu yang dihasilkan langsung oleh pasien.
+Berdasarkan permasalahan tersebut, penelitian ini bertujuan untuk merancang dan mengimplementasikan \textit{pipeline} integrasi PGHD pada ekosistem DecMed yang memperhatikan kondisi perangkat ketika tidak terhubung ke internet (\textit{offline-first}), menjamin keamanan data PGHD dalam kerangka CIA (\textit{Confidentiality, Integrity, Availability}), serta menyediakan mekanisme \textit{data provenance} yang dapat diverifikasi\@. 
+Dengan demikian, penelitian ini diharapkan dapat memperluas kapabilitas DecMed dari sistem yang bersifat \textit{provider-centric} menjadi platform kesehatan yang mampu mengakomodasi data kontinu yang dihasilkan langsung oleh pasien secara aman dan terpercaya.

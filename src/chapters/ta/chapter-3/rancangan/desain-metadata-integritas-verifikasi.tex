@@ -7,7 +7,7 @@ Struktur metadata yang disimpan secara \textit{on-chain} pada ledger IOTA untuk 
     \item \verb|enc_aes_key_nonce|: ciphertext yang berisi gabungan kunci AES dan \textit{nonce} yang telah dienkripsi menggunakan \verb|pre_public_key| pasien melalui mekanisme proxy re-encryption,
     \item \verb|capsule|: artefak kriptografis proxy re-encryption yang diperlukan untuk merekonstruksi kunci AES di sisi klien yang berhak,
     \item \verb|pghd_outer_signature|: \textit{digital signature} yang dihasilkan dari penandatanganan nilai hash SHA-256 dari \verb|enc_pghd| menggunakan kunci privat pasien \verb|pghd_secret_key|,
-    \item \item \verb|h_cipher|: nilai hash SHA-256 dari ciphertext \verb|enc_pghd| yang dihitung oleh klien pasien,
+    \item \verb|h_cipher|: nilai hash SHA-256 dari ciphertext \verb|enc_pghd| yang dihitung oleh klien pasien,
     \item \verb|status|: status entri PGHD (\texttt{VALID} atau \texttt{INVALID}) yang digunakan untuk menandai apakah entri masih dapat digunakan oleh aplikasi,
     \item \verb|timestamp|: waktu pencatatan data ke dalam sistem.
 \end{itemize}

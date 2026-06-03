@@ -1,0 +1,74 @@
+\subsection{Analisis Solusi Data Provenance}
+
+Seperti yang sudah dibahas pada Subbab~\ref{data-provenance}, terdapat empat metode untuk mendapatkan \textit{data provenance}, yaitu \textit{logging-based}, \textit{cryptography-based}, \textit{blockchain-based}, dan \textit{ontology-based}.
+Kriteria pemilihan yang perlu dipertimbangkan untuk kebutuhan \textit{data provenance} yaitu:
+(1) \textit{unforgeability}---catatan \textit{provenance} tidak dapat dipalsukan;
+(2) integritas metadata---metadata tidak dapat dimodifikasi setelah dicatat; (3)
+keselarasan dengan prinsip \textit{trustless} dan desentralisasi DecMed; serta (4)
+efisiensi komputasi untuk perangkat klien pasien
+\parencite{Ahmed_2023_Data_Provenance}
+
+\begin{table}[h!]
+\centering
+\caption{Perbandingan pendekatan \textit{data provenance}}
+\label{tab:perbandingan-provenance}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Kriteria} & \textbf{Logging} & \textbf{Kriptografi} & \textbf{Blockchain} & \textbf{Ontologi} \\
+\midrule
+\textit{Unforgeability}        & \ding{55} & \ding{51} & \ding{51} & \ding{55} \\
+Integritas metadata            & \ding{55} & \ding{51} & \ding{51} & \ding{51} \\
+Prinsip \textit{trustless}     & \ding{55} & \ding{51} & \ding{51} & \ding{55} \\
+Efisiensi komputasi            & \ding{51} & \ding{51} & \ding{55} & \ding{55} \\
+Sesuai infrastruktur DecMed    & \ding{55} & \ding{51} & \ding{51} & \ding{55} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Pendekatan \textit{logging-based} tidak memenuhi kriteria \textit{unforgeability} dan
+prinsip \textit{trustless} karena log tersimpan pada entitas yang berpotensi
+dimodifikasi, sehingga tidak selaras dengan arsitektur desentralisasi DecMed.
+Pendekatan \textit{ontology-based} menawarkan kekuatan semantik namun kompleksitasnya
+tidak sebanding dengan kebutuhan sistem ini yang berfokus pada verifikasi kriptografis.
+Oleh karena itu, pendekatan yang dipilih adalah kombinasi
+\textbf{\textit{cryptography-based}} dan \textbf{\textit{blockchain-based}}:
+\begin{itemize}
+    \item \textbf{Kriptografi (tanda tangan digital ECDSA)}: digunakan untuk
+          mengikat setiap entri PGHD ke identitas kriptografis pasien, memungkinkan
+          verifikasi asal-usul data secara efisien tanpa bergantung pada pihak ketiga,
+          sekaligus menyediakan bukti \textit{non-repudiation}
+          \parencite{Ahmed_2023_Data_Provenance}.
+    \item \textbf{DLT (IOTA \textit{ledger})}: metadata
+          \textit{provenance}---yang telah ditandatangani secara digital---dicatat
+          sebagai transaksi pada \textit{ledger} IOTA yang bersifat \textit{immutable}.
+          Sifat desentralisasi jaringan IOTA menjamin catatan tersebut tahan terhadap
+          pemalsuan dan dapat diaudit kapan saja tanpa bergantung pada satu otoritas
+          \parencite{Ahmed_2023_Data_Provenance}.
+\end{itemize}
+Kombinasi kedua pendekatan ini juga telah terimplementasi secara parsial dalam
+mekanisme DecMed yang ada untuk data klinis, sehingga ekstensi ke PGHD
+dapat dilakukan tanpa memperkenalkan komponen arsitektur yang sepenuhnya baru.
+
+% \textit{Data provenance} pada PGHD dicapai melalui kombinasi mekanisme kriptografi dan pencatatan berbasis blockchain IOTA\@. 
+% Tanda tangan digital digunakan untuk identifikasi asal-usul data, sedangkan blockchain atau DLT memberikan catatan provenance yang bersifat \textit{immutable}, tahan terhadap pemalsuan, dan dapat diaudit kapan saja \parencite{Ahmed_2023_Data_Provenance}. 
+% Setiap entri PGHD yang dikirimkan akan disertai metadata \textit{provenance} yang ditandatangani secara digital oleh pasien dan dicatat sebagai transaksi pada IOTA, dan memanfaatkan sifat \textit{immutability} dan desentralisasi jaringan IOTA sehingga upaya modifikasi \textit{data provenance} akan sangat sulit \parencite{Ahmed_2023_Data_Provenance}.
+
+% Untuk memberikan \textit{provenance} data PGHD, metadata akan ditambahkan dalam pengiriman data ke IPFS dan IOTA\@.
+% Metadata \textit{provenance} harus mencakup informasi tentang asal-usul data serta semua operasi yang dilakukan terhadap data tersebut sepanjang siklus hidupnya \parencite{Ahmed_2023_Data_Provenance}. 
+% Berdasarkan analisis kebutuhan \textit{provenance}, metadata yang diperlukan mencakup:
+% \begin{itemize}
+%     \item \textbf{Identitas pasien} (\textit{patient ID}): 
+%     identifikasi unik pasien sebagai sumber dan penanggung jawab data \parencite{Ahmed_2023_Data_Provenance}.
+%     \item \textbf{Identitas dan informasi perangkat}: 
+%      (\textit{device ID}, tipe, produsen) \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+%     \item \textbf{Waktu pengumpulan data} (\textit{timestamp}): 
+%     pencatatan waktu pengukuran \textit{time-series} \parencite{Ahmed_2023_Data_Provenance}.
+%     \item \textbf{Tipe dan satuan data}: 
+%     spesifikasi tipe pengukuran dan satuannya untuk mendukung interoperabilitas dan pemahaman data \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+%     \item \textbf{Nilai hash data} (\textit{data hash}): 
+%     nilai hash data pengukuran untuk verifikasi integritas \parencite{Ahmed_2023_Data_Provenance}.
+%     \item \textbf{Tanda tangan digital (\textit{digital signature})}: 
+%     tanda tangan kriptografis pasien atas metadata dan hash data untuk menjamin autentisitas dan non-repudiasi \parencite{NIST_FIPS186-5}.
+%     \item \textbf{Versi skema data}: 
+%     versi format yang digunakan untuk mendukung kompatibilitas dan keterlacakan transformasi format \parencite{Ahmed_2023_Data_Provenance}.
+% \end{itemize}

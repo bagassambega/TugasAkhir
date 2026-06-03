@@ -4,12 +4,12 @@ Metodologi yang digunakan dalam Tugas Akhir ini terdiri dari empat tahap utama s
 
 \begin{enumerate}
   \item \textbf{Tahap Studi Literatur dan Analisis Sistem Berjalan}
-        Tahap ini mencakup kajian terhadap arsitektur DecMed yang sudah ada, kerangka kerja integrasi PGHD ke sistem klinis, pendekatan \textit{offline-first} pada aplikasi \textit{mobile}, serta mekanisme keamanan berbasis kriptografi untuk menjamin integritas dan non-repudiation data. 
-        Selain itu, dilakukan analisis kesenjangan (\textit{gap analysis}) antara kapabilitas DecMed saat ini dan kebutuhan untuk mengakomodasi aliran PGHD secara kontinu. 
+        Tahap ini mencakup kajian terhadap arsitektur DecMed yang sudah ada, dasar integrasi PGHD ke sistem DecMed, kebutuhan kelengkapan data PGHD untuk mendukung \textit{data provenance}, serta mekanisme untuk menjamin kerahasiaan, integritas dan ketersediaan data. 
+        Selain itu, dilakukan analisis kesenjangan (\textit{gap analysis}) antara kapabilitas DecMed saat ini dan kebutuhan untuk mengintegrasikan data PGHD\@. 
         Tahap ini menjadi dasar perumusan kebutuhan yang menjawab seluruh rumusan masalah.
 
   \item \textbf{Tahap Perancangan Arsitektur dan Desain Sistem.}
-        Berdasarkan analisis kesenjangan dan kebutuhan yang dirumuskan pada tahap sebelumnya, dilakukan perancangan arsitektur \textit{pipeline} integrasi PGHD, desain mekanisme \textit{offline-first} dengan \textit{batching} di sisi klien, serta desain penjaminan integritas data dan mekanisme \textit{non-repudiation}\@.
+        Berdasarkan analisis kesenjangan dan kebutuhan yang dirumuskan pada tahap sebelumnya, dilakukan perancangan arsitektur \textit{pipeline} integrasi PGHD, kebutuhan kelengkapan data PGHD untuk menjamin \textit{data provenance}, dan mekanisme verifikasi keamanan, integritas dan ketersediaan data\@.
 
   \item \textbf{Tahap Implementasi.}
         Rancangan arsitektur diimplementasikan ke dalam bentuk kode sumber. 

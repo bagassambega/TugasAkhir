@@ -1,23 +1,23 @@
 \section{Tujuan dan Ukuran Keberhasilan}
 
-Tujuan dari skripsi ini adalah merancang dan mengimplementasikan \textit{integration pipeline} Patient-Generated Health Data (PGHD) ke dalam ekosistem DecMed yang mampu menangani aliran data secara asinkron, aman, dan terverifikasi.
+Tujuan dari tugas akhir ini adalah merancang dan mengimplementasikan \textit{integration pipeline} Patient-Generated Health Data (PGHD) ke dalam ekosistem DecMed yang mampu menangani aliran data secara asinkron, aman, dan terverifikasi.
 
 Secara khusus, penelitian ini bertujuan untuk:
 
 \begin{enumerate}
-    \item Mengimplementasikan arsitektur \textit{pipeline} integrasi PGHD berbasis penyimpanan hibrid IPFS dan IOTA\@.
+    \item Mengimplementasikan arsitektur \textit{pipeline} mekanisme pengumpulan, pengolahan, pengiriman dan pengaksesan PGHD yang terintegrasi dengan sistem DecMed\@.
 
-    \item Merancang dan mengimplementasikan mekanisme \textit{offline-first state management} dan \textit{batching} pada aplikasi klien pasien untuk memastikan pengelolaan data yang tahan terhadap gangguan konektivitas.
+    \item Merancang struktur data dan metadata PGHD untuk memenuhi kebutuhan \textit{data provenance}.
 
-    \item Mengembangkan mekanisme verifikasi data PGHD untuk menjamin integritas dan \textit{non-repudiation} data.
+    \item Mengembangkan mekanisme verifikasi untuk menjamin keamanan, integritas dan ketersediaan data PGHD\@.
 \end{enumerate}
 
 Keterukuran keberhasilan Tugas Akhir ini bisa dilihat dari ketercapaian parameter berikut:
 
 \begin{enumerate}
-    \item \textit{Payload} PGHD yang diambil dapat diunggah ke IPFS \textit{cluster} hingga menghasilkan Content Identifier (CID) yang valid, dan CID tersebut berhasil dikirimkan sebagai \textit{transaction} ke jaringan IOTA\@.
+    \item Data PGHD yang diambil perangkat pasien dapat dikirim dan diakses oleh tenaga kesehatan meskipun dalam kendala internet atau \textit{offline} dan volume data yang besar\@.
 
-    \item Saat aplikasi berjalan secara luring, data stabil tersimpan di basis data lokal. Saat daring, sistem mampu mengirimkan data secara \textit{batching} tanpa adanya \textit{data loss} ataupun duplikasi.
+    \item Data PGHD memiliki metadata \textit{provenance} untuk menjamin kelengkapan dan pemenuhan kebutuhan \textit{data provenance} pada PGHD\@.
 
-    \item Mekanisme verifikasi yang diimplementasikan mampu menerima data dengan \textit{signature} yang valid, menolak data dengan \textit{signature} yang tidak valid, dan menjamin sifat \textit{non-repudiation} terhadap data PGHD\@.
+    \item Sistem DecMed mampu menerima dan menjamin kerahasiaan, integritas dan ketersediaan data PGHD yang diterima dan menolak data yang sudah dimanipulasi atau tidak valid.
 \end{enumerate}
