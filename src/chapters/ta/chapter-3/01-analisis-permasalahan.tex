@@ -29,8 +29,12 @@ PGHD, khususnya yang berasal dari sensor \textit{wearable} dan smartphone, bersi
 Mengirimkan setiap pembacaan sensor secara langsung sebagai transaksi terpisah ke IOTA Rebased tidak efisien mengingat adanya biaya \textit{gas fee} per transaksi dan batasan \textit{throughput} jaringan \parencite{FromTangleToRebased_2025}. 
 Saat ini, DecMed belum memiliki mekanisme \textit{batching} yang dirancang untuk menangani volume data \textit{time-series} tinggi seperti PGHD, sehingga terbentuk \textbf{Gap 3}: \emph{tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD yang efisien terhadap infrastruktur IOTA-IPFS}.
 
-Terakhir, dari sisi kepercayaan dan asal-usul data, seluruh data klinis yang tersimpan di DecMed saat ini berasal dari tenaga kesehatan yang terverifikasi dan dicatat dalam konteks pelayanan klinis, sehingga memiliki tingkat kepercayaan tinggi secara medis. 
+Kemudian dari segi kepercayaan dan asal-usul data, seluruh data klinis yang tersimpan di DecMed saat ini berasal dari tenaga kesehatan yang terverifikasi dan dicatat dalam konteks pelayanan klinis, sehingga memiliki tingkat kepercayaan tinggi secara medis. 
 PGHD dihasilkan secara mandiri oleh pasien di luar pengawasan langsung penyedia layanan kesehatan dan tidak secara otomatis memiliki tingkat kepercayaan yang setara dengan data klinis. 
 Tanpa mekanisme yang menjamin kerahasiaan, integritas, dan ketersediaan data PGHD juga penyediaan informasi \textit{provenance} yang lengkap, tenaga kesehatan dan sistem sulit memverifikasi keaslian, asal perangkat, dan keterpercayaan data tersebut.
 DecMed telah memiliki infrastruktur identitas kriptografis pasien (sepasang kunci IOTA yang dibangkitkan dari \textit{seed}) dan \textit{smart contract} yang dapat diperluas untuk menyimpan metadata tambahan, tetapi belum ada modul yang memanfaatkan komponen tersebut untuk menjamin kerahasiaan, integritas, ketersediaan, dan \textit{data provenance} PGHD\@.
 Kondisi ini membentuk \textbf{Gap~4}: tidak adanya mekanisme penjaminan kerahasiaan, integritas, ketersediaan dan \textit{data provenance} khusus untuk data yang berasal dari pasien.
+
+Terakhir, DecMed saat ini menggunakan token akses baca dengan \textit{time to live} yang sudah ditetapkan dan bersifat sementara. 
+Seperti dijelaskan pada latar belakang (subbab~\ref{sec:latar-belakang}), dalam kondisi rawat inap, gawat darurat, atau rawat jalan yang berlangsung berkepanjangan, PGHD memiliki manfaat yang besar bagi tenaga kesehatan dengan mengakses data yang dihasilkan secara kontinu. 
+Ketidakmampuan sistem untuk mempertahankan akses baca selama durasi perawatan klinis membentuk \textbf{Gap 5}: \textit{tidak adanya mekanisme akses baca secara persisten berbasis status klinis pasien}.
