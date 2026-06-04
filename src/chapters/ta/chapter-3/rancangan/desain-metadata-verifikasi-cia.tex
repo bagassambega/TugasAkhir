@@ -1,0 +1,39 @@
+\subsection{Mekanisme Verifikasi Kerahasiaan, Integritas dan Ketersediaan PGHD}\label{rancangan-mekanisme-integritas-nonrepudiation}
+
+Berdasarkan pemilihan pada subbab~\ref{alternatif-analisis-solusi-cia}, diperlukan suatu mekanisme untuk memverifikasi kerahasiaan, integritas, dan ketersediaan data PGHD\@.
+Mekanisme yang dipilih untuk menjamin kerahasiaan adalah mekanisme enkripsi data PGHD, sementara mekanisme untuk menjamin integritas adalah kombinasi hash dengan digital signature, dan mekanisme untuk menjamin ketersediaan adalah mekanisme \textit{batching} dan penyimpanan data PGHD di IPFS, bukan di \textit{on-chain} IOTA\@.
+Sama seperti rekam medis elektronik yang dihasilkan oleh tenaga kesehatan, data PGHD yang dihasilkan pasien akan disimpan di IPFS, sementara metadata dan informasi mengenai data akan disimpan di \textit{on-chain} IOTA mempertimbangkan keterbatasan IOTA untuk menyimpan data maksimum berukuran 250 KB\@.
+Selain itu, sejalan dengan strategi pengiriman dan penyimpanan data pada alternatif \textit{pipeline} di subbab~\ref{alternatif-arsitektur-pipeline-pghd} dan arsitektur \textit{pipeline} di subbab~\ref{rancangan-solusi-arsitektur-sistem}, akan digunakan mekanisme \textit{batching} sehingga jaringan dan sistem DecMed tidak \textit{overload} terhadap transaksi yang sedang berjalan.
+
+Untuk menjamin kerahasiaan PGHD, klien pasien melakukan enkripsi data PGHD sebelum dikirim ke DecMed dan disimpan di IPFS\@.
+Hal ini dilakukan agar data PGHD tidak dapat diakses oleh orang yang tidak memiliki hak akses baik ketika data dikirim ataupun sudah disimpan di IPFS DecMed\@.
+
+Untuk menjamin integritas PGHD, klien pasien menghitung hash dari PGHD sebelum data dienkripsi.
+Kemudian hash tersebut ditandatangani oleh kunci privat pasien menjadi digital signature.
+Kedua data tersebut dikirim ke DecMed, di mana PGHD yang dienkripsi akan disimpan di IPFS, dan smart contract akan memverifikasi digital signature menggunakan kunci publik pasien.
+Jika digital signature valid, maka hal ini berarti nilai hash tidak dimodifikasi. 
+
+Smart contract kemudian akan melakukan dekripsi digital signature dan didapatkan hash yang dikirim dari klien pasien.
+Untuk memverifikasi apakah data PGHD yang disimpan di IPFS valid atau tidak, smart contract perlu menghitung ulang hash dari data yang dikirim.
+Namun karena baik smart contract, PRE maupun IPFS tidak dapat mendekripsi data PGHD sama sekali dan smart contract tidak dapat mengolah data berukuran di atas 250 KB, maka dekripsi dan penghitungan hash PGHD tidak dapat dilakukan dalam sistem DecMed.
+Sistem DecMed menjamin keamanan data pasien dengan mekanisme proxy-reencryption sehingga pasien tidak perlu mengirimkan kunci privatnya untuk tenaga kesehatan dapat mengakses rekam medisnya.
+Proxy reencryption bekerja dengan \dots (referensi PRE, jelaskan PRE secara singkat, tambah subbab PRE di studi literatur/dasar teori).
+Hal ini membuat DecMed tidak memungkinkan untuk melakukan dekripsi 
+
+Untuk mengatasi hal tersebut, dibuat mekanisme digital signature rangkap (bawa penjelasan di rancangan fungsionalitas).
+
+
+
+Struktur metadata yang disimpan secara \textit{on-chain} pada ledger IOTA untuk setiap entri PGHD dirancang sebagai berikut:
+\begin{itemize}
+    \item \verb|patient_id|: alamat IOTA pasien (\verb|iota_address|) sebagai identitas kriptografis yang unik,
+    \item \verb|cid|: \textit{Content Identifier} IPFS yang merujuk ke \textit{payload} PGHD terenkripsi (\verb|enc_pghd|),
+    \item \verb|enc_aes_key_nonce|: ciphertext yang berisi gabungan kunci AES dan \textit{nonce} yang telah dienkripsi menggunakan \verb|pre_public_key| pasien melalui mekanisme proxy re-encryption,
+    \item \verb|capsule|: artefak kriptografis proxy re-encryption yang diperlukan untuk merekonstruksi kunci AES di sisi klien yang berhak,
+    \item \verb|pghd_outer_signature|: \textit{digital signature} yang dihasilkan dari penandatanganan nilai hash SHA-256 dari \verb|enc_pghd| menggunakan kunci privat pasien \verb|pghd_secret_key|,
+    \item \verb|h_cipher|: nilai hash SHA-256 dari ciphertext \verb|enc_pghd| yang dihitung oleh klien pasien,
+    \item \verb|status|: status entri PGHD (\texttt{VALID} atau \texttt{INVALID}) yang digunakan untuk menandai apakah entri masih dapat digunakan oleh aplikasi,
+    \item \verb|timestamp|: waktu pencatatan data ke dalam sistem.
+\end{itemize}
+
+(Di sini kita juga perlu menjelaskan mengenai strategi pengaksesan data saat kondisi gawat darurat, rawat jalan, rawat inap, dll seperti dijelaskan di subbab~\ref{alternatif-arsitektur-pipeline-pghd}).

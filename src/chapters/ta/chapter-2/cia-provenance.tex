@@ -1,31 +1,45 @@
-\section{Kerahasiaan, Integritas, Ketersediaan dan \textit{Data Provenance}}
+\section{Kerahasiaan, Integritas, Ketersediaan dan \textit{Data Provenance}}\label{studi-cia-provenance}
 
-\subsection{Kerahasiaan (\textit{Confidentiality})}
+\subsection{Kerahasiaan (\textit{Confidentiality})}\label{studi-confidentiality}
 Kerahasiaan (\textit{confidentiality}) adalah properti keamanan yang memastikan bahwa informasi hanya dapat diakses oleh pihak yang memiliki otorisasi, serta mencegah pengungkapan data kepada individu atau sistem yang tidak berwenang \parencite{tripathi2025cia}. 
 Dalam konteks PGHD, kerahasiaan menjadi parameter penting karen data tersebut mengandung informasi medis sensitif pasien \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
 Mekanisme utama untuk mendapatkan kerahasiaan adalah enkripsi, di mana data diubah ke bentuk \textit{ciphertext} yang hanya dapat dibaca oleh pihak yang memiliki kunci dekripsi yang sah \parencite{gowthamani_edgecrypto_2025}.
 
-\subsection{Integritas (\textit{Integrity})}
+%3.1. Data acquisition from IoT medical devices
+% In smart healthcare IoT systems, patient information
+% such as vital signs and medication details is collected
+% through interconnected devices, including wearable
+% sensors, physiological monitors, and intelligent med-
+% ical equipment. These devices continuously monitor
+% parameters like heart rate, blood pressure, or oxygen
+% saturation, transmitting the data securely over wire-
+% less networks. To ensure confidentiality and safeguard
+% patient privacy, the data is encrypted at the source
+% using robust cryptographic algorithms before being
+% transmitted to edge servers or cloud platforms. These
+% platforms handle real-time processing, secure storage,
+% and advanced analytics while maintaining end-to-end
+% privacy throughout the data acquisition and transfer
+% processes.
+
+\subsection{Integritas (\textit{Integrity})}\label{studi-integrity}
 Integritas adalah properti keamanan yang menjamin bahwa data tidak mengalami modifikasi, penghapusan, atau pemalsuan yang tidak sah \parencite{tripathi2025cia}. 
 Dua mekanisme kriptografi utama yang digunakan untuk menjamin integritas adalah fungsi \textit{hash} kriptografis dan tanda tangan digital (\textit{digital signature}). 
 Fungsi \textit{hash} menghasilkan nilai ringkasan berukuran tetap dari data masukan, di mana perubahan sekecil apapun pada data akan menghasilkan nilai \textit{hash} yang sepenuhnya berbeda sehingga modifikasi dapat langsung dideteksi \parencite{NIST_FIPS186-5}. 
 Tanda tangan digital menggabungkan fungsi \textit{hash} dengan kriptografi kunci privat untuk memverifikasi integritas sekaligus mengautentikasi identitas pengirim \parencite{NIST_FIPS186-5}.
 
-\subsection{Ketersediaan (\textit{Availability})}
+\subsection{Ketersediaan (\textit{Availability})}\label{studi-availability}
 Ketersediaan (\textit{availability}) memastikan bahwa sistem dan data dapat diakses secara tepat waktu dan andal oleh pengguna yang berwenang setiap kali dibutuhkan \parencite{tripathi2025cia}.
 Dalam konteks PGHD, karakteristik data yang dikumpulkan sensor perangkat seluler dan wearable bertipe \textit{time-series} dengan laju pengiriman data tinggi berpotensi membebani jaringan blockchain dan menyebabkan degradasi \textit{throughput}.
 
-\subsection{\textit{Data Provenance}}\label{data-provenance}
+\subsection{\textit{Data Provenance}}\label{studi-data-provenance}
 \textit{Data provenance} didefinisikan sebagai pencatatan asal-usul data serta riwayat pembuatan dan pemrosesan data tersebut sepanjang siklus hidupnya \parencite{Ahmed_2023_Data_Provenance}.
 Dalam sistem layanan kesehatan, \textit{provenance} memungkinkan pelacakan sumber dan alasan di balik setiap perubahan atau masalah pada data \parencite{Ahmed_2023_Data_Provenance}. 
-Terdapat empat metode yang digunakan untuk mencapai \textit{data provenance}: berbasis log, berbasis kriptografi, berbasis blockchain, dan berbasis ontologi \parencite{Ahmed_2023_Data_Provenance}. 
-Teknologi kriptografi memungkinkan identifikasi asal-usul data secara efisien, sedangkan blockchain memberikan catatan provenance yang bersifat \textit{immutable} dan dapat diaudit.
-Kebutuhan mendasar sistem \textit{provenance} meliputi kerahasiaan, integritas, ketersediaan, perlindungan metadata, \textit{unforgeability}, dan kepatuhan terhadap regulasi \parencite{Ahmed_2023_Data_Provenance}.
 
 Terdapat empat teknologi untuk mencapai \textit{data provenance} \parencite{Ahmed_2023_Data_Provenance}:
 \begin{enumerate}
     \item \textbf{\textit{Logging-based provenance}}: mencatat riwayat akses dan modifikasi data dalam berkas log. 
     \item \textbf{\textit{Cryptography-based provenance}}: memanfaatkan mekanisme kriptografis seperti tanda tangan digital dan fungsi \textit{hash} untuk membuktikan asal-usul dan integritas data secara matematis. 
     \item \textbf{\textit{Blockchain-based provenance}}: menyimpan catatan \textit{provenance} pada \textit{distributed ledger} yang bersifat \textit{immutable} dan dapat diaudit oleh semua pihak.
-    \item \textbf{\textit{Ontology-based provenance}}: menggunakan model ontologi untuk merepresentasikan hubungan semantik antara entitas data, aktor dan aktivitas.
+    \item \textbf{\textit{Ontology-based provenance}}: menggunakan format data untuk merepresentasikan struktur dan hubungan antara entitas data, aktor dan aktivitas.
 \end{enumerate}

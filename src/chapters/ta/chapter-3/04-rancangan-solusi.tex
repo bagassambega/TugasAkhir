@@ -1,6 +1,6 @@
 \section{Rancangan Solusi}
 
-\subsection{Arsitektur Sistem}
+\subsection{Arsitektur Sistem}\label{rancangan-solusi-arsitektur-sistem}
 Gambaran high-level:
 \begin{itemize}
 	\item Patient device (Android)
@@ -13,6 +13,7 @@ Gambaran high-level:
 \end{itemize}
 
 
+\input{chapters/ta/chapter-3/rancangan/desain-metadata-verifikasi-cia.tex}
 
 \input{chapters/ta/chapter-3/rancangan/desain-format-data.tex}
 
@@ -23,69 +24,3 @@ Gambaran high-level:
 \input{chapters/ta/chapter-3/rancangan/rancangan-pengiriman-pghd.tex}
 
 \input{chapters/ta/chapter-3/rancangan/rancangan-pengaksesan-pghd.tex}
-
-
-% Diagram di sini harus jelas menunjukkan aliran data PGHD dari sensor $\rightarrow$ encrypted payload $\rightarrow$ IPFS $\rightarrow$ CID $\rightarrow$ IOTA.
-
-% \subsection{Desain representasi dan pipeline data PGHD}
-% Tentukan unit data yang dikirim. Contoh struktur untuk \texttt{PGHDObservation}:
-% \begin{itemize}
-% 	\item \textbf{type}: (steps/hr/sleep)
-% 	\item \textbf{value}: (numeric / JSON)
-% 	\item \textbf{interval}: (start\_time, end\_time)
-% 	\item \textbf{device\_id}, \textbf{patient\_id}
-% 	\item \textbf{signature}
-% \end{itemize}
-
-% Jelaskan pipeline raw $\rightarrow$ processed (contoh: accelerometer $\rightarrow$ step count). Referensi praktik pada studi wearable (mis. Abedian et al., JAMIA PGHD/EHR) dapat digunakan sebagai acuan.
-
-% Jelaskan format penyimpanan di IPFS (mis. JSON array per batch, setiap entri berisi objek \texttt{PGHDObservation}).
-
-% \subsection{Desain offline-first state management dan batching}
-% Nyatakan pilihan arsitektur:
-% \begin{itemize}
-% 	\item Action queue / event log: setiap reading/summary dibuat sebagai ``event'' yang disimpan ke local DB.
-% 	\item Scheduler/worker mengirim batch saat online.
-% \end{itemize}
-
-% Deskripsikan detail berikut:
-% \begin{itemize}
-% 	\item Struktur tabel queue: field contoh -- id, payload, status (pending, sent, failed), attempts, timestamp.
-% 	\item Kebijakan window batching: kumpulkan data 1--5 menit lalu kirim sebagai satu batch (parameter dapat dikonfigurasi).
-% 	\item Mekanisme retry: backoff terkontrol, batas percobaan, dan penanganan error (flagging untuk review manual jika terus gagal).
-% \end{itemize}
-
-% \subsection{Desain enkripsi dan penyimpanan}
-% Nyatakan pilihan kriptografi dan alur data:
-% \begin{itemize}
-% 	\item Algoritma enkripsi di klien: mis. AES-GCM untuk enkripsi simetris, dengan key turunan dari seed pasien (KDF) untuk konsistensi dengan DecMed.
-% 	\item Proses: data $\rightarrow$ JSON $\rightarrow$ encrypt $\rightarrow$ upload ke IPFS $\rightarrow$ dapat CID.
-% \end{itemize}
-
-% Jelaskan apa yang disimpan di masing-masing lapisan:
-% \begin{itemize}
-% 	\item Di IPFS: ciphertext (payload terenkripsi), mungkin bersama metadata non-sensitif untuk indexing.
-% 	\item Di IOTA (on-chain): CID, ringkasan metadata (timestamp, tipe data, pointer provenance), dan tanda tangan/verifikasi integritas.
-% \end{itemize}
-
-% Ikatkan desain ini ke constraint IOTA (ukuran transaksi, biaya, throughput) dan jelaskan alasan batching (mengurangi jumlah entri on-chain, efisiensi biaya), dengan referensi literatur tentang integrasi blockchain--IPFS untuk IoT.
-
-% \subsection{Desain metadata dan smart contract untuk provenance}
-% Deskripsikan struktur metadata on-chain (contoh fields):
-% \begin{itemize}
-% 	\item \texttt{patient\_id} / on-chain identity
-% 	\item \texttt{cid} (IPFS CID)
-% 	\item \texttt{timestamp}
-% 	\item \texttt{signature}
-% 	\item \texttt{data\_type} (kategori PGHD)
-% \end{itemize}
-
-% Jelaskan penerapan keamanan dan validasi:
-% \begin{itemize}
-% 	\item Signature dibuat di klien menggunakan keypair pasien (private key tersimpan aman di device atau managed oleh PRE/KEY service sesuai DecMed).
-% 	\item Smart contract memverifikasi signature dan memeriksa bahwa \texttt{patient\_id} terdaftar di DecMed (mengacu pada skema akun DecMed).
-% 	\item Entri yang valid disimpan sebagai immutable record on-chain; entri yang tidak valid ditolak oleh kontrak.
-% \end{itemize}
-
-% Ringkasan dan bridging ke kebutuhan PGHD (tersisa sebagai catatan):
-% Dari perspektif arsitektur teknis, DecMed menyediakan beberapa komponen kunci yang relevan untuk integrasi \emph{patient-generated health data} (PGHD) ke dalam ekosistem RME terdistribusi \parencite{Purnama_2026,Hari_2025}. ...

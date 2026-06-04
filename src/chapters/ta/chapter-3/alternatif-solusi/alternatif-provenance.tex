@@ -1,53 +1,93 @@
-\subsection{Analisis Solusi Data Provenance}
+\subsection{Analisis Alternatif Solusi Data Provenance}\label{alternatif-provenance}
 
-Seperti yang sudah dibahas pada Subbab~\ref{data-provenance}, terdapat empat metode untuk mendapatkan \textit{data provenance}, yaitu \textit{logging-based}, \textit{cryptography-based}, \textit{blockchain-based}, dan \textit{ontology-based}.
-Kriteria pemilihan yang perlu dipertimbangkan untuk kebutuhan \textit{data provenance} yaitu:
-(1) \textit{unforgeability}---catatan \textit{provenance} tidak dapat dipalsukan;
-(2) integritas metadata---metadata tidak dapat dimodifikasi setelah dicatat; (3)
-keselarasan dengan prinsip \textit{trustless} dan desentralisasi DecMed; serta (4)
-efisiensi komputasi untuk perangkat klien pasien
-\parencite{Ahmed_2023_Data_Provenance}
+Seperti yang sudah dibahas pada Subbab~\ref{studi-data-provenance}, terdapat empat metode untuk mendapatkan \textit{data provenance}, yaitu \textit{logging-based}, \textit{cryptography-based}, \textit{blockchain-based}, dan \textit{ontology-based}.
+Terdapat tujuh parameter yang perlu dipertimbangkan dalam pemakaian teknologi untuk menjamin \textit{data provenance} \parencite{Ahmed_2023_Data_Provenance}:
 
-\begin{table}[h!]
-\centering
-\caption{Perbandingan pendekatan \textit{data provenance}}
-\label{tab:perbandingan-provenance}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Kriteria} & \textbf{Logging} & \textbf{Kriptografi} & \textbf{Blockchain} & \textbf{Ontologi} \\
-\midrule
-\textit{Unforgeability}        & \ding{55} & \ding{51} & \ding{51} & \ding{55} \\
-Integritas metadata            & \ding{55} & \ding{51} & \ding{51} & \ding{51} \\
-Prinsip \textit{trustless}     & \ding{55} & \ding{51} & \ding{51} & \ding{55} \\
-Efisiensi komputasi            & \ding{51} & \ding{51} & \ding{55} & \ding{55} \\
-Sesuai infrastruktur DecMed    & \ding{55} & \ding{51} & \ding{51} & \ding{55} \\
-\bottomrule
-\end{tabular}
+\begin{enumerate}
+    \item \textbf{\textit{Provenance Security}} (\textbf{DP1}): \textit{data provenance} terlindungi dari manipulasi.
+    \item \textbf{\textit{Compliance}} (\textbf{DP2}): mendukung \textit{audit trail} atau mekanisme untuk membuktikan keberadaan dan asal-usul data.
+    \item \textbf{\textit{Storage/Taxonomy}} (\textbf{DP3}): pendefinisian dan penyimpanan kategori/tipe data secara eksplisit.
+    \item \textbf{\textit{Unforgeability}} (\textbf{DP4}): tidak dapat dibuat atau dimodifikasi tanpa terdeteksi.
+    \item \textbf{\textit{Overhead}} (\textbf{DP5}): biaya komputasi dan penyimpanan.
+    \item \textbf{\textit{Revocability}} (\textbf{DP6}): akses terhadap \textit{metadata record} bisa dicabut.
+    \item \textbf{\textit{Metadata Protection}} (\textbf{DP7}): metadata \textit{provenance} terlindungi dari akses tidak sah.
+\end{enumerate}
+
+Perbandingan setiap teknologi untuk menjamin \textit{data provenance} dapat dilihat pada Tabel~\ref{tab:perbandingan-provenance}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Perbandingan teknik \textit{data provenance}}\label{tab:perbandingan-provenance}
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{8pt}
+    \rowcolors{2}{white}{white}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
+        \rowcolor[HTML]{DDEBF7}
+        \textbf{Teknik} & \textbf{DP1} & \textbf{DP2} & \textbf{DP3} & \textbf{DP4} & \textbf{DP5} & \textbf{DP6} & \textbf{DP7} \\
+        \midrule
+        \textit{Log-based}          & Parsial & Parsial & Parsial        & Tidak & Baik    & Tidak   & Parsial \\
+        \midrule
+        \textit{Cryptography-based} & Parsial & Parsial & Tidak          & Baik  & Baik    & Tidak   & Parsial \\
+        \midrule
+        \textit{Ontology-based}     & Parsial & Parsial & Baik           & Tidak & Parsial & Tidak   & Baik    \\
+        \midrule
+        \textit{Blockchain-based}   & Baik    & Parsial & Parsial        & Baik  & Parsial & Parsial & Parsial \\
+    \end{tabularx}
 \end{table}
 
-Pendekatan \textit{logging-based} tidak memenuhi kriteria \textit{unforgeability} dan
-prinsip \textit{trustless} karena log tersimpan pada entitas yang berpotensi
-dimodifikasi, sehingga tidak selaras dengan arsitektur desentralisasi DecMed.
-Pendekatan \textit{ontology-based} menawarkan kekuatan semantik namun kompleksitasnya
-tidak sebanding dengan kebutuhan sistem ini yang berfokus pada verifikasi kriptografis.
-Oleh karena itu, pendekatan yang dipilih adalah kombinasi
-\textbf{\textit{cryptography-based}} dan \textbf{\textit{blockchain-based}}:
+Teknik \textit{log-based} unggul dalam hal \textit{overhead} karena hanya menambahkan beberapa \textit{field} pada rekam data tanpa transaksi jaringan tambahan, namun lemah pada \textit{unforgeability} karena rekam log dapat dimodifikasi secara sepihak tanpa mekanisme kriptografis yang mencegah pemalsuan. 
+Teknik \textit{cryptography-based} memenuhi \textit{unforgeability} karena \textit{provenance} terikat secara kriptografis pada identitas pengirim, namun teknik kriptografi tidak memberikan informasi mengenai informasi penting data dan metadata sehingga ia tidak mampu memenuhi \textit{storage \& taxonomy} yang membutuhkan representasi data dan riwayat pemrosesan data.
+
+Teknik \textit{ontology-based} merupakan satu-satunya teknik yang memenuhi \textit{storage \& taxonomy} karena mendefinisikan informasi penting mengenai struktur data dan informasi mengenai data.
+Namun, teknik ini tidak memiliki mekanisme \textit{unforgeability} untuk melindungi ontologi dari manipulasi data.
+Teknik \textit{blockchain-based} memenuhi \textit{provenance security} secara baik berkat sifat \textit{immutability} dan memenuhi \textit{unforgeability} karena sangat sulit untuk melakukan modifikasi data secara tidak sah.
+Namun \textit{blockchain} memiliki kelemahan pada \textit{overhead} karena setiap transaksi \textit{provenance} menambah beban komunikasi pada jaringan.
+
+Dari perbandingan di atas, tidak ada satu teknik tunggal yang mampu memenuhi seluruh \textit{essential requirements} secara penuh. 
+Setiap teknik memiliki kelebihan dan kekurangan.
+
+Berdasarkan analisis di atas, solusi \textit{data provenance} pada sistem ini adalah dengan mengombinasikan empat kandidat berikut.
+
 \begin{itemize}
-    \item \textbf{Kriptografi (tanda tangan digital ECDSA)}: digunakan untuk
-          mengikat setiap entri PGHD ke identitas kriptografis pasien, memungkinkan
-          verifikasi asal-usul data secara efisien tanpa bergantung pada pihak ketiga,
-          sekaligus menyediakan bukti \textit{non-repudiation}
-          \parencite{Ahmed_2023_Data_Provenance}.
-    \item \textbf{DLT (IOTA \textit{ledger})}: metadata
-          \textit{provenance}---yang telah ditandatangani secara digital---dicatat
-          sebagai transaksi pada \textit{ledger} IOTA yang bersifat \textit{immutable}.
-          Sifat desentralisasi jaringan IOTA menjamin catatan tersebut tahan terhadap
-          pemalsuan dan dapat diaudit kapan saja tanpa bergantung pada satu otoritas
-          \parencite{Ahmed_2023_Data_Provenance}.
+    \item \textbf{Kriptografi}. Tanda tangan digital (\textit{digital signature}) akan menjadi mekanisme kriptografis utama untuk menemukan asal-usul data dan menjaga \textit{provenance security} dengan \textit{overhead} yang kecil. 
+    Pada sistem ini, setiap entri PGHD akan di-hash ditandatangani menggunakan kunci privat pasien sehingga \textit{provenance} terikat secara kriptografis pada identitas sumber data. 
+    Pendekatan ini memenuhi \textit{unforgeability} dan \textit{provenance security} dari sisi integritas, sekaligus efisien untuk data PGHD yang bersifat \textit{time-series} karena komputasinya ringan.
+
+    \item \textbf{Blockchain}. Sistem DecMed sudah memakai IOTA sebagai lapisan \textit{distributed ledger}.
+    Setiap transaksi juga dicatat \textit{on-chain} melalui \textit{smart contract} Move sehingga menjamin \textit{immutability} rekam \textit{provenance} dan menyediakan audit trail permanen yang memenuhi kebutuhan \textit{compliance}.
+
+    \item \textbf{Metadata kontekstual} seperti \textit{device type}, \textit{timestamp}, \textit{platform}, OS, dan sejenisnya. 
+    Informasi ini termasuk dalam kategori \textit{log-based} dan \textit{ontology-based} karena log mencatat riwayat kejadian secara kronologis, sementara ontologi mengklasifikasikan atribut metadata untuk menjelaskan informasi penting mengenai data yang disimpan. 
+    Metadata kontekstual ini memenuhi \textit{storage \& taxonomy} yang tidak dapat dipenuhi oleh kriptografi maupun blockchain.
 \end{itemize}
-Kombinasi kedua pendekatan ini juga telah terimplementasi secara parsial dalam
-mekanisme DecMed yang ada untuk data klinis, sehingga ekstensi ke PGHD
-dapat dilakukan tanpa memperkenalkan komponen arsitektur yang sepenuhnya baru.
+
+
+
+
+
+% Pendekatan \textit{logging-based} tidak memenuhi kriteria \textit{unforgeability} dan
+% prinsip \textit{trustless} karena log tersimpan pada entitas yang berpotensi
+% dimodifikasi, sehingga tidak selaras dengan arsitektur desentralisasi DecMed.
+% Pendekatan \textit{ontology-based} menawarkan kekuatan semantik namun kompleksitasnya
+% tidak sebanding dengan kebutuhan sistem ini yang berfokus pada verifikasi kriptografis.
+% Oleh karena itu, pendekatan yang dipilih adalah kombinasi
+% \textbf{\textit{cryptography-based}} dan \textbf{\textit{blockchain-based}}:
+% \begin{itemize}
+%     \item \textbf{Kriptografi (tanda tangan digital ECDSA)}: digunakan untuk
+%           mengikat setiap entri PGHD ke identitas kriptografis pasien, memungkinkan
+%           verifikasi asal-usul data secara efisien tanpa bergantung pada pihak ketiga,
+%           sekaligus menyediakan bukti \textit{non-repudiation}
+%           \parencite{Ahmed_2023_Data_Provenance}.
+%     \item \textbf{DLT (IOTA \textit{ledger})}: metadata
+%           \textit{provenance}---yang telah ditandatangani secara digital---dicatat
+%           sebagai transaksi pada \textit{ledger} IOTA yang bersifat \textit{immutable}.
+%           Sifat desentralisasi jaringan IOTA menjamin catatan tersebut tahan terhadap
+%           pemalsuan dan dapat diaudit kapan saja tanpa bergantung pada satu otoritas
+%           \parencite{Ahmed_2023_Data_Provenance}.
+% \end{itemize}
+% Kombinasi kedua pendekatan ini juga telah terimplementasi secara parsial dalam
+% mekanisme DecMed yang ada untuk data klinis, sehingga ekstensi ke PGHD
+% dapat dilakukan tanpa memperkenalkan komponen arsitektur yang sepenuhnya baru.
 
 % \textit{Data provenance} pada PGHD dicapai melalui kombinasi mekanisme kriptografi dan pencatatan berbasis blockchain IOTA\@. 
 % Tanda tangan digital digunakan untuk identifikasi asal-usul data, sedangkan blockchain atau DLT memberikan catatan provenance yang bersifat \textit{immutable}, tahan terhadap pemalsuan, dan dapat diaudit kapan saja \parencite{Ahmed_2023_Data_Provenance}. 

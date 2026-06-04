@@ -1,22 +1,9 @@
-\subsection{Analisis Solusi Kerahasiaan, Integritas dan Ketersediaan}
-
-% Kerahasiaan data PGHD diimplementasikan melalui mekanisme enkripsi sebelum data dikirimkan ke jaringan IOTA\@. 
-% Mekanisme enkripsi hibrid yang menggunakan enkripsi asimetris untuk pertukaran kunci sesi dan enkripsi simetris untuk data aktual digunakan untuk menjamin kerahasiaan dan efisiensi komputasi \parencite{Qin_2016_PRE}. 
-% Pada rancangan solusi, data PGHD akan dienkripsi pada sisi klien sebelum dikirim sehingga data yang tersimpan di IPFS berbentuk \textit{ciphertext} yang tidak dapat dibaca tanpa kunci yang sah.
-
-% Integritas data PGHD dijamin melalui kombinasi fungsi \textit{hash} kriptografis dan tanda tangan digital. 
-% Nilai \textit{hash} dari data dihitung sebelum pengiriman dan disertakan dalam transaksi IOTA\@.
-% Penerima dapat memverifikasi keutuhan data dengan menghitung ulang \textit{hash} dan membandingkannya dengan nilai yang tersimpan \parencite{NIST_FIPS186-5}. 
-% Tanda tangan digital menambahkan nilai \textit{hash} tersebut dengan identitas kriptografis pengirim sehingga setiap upaya modifikasi data maupun hash oleh pihak tidak berwenang akan terdeteksi karena tanda tangan tidak lagi valid \parencite{NIST_FIPS186-5}. 
-
-% Ketersediaan sistem dijaga melalui strategi pengiriman data yang mempertimbangkan karakteristik \textit{time-series} PGHD\@. 
-% Data PGHD dikelompokkan (\textit{batching}) dalam interval waktu tertentu sebelum dikirimkan sebagai satu transaksi, sehingga secara signifikan mengurangi jumlah transaksi yang harus diproses jaringan dan menurunkan risiko degradasi \textit{throughput} akibat beban berlebih \parencite{Wen_2024_Performance_Blockchain}. 
-% Selain itu, data PGHD disimpan secara \textit{off-chain} sedangkan hanya nilai \textit{hash} dan metadata provenance yang dicatat pada on-chain IOTA \textit{Tangle} sehingga mampu mengurangi beban komputasi di IOTA karena IOTA hanya mampu mengolah xxx KB data saja \parencite{Wen_2024_Performance_Blockchain}.
+\subsection{Analisis Solusi Kerahasiaan, Integritas dan Ketersediaan}\label{alternatif-analisis-solusi-cia}
 
 \subsubsection{Analisis Solusi Kerahasiaan (\textit{Confidentiality})}
 
-Untuk menjamin kerahasiaan PGHD, terdapat dua pendekatan enkripsi yang dapat
-dipertimbangkan: enkripsi simetris murni dan enkripsi hibrid. Enkripsi simetris murni
+Berdasarkan subbab~\ref{studi-confidentiality}, untuk menjamin kerahasiaan PGHD diperlukan mekanisme enkripsi. 
+Enkripsi simetris murni
 efisien secara komputasi namun menimbulkan masalah distribusi kunci---kunci yang sama
 harus dibagikan ke semua pihak yang berhak mengakses, yang bertentangan dengan model
 kontrol akses granular berbasis pasien pada DecMed. Enkripsi hibrid mengatasi masalah

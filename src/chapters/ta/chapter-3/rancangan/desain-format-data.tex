@@ -1,10 +1,9 @@
 \subsection{Rancangan Format dan Skema PGHD}\label{rancangan-format-data-pghd}
 
-Berdasarkan pemilihan solusi pada Subbab~\ref{analisis-alternatif-format-pghd} dan landasan teori pada Subbab~\ref{standar-format-pghd}, bagian ini merancang skema JSON \textit{custom} yang akan digunakan sebagai format
-
+Berdasarkan pemilihan solusi pada Subbab~\ref{alternatif-provenance} dan landasan teori pada Subbab~\ref{studi-cia-provenance}, bagian ini merancang format data yang akan digunakan PGHD untuk menjamin \textit{data provenance}.
 Payload PGHD yang disimpan di IPFS terdiri dari tingkat \textit{batch} yang membungkus konteks pengiriman, dan tingkat \textit{data point} yang merepresentasikan pengukuran individual.
 
-Tabel~\ref{tab:field-batch-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{batch} dari skema JSON kustom tersebut.
+Tabel~\ref{tab:field-batch-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{batch} dari skema JSON tersebut.
 
 \begin{table}[!ht]
   \centering
