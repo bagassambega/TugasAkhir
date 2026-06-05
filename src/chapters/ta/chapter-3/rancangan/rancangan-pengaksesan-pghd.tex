@@ -12,15 +12,21 @@
     
     \item \textbf{Pengambilan ciphertext dari IPFS dan metadata dari IOTA.}
     Jika akses dinyatakan valid, proxy mengambil metadata PGHD yang bersangkutan dari ledger IOTA dan mengambil ciphertext PGHD \verb|enc_pghd| dari IPFS dengan menggunakan \verb|cid| yang tercatat pada metadata. 
-    Pada tahap ini, integritas ciphertext sudah dijamin oleh \textit{outer signature} yang telah diverifikasi ketika data pertama kali dicatat di ledger.
+    Sebelum melanjutkan ke proses re-encryption, proxy menghitung nilai SHA-256 dari \verb|enc_pghd| yang diambil dan membandingkannya dengan \verb|h_cipher| yang diperoleh dari metadata IOTA\@. 
+    Jika kedua nilai hash tidak cocok, proxy langsung mengembalikan error \verb|ERR_DATA_CORRUPTED| ke klien tenaga kesehatan tanpa melanjutkan proses re-encryption. 
+    Proxy juga memicu event untuk menginvalidasi entri PGHD tersebut melalui mekanisme yang dijelaskan pada Poin~\ref{fungsionalitas-verifikasi-outer-signature-tenaga-kesehatan}. 
+    Langkah verifikasi ini mencegah pemborosan komputasi pada proses re-encryption untuk data yang sudah terbukti rusak.
     
-    \item \textbf{Verifikasi integritas ciphertext (\textit{Outer Verification}).}
+    \item\label{fungsionalitas-verifikasi-outer-signature-tenaga-kesehatan} \textbf{Verifikasi integritas ciphertext (\textit{Outer Verification}).}
     Sebelum melakukan dekripsi, klien tenaga kesehatan wajib memastikan bahwa ciphertext \verb|enc_pghd| yang diunduh dari IPFS belum mengalami modifikasi (misalnya akibat serangan pada proxy atau node IPFS). 
     Klien menghitung nilai SHA-256 dari \verb|enc_pghd| yang diunduh:
     \[
         h_{\text{download}} = \mathrm{SHA256}(\texttt{enc\_pghd}_{\text{downloaded}}).
     \]
-    Nilai $h_{\text{download}}$ ini kemudian dibandingkan dengan \verb|h_cipher| yang didapatkan dari metadata IOTA yang \textit{immutable}. Jika nilai hash tidak cocok, klien akan langsung membatalkan proses dan memunculkan peringatan integritas data yang rusak.
+    Nilai $h_{\text{download}}$ ini kemudian dibandingkan dengan \verb|h_cipher| yang didapatkan dari metadata IOTA yang \textit{immutable}.
+    Jika nilai hash tidak cocok, klien akan langsung membatalkan proses dan memunculkan peringatan integritas data yang rusak. 
+    Selanjutnya, klien mengirimkan laporan ke proxy yang berisi CID dan alasan kegagalan (\verb|OUTER_SIGNATURE_MISMATCH|). 
+    Proxy kemudian melakukan \textit{unpin} CID terkait dari kluster IPFS sehingga data tidak lagi dijaga secara aktif, kemudian memanggil fungsi \verb|invalidate_pghd_entry| pada \textit{smart contract} untuk mengubah status entri PGHD menjadi \verb|INVALID| dengan alasan \verb|OUTER_SIGNATURE_MISMATCH|\@.
     
     \item \textbf{Proses proxy re-encryption.}
     Proxy melakukan proses proxy re-encryption terhadap \verb|enc_aes_key_nonce| dengan memanfaatkan \verb|capsule| dan \verb|kfrag| yang sebelumnya disimpan di Redis saat pasien memberikan akses kepada tenaga kesehatan. 
@@ -49,26 +55,64 @@
     
     \item \textbf{Penanganan kegagalan verifikasi \textit{inner signature}.}
     Jika verifikasi \textit{inner signature} gagal, klien tenaga kesehatan akan menolak menampilkan dan menggunakan PGHD tersebut. 
-    Selain itu, klien mengirimkan permintaan ke \textit{smart contract} untuk menginvalidasi entri PGHD yang bersangkutan. \textit{Smart contract} kemudian mengubah status entri PGHD menjadi \texttt{INVALID} dan menyimpan alasan kegagalan (\texttt{INNER\_SIGNATURE\_INVALID}) dalam metadata.
+    Selain itu, klien mengirimkan permintaan ke \textit{smart contract} untuk menginvalidasi entri PGHD yang bersangkutan. 
+    \textit{Smart contract} kemudian mengubah status entri PGHD menjadi \texttt{INVALID} dan menyimpan alasan kegagalan (\texttt{INNER\_SIGNATURE\_INVALID}) dalam metadata.
+    Alasan yang dicatat meliputi \verb|INNER_SIGNATURE_INVALID| (tanda tangan inner tidak valid) atau \verb|DATA_INTEGRITY_FAILED| (hash plaintext tidak cocok). 
+    Proxy juga akan melakukan unpin CID terkait dari kluster IPFS setelah status berubah menjadi \verb|INVALID|, sehingga data yang telah dinyatakan tidak valid tidak lagi tersimpan secara aktif di IPFS\@.
     
     \item \textbf{Invalidasi CID IPFS dan koneksi ke IOTA.}
-    Setelah entri PGHD ditandai sebagai \texttt{INVALID} pada ledger IOTA, komponen off-chain yang memantau event \textit{invalidasi} dapat melakukan \textit{unpin} CID terkait dari kluster IPFS sehingga data tidak lagi dijaga secara aktif di penyimpanan lokal. 
-    Selain itu, klien pasien maupun tenaga kesehatan tidak lagi menampilkan entri PGHD yang berstatus \texttt{INVALID} dalam daftar data aktif sehingga secara efektif koneksi antara CID dan daftar data pasien telah dihapus dari perspektif sistem.
+    Ketika terjadi kegagalan verifikasi (baik \textit{outer signature} maupun \textit{inner signature}), klien tenaga kesehatan memanggil fungsi \verb|invalidate_pghd_entry| pada \textit{smart contract} dengan parameter \verb|cid| dan alasan kegagalan. 
+    Smart contract akan:
+    \begin{enumerate}
+        \item Memverifikasi bahwa pemanggil memiliki otorisasi (tenaga kesehatan yang memiliki akses baca terhadap entri tersebut),
+        \item Mengubah status entri PGHD menjadi \verb|INVALID| dan mencatat alasan kegagalan,
+        \item Menambahkan CID ke dalam daftar \textit{blacklist} untuk mencegah akses di masa depan.
+    \end{enumerate}
+    Setelah status berubah menjadi \verb|INVALID|, proxy akan melakukan \textit{unpin} CID terkait dari kluster IPFS\@. 
+    Klien pasien maupun tenaga kesehatan tidak lagi menampilkan entri PGHD yang berstatus \verb|INVALID| dalam daftar data aktif. 
 \end{enumerate}
 
 Dalam kondisi gawat darurat, rawat inap maupun rawat jalan yang memerlukan akses data berkelanjutan seperti dijelaskan pada subbab~\ref{alternatif-pengaksesan-pghd}, diperlukan mekanisme tambahan untuk memastikan bahwa tenaga kesehatan dapat terus mengakses PGHD selama sesi perawatan berlangsung.
 
 \begin{enumerate}
     \item \textbf{Aktivasi sesi akses persisten.}
-        Selama tenaga kesehatan masih berada dalam jangka waktu akses yang sah (2 jam sejak pasien memberikan akses baca), klien menyediakan opsi bagi tenaga kesehatan untuk mengaktifkan sesi akses persisten terhadap PGHD pasien. 
-        Ketika opsi ini dipilih, klien mengirim permintaan ke proxy untuk mengubah status akses menjadi sesi perawatan. 
-        Proxy memvalidasi bahwa tenaga kesehatan masih memiliki akses yang sah dan kemudian mencatat status sesi persisten pada penyimpanan sementara sehingga permintaan pembacaan PGHD berikutnya tidak lagi dibatasi oleh masa berlaku \textit{access token} baca jangka pendek.
+    Selama tenaga kesehatan masih berada dalam jangka waktu akses yang sah (2 jam sejak pasien memberikan akses baca PGHD), klien menyediakan opsi bagi tenaga kesehatan untuk mengaktifkan sesi akses persisten terhadap PGHD pasien. 
+    Ketika opsi ini dipilih:
+    \begin{enumerate}
+        \item Klien tenaga kesehatan mengirim permintaan \verb|POST /persistent-session| ke proxy dengan melampirkan \verb|access_token_read| yang valid.
+        \item Proxy memvalidasi \textit{access token} dan memverifikasi bahwa tenaga kesehatan memiliki akses sah terhadap pasien tersebut.
+        \item Jika valid, proxy memanggil fungsi \verb|create_persistent_session| pada \textit{smart contract}. 
+        Fungsi ini membuat \textit{capability} baru bertipe \verb|ReadPersistent| dengan parameter:
+        \begin{itemize}
+            \item \verb|patient_id|: IOTA address pasien
+            \item \verb|medical_personnel_id|: IOTA address tenaga kesehatan
+            \item \verb|reason|: alasan aktivasi (\verb|RAWAT_INAP|, \verb|RAWAT_JALAN|, atau \verb|GAWAT_DARURAT|)
+            \item \verb|token_validity|: boolean menandakan token sudah diinvalidasi atau belum
+        \end{itemize}
 
-  \item \textbf{Penggunaan sesi persisten selama periode perawatan.}
-        Setelah sesi persisten aktif, tenaga kesehatan dapat melakukan pembacaan ulang PGHD pasien secara berkala selama periode perawatan tanpa harus meminta persetujuan ulang dari pasien atau menginisiasi akses baru. 
+        \item \textit{Smart contract} menyimpan \textit{capability} tersebut di IOTA dan mengembalikan \verb|persistent_session_id| ke proxy.
 
-  \item \textbf{Pengakhiran sesi persisten oleh tenaga kesehatan.}
-        Ketika periode perawatan dinyatakan selesai, tenaga kesehatan mengakhiri sesi persisten melalui klien. 
-        Klien mengirim permintaan ke proxy untuk menandai sesi sebagai selesai.
-        Setelah permintaan ini berhasil diproses, proxy menghapus status sesi persisten sehingga akses baca terhadap PGHD kembali hanya dapat dilakukan dengan skema akses biasa yang dimulai dari persetujuan pasien.
+        \item Proxy mengirimkan \verb|persistent_session_id| ke klien tenaga kesehatan sebagai konfirmasi.
+    \end{enumerate}
+
+    \item \textbf{Penggunaan sesi persisten selama periode perawatan.}
+    Setelah sesi persisten aktif, klien tenaga kesehatan dapat mengakses PGHD pasien dengan cara:
+    \begin{itemize}
+        \item Mengirim request \verb|GET /pghd| ke proxy dengan melampirkan \verb|persistent_session_id| sebagai \verb|bearer| token.
+        \item Proxy memverifikasi bahwa \verb|persistent_session_id| masih valid (\verb|token_validity = true|) dengan melakukan inspect transaction ke IOTA untuk membaca capability yang tersimpan.
+        \item Jika valid, proxy melanjutkan proses pengambilan dan re-encryption data PGHD seperti biasa
+    \end{itemize}
+
+    \item \textbf{Pengakhiran sesi persisten}
+    Pengakhiran sesi persisten bisa dilakukan melalui dua cara:
+    \begin{itemize}
+        \item Diakhiri oleh tenaga kesehatan: 
+        Ketika periode perawatan dinyatakan selesai, tenaga kesehatan mengakhiri sesi persisten melalui klien dengan mengirim request \verb|DELETE /persistent-session/{id}| ke proxy. 
+        Proxy kemudian memanggil fungsi \verb|revoke_persistent_session| pada \textit{smart contract} untuk menghapus \verb|capability| dari IOTA\@.
+    
+        \item Dicabut oleh pasien: 
+        Pasien dapat melihat daftar sesi persisten yang aktif pada halaman log akses di client pasien. 
+        Pasien dapat mencabut sesi persisten kapan saja tanpa memerlukan konfirmasi dari tenaga kesehatan. 
+        Mekanisme pencabutan ini sama dengan mekanisme pencabutan akses CapBAC yang sudah ada di DecMed.
+    \end{itemize}
 \end{enumerate}

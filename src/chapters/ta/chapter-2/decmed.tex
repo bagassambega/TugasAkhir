@@ -285,3 +285,28 @@ Pada DecMed, penambahan entri rekam medis baru hanya dapat dilakukan menggunakan
     \item Setelah entri baru berhasil dibuat, tenaga kesehatan tidak dapat lagi menambahkan entri baru kedua pada grant akses Update yang sama.
     Selama durasi akses Update masih berlaku, tenaga kesehatan hanya dapat melakukan edit terhadap entri yang baru saja dibuat tersebut.
 \end{enumerate}
+
+\subsection{Mekanisme Pencabutan Akses terhadap Data RME}\label{studi-decmed-revoke}
+
+DecMed menyediakan mekanisme bagi pasien untuk mencabut akses yang telah diberikan kepada personel fasyankes, baik akses baca maupun akses tulis. Mekanisme ini penting untuk memastikan bahwa pasien memegang kendali penuh atas data RME mereka, sesuai dengan prinsip CapBAC yang diusung DecMed \parencite{Hari_2025,Purnama_2026}.
+Mekanisme pencabutan akses di DecMed dilakukan dengan langkah-langkah sebagai berikut:
+
+\begin{enumerate}
+    \item Pasien membuka halaman \textit{log akses} pada client pasien. Halaman ini menampilkan daftar seluruh akses yang telah diberikan, beserta informasi mengenai pihak yang diberi akses, tipe akses (baca atau tulis), dan durasi akses.
+    
+    \item Pasien memilih salah satu entri akses yang ingin dicabut, kemudian menekan tombol \textit{revoke}.
+    
+    \item Client pasien menginisialisasi transaksi bersponsor \texttt{revoke\_access} melalui \textit{gas station server}. Transaksi ini memanggil fungsi \texttt{revoke\_access} pada \textit{smart contract} DecMed dengan parameter:
+    \begin{itemize}
+        \item \texttt{patient\_id}: IOTA address pasien
+        \item \texttt{target\_id}: IOTA address personel fasyankes yang aksesnya akan dicabut
+        \item \texttt{access\_type}: tipe akses yang dicabut (\texttt{Read} atau \texttt{Update})
+    \end{itemize}
+    
+    \item \textit{Smart contract} memvalidasi bahwa pasien memang memiliki kewenangan untuk mencabut akses tersebut (yaitu akses tersebut benar-benar diberikan oleh pasien yang bersangkutan).
+    
+    \item Jika valid, \textit{smart contract} menghapus \textit{capability} yang bersesuaian dari \textit{state} IOTA\@. 
+	Penghapusan ini bersifat \textit{immutable} (riwayat bahwa akses pernah diberikan tetap tercatat, tetapi akses tidak lagi berlaku untuk permintaan di masa depan).
+    
+    \item Setelah transaksi berhasil dieksekusi, client pasien memperbarui tampilan halaman \textit{log akses} untuk mencerminkan bahwa akses telah dicabut.
+\end{enumerate}
