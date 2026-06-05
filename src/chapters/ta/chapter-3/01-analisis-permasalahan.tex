@@ -16,8 +16,9 @@ PGHD mencakup aktivitas harian, gejala subjektif, dan parameter fisiologis pasie
 Dengan menelusuri alur kerja DecMed (Subbab~\ref{studi-decmed}) dan mencocokkannya dengan karakteristik PGHD (Subbab~\ref{studi-pghd}), dapat diidentifikasi beberapa kesenjangan (\textit{gap}) antara kapabilitas DecMed saat ini dan kebutuhan integrasi PGHD\@.
 
 Pertama, dari sisi jalur pemasukan data, seluruh aliran data pada DecMed dimulai dari sisi tenaga kesehatan dan tidak menyediakan jalur bagi data yang berasal dari perangkat pasien secara mandiri. 
-Saat ini belum ada komponen yang memungkinkan aplikasi klien pasien di perangkat Android untuk mengumpulkan data dari sensor (misalnya sensor langkah, detak jantung, atau data \textit{wearable} lainnya) dan mengirimkannya sebagai entri ke dalam ekosistem DecMed. 
-Kondisi ini membentuk \textbf{Gap 1}: \emph{tidak adanya jalur \textit{ingest} PGHD di sisi pasien}.
+Saat ini belum ada komponen yang memungkinkan aplikasi klien pasien di perangkat untuk mengumpulkan data dan mengirimkannya sebagai entri ke dalam ekosistem DecMed. 
+Diperlukan suatu mekanisme untuk mengumpulkan data yang berasal dari sumber data mana saja, proses pengolahan dan pengiriman data, juga pengaksesan data PGHD \parencite{Zeng2022-Standardized-PGD}. 
+% This viewpoint paper formulates the integration of PGD into clinical systems and workflow as a PGD integration pipeline and reviews the functional components of such a pipeline. A PGD integration pipeline includes PGD acquisition, aggregation, and consumption (Zeng Standardized)
 
 Kedua, arsitektur DecMed belum mengimplementasikan mekanisme \textit{offline-first} pada klien pasien dan belum menyediakan penyimpanan lokal serta sinkronisasi bertahap untuk data kesehatan yang dihasilkan di luar konteks kunjungan klinis. 
 Dalam skenario pemantauan data rekam medis di luar fasyankes, konektivitas yang tidak stabil dapat menyebabkan PGHD yang dikumpulkan saat luring tidak pernah terkirim ke sistem. 
@@ -27,14 +28,18 @@ Kondisi ini membentuk \textbf{Gap 2}: \emph{tidak adanya mekanisme \textit{offli
 Ketiga, dari perspektif infrastruktur penyimpanan, DecMed saat ini memanfaatkan IOTA dan IPFS untuk data klinis yang diinisiasi oleh tenaga kesehatan dengan asumsi bahwa frekuensi pembuatan entri RME mengikuti frekuensi kunjungan klinis yang relatif jarang dan berukuran moderat per entri. 
 PGHD, khususnya yang berasal dari sensor \textit{wearable} dan smartphone, bersifat \textit{time-series} dengan frekuensi yang dapat mencapai beberapa pembacaan per detik dan menghasilkan volume data besar dalam periode waktu pendek. 
 Mengirimkan setiap pembacaan sensor secara langsung sebagai transaksi terpisah ke IOTA Rebased tidak efisien mengingat adanya biaya \textit{gas fee} per transaksi dan batasan \textit{throughput} jaringan \parencite{FromTangleToRebased_2025}. 
-Saat ini, DecMed belum memiliki mekanisme \textit{batching} yang dirancang untuk menangani volume data \textit{time-series} tinggi seperti PGHD, sehingga terbentuk \textbf{Gap 3}: \emph{tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD yang efisien terhadap infrastruktur IOTA-IPFS}.
+Saat ini, DecMed belum memiliki mekanisme \textit{batching} yang dirancang untuk menangani volume data \textit{time-series} tinggi seperti PGHD, sehingga terbentuk \textbf{Gap 3}: \emph{tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD}.
 
 Kemudian dari segi kepercayaan dan asal-usul data, seluruh data klinis yang tersimpan di DecMed saat ini berasal dari tenaga kesehatan yang terverifikasi dan dicatat dalam konteks pelayanan klinis, sehingga memiliki tingkat kepercayaan tinggi secara medis. 
-PGHD dihasilkan secara mandiri oleh pasien di luar pengawasan langsung penyedia layanan kesehatan dan tidak secara otomatis memiliki tingkat kepercayaan yang setara dengan data klinis. 
-Tanpa mekanisme yang menjamin kerahasiaan, integritas, dan ketersediaan data PGHD juga penyediaan informasi \textit{provenance} yang lengkap, tenaga kesehatan dan sistem sulit memverifikasi keaslian, asal perangkat, dan keterpercayaan data tersebut.
-DecMed telah memiliki infrastruktur identitas kriptografis pasien (sepasang kunci IOTA yang dibangkitkan dari \textit{seed}) dan \textit{smart contract} yang dapat diperluas untuk menyimpan metadata tambahan, tetapi belum ada modul yang memanfaatkan komponen tersebut untuk menjamin kerahasiaan, integritas, ketersediaan, dan \textit{data provenance} PGHD\@.
-Kondisi ini membentuk \textbf{Gap~4}: tidak adanya mekanisme penjaminan kerahasiaan, integritas, ketersediaan dan \textit{data provenance} khusus untuk data yang berasal dari pasien.
+PGHD sebaliknya dihasilkan secara mandiri oleh pasien di luar pengawasan langsung penyedia layanan kesehatan, sehingga tidak secara otomatis memiliki tingkat kepercayaan yang setara.
+Kebutuhan akan pencatatan asal-usul, riwayat pemrosesan, dan rantai kepemilikan data sejak pertama kali dikumpulkan menjadi hal yang penting dalam bagi PGHD\@ \parencite{Ahmed_2023_Data_Provenance}. 
+Tanpa \textit{provenance} yang terdokumentasi dengan baik, tenaga kesehatan tidak dapat memverifikasi apakah suatu data PGHD benar-benar berasal dari pasien yang bersangkutan, kapan diukur, menggunakan perangkat apa, dan apakah telah mengalami transformasi selama pengiriman.
+Kondisi ini membentuk \textbf{Gap 4}: \emph{tidak adanya \textit{data provenance} untuk menjamin keandalan data yang berasal dari pasien}.
+
+Data kesehatan yang dihasilkan pasien bersifat sensitif dan memerlukan perlindungan agar data hanya dapat diakses pihak berwenang, integritas data agar data tidak mengalami modifikasi tidak sah selama transmisi maupun penyimpanan, dan ketersediaan (sistem tetap dapat melayani permintaan sah meskipun terdapat lonjakan data \textit{time-series} bervolume tinggi) \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+DecMed telah memiliki infrastruktur identitas kriptografis, akses kontrol, autentikasi, penyimpanan dan sistem terdistribusi, tetapi belum ada modul yang memanfaatkan komponen tersebut untuk menjamin kerahasiaan, integritas dan ketersediaan PGHD\@.
+Hal ini memunculkan \textbf{Gap 5}: \emph{tidak adanya mekanisme penjaminan kerahasiaan, integritas dan ketersediaan untuk data PGHD pada sistem DecMed}.
 
 Terakhir, DecMed saat ini menggunakan token akses baca dengan \textit{time to live} yang sudah ditetapkan dan bersifat sementara. 
 Seperti dijelaskan pada latar belakang (subbab~\ref{sec:latar-belakang}), dalam kondisi rawat inap, gawat darurat, atau rawat jalan yang berlangsung berkepanjangan, PGHD memiliki manfaat yang besar bagi tenaga kesehatan dengan mengakses data yang dihasilkan secara kontinu. 
-Ketidakmampuan sistem untuk mempertahankan akses baca selama durasi perawatan klinis membentuk \textbf{Gap 5}: \textit{tidak adanya mekanisme akses baca secara persisten berbasis status klinis pasien}.
+Ketidakmampuan sistem untuk mempertahankan akses baca selama durasi perawatan klinis membentuk \textbf{Gap 6}: \textit{tidak adanya mekanisme akses baca secara persisten berbasis status klinis pasien}.

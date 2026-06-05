@@ -2,9 +2,9 @@
 
 Berdasarkan analisis permasalahan di atas, terdapat beberapa arsitektur yang dipertimbangkan.
 
-Pengumpulan data 
+(Seluruh subbab ini butuh justifikasi berbasis referensi)
 
-\subsubsection{Wearable Device}
+\subsubsection{Wearable Device}\label{alternatif-wearable-pghd}
 
 Data PGHD bisa diambil dari wearable device seperti smartwatch ataupun IoT device lainnya.
 Terdapat beberapa pertimbangan terkait keterlibatan dan integrasi wearable device.
@@ -15,10 +15,10 @@ Terdapat beberapa pertimbangan terkait keterlibatan dan integrasi wearable devic
     \item Mensimulasikan wearable via BLE (tanpa perangkat fisik).
 \end{enumerate}
 
-Mekanisme yang dipilih adalah data dari sensor di wearable devices akan dikirim ke perangkat Android, di mana API HealthConnect pada perangkat Android akan mengumpulkan seluruh data tersebut.
-Implementasi ini dipilih agar kelengkapan dan kekayaan data dapat terjamin. % TODO: justifikasi dari referensi
+Mekanisme yang dipilih adalah data dari sensor di wearable devices akan dikirim ke perangkat mobile phone, di mana mobile phone akan mengumpulkan data dari wearable dan juga sensor yang dimiliki mobile phone itu sendiri.
+Implementasi ini dipilih agar kelengkapan dan kekayaan data dapat terjamin. (Butuh justifikasi dari referensi)
 
-\subsubsection{Aliran Data PGHD}
+\subsubsection{Aliran Data PGHD}\label{alternatif-aliran-pghd}
 
 Terdapat tiga alternatif mekanisme pengummpulan dan pengiriman data yang dapat dipertimbangkan.
 
@@ -31,11 +31,11 @@ Terdapat tiga alternatif mekanisme pengummpulan dan pengiriman data yang dapat d
 Mekanisme yang dipilih adalah data raw disimpan di storage lokal dan dikirim dalam \textit{batch} ke DecMed tanpa agregasi di sisi klien pasien.
 Pilihan ini memberikan nilai klinis yang lebih tinggi karena data asli tetap tersedia di ekosistem DecMed dan data asli dapat diakses oleh tenaga kesehatan tanpa kehilangan informasi apapun. % TODO: justifikasi referensi
 
-Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health-connect-send-data-interval} \parencite{android_hc_write}.
+Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health-connect-get-data-interval} \parencite{android_hc_write}.
 
 \begin{table}[htbp]
 	\centering
-	\caption{Panduan Penulisan Data Health Connect}\label{health-connect-send-data-interval}
+	\caption{Panduan Interval Pengambilan Data}\label{health-connect-get-data-interval}
 	\renewcommand{\arraystretch}{1.25}
 	\setlength{\tabcolsep}{8pt}
 	\rowcolors{2}{white}{white}
@@ -70,7 +70,7 @@ Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health
 	\end{tabularx}
 \end{table}
 
-\subsubsection{Trigger Pengiriman Data}
+\subsubsection{Trigger Pengiriman Data}\label{alternatif-trigger-pengiriman-pghd}
 
 Terdapat dua mekanisme kapan pengiriman data dilakukan, yaitu \textit{time-based periodic} atau \textit{event-based periodic}.
 Pada pengiriman berdasarkan \textit{time-based periodic}, data dikirim setiap interval waktu tetap, sementara pada \textit{event-based periodic}, pengiriman dipicu oleh peristiwa klinis tertentu, misalnya ketika detak jantung tiba-tiba naik drastis atau anomali terjadi.
@@ -79,14 +79,30 @@ Mekanisme yang dipilih adalah pengiriman batch berbasis interval waktu (\textit{
 Pengiriman berbasis waktu memberikan prediktabilitas konsumsi baterai dan jaringan yang lebih baik dibanding \textit{event-based trigger}.
 Selain itu, mekanisme event-based trigger juga rentan terhadap error pada perangkat ataupun anomali yang disebabkan faktor eksternal lainnya. % TODO: justifikasi referensi
 
+Interval 15 menit dipilih merujuk pada panduan penulisan data Health Connect API yang merekomendasikan interval tersebut untuk tipe data fisiologis
 Durasi yang digunakan untuk mengirimkan data dari klien ke sistem DecMed adalah setiap 15 menit sekali seperti rekomendasi Google HealthConnect API \parencite{android_hc_write}.
 
-\subsubsection{Mekanisme Pengaksesan Data PGHD}
+\subsubsection{Pengaksesan Data PGHD}\label{alternatif-pengaksesan-pghd}
 
-Data PGHD saat kondisi gawat darurat atau rawat jalan atau rawat inap bisa diakses datanya terus menerus oleh tenaga kesehatan.
-Hal ini dikarenakan tenaga kesehatan selalu butuh data secara sekuensial dan terus menerus saat hal tersebut terjadi.
+Berdasarkan analisis masalah pada subbab~\ref{analisis-permasalahan}, terdapat dua pola utama pengaksesan PGHD oleh tenaga kesehatan. 
+Pola pertama adalah akses berbasis kunjungan (\textit{visit-based access}), di mana tenaga kesehatan hanya membutuhkan akses PGHD dalam jangka waktu yang terbatas seperti selama konsultasi tatap muka. 
+Pola ini sudah didukung oleh mekanisme akses baca DecMed saat ini yang menggunakan \textit{access token} dengan masa berlaku singkat dan otomatis kedaluwarsa setelah jangka waktu 15 menit untuk akses baca dan 2 jam untuk akses edit/tulis.
 
-Mekanisme teknis yang akan dimasukkan ke DecMed adalah nanti waktu kedaluarsa \verb|access_token_read| yang sudah dibentuk dari PRE dan diubah dari cfrag memiliki waktu kedaluwarsa tidak ada.
-Status gawat darurat, rawat jalan, rawat inap hanya bisa dicabut oleh tenaga kesehatan.
+Pola kedua adalah akses berbasis kontinuitas perawatan yang muncul pada saat rawat inap, rawat jalan, dan gawat darurat. 
+Pada situasi tersebut, tenaga kesehatan membutuhkan akses baca yang persisten terhadap PGHD pasien untuk memantau perkembangan kondisi secara kontinu selama perawatan berlangsung.
 
-Poin-poin dan penjelasan di atas butuh referensi untuk justifikasi.
+Untuk mengakomodasi kebutuhan ini, dirancang mekanisme akses baca bertipe \textit{persistent session} yang dapat diaktifkan oleh tenaga kesehatan setelah pasien terlebih dahulu memberikan akses baca biasa melalui mekanisme CapBAC yang sudah ada di DecMed. 
+Selama masih berada dalam jendela waktu akses baca yang sah (2 jam) dan selama hubungan perawatan klinis masih berlangsung, tenaga kesehatan dapat mengubah status akses menjadi persisten yang berlaku sepanjang perawatan.
+
+Pengaktifan sesi persisten tidak memerlukan persetujuan tambahan dari pasien pada saat perubahan status dilakukan. 
+Hal ini didasarkan pada dua pertimbangan. 
+Pertama, tenaga kesehatan yang mengubah status akses sudah memiliki akses sah yang sebelumnya diberikan oleh pasien, sehingga perubahan status hanya memperpanjang cara akses dalam periode perawatan yang sama. 
+Kedua, dalam konteks kegawatdaruratan medis, diberikan pengecualian terhadap kewajiban mendapatkan persetujuan tindakan medis terlebih dahulu apabila penundaan tindakan berpotensi mengancam nyawa atau menyebabkan kecacatan yang lebih berat \parencite{UUKesehatan2023}.
+
+Setelah tenaga kesehatan menyatakan perawatan selesai, sesi persisten diakhiri oleh tenaga kesehatan dan akses baca terhadap PGHD kembali ke pola biasa yang harus dimulai lagi dengan pemberian izin oleh pasien.
+
+% Dengan demikian, mekanisme sesi persisten dirancang untuk tetap
+% menghormati prinsip kontrol akses berbasis pasien—karena inisiasi akses
+% tetap berasal dari persetujuan pasien—sekaligus memberikan kelonggaran
+% operasional bagi tenaga kesehatan untuk memastikan kontinuitas akses PGHD
+% selama episode perawatan klinis berlangsung. 

@@ -2,75 +2,59 @@
 
 \subsubsection{Analisis Solusi Kerahasiaan (\textit{Confidentiality})}
 
-Berdasarkan subbab~\ref{studi-confidentiality}, untuk menjamin kerahasiaan PGHD diperlukan mekanisme enkripsi. 
-Enkripsi simetris murni
-efisien secara komputasi namun menimbulkan masalah distribusi kunci---kunci yang sama
-harus dibagikan ke semua pihak yang berhak mengakses, yang bertentangan dengan model
-kontrol akses granular berbasis pasien pada DecMed. Enkripsi hibrid mengatasi masalah
-ini: kunci simetris (\textit{AES key}) dibangkitkan secara acak untuk setiap sesi,
-mengenkripsi data aktual secara efisien, kemudian kunci tersebut dienkripsi menggunakan
-kunci publik PRE pasien sehingga hanya pihak yang diberi akses melalui mekanisme PRE
-yang dapat mendekripsinya \parencite{Qin_2016_PRE}.
+Berdasarkan pengertian dan mekanisme penjaminan kerahasiaan data pada subbab~\ref{studi-confidentiality}, mekanisme yang digunakan untuk menjamin kerahasiaan PGHD yaitu enkripsi, akses kontrol, autentikasi, dan protokol komunikasi yang aman. 
+Berdasarkan kondisi DecMed saat ini (subbab~\ref{studi-decmed}) dan analisis permasalahan pada subbab~\ref{analisis-permasalahan}, DecMed sudah mengimplementasikan akses kontrol berbasis CapBac, mekanisme enkripsi data baik saat pengiriman, penyimpanan maupun pengaksesan data, dan autentikasi menggunakan manajemen akun, kunci dan \textit{address} IOTA\@.
+Namun seluruh mekanisme tersebut baru diimplementasikan pada rekam medis elektronik yang ditambahkan oleh tenaga kesehatan saja.
 
-Kriteria pemilihan yang relevan untuk PGHD mencakup: (a) konsistensi dengan mekanisme
-enkripsi PRE yang sudah ada di DecMed, (b) efisiensi komputasi pada perangkat klien
-pasien, dan (c) dukungan kontrol akses granular berbasis pasien
-\parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Berdasarkan analisis tersebut, \textbf{enkripsi hibrid AES-GCM + PRE} dipilih karena
-selaras penuh dengan arsitektur yang sudah ada, efisien untuk data bervolume besar,
-dan mendukung pendelegasian akses tanpa mengekspos kunci privat pasien.
+Untuk menjaga kerahasiaan data PGHD, keseluruhan mekanisme yang sudah ada di DecMed akan digunakan juga untuk data PGHD\@.
+Hal ini bersesuaian dengan kebutuhan penjaminan keamanan pada PGHD yang membutuhkan mekanisme \textit{end-to-end encryption}, akses kontrol, pengamanan protokol komunikasi, dan autentikasi seperti dijelaskan di subbab~\ref{studi-confidentiality} yang seluruhnya sudah didukung di DecMed \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% Utilize end-to-end encryption methods to secure the transmission of PGHD from patients’ devices to healthcare systems. This ensures that data remains confidential and is protected against interception or unauthorized access during transmission. (Khatiwada)
+
+Data PGHD akan dienkripsi di sisi klien pasien dan baru dapat didekripsi dan diakses oleh tenaga kesehatan yang resmi dan sudah diverifikasi oleh pasien ketika pasien memberikan izin melalui akses kontrol CapBac dan proxy reencryption.
+Mekanisme ini menjamin data terenkripsi dan dapat dijamin kerahasiaannya baik dari segi komunikasi pertukaran data, dan hanya bisa diakses oleh personel yang terautentikasi dan diizinkan oleh akses kontrol.
+
 
 \subsubsection{Analisis Solusi Integritas (\textit{Integrity})}
 
-Terdapat tiga mekanisme yang dapat dipertimbangkan untuk menjamin integritas PGHD:
-(1) fungsi \textit{hash} kriptografis saja, (2) \textit{Message Authentication Code}
-(MAC) berbasis kunci simetris, dan (3) tanda tangan digital. Fungsi \textit{hash} saja
-dapat mendeteksi perubahan data namun tidak membuktikan identitas pengirim. MAC
-membuktikan integritas namun mensyaratkan kunci simetris yang dibagikan, sehingga
-tidak mendukung \textit{non-repudiation}. Tanda tangan digital menggabungkan deteksi
-modifikasi dengan autentikasi identitas pengirim dan memberikan
-\textit{non-repudiation}---pasien tidak dapat menyangkal kepemilikan data yang
-ditandatangani dengan kunci privatnya
-\parencite{NIST_FIPS186-5}.
+Terdapat tiga mekanisme yang dapat dipertimbangkan untuk menjamin integritas PGHD berdasarkan penjelasan mengenai integritas data pada subbab~\ref{studi-integrity}\@:
+\begin{enumerate}
+      \item Fungsi \textit{hash} kriptografis saja, 
+      \item \textit{Message Authentication Code}, menggabungkan hash dengan enkripsi berbasis kunci simetris, dan 
+      \item Tanda tangan digital/\textit{digital signature}, menggabungkan hash dengan enkripsi berbasis kunci asimetris. 
+\end{enumerate}
 
-Selain itu, mengingat PGHD disimpan di IPFS (\textit{off-chain}) sedangkan metadata
-dicatat di IOTA (\textit{on-chain}), diperlukan mekanisme dua lapis: nilai
-\textit{hash} dari \textit{ciphertext} (\texttt{h\_cipher}) dicatat \textit{on-chain}
-untuk memverifikasi integritas data sebelum dekripsi, dan \textit{inner signature}
-dari \textit{plaintext} disematkan di dalam \textit{ciphertext} untuk verifikasi
-integritas data setelah dekripsi dilakukan di sisi klien tenaga kesehatan.
-Berdasarkan analisis ini, \textbf{tanda tangan digital ECDSA dengan verifikasi dua
-lapis} dipilih.
+Fungsi \textit{hash} saja dapat mendeteksi perubahan data, namun tidak memiliki mekanisme untuk menjamin apakah baik data maupun hash dimodifikasi atau tidak \parencite{NIST_FIPS186-5}. 
+% In other words, signatures are designed so that they cannot be forged (NIST)
+MAC membuktikan integritas dan memungkinkan modifikasi data dan hash dapat dideteksi, namun memerlukan kunci simetris yang dibagikan.
+Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa menggunakan kunci privat itu untuk menghasilkan hash yang valid dari data dan hash yang sudah dimodifikasi \parencite{NIST_FIPS186-5}.
+% In order to prevent other entities from claiming to be the key pair owner and using the private key to generate fraudulent signatures, the private key must remain secret. (NIST)
+Selain itu, pembagian kunci privat juga tidak sesuai dengan DecMed yang menggunakan prinsip untuk tidak pernah membagikan kunci privat/enkripsi menggunakan proxy reencryption \parencite{Hari_2025}. 
 
-\subsubsection{Analisis Solusi Ketersediaan (\textit{Availability}) dan Strategi
-Penyimpanan Hybrid IPFS-IOTA}
+\textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan didekripsi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
+Untuk menjamin integritas data sehingga baik data maupun bukti hash tidak dimodifikasi, dan menyesuaikan kondisi DecMed yang tidak membagikan kunci privat, mekanisme yang dipilih untuk menjaga integritas adalah menggunakan \textit{digital signature} untuk data PGHD\@.
 
-Ketersediaan sistem dijaga melalui dua strategi komplementer. Pertama,
-\textbf{mekanisme \textit{batching}}. Pengiriman data sensor per-titik langsung ke
-\textit{ledger} IOTA tidak efisien mengingat adanya biaya gas per transaksi dan
-kapasitas jaringan, serta berpotensi menyebabkan degradasi \textit{throughput} akibat
-lonjakan transaksi yang melebihi kapasitas konsensus
-\parencite{Wen_2024_Performance_Blockchain}. Mekanisme \textit{batching}---di mana
-data dikumpulkan selama 15 menit sesuai panduan Google Health Connect API
-\parencite{android_2024_healthconnect} kemudian dikirim dalam satu transaksi---secara
-signifikan mengurangi beban jaringan dan risiko \textit{denial of service}.
+\subsubsection{Analisis Solusi Ketersediaan (\textit{Availability})}
 
-Kedua, \textbf{strategi penyimpanan \textit{hybrid} IPFS dan IOTA}. DecMed telah
-menerapkan pola ini untuk data klinis \parencite{Purnama_2026}. Dokumentasi
-DecMed menetapkan bahwa IOTA memiliki batas ukuran objek \textit{on-chain} sebesar
-\textbf{250~KB}---penyimpanan objek yang melampaui batas ini akan membatalkan transaksi
-\parencite{Purnama_2026}. Payload PGHD berformat JSON yang berisi puluhan hingga
-ratusan \textit{data point} dengan frekuensi tinggi dapat dengan mudah melampaui batas
-ini, terutama setelah dienkripsi. Oleh karena itu:
-\begin{itemize}
-    \item \textbf{\textit{Ciphertext} PGHD} (\texttt{enc\_pghd}) disimpan di
-          \textbf{IPFS} yang tidak memiliki batasan ukuran praktis untuk konten
-          terenkripsi.
-    \item \textbf{Metadata \textit{provenance}} berukuran kecil---meliputi
-          \texttt{CID}, \texttt{h\_cipher}, \texttt{enc\_aes\_key\_nonce},
-          \texttt{capsule}, \texttt{pghd\_outer\_signature}, \texttt{status},
-          dan \texttt{timestamp}---dicatat pada \textbf{\textit{ledger} IOTA}.
-\end{itemize}
-Dengan arsitektur ini, batas 250~KB IOTA tidak menjadi hambatan, sekaligus integritas
-data tetap dapat diverifikasi \textit{end-to-end} melalui nilai \textit{hash} yang
-tercatat \textit{on-chain}.
+Seperti sudah dijelaskan pada pembahasan mengenai ketersediaan, subbab~\ref{studi-availability}, terdapat empat mekanisme penjaminan ketersediaan data PGHD yang dipertimbangkan, yaitu,
+
+\begin{enumerate}
+    \item \textit{Sharding/batching}, yaitu pengelompokan data dan pemecahan data
+    
+    \item Penyimpanan terdistribusi
+    
+    \item Redundansi, penyimpanan salinan data di beberapa lokasi fisik atau logis yang berbeda
+    
+    \item \textit{Rate limiting/throttling}
+\end{enumerate}
+
+Berdasarkan kondisi DecMed saat ini, DecMed sudah mengimplementasikan penyimpanan terdistribusi berbasis IPFS\@.
+IPFS menyelesaikan kebutuhan redundansi dan \textit{sharding} melalui mekanisme \textit{content-addressing}.
+Setiap berkas diidentifikasi berdasarkan hash isinya (CID), bukan lokasi penyimpanannya, sehingga berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari node mana pun yang tersedia \parencite{Benet_2014_ipfs}.
+% IPFS has no single point of failure, and nodes do not need to trust each other. (Benet IPFS)
+% Modelled as a market, weakly incentivizes data replication. Trade Strategies swappable (Benet IPFS)
+
+Solusi mekanisme lain yang akan diimplementasikan adalah \textit{rate limiting} dan \textit{batching}.
+Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan} dan mekanisme penjaminan ketersediaan pada subbab~\ref{studi-availability}, data PGHD umumnya dari sensor yang bersifat \textit{time-series} dan bervolume tinggi, sehingga pengiriman secara terus menerus dapat membebani kerja sistem DecMed dan berpotensi menyebabkan Denial of Service.
+\textit{Rate limit} tidak diterapkan pada sisi server ataupun DecMed karena berpotensi melakukan \textit{drop request} untuk data rekam medis atau PGHD yang valid, sehingga mengurangi kontinuitas dan menghilangkan data yang seharusnya didapatkan oleh tenaga kesehatan \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+Untuk itu data akan dikumpulkan (\textit{grouping}) dalam waktu tertentu di sisi klien sebelum dikirimkan dalam satuan waktu tetap untuk menghindari frekuensi pengiriman data yang terlalu sering.
+

@@ -11,7 +11,7 @@ Secara arsitektural, DecMed terdiri atas tiga komponen utama.
 Pertama, klien (\textit{client}), untuk memudahkan interaksi aktor dengan sistem dan memiliki fungsionalitas berdasarkan jenis aktor yang menggunakan sistem.
 Kedua, \textit{proxy}  sebagai mekanisme kontrol akses data RME yang memungkinkan pendelegasian akses terhadap data terenkripsi tanpa harus membagikan kunci privat secara langsung memakai \textit{proxy re-encryption} \parencite{Qin_2016_PRE}.
 Ketiga, \textit{storage} sebagai mekanisme penyimpanan, dengan \textit{InterPlanetary File System} (IPFS) digunakan sebagai lapisan penyimpanan \textit{off-chain} untuk menangani data klinis berukuran besar, sementara metadata dan referensi data disimpan pada jaringan \textit{on-chain} IOTA untuk menjamin integritas melalui sifat \textit{immutable} \parencite{Hari_2025,Purnama_2026}.
-Melalui kombinasi ini, DecMed mampu menyediakan mekanisme pengelolaan RME yang aman, terdesentralisasi, dan mendukung kontrol akses berbasis pasien.
+Melalui kombinasi ini, DecMed mampu menyediakan mekanisme pengelolaan RME yang aman, terdesentralisasi, dan mendukung kontrol akses berbasis kapabilitas.
 
 Meskipun demikian, implementasi DecMed saat ini masih bersifat \textit{provider-centric}.
 Data kesehatan pasien hanya masuk ke dalam sistem ketika terjadi interaksi dengan fasyankes, seperti kunjungan klinis atau pencatatan oleh tenaga medis.
@@ -26,11 +26,12 @@ Data PGHD memberikan informasi bagi tenaga kesehatan yang tidak dapat diperoleh 
 Selain itu, ketika pasien berada dalam kondisi rawat inap, rawat jalan, gawat darurat atau kondisi penyakit kronis lainnya, akses terhadap PGHD menjadi informasi yang berharga bagi tenaga kesehatan untuk mendukung pengambilan keputusan klinis secara \textit{real-time} \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 % Chronic Disease Management: Real-time PGHD can be transmitted to healthcare providers, allowing them to monitor and manage chronic conditions from a distance (khatiwada)
 % We found that the usefulness of PGHD in the outpatient setting rests not only on data having clinical relevance but also relies on patients to collect these data. There is recognition among health care professions that using PGHD tools to inform health care requires balancing the data patients want to and are willing to collect with the data health care professionals find valuable. While little has been written about how to strike this balance in the PGHD development process, most of the PHD teams engaged multiple users in the development of tracking tools. Those interested in developing PGHD tools might benefit from reviewing published work in the area of groupware development, which identifies steps for developing products to benefit different types of group members (cohen).
-Dengan demikian, integrasi PGHD berpotensi mengubah DecMed menjadi sistem yang lebih \textit{patient-centric} dan proaktif.
 
 Namun, integrasi PGHD ke dalam arsitektur DecMed memberikan sejumlah tantangan.
 Tantangan pertama adalah kebutuhan akan arsitektur \textit{offline-first}, mengingat perangkat pasien tidak selalu terhubung ke jaringan secara stabil \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 Tantangan kedua adalah karakteristik data PGHD yang berasal dari sensor perangkat bersifat \textit{time-series} dengan frekuensi tinggi yang tidak efisien jika terus menerus dikirim \parencite{Wen_2024_Performance_Blockchain}.
+Selain itu, diperlukan juga mekanisme aliran data dari sisi pasien hingga ke konsumsi klinis oleh tenaga kesehatan, seperti mekanisme pengumpulan dari sumber data, pengolahan, standardisasi, dan penyimpanan data, juga pengiriman hingga penggunaan data oleh tenaga kesehatan \parencite{Zeng2022-Standardized-PGD}. 
+% This viewpoint paper formulates the integration of PGD into clinical systems and workflow as a PGD integration pipeline and reviews the functional components of such a pipeline. A PGD integration pipeline includes PGD acquisition, aggregation, and consumption (Zeng Standardized)
 
 Selain karakteristik dan volume datanya, integrasi PGHD juga memunculkan tantangan dari sisi keamanan dan kepercayaan data.
 Data kesehatan yang dihasilkan pasien bersifat sensitif dan memerlukan perlindungan yang mencakup aspek kerahasiaan (\textit{confidentiality}), integritas (\textit{integrity}), dan ketersediaan (\textit{availability}) \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.

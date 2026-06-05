@@ -45,7 +45,7 @@
         h_{\text{plain}}' = \mathrm{SHA256}(\texttt{pghd\_plaintext}),
     \]
     lalu memuat \verb|pghd_public_key| pasien dari ledger IOTA dan memverifikasi \verb|pghd_inner_signature| menggunakan algoritma ECDSA\@. 
-    Jika verifikasi berhasil, klien menampilkan PGHD kepada tenaga kesehatan untuk digunakan dalam pengambilan keputusan klinis.
+    Jika verifikasi berhasil, klien menampilkan PGHD kepada tenaga kesehatan untuk digunakan dalam pengambilan keputusan klinis dengan waktu akses baca selama 2 jam.
     
     \item \textbf{Penanganan kegagalan verifikasi \textit{inner signature}.}
     Jika verifikasi \textit{inner signature} gagal, klien tenaga kesehatan akan menolak menampilkan dan menggunakan PGHD tersebut. 
@@ -54,4 +54,21 @@
     \item \textbf{Invalidasi CID IPFS dan koneksi ke IOTA.}
     Setelah entri PGHD ditandai sebagai \texttt{INVALID} pada ledger IOTA, komponen off-chain yang memantau event \textit{invalidasi} dapat melakukan \textit{unpin} CID terkait dari kluster IPFS sehingga data tidak lagi dijaga secara aktif di penyimpanan lokal. 
     Selain itu, klien pasien maupun tenaga kesehatan tidak lagi menampilkan entri PGHD yang berstatus \texttt{INVALID} dalam daftar data aktif sehingga secara efektif koneksi antara CID dan daftar data pasien telah dihapus dari perspektif sistem.
+\end{enumerate}
+
+Dalam kondisi gawat darurat, rawat inap maupun rawat jalan yang memerlukan akses data berkelanjutan seperti dijelaskan pada subbab~\ref{alternatif-pengaksesan-pghd}, diperlukan mekanisme tambahan untuk memastikan bahwa tenaga kesehatan dapat terus mengakses PGHD selama sesi perawatan berlangsung.
+
+\begin{enumerate}
+    \item \textbf{Aktivasi sesi akses persisten.}
+        Selama tenaga kesehatan masih berada dalam jangka waktu akses yang sah (2 jam sejak pasien memberikan akses baca), klien menyediakan opsi bagi tenaga kesehatan untuk mengaktifkan sesi akses persisten terhadap PGHD pasien. 
+        Ketika opsi ini dipilih, klien mengirim permintaan ke proxy untuk mengubah status akses menjadi sesi perawatan. 
+        Proxy memvalidasi bahwa tenaga kesehatan masih memiliki akses yang sah dan kemudian mencatat status sesi persisten pada penyimpanan sementara sehingga permintaan pembacaan PGHD berikutnya tidak lagi dibatasi oleh masa berlaku \textit{access token} baca jangka pendek.
+
+  \item \textbf{Penggunaan sesi persisten selama periode perawatan.}
+        Setelah sesi persisten aktif, tenaga kesehatan dapat melakukan pembacaan ulang PGHD pasien secara berkala selama periode perawatan tanpa harus meminta persetujuan ulang dari pasien atau menginisiasi akses baru. 
+
+  \item \textbf{Pengakhiran sesi persisten oleh tenaga kesehatan.}
+        Ketika periode perawatan dinyatakan selesai, tenaga kesehatan mengakhiri sesi persisten melalui klien. 
+        Klien mengirim permintaan ke proxy untuk menandai sesi sebagai selesai.
+        Setelah permintaan ini berhasil diproses, proxy menghapus status sesi persisten sehingga akses baca terhadap PGHD kembali hanya dapat dilakukan dengan skema akses biasa yang dimulai dari persetujuan pasien.
 \end{enumerate}
