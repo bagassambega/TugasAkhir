@@ -7,7 +7,7 @@ Berdasarkan kondisi DecMed saat ini (subbab~\ref{studi-decmed}) dan analisis per
 Namun seluruh mekanisme tersebut baru diimplementasikan pada rekam medis elektronik yang ditambahkan oleh tenaga kesehatan saja.
 
 Untuk menjaga kerahasiaan data PGHD, keseluruhan mekanisme yang sudah ada di DecMed akan digunakan juga untuk data PGHD\@.
-Hal ini bersesuaian dengan kebutuhan penjaminan keamanan pada PGHD yang membutuhkan mekanisme \textit{end-to-end encryption}, akses kontrol, pengamanan protokol komunikasi, dan autentikasi seperti dijelaskan di subbab~\ref{studi-confidentiality} yang seluruhnya sudah didukung di DecMed \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Hal ini bersesuaian dengan kebutuhan penjaminan keamanan pada PGHD yang membutuhkan mekanisme \textit{end-to-end encryption}, akses kontrol, pengamanan protokol komunikasi, dan autentikasi seperti dijelaskan di subbab~\ref{studi-confidentiality} \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding} yang seluruhnya sudah didukung di DecMed.
 % Utilize end-to-end encryption methods to secure the transmission of PGHD from patients’ devices to healthcare systems. This ensures that data remains confidential and is protected against interception or unauthorized access during transmission. (Khatiwada)
 
 Data PGHD akan dienkripsi di sisi klien pasien dan baru dapat didekripsi dan diakses oleh tenaga kesehatan yang resmi dan sudah diverifikasi oleh pasien ketika pasien memberikan izin melalui akses kontrol CapBac dan proxy reencryption.
@@ -35,7 +35,7 @@ Untuk menjamin integritas data sehingga baik data maupun bukti hash tidak dimodi
 
 \subsubsection{Analisis Solusi Ketersediaan (\textit{Availability})}
 
-Seperti sudah dijelaskan pada pembahasan mengenai ketersediaan, subbab~\ref{studi-availability}, terdapat empat mekanisme penjaminan ketersediaan data PGHD yang dipertimbangkan, yaitu,
+Seperti sudah dijelaskan pada pembahasan mengenai ketersediaan pada subbab~\ref{studi-availability}, terdapat empat mekanisme penjaminan ketersediaan data PGHD yang dipertimbangkan, yaitu,
 
 \begin{enumerate}
     \item \textit{Sharding/batching}, yaitu pengelompokan data dan pemecahan data

@@ -1,86 +1,72 @@
 \subsection{Alternatif Pipeline PGHD-DecMed}\label{alternatif-arsitektur-pipeline-pghd}
 
-Berdasarkan analisis permasalahan di atas, terdapat beberapa arsitektur yang dipertimbangkan.
+Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan}, terdapat beberapa komponen dari arsitektur \textit{pipeline} integrasi PGHD yang perlu dipertimbangkan, yaitu sumber data, pengumpulan dan pengolahan data, pengiriman data, dan pengaksesan data.
 
 (Seluruh subbab ini butuh justifikasi berbasis referensi)
 
-\subsubsection{Wearable Device}\label{alternatif-wearable-pghd}
+\subsubsection{Sumber Data}\label{alternatif-sumber-data}
 
-Data PGHD bisa diambil dari wearable device seperti smartwatch ataupun IoT device lainnya.
-Terdapat beberapa pertimbangan terkait keterlibatan dan integrasi wearable device.
+Data PGHD bisa diambil dari \textit{wearable device} seperti smartwatch ataupun IoT \textit{device} lainnya dan juga dari perangkat \textit{mobile} menggunakan aplikasi kesehatan seperti FitBit atau Google Health Connect \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+Terdapat beberapa pertimbangan terkait sumber data yang akan digunakan.
 
 \begin{enumerate}
-    \item Hanya menggunakan sensor bawaan mobile phone (tanpa wearable).
-    \item Mengintegrasikan data dari wearable fisik ke mobile phone.
-    \item Mensimulasikan wearable via BLE (tanpa perangkat fisik).
+    \item Hanya menggunakan sensor bawaan \textit{mobile phone} (tanpa \textit{wearable}).
+    \item Mengintegrasikan data dari wearable fisik ke \textit{mobile phone}.
 \end{enumerate}
 
-Mekanisme yang dipilih adalah data dari sensor di wearable devices akan dikirim ke perangkat mobile phone, di mana mobile phone akan mengumpulkan data dari wearable dan juga sensor yang dimiliki mobile phone itu sendiri.
-Implementasi ini dipilih agar kelengkapan dan kekayaan data dapat terjamin. (Butuh justifikasi dari referensi)
+Sumber data yang akan digunakan adalah kombinasi dari data yang dihasilkan oleh \textit{wearable} dan juga informasi kesehatan dari perangkat seluler.
+Implementasi ini dipilih agar data yang didapatkan lengkap dan sudah diadopsi secara luas \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 
-\subsubsection{Aliran Data PGHD}\label{alternatif-aliran-pghd}
+\subsubsection{Pengolahan Data PGHD}\label{alternatif-aliran-pghd}
 
-Terdapat tiga alternatif mekanisme pengummpulan dan pengiriman data yang dapat dipertimbangkan.
+Terdapat tiga alternatif mekanisme pengummpulan dan pengolahan data yang dapat dipertimbangkan.
 
 \begin{enumerate}
-    \item Data raw dikirim langsung ke sistem DecMed
+    \item Data \textit{raw} dikirim langsung ke sistem DecMed
     \item Data diagregasi/diringkas di mobile sebelum dikirim ke DecMed
-    \item Data raw disimpan lokal, hanya agregat/ringkasan yang dikirim ke DecMed
+    \item Data \textit{raw} disimpan lokal, hanya agregat/ringkasan yang dikirim ke DecMed
 \end{enumerate}
 
 Mekanisme yang dipilih adalah data raw disimpan di storage lokal dan dikirim dalam \textit{batch} ke DecMed tanpa agregasi di sisi klien pasien.
-Pilihan ini memberikan nilai klinis yang lebih tinggi karena data asli tetap tersedia di ekosistem DecMed dan data asli dapat diakses oleh tenaga kesehatan tanpa kehilangan informasi apapun. % TODO: justifikasi referensi
+Pilihan ini memberikan nilai klinis yang lebih tinggi karena data asli tetap tersedia \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR} dan data asli dapat diakses oleh tenaga kesehatan tanpa kehilangan informasi apapun, namun tetap memperhatikan frekuensi pengiriman data dan \textit{throughput} jaringan agar \textit{availability} tetap terjamin seperti yang sudah dijelaskan pada subbab~\ref{alternatif-analisis-solusi-cia} \parencite{Wen_2024_Performance_Blockchain}. 
 
-Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health-connect-get-data-interval} \parencite{android_hc_write}.
+\subsubsection{Pengiriman Data}\label{alternatif-trigger-pengiriman-pghd}
 
+Terdapat dua mekanisme bagaimana pengiriman data dilakukan mempertimbangkan pengiriman data pada \textit{distributed system}, yaitu dengan \textit{time-triggered} (pengiriman berdasarkan interval waktu tetap) dan \textit{event-triggered} (pengiriman dipicu oleh kejadian atau perubahan kondisi tertentu) \parencite{Albert2004_Event_Time_Triggered_Comparison}.
+Pada pengiriman berdasarkan \textit{time-triggered}, data dikirim setiap interval waktu tetap, sementara pada \textit{event-triggered}, pengiriman dipicu oleh suatu kondisi atau perubahan tertentu, misalnya ketika detak jantung tiba-tiba naik drastis atau anomali terjadi.
+
+Perbandingan antara penggunaan \textit{time-triggered} dan \textit{event-triggered} berdasarkan kebutuhan PGHD dan juga karakteristik sistem terdistribusi terlampir pada Tabel~\ref{tab:time-event-comparison}.
 \begin{table}[htbp]
-	\centering
-	\caption{Panduan Interval Pengambilan Data}\label{health-connect-get-data-interval}
-	\renewcommand{\arraystretch}{1.25}
-	\setlength{\tabcolsep}{8pt}
-	\rowcolors{2}{white}{white}
-	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X}
-		\rowcolor[HTML]{DDEBF7}
-		\textbf{Tipe Data} & \textbf{Ekspektasi (Frekuensi Penulisan)} \\
-		\midrule
-		Steps & Setiap 1 menit \\
-		\midrule
-		StepsCadence & Setiap 1 menit \\
-		\midrule
-		WheelchairPushes & Setiap 1 menit \\
-		\midrule
-		ActiveCaloriesBurned & Setiap 15 menit \\
-		\midrule
-		TotalCaloriesBurned & Setiap 15 menit \\
-		\midrule
-		Distance & Setiap 1 menit \\
-		\midrule
-		ElevationGained & Setiap 1 menit \\
-		\midrule
-		FloorsClimbed & Setiap 1 menit \\
-		\midrule
-		HeartRate & 4 kali per menit \\
-		\midrule
-		HeartRateVariabilityRmssd & Setiap 1 menit \\
-		\midrule
-		RespiratoryRate & Setiap 1 menit \\
-		\midrule
-		OxygenSaturation & Setiap jam \\
-		\bottomrule
-	\end{tabularx}
+    \centering
+    \caption{Perbandingan \textit{time-triggered} dan \textit{event-triggered} untuk pengiriman PGHD}\label{tab:time-event-comparison}
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+        \rowcolor[HTML]{DDEBF7}
+        \textbf{Kriteria} & \textbf{\textit{Time-based periodic}} & \textbf{\textit{Event-based periodic}} \\
+        \midrule
+        Prediktabilitas beban jaringan & Tinggi (interval tetap) & Rendah (bergantung pada kondisi pasien) \\
+        Risiko lonjakan transaksi & Rendah & Tinggi (saat pasien aktif atau terjadi anomali) \\
+        Kemampuan respons cepat & Rendah (tunggu interval berikutnya) & Tinggi (langsung saat kondisi terdeteksi) \\
+        Ketergantungan pada akurasi \textit{threshold} & Tidak ada & Tinggi (rentan \textit{false positive}) \\
+        Konsumsi baterai perangkat & Bisa diperkirakan & Tidak terprediksi (bergantung frekuensi \textit{event}) \\
+        \bottomrule
+    \end{tabularx}
 \end{table}
 
-\subsubsection{Trigger Pengiriman Data}\label{alternatif-trigger-pengiriman-pghd}
+\textit{Event-triggered} membuat data dapat tersedia secara cepat terhadap suatu kejadian, karena pengiriman dapat dilakukan segera setelah \textit{event} terdeteksi tanpa harus menunggu interval waktu berikutnya.
+Namun \textit{event-triggered} sangat bergantung pada volume dan frekuensi data yang dikirim karena lonjakan pengiriman data ketika \textit{event} muncul secara terus menerus dapat membuat pengiriman data terjadi terus menerus.
+% The main advantage of event-triggered systems is their ability to fastly react to asynchronous external events which are not known in advance [AG03]. Thus, they show a better real-time performance in comparison with time-triggered systems. In addition, event-triggered systems possess a higher flexibility and allow in many cases the adaptation to the actual demand without a redesign of the complete system.
+% It can be summarized that event-triggered bus concepts are more efficient for small bus loads, since they generate lower latencies and less jitter when reacting to asynchronous events. But as has been shown a bus load or a load on the micro controller arbitrarily worsen the behavior of the CAN bus
+Sementara itu pengiriman berbasis \textit{time-triggered} perilaku dan konsumsi daya lebih \textit{predictable} karena pengiriman data stabil \parencite{Albert2004_Event_Time_Triggered_Comparison}.
+% Within a time-triggered communication the permission to access the bus is controlled by predefined time windows (TDMA, time division multiple access), leading to the advantage of a quasideterministic behavior during regular operation.
+% Therefore, time-triggered concepts potentially provide a higher dependability, since e.g. missing messages are immediately detected
 
-Terdapat dua mekanisme kapan pengiriman data dilakukan, yaitu \textit{time-based periodic} atau \textit{event-based periodic}.
-Pada pengiriman berdasarkan \textit{time-based periodic}, data dikirim setiap interval waktu tetap, sementara pada \textit{event-based periodic}, pengiriman dipicu oleh peristiwa klinis tertentu, misalnya ketika detak jantung tiba-tiba naik drastis atau anomali terjadi.
-
-Mekanisme yang dipilih adalah pengiriman batch berbasis interval waktu (\textit{time-based periodic batching}).
-Pengiriman berbasis waktu memberikan prediktabilitas konsumsi baterai dan jaringan yang lebih baik dibanding \textit{event-based trigger}.
-Selain itu, mekanisme event-based trigger juga rentan terhadap error pada perangkat ataupun anomali yang disebabkan faktor eksternal lainnya. % TODO: justifikasi referensi
-
-Interval 15 menit dipilih merujuk pada panduan penulisan data Health Connect API yang merekomendasikan interval tersebut untuk tipe data fisiologis
-Durasi yang digunakan untuk mengirimkan data dari klien ke sistem DecMed adalah setiap 15 menit sekali seperti rekomendasi Google HealthConnect API \parencite{android_hc_write}.
+Mekanisme yang dipilih untuk pengiriman PGHD ke DecMed adalah pengiriman batch berbasis interval waktu (\textit{time-based periodic batching}).
+Pengiriman berbasis waktu memberikan prediktabilitas konsumsi baterai dan jaringan yang lebih baik dibanding \textit{event-based trigger} \parencite{Albert2004_Event_Time_Triggered_Comparison}.
+Hal ini dikarenakan PGHD adalah data yang memiliki frekuensi tinggi, sementara pengiriman berbasis \textit{event-triggered} sangat bergantung pada frekuensi pengiriman data.
+Pengiriman berbasis \textit{event} berisiko menghasilkan lonjakan transaksi (\textit{burst traffic}) ketika pasien mengalami perubahan yang signifikan (misalnya saat olahraga atau kondisi sakit berkepanjangan) yang justru merupakan situasi kritis di mana ketersediaan sistem paling dibutuhkan.
+Selain itu, mekanisme \textit{event-triggered} juga rentan terhadap \textit{error} pada perangkat ataupun anomali yang disebabkan faktor eksternal lainnya.
 
 \subsubsection{Pengaksesan Data PGHD}\label{alternatif-pengaksesan-pghd}
 

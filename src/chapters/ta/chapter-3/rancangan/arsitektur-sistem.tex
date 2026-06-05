@@ -1,0 +1,58 @@
+\subsection{Arsitektur Sistem}\label{rancangan-solusi-arsitektur-sistem}
+
+Gambaran high-level:
+\begin{itemize}
+	\item Patient device (Android)
+	\item Optional: wearable $\rightarrow$ Android
+	\item Local DB + batching engine
+	\item Encryption module
+	\item IPFS cluster
+	\item IOTA node + smart contract DecMed (extended)
+	\item Existing DecMed components (proxy, CapBAC, PRE) di mana PGHD diintegrasikan
+\end{itemize}
+
+
+
+Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health-connect-get-data-interval} \parencite{android_hc_write}.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Panduan Interval Pengambilan Data}\label{health-connect-get-data-interval}
+	\renewcommand{\arraystretch}{1.25}
+	\setlength{\tabcolsep}{8pt}
+	\rowcolors{2}{white}{white}
+	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X}
+		\rowcolor[HTML]{DDEBF7}
+		\textbf{Tipe Data} & \textbf{Ekspektasi (Frekuensi Penulisan)} \\
+		\midrule
+		Steps & Setiap 1 menit \\
+		\midrule
+		StepsCadence & Setiap 1 menit \\
+		\midrule
+		WheelchairPushes & Setiap 1 menit \\
+		\midrule
+		ActiveCaloriesBurned & Setiap 15 menit \\
+		\midrule
+		TotalCaloriesBurned & Setiap 15 menit \\
+		\midrule
+		Distance & Setiap 1 menit \\
+		\midrule
+		ElevationGained & Setiap 1 menit \\
+		\midrule
+		FloorsClimbed & Setiap 1 menit \\
+		\midrule
+		HeartRate & 4 kali per menit \\
+		\midrule
+		HeartRateVariabilityRmssd & Setiap 1 menit \\
+		\midrule
+		RespiratoryRate & Setiap 1 menit \\
+		\midrule
+		OxygenSaturation & Setiap jam \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+
+
+Interval 15 menit dipilih merujuk pada panduan penulisan data Health Connect API yang merekomendasikan interval tersebut untuk tipe data fisiologis
+Durasi yang digunakan untuk mengirimkan data dari klien ke sistem DecMed adalah setiap 15 menit sekali seperti rekomendasi Google HealthConnect API \parencite{android_hc_write}.
