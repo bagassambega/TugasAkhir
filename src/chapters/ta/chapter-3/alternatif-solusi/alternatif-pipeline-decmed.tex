@@ -61,9 +61,9 @@ Dalam kondisi normal, data PGHD dari perangkat \textit{wearable} dan smartphone 
 Namun, skenario seperti penggunaan \textit{multiple wearable} dengan frekuensi pengambilan data tinggi atau penyimpanan data dalam jangka waktu lama karena perangkat terus-menerus \textit{offline} dapat menyebabkan akumulasi data yang sangat besar.
 
 Untuk mengantisipasi skenario ekstrim tersebut, diterapkan mekanisme \textit{early trigger} sebagai \textit{fallback}. 
-\textit{Threshold} yang digunakan adalah 100 MB untuk satu \textit{batch} sebelum enkripsi. 
+\textit{Threshold} yang digunakan adalah 10 MB untuk satu \textit{batch} sebelum enkripsi. 
 Jika ukuran batch yang sedang dikumpulkan dalam memori mencapai \textit{threshold} tersebut sebelum interval 15 menit tercapai, klien pasien akan segera mengirim batch tersebut tanpa menunggu interval waktu berikutnya. 
-Pemilihan \textit{threshold} 100 MB didasarkan pada pertimbangan bahwa ukuran tersebut masih dapat ditangani oleh perangkat mobile dengan RAM terbatas (2~-~4 GB) dan koneksi jaringan yang stabil.
+Pemilihan \textit{threshold} 10 MB didasarkan pada pertimbangan bahwa ukuran tersebut masih dapat ditangani oleh perangkat mobile dengan RAM terbatas (2~-~4 GB) dan koneksi jaringan yang stabil.
 
 \subsubsection{Pengolahan Data PGHD}\label{alternatif-aliran-pghd}
 
@@ -93,7 +93,7 @@ Pola kedua adalah akses berbasis kontinuitas perawatan yang muncul pada saat raw
 Pada situasi tersebut, tenaga kesehatan membutuhkan akses baca yang persisten terhadap PGHD pasien untuk memantau perkembangan kondisi secara kontinu selama perawatan berlangsung.
 
 Untuk mengakomodasi kebutuhan ini, dirancang mekanisme akses baca bertipe \textit{persistent session} yang dapat diaktifkan oleh tenaga kesehatan setelah pasien terlebih dahulu memberikan akses baca biasa melalui mekanisme CapBAC yang sudah ada di DecMed. 
-Selama masih berada dalam jendela waktu akses baca yang sah (2 jam) dan selama hubungan perawatan klinis masih berlangsung, tenaga kesehatan dapat mengubah status akses menjadi persisten yang berlaku sepanjang perawatan.
+Selama masih berada dalam jendela waktu akses baca yang sah (15 menit) dan selama hubungan perawatan klinis masih berlangsung, tenaga kesehatan dapat mengubah status akses menjadi persisten yang berlaku sepanjang perawatan.
 
 Pengaktifan sesi persisten tidak memerlukan persetujuan tambahan dari pasien pada saat perubahan status dilakukan. 
 Hal ini didasarkan pada dua pertimbangan. 

@@ -69,7 +69,7 @@ Setelah \textit{batch} PGHD terbentuk dan disimpan dalam \textit{local database}
     Setelah menerima pemanggilan fungsi, \textit{smart contract} memproses metadata dengan langkah berikut:
     \begin{enumerate}
         \item Memuat \verb|pghd_public_key| pasien dari state \textit{on-chain}.
-        \item Memverifikasi \verb|pghd_outer_signature| terhadap nilai \verb|h_cipher| yang diterima sebagai parameter menggunakan algoritma ECDSA dan \verb|pghd_public_key|\@.
+        \item Memverifikasi \verb|pghd_outer_signature| menggunakan algoritma ECDSA dan \verb|pghd_public_key|\@.
     \end{enumerate}
     
     Jika verifikasi gagal, transaksi dibatalkan dan metadata tidak disimpan. 

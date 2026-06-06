@@ -30,7 +30,7 @@ Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa mengguna
 % In order to prevent other entities from claiming to be the key pair owner and using the private key to generate fraudulent signatures, the private key must remain secret. (NIST)
 Selain itu, pembagian kunci privat juga tidak sesuai dengan DecMed yang menggunakan prinsip untuk tidak pernah membagikan kunci privat/enkripsi menggunakan proxy reencryption \parencite{Hari_2025}. 
 
-\textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan didekripsi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
+\textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan diverifikasi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
 Untuk menjamin integritas data sehingga baik data maupun bukti hash tidak dimodifikasi, dan menyesuaikan kondisi DecMed yang tidak membagikan kunci privat, mekanisme yang dipilih untuk menjaga integritas adalah menggunakan \textit{digital signature} untuk data PGHD\@.
 
 \subsubsection{Analisis Solusi Ketersediaan (\textit{Availability})}
