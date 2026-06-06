@@ -1,1 +1,44 @@
-\subsubsection{Mekanisme Pengumpulan PGHD pada Klien Pasien}\label{subsubsec:pengumpulan-pghd}
+\subsubsection{Mekanisme Pengumpulan PGHD pada Klien Pasien}\label{mekanisme-pengumpulan-pghd}
+
+Sebelum data PGHD dapat dikirim ke sistem, klien pasien harus terlebih dahulu mengumpulkan data dari berbagai sumber.
+
+\begin{enumerate}
+    \item \textbf{Inisialisasi sumber data pada saat pertama kali aplikasi dijalankan.}
+    Setelah pasien berhasil login ke akun DecMed, klien pasien meminta izin akses ke:
+    \begin{itemize}
+        \item Sensor perangkat yang tersedia melalui API Android/iOS\@.
+        \item Health Connect API (Android) atau HealthKit (iOS) untuk membaca data dari aplikasi kesehatan pihak ketiga \parencite{android_hc_write}.
+    \end{itemize}
+    Izin yang diberikan pengguna disimpan secara persisten.
+
+    \item \textbf{Registrasi \textit{listener} data untuk setiap tipe pengukuran.}
+    Klien mendaftarkan \textit{listener} untuk setiap tipe data yang akan dikumpulkan sesuai frekuensi pada Tabel~\ref{health-connect-get-data-interval}. 
+    Setiap kali data baru diterima, klien mengkonversinya ke dalam struktur \texttt{data group} dan \texttt{data points} sesuai Tabel~\ref{tab:field-datagroup-json-pghd} dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+
+    \item \textbf{Penyimpanan sementara per tipe pengukuran.}
+    Klien menyimpan struktur data dalam memori untuk setiap tipe pengukuran, yang terdiri dari metadata (\texttt{measurement\_type}, \texttt{device\_type}, \texttt{recording\_method}, \texttt{source}) dan daftar \texttt{values} (\texttt{timestamp}, \texttt{value}, \texttt{unit}). 
+    Data ditambahkan (\textit{append}) ke daftar \texttt{data\_points} yang sesuai setiap kali \textit{listener} menerima pembacaan baru.
+
+    \item \textbf{Pengecekan estimasi ukuran batch periodik.}
+    Klien setiap 1 menit menghitung ukuran batch berdasarkan jumlah total \texttt{data\_points} yang telah terkumpul. 
+    Jika perkiraan ukuran melebihi ambang batas 100 MB (sebelum enkripsi), klien akan segera membuat batch (Tabel~\ref{tab:field-batch-json-pghd}) dan memicu \textit{early trigger} tanpa menunggu interval 15 menit.
+
+    \item \textbf{Pembentukan batch periodik (setiap 15 menit atau \textit{early trigger}).}
+    Klien menjalankan \textit{timer} dengan interval 15 menit untuk membentuk batch. 
+    Ketika pembentukan batch di-\textit{trigger} baik oleh \textit{timer} maupun \textit{early trigger}, klien akan melakukan hal berikut,
+    \begin{enumerate}
+        \item Mengambil seluruh data yang telah terkumpul untuk setiap tipe pengukuran.
+        \item Mengosongkan struktur data memori (data yang telah diambil dihapus).
+        \item Membentuk struktur JSON sesuai skema pada Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+        \item Menyimpan batch ke \textit{local database} dengan status \texttt{pending}.
+        Struktur data yang disimpan mengikuti Tabel~\ref{tab:field-batch-pghd-local}.
+        Batch yang telah disimpan akan diproses lebih lanjut oleh mekanisme pengiriman pada Subbab~\ref{subsubsec:pengiriman-pghd}.
+    \end{enumerate}
+
+    \item \textbf{Penanganan data saat perangkat \textit{offline}.}
+    Jika perangkat tidak terhubung ke internet, batch tetap disimpan di \textit{local database}. 
+    Pengiriman akan ditangani oleh mekanisme \textit{retry} pada Subbab III.4.5.2 Poin 8.
+
+    \item \textbf{Cleanup data lama.}
+    Klien secara otomatis menghapus batch dengan status \texttt{sent} dan batch dengan status \texttt{permanent\_failure} setelah 7 hari.
+\end{enumerate}

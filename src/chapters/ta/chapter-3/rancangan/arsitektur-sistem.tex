@@ -1,19 +1,30 @@
 \subsection{Arsitektur Sistem}\label{rancangan-solusi-arsitektur-sistem}
 
-Gambaran high-level:
-\begin{itemize}
-	\item Patient device (Android)
-	\item Optional: wearable $\rightarrow$ Android
-	\item Local DB + batching engine
-	\item Encryption module
-	\item IPFS cluster
-	\item IOTA node + smart contract DecMed (extended)
-	\item Existing DecMed components (proxy, CapBAC, PRE) di mana PGHD diintegrasikan
-\end{itemize}
+Arsitektur sistem DecMed yang diperluas untuk mendukung integrasi PGHD ditunjukkan pada Gambar~\ref{fig:pghd-decmed-architecture}. 
+Arsitektur ini menggunakan arsitektur utama DecMed (Client Layer, Proxy Layer, dan Storage Layer) dengan penambahan komponen-komponen untuk mendukung pengumpulan, penyimpanan lokal, pengiriman, dan pengaksesan PGHD\@.
 
+\begin{figure}[htbp]
+    \centering
+	\includegraphics[width=\textwidth]{resources/chapter-3/arsitektur-pghd-decmed-total.png}
+	\caption{Arsitektur DecMed \parencite{Hari_2025}}\label{fig:pghd-decmed-architecture}
+\end{figure}
 
+\subsubsection{Pengumpulan Data dari Sumber PGHD}
 
-Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health-connect-get-data-interval} \parencite{android_hc_write}.
+Klien pasien mengumpulkan data dari tiga sumber utama:
+
+\begin{enumerate}
+    \item \textbf{Sensor internal perangkat}: 
+    Klien mengakses sensor bawaan \textit{smartphone} yang tersedia melalui API Android/iOS\@. 
+    Izin akses diminta saat pertama kali aplikasi dijalankan.
+    
+    \item \textbf{Perangkat \textit{wearable}}: Klien terhubung ke perangkat \textit{wearable} (smartwatch, fitness tracker) melalui Bluetooth. 
+\end{enumerate}
+
+\subsubsection{Frekuensi Pengambilan Data}
+
+Frekuensi pengambilan data dari setiap sumber mengikuti rekomendasi Google Health Connect API seperti tercantum pada Tabel~\ref{health-connect-get-data-interval}. 
+Pemilihan interval 15 menit untuk pengiriman \textit{batch} (dijelaskan pada Subbab~\ref{alternatif-trigger-pengiriman-pghd}).
 
 \begin{table}[htbp]
 	\centering
@@ -21,7 +32,7 @@ Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health
 	\renewcommand{\arraystretch}{1.25}
 	\setlength{\tabcolsep}{8pt}
 	\rowcolors{2}{white}{white}
-	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X}
+	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}X}
 		\rowcolor[HTML]{DDEBF7}
 		\textbf{Tipe Data} & \textbf{Ekspektasi (Frekuensi Penulisan)} \\
 		\midrule
@@ -52,7 +63,20 @@ Interval pengambilan data dilakukan setiap interval waktu pada tabel~\ref{health
 	\end{tabularx}
 \end{table}
 
+\subsubsection{Penyimpanan Lokal}
 
+Klien pasien menyimpan setiap \textit{batch} PGHD dalam \textit{local database} sebelum dikirim ke sistem. 
+Struktur data lokal dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
 
-Interval 15 menit dipilih merujuk pada panduan penulisan data Health Connect API yang merekomendasikan interval tersebut untuk tipe data fisiologis
-Durasi yang digunakan untuk mengirimkan data dari klien ke sistem DecMed adalah setiap 15 menit sekali seperti rekomendasi Google HealthConnect API \parencite{android_hc_write}.
+\subsubsection{Proxy Layer dan Smart Contract}
+
+Proxy Layer berperan sebagai \textit{middleware} yang memproses permintaan dari klien pasien dan klien tenaga kesehatan. 
+Untuk PGHD, proxy menyediakan \textit{endpoint} berikut:
+
+\begin{itemize}
+    \item \verb|POST /pghd|: menerima \textit{batch} PGHD dari klien pasien, mengunggah \verb|enc_pghd| ke IPFS, dan memanggil \verb|submit_pghd| pada \textit{smart contract}
+    \item \verb|GET /pghd|: mengembalikan daftar PGHD milik pasien untuk tenaga kesehatan
+    \item \verb|GET /pghd/{index}|: mengambil satu entri PGHD tertentu, melakukan verifikasi hash, re-encryption, dan mengembalikan data ke klien
+\end{itemize}
+
+\textit{Smart contract} di IOTA menyimpan metadata PGHD untuk setiap entri mengikuti format pada Tabel~\ref{tab:iota-pghd-metadata}.

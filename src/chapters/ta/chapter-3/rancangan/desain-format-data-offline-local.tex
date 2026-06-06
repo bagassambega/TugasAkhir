@@ -1,24 +1,35 @@
 \subsection{Rancangan Format Data Lokal}\label{rancangan-solusi-format-data-lokal}
 
-Untuk menangani mekanisme \textit{offline-first} (Gap 2) dan \textit{retry mechanism}, klien pasien menyimpan setiap batch PGHD dalam local encrypted database dengan struktur berikut,
+Untuk menangani mekanisme \textit{retry mechanism}, klien pasien menyimpan setiap \textit{batch} PGHD dalam \textit{local database} dengan struktur pada tabel~\ref{tab:field-batch-pghd-local},
 
-\begin{table}[!ht]
-  \centering
-  \caption{Deskripsi field tabel pengiriman batch PGHD}\label{tab:field-batch-pghd}
-  \begin{tabular}{p{4cm} p{2.5cm} p{6.5cm}}
-    \toprule
-    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-    \midrule
-    \verb|batch_id| & String (UUID v4) & Identitas unik batch, sama dengan field pada skema JSON\@. \\
-    \verb|enc_pghd| & String (Base64) & Ciphertext hasil enkripsi (AES-GCM) dari payload PGHD\@. \\
-    \verb|enc_aes_key_nonce| & String (Base64) & Kunci AES dan nonce yang telah dienkripsi untuk kebutuhan PRE\@. \\
-    \verb|capsule| & String (Base64) & Artefak kriptografis untuk kebutuhan PRE\@. \\
-    \verb|h_cipher| & String (Hex) & Hash SHA-256 dari \verb|enc_pghd|. \\
-    \verb|pghd_outer_signature| & String (Base64) & Tanda tangan digital dari \verb|h_cipher|. \\
-    \verb|status| & Enum & Status pengiriman: \verb|pending| (belum dikirim), \verb|sent| (berhasil), \verb|failed| (gagal sementara), \verb|permanent_failure| (gagal permanen). \\
-    \verb|retry_count| & Integer & Jumlah percobaan pengiriman (default 0, maksimal 3). \\
-    \verb|created_at| & Timestamp & Waktu batch dibuat. \\
-    \verb|last_attempt| & Timestamp & Waktu percobaan pengiriman terakhir. \\
-    \bottomrule
-  \end{tabular}
+\begin{table}[htbp]
+    \centering
+    \caption{Struktur data lokal batch PGHD}\label{tab:field-batch-pghd-local}
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
+        \rowcolor[HTML]{DDEBF7}
+        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+        \midrule
+        \verb|batch_id| & UUID & Identitas unik batch, sama dengan field pada skema JSON (Tabel~\ref{tab:field-batch-json-pghd}). \\
+        \midrule
+        \verb|enc_pghd| & String (Base64) & Ciphertext hasil enkripsi (AES-GCM) dari payload PGHD\@. \\
+        \midrule
+        \verb|enc_aes_key_nonce| & String (Base64) & Kunci AES dan nonce yang dienkripsi untuk kebutuhan PRE nantinya\@. \\
+        \midrule
+        \verb|capsule| & String (Base64) & Artefak kriptografis untuk kebutuhan PRE nantinya. \\
+        \midrule
+        \verb|h_cipher| & String (Hex) & Hash SHA-256 dari \verb|enc_pghd|. \\
+        \midrule
+        \verb|pghd_outer_signature| & String (Base64) & Tanda tangan digital dari \verb|h_cipher|. \\
+        \midrule
+        \verb|status| & Enum & Status pengiriman: \verb|pending| (belum dikirim), \verb|sent| (berhasil), \verb|failed| (gagal sementara), \verb|permanent_failure| (gagal permanen). \\
+        \midrule
+        \verb|retry_count| & Integer & Jumlah percobaan pengiriman (default 0, maksimal 3). \\
+        \midrule
+        \verb|created_at| & Timestamp & Waktu batch dibuat (Unix timestamp). \\
+        \midrule
+        \verb|last_attempt| & Timestamp & Waktu percobaan pengiriman terakhir (Unix timestamp). \\
+        \bottomrule
+    \end{tabularx}
 \end{table}

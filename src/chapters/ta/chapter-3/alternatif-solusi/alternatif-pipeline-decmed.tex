@@ -55,6 +55,16 @@ Hal ini dikarenakan PGHD adalah data yang memiliki frekuensi tinggi, sementara p
 Pengiriman berbasis \textit{event} berisiko menghasilkan lonjakan transaksi (\textit{burst traffic}) ketika pasien mengalami perubahan yang signifikan (misalnya saat olahraga atau kondisi sakit berkepanjangan) yang justru merupakan situasi kritis di mana ketersediaan sistem paling dibutuhkan.
 Selain itu, mekanisme \textit{event-triggered} juga rentan terhadap \textit{error} pada perangkat ataupun anomali yang disebabkan faktor eksternal lainnya.
 
+Namun, meskipun mekanisme \textit{time-based periodic} dipilih sebagai mekanisme utama pengiriman data, perlu dipertimbangkan jika terjadi skenario ekstrim di mana volume data yang terkumpul dalam interval 15 menit melebihi ukuran data yang wajar. 
+Pemilihan durasi 15 menit didasarkan pada standar Android yang menetapkan maksimum pengiriman data ke server per tiap 15 menit \parencite{android_hc_write}.
+Dalam kondisi normal, data PGHD dari perangkat \textit{wearable} dan smartphone dalam interval 15 menit berukuran relatif kecil (diperkirakan kurang dari 10 MB). 
+Namun, skenario seperti penggunaan \textit{multiple wearable} dengan frekuensi pengambilan data tinggi atau penyimpanan data dalam jangka waktu lama karena perangkat terus-menerus \textit{offline} dapat menyebabkan akumulasi data yang sangat besar.
+
+Untuk mengantisipasi skenario ekstrim tersebut, diterapkan mekanisme \textit{early trigger} sebagai \textit{fallback}. 
+\textit{Threshold} yang digunakan adalah 100 MB untuk satu \textit{batch} sebelum enkripsi. 
+Jika ukuran batch yang sedang dikumpulkan dalam memori mencapai \textit{threshold} tersebut sebelum interval 15 menit tercapai, klien pasien akan segera mengirim batch tersebut tanpa menunggu interval waktu berikutnya. 
+Pemilihan \textit{threshold} 100 MB didasarkan pada pertimbangan bahwa ukuran tersebut masih dapat ditangani oleh perangkat mobile dengan RAM terbatas (2~-~4 GB) dan koneksi jaringan yang stabil.
+
 \subsubsection{Pengolahan Data PGHD}\label{alternatif-aliran-pghd}
 
 Terdapat tiga alternatif mekanisme pengummpulan dan pengolahan data yang dapat dipertimbangkan.

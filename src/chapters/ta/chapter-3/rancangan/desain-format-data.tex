@@ -1,191 +1,83 @@
 \subsection{Rancangan Format dan Skema PGHD}\label{rancangan-format-data-pghd}
 
 Berdasarkan pemilihan solusi pada Subbab~\ref{alternatif-provenance} dan landasan teori pada Subbab~\ref{studi-cia-provenance}, bagian ini merancang format data yang akan digunakan PGHD untuk menjamin \textit{data provenance}.
-Payload PGHD yang disimpan di IPFS terdiri dari tingkat \textit{batch} yang membungkus konteks pengiriman, dan tingkat \textit{data point} yang merepresentasikan pengukuran individual.
-
+Payload PGHD yang disimpan di IPFS terdiri dari tingkat \textit{batch} yang berisi seluruh data PGHD dan tingkat \textit{data group} yang berisi kumpulan \textit{data point} yang merupakan data pengukuran individual.
 Tabel~\ref{tab:field-batch-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{batch} dari skema JSON tersebut.
 
-\begin{table}[!ht]
-  \centering
-  \caption{Deskripsi field tingkat batch pada skema JSON untuk PGHD}\label{tab:field-batch-json-pghd}
-  \begin{tabular}{p{3.5cm} p{1.8cm} p{1.3cm} p{6cm}}
-    \toprule
-    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-    \midrule
-    \verb|schema_version| & String & Ya & Versi skema JSON PGHD yang digunakan (misalnya \verb|"1.0"|). \\
-    \verb|batch_id| & String (UUID) & Ya & Identitas unik batch sebagai UUID v4. \\
-    \verb|patient_id| & String & Ya & Identitas pasien di ekosistem DecMed, diisi dengan \textit{address} IOTA akun pasien. \\
-    \verb|source_device| & Objek & Ya & Metadata perangkat pengirim batch, meliputi: \verb|type| (misalnya \verb|"smartphone"|), \verb|platform| (misalnya \verb|"android"|), \verb|app_version|, \verb|device_manufacturer|, dan \verb|device_model|. \\
-    \verb|batch_period| & Objek & Ya & Rentang waktu yang dicakup oleh batch, terdiri atas \verb|start_timestamp| dan \verb|end_timestamp| dalam format ISO~8601 UTC\@. \\
-    \verb|data_points| & Array & Ya & Daftar pengukuran individual yang termasuk dalam batch (dijelaskan pada Tabel~\ref{tab:field-datapoint-json-pghd}). \\
-    \bottomrule
-  \end{tabular}
+\begin{table}[htbp]
+    \centering
+    \caption{Deskripsi field tingkat batch pada skema JSON untuk PGHD}\label{tab:field-batch-json-pghd}
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{6pt}
+    \rowcolors{2}{white}{white}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[HTML]{DDEBF7}
+        \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+        \midrule
+        \texttt{schema\_version} & String & Ya & Versi skema JSON PGHD yang digunakan. \\
+        \midrule
+        \texttt{batch\_id} & UUID & Ya & Identitas unik batch. \\
+        \midrule
+        \texttt{patient\_id} & String & Ya & Identitas pasien di sistem DecMed, diisi dengan \textit{address} IOTA akun pasien. \\
+        \midrule
+        \texttt{source\_device} & Objek & Ya & Metadata perangkat pengirim batch, meliputi: \texttt{type}, \texttt{platform}, \texttt{app\_version}, \texttt{device\_manufacturer}, dan \texttt{device\_model}. \\
+        \midrule
+        \texttt{batch\_period} & Objek & Ya & Rentang waktu yang dicakup oleh batch, terdiri atas \texttt{start\_timestamp} dan \texttt{end\_timestamp} dalam format Unix timestamp (detik). \\
+        \midrule
+        \texttt{trigger\_reason} & String & Tidak & Alasan pembentukan batch: \texttt{time\_based} untuk interval 15 menit, atau \texttt{size\_threshold} untuk \textit{early trigger}. \\
+        \midrule
+        \texttt{data\_group} & Array & Ya & Daftar pengukuran individual yang dikelompokkan pada setiap grup (dijelaskan pada Tabel~\ref{tab:field-datagroup-json-pghd}). \\
+        \bottomrule
+    \end{tabularx}
 \end{table}
 
-Setiap elemen di dalam array \verb|data_points| tersusun atas: jenis pengukuran, nilai, unit, sumber, dan \textit{timestamp}.
-Tabel~\ref{tab:field-datapoint-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{data point}.
+Setiap elemen di dalam \textit{array} \verb|data_group| tersusun atas sekumpulan \textit{data group} yang dikelompokkan berdasarkan tipe pengukuran dan asal perangkat.
+Tabel~\ref{tab:field-datagroup-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{data group}.
 
-\begin{table}[!ht]
-  \centering
-  \caption{Deskripsi field tingkat data point pada skema JSON untuk PGHD}\label{tab:field-datapoint-json-pghd}
-  \begin{tabular}{p{3.5cm} p{1.8cm} p{1.3cm} p{6cm}}
-    \toprule
-    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-    \midrule
-    \verb|measurement_type| & String & Ya & Jenis pengukuran dalam format \textit{snake\_case}, misalnya \verb|"heart_rate"|, \verb|"steps"|, \verb|"spo2"|, \verb|"blood_pressure"|, atau \verb|"sleep_stage"|. \\
-    \verb|timestamp| & String (ISO~8601) & Ya & Waktu pengambilan pengukuran dalam format ISO~8601 UTC\@. \\
-    \verb|value| & Number / Objek & Ya & Nilai pengukuran. Untuk pengukuran skalar (detak jantung, langkah, saturasi) diisi sebagai bilangan. Untuk pengukuran komposit seperti tekanan darah, diisi sebagai objek berisi komponen, misalnya \verb|{"systol": 118, "diastol": 76}|. \\
-    \verb|unit| & String & Ya & Satuan pengukuran, misalnya \verb|"beats/min"|, \verb|"count"|, \verb|"percent"|, \verb|"mm[Hg]"|, atau \verb|"Cel"|. \\
-    \verb|source| & String & Ya & Sumber data spesifik tempat pengukuran diperoleh, misalnya \verb|"android_health_connect"|, \verb|"android_sensor"|, atau \verb|"ble_wearable_simulated"|. \\
-    \verb|device_type| & String & Ya & Tipe perangkat penghasil pengukuran, misalnya \verb|"smartphone"|, \verb|"wearable"|, atau \verb|"wearable_sim"|. \\
-    \verb|recording_method| & String & Opsional & Cara data direkam: \verb|"auto"| (otomatis oleh sensor), \verb|"active"| (pengguna memulai sesi), atau \verb|"manual"| (pengguna memasukkan data secara manual). \\
-    \bottomrule
-  \end{tabular}
+\begin{table}[htbp]
+    \centering
+    \caption{Deskripsi field tingkat \textit{data group} pada skema JSON untuk PGHD}\label{tab:field-datagroup-json-pghd}
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{6pt}
+    \rowcolors{2}{white}{white}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[HTML]{DDEBF7}
+        \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+        \midrule
+        \texttt{measurement\_type} & String & Ya & Jenis pengukuran dalam format \textit{snake\_case}, misalnya \texttt{heart\_rate} atau \texttt{steps}. \\
+        \midrule
+        \texttt{device\_type} & String & Ya & Tipe perangkat penghasil pengukuran, misalnya \texttt{smartphone} atau \texttt{wearable}. \\
+        \midrule
+        \texttt{recording\_method} & String & Opsional & Cara data direkam: \texttt{auto} (otomatis oleh sensor), \texttt{active} (pengguna memulai sesi), atau \texttt{manual} (pengguna memasukkan data secara manual). \\
+        \midrule
+        \texttt{source} & String & Ya & Sumber data tempat pengukuran diperoleh, misalnya \texttt{android\_health\_connect} atau \texttt{android\_sensor}. \\
+        \midrule
+        \texttt{data\_points} & Array & Ya & Daftar nilai pengukuran aktual (dijelaskan pada Tabel~\ref{tab:field-datapoints-json-pghd}). \\
+        \bottomrule
+    \end{tabularx}
 \end{table}
 
-Contoh dari PGHD yang akan dikirim dapat dilihat pada Listing~\ref{lst:pghd-batch-json}.
+Data group berisi kumpulan \textit{data points} individual yang merupakan hasil pengukuran individual dari sensor untuk setiap satuan waktu/jumlah.
+Tabel~\ref{tab:field-datapoints-json-pghd} berisi skema data untuk level \textit{data points}.
 
-\begin{lstlisting}[language=json,caption={Skema JSON payload batch PGHD pada pipeline DecMed},label={lst:pghd-batch-json}]
-{
-  "schema_version": "1.0",
-  "batch_id": "7c2c4b3e-ff8e-4a30-8b3c-2d1a1a3e0b91",
-  "patient_id": "iota1qz9c5u...",
-  "source_device": {
-    "type": "smartphone",
-    "platform": "android",
-    "app_version": "1.0.0",
-    "device_manufacturer": "Samsung",
-    "device_model": "Galaxy S23"
-  },
-  "batch_period": {
-    "start_timestamp": "2025-12-20T10:00:00Z",
-    "end_timestamp":   "2025-12-20T10:15:00Z"
-  },
-  "data_points": [
-    {
-      "measurement_type": "heart_rate",
-      "timestamp": "2025-12-20T10:01:05Z",
-      "value": 78,
-      "unit": "beats/min",
-      "source": "android_health_connect",
-      "device_type": "smartphone",
-      "recording_method": "auto"
-    },
-    {
-      "measurement_type": "steps",
-      "timestamp": "2025-12-20T10:05:00Z",
-      "value": 120,
-      "unit": "count",
-      "source": "android_health_connect",
-      "device_type": "smartphone",
-      "recording_method": "auto"
-    },
-    {
-      "measurement_type": "spo2",
-      "timestamp": "2025-12-20T10:07:32Z",
-      "value": 97,
-      "unit": "percent",
-      "source": "ble_wearable_simulated",
-      "device_type": "wearable_sim",
-      "recording_method": "auto"
-    },
-    {
-      "measurement_type": "blood_pressure",
-      "timestamp": "2025-12-20T10:10:00Z",
-      "value": {
-        "systolic": 118,
-        "diastolic": 76
-      },
-      "unit": "mm[Hg]",
-      "source": "android_health_connect",
-      "device_type": "smartphone",
-      "recording_method": "manual"
-    }
-  ]
-}
-\end{lstlisting}
-
-
-
-% \begin{table}[htbp]
-%   \centering
-%   \caption{Deskripsi field skema JSON kustom batch PGHD pada pipeline DecMed}\label{tab:field-json-pghd}
-
-%   \begin{tabular}{p{3.2cm} p{1.8cm} p{1.4cm} p{6cm}}
-%     \toprule
-%     \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-%     \midrule
-
-%     \verb|schema_version| &
-%     String &
-%     Ya &
-%     Versi skema JSON PGHD yang digunakan (misalnya \verb|"1.0"|).\\[0.2cm]
-
-%     \verb|batch_id| &
-%     UUID &
-%     Ya &
-%     Identitas unik batch UUID v4.\\[0.2cm]
-
-%     \verb|patient_id| &
-%     String &
-%     Ya &
-%     Identitas pasien di ekosistem DecMed, diisi dengan \textit{address} IOTA akun pasien \\[0.2cm]
-
-%     \verb|source_device| &
-%     Objek &
-%     Ya &
-%     Metadata perangkat pengirim batch, meliputi: \verb|type| (misalnya \verb|"smartphone"|), \verb|platform| (misalnya \verb|"android"|), \verb|app_version|, \verb|device_manufacturer|, dan \verb|device_model|.\\[0.2cm]
-
-%     \verb|batch_period| &
-%     Objek &
-%     Ya &
-%     Rentang waktu yang dicakup oleh batch, terdiri atas \verb|start_timestamp| dan \verb|end_timestamp| dalam format ISO~8601 UTC\@. \\[0.2cm]
-
-%     \verb|data_points| &
-%     Array &
-%     Ya &
-%     Daftar pengukuran individual yang termasuk dalam batch \\[0.3cm]
-
-%     \multicolumn{4}{l}{Field di dalam setiap elemen data\_points} \\[0.2cm]
-
-%     \verb|measurement_type| &
-%     String &
-%     Ya &
-%     Jenis pengukuran dalam format \textit{snake\_case}, misalnya \verb|"heart_rate"|, \verb|"steps"|, \verb|"spo2"|, \verb|"blood_pressure"|, atau \verb|"sleep_stage"| \\[0.2cm]
-
-%     \verb|timestamp| &
-%     String (ISO~8601) &
-%     Ya &
-%     Waktu pengambilan pengukuran dalam format ISO~8601 UTC\@ \\[0.2cm]
-
-%     \verb|value| &
-%     Number / Objek &
-%     Ya &
-%     Nilai pengukuran. 
-%     Untuk pengukuran skalar (detak jantung, langkah, saturasi) diisi sebagai bilangan. 
-%     Untuk pengukuran komposit seperti tekanan darah, diisi sebagai objek berisi komponen, misalnya \verb|{"systolic": 118, "diastolic": 76}| \\[0.2cm]
-
-%     \verb|unit| &
-%     String &
-%     Ya &
-%     Satuan pengukuran, misalnya \verb|"beats/min"|, \verb|"count"|, \verb|"percent"|, \verb|"mm[Hg]"|, atau \verb|"Cel"| \\[0.2cm]
-
-%     \verb|source| &
-%     String &
-%     Ya &
-%     Sumber data spesifik tempat pengukuran diperoleh, misalnya \verb|"android_health_connect"|, \verb|"android_sensor"|, atau \verb|"ble_wearable_simulated"| \\[0.2cm]
-
-%     \verb|device_type| &
-%     String &
-%     Ya &
-%     Tipe perangkat penghasil pengukuran, misalnya \verb|"smartphone"|, \verb|"wearable"|, atau \verb|"wearable_sim"| \\[0.2cm]
-
-%     \verb|recording_method| &
-%     String &
-%     Opsional &
-%     Cara data direkam: \verb|"auto"| (otomatis oleh sensor), \verb|"active"| (pengguna memulai sesi), atau \verb|"manual"| (pengguna memasukkan data secara manual) \\[0.2cm]
-
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
-
+\begin{table}[htbp]
+    \centering
+    \caption{Deskripsi field tingkat \textit{data points} pada skema JSON untuk PGHD}\label{tab:field-datapoints-json-pghd}
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{6pt}
+    \rowcolors{2}{white}{white}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[HTML]{DDEBF7}
+        \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+        \midrule
+        \texttt{timestamp} & Unix timestamp & Ya & Waktu pengambilan pengukuran (Unix timestamp dalam detik). \\
+        \midrule
+        \texttt{value} & Number / Objek & Ya & Nilai pengukuran. Untuk pengukuran skalar (detak jantung, langkah) diisi sebagai bilangan. Untuk pengukuran komposit (tekanan darah) diisi sebagai objek, misalnya \texttt{\{systolic: 118, diastolic: 76\}}. \\
+        \midrule
+        \texttt{unit} & String & Ya & Satuan pengukuran, misalnya \texttt{beats/min} atau \texttt{mm[Hg]}. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}

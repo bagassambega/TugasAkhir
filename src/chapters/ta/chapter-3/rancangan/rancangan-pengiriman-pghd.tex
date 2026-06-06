@@ -1,36 +1,35 @@
 \subsubsection{Mekanisme Pengiriman PGHD oleh Pasien}\label{subsubsec:pengiriman-pghd}
 
+Setelah \textit{batch} PGHD terbentuk dan disimpan dalam \textit{local database} dengan status \texttt{pending} (dijelaskan pada Subbab~\ref{mekanisme-pengumpulan-pghd}), klien pasien menjalankan mekanisme berikut untuk mengirim batch tersebut ke sistem DecMed.
 
 \begin{enumerate}
+    
     \item \textbf{Pembangkitan kunci penandatanganan PGHD.}
-    Pada saat registrasi akun pasien, selain pasangan kunci IOTA (\verb|iota_key_pair|) dan kunci proxy re-encryption (\verb|pre_public_key|) yang telah dibangkitkan oleh DecMed, klien pasien juga membangkitkan sepasang kunci publik dan kunci privat untuk penandatanganan PGHD menggunakan algoritma ECDSA, menghasilkan \verb|pghd_public_key| dan \verb|pghd_secret_key|. 
-    ECDSA dipilih karena ukuran kuncinya yang lebih kecil namun menawarkan tingkat keamanan yang ekuivalen dengan RSA, sehingga lebih hemat komputasi untuk perangkat pasien.
+    Pada saat registrasi akun pasien, selain pasangan kunci IOTA (\verb|iota_key_pair|) dan kunci proxy re-encryption (\verb|pre_public_key|) yang telah dibangkitkan oleh DecMed, klien pasien juga membangkitkan sepasang kunci publik dan kunci privat untuk penandatanganan PGHD menggunakan algoritma ECDSA dan menghasilkan \verb|pghd_public_key| dan \verb|pghd_secret_key|. 
     
     \item \textbf{Publikasi kunci publik ke IOTA.}
     Kunci publik \verb|pghd_public_key| dikirim dan disimpan pada ledger IOTA sebagai bagian dari metadata identitas pasien. 
     Dengan demikian, komponen lain di ekosistem DecMed dapat memverifikasi \textit{digital signature} PGHD menggunakan \verb|pghd_public_key| tanpa bergantung pada penyimpanan kunci di sisi klien.
     
     \item \textbf{Pembentukan payload plaintext dan \textit{inner signature}.}
-    Ketika data PGHD akan dikirim, klien pasien terlebih dahulu membentuk payload PGHD dalam bentuk plaintext. 
-    Klien kemudian menghitung nilai \textit{hash} plaintext dengan fungsi SHA-256,
+    Ketika data PGHD akan dikirim, klien pasien terlebih dahulu membentuk payload PGHD dalam bentuk plaintext melalui mekansime pengumpulan data (subbab~\ref{mekanisme-pengumpulan-pghd}). 
+    Lalu klien menghitung \textit{hash} plaintext dengan SHA-256,
     \[
         h_{\text{plain}} = \mathrm{SHA256}(\texttt{pghd\_plaintext}),
     \]
-    dan menghasilkan \textit{digital signature} \verb|pghd_inner_signature| dengan menandatangani \verb|h_plain| menggunakan \verb|pghd_secret_key| melalui algoritma ECDSA\@. 
+    hash \verb|h_plain| yang dihasilkan kemudian di-\textit{sign} menggunakan \verb|pghd_secret_key| menghasilkan \textit{digital signature} \verb|pghd_inner_signature|\@. 
     Payload plaintext dan \verb|pghd_inner_signature| kemudian digabungkan ke dalam satu struktur data (field \verb|pghd_data| dan \verb|inner_signature|) sebelum dienkripsi.
     
     \item \textbf{Enkripsi payload PGHD.}
     Struktur data gabungan yang berisi payload PGHD dan \verb|pghd_inner_signature| kemudian dienkripsi menggunakan algoritma AES-GCM dengan kunci simetris acak \verb|aes_key| dan \verb|aes_nonce|, menghasilkan ciphertext \verb|enc_pghd|. 
-    Selanjutnya, \verb|aes_key| dan \verb|aes_nonce| digabungkan dan dienkripsi menggunakan \verb|pre_public_key| milik pasien melalui mekanisme proxy re-encryption, menghasilkan pasangan \verb|enc_aes_key_nonce| dan \verb|capsule| serupa dengan mekanisme penambahan rekam medis oleh tenaga kesehatan.
+    Selanjutnya, \verb|aes_key| dan \verb|aes_nonce| digabungkan dan dienkripsi menggunakan \verb|pre_public_key| milik pasien melalui mekanisme proxy re-encryption dan menghasilkan pasangan \verb|enc_aes_key_nonce| dan \verb|capsule| yang sama dengan mekanisme penambahan rekam medis oleh tenaga kesehatan.
     
     \item\label{fungsionalitas-penyimpanan-lokal-batch} \textbf{Penyimpanan lokal batch PGHD dengan status pengiriman}. 
-    Setelah struktur data gabungan (plaintext + \textit{ inner signature}) berhasil dienkripsi menjadi \verb|enc_pghd|, klien pasien menyimpan batch PGHD ke dalam \textit{local encrypted database} dengan struktur format data yang dijelaskan pada subbab~\ref{rancangan-solusi-format-data-lokal}.
-    \textit{Local database} dienkripsi menggunakan AES-GCM dengan kunci yang diturunkan dari PIN pasien menggunakan PBKDF2 (iterations: 100.000, output length: 256 bit) dan disimpan di \textit{secure storage} perangkat. 
-    Enkripsi ini memastikan bahwa data PGHD yang tersimpan secara lokal tetap aman meskipun perangkat hilang atau dicuri. 
+    Setelah struktur data gabungan (plaintext + \textit{inner signature}) berhasil dienkripsi menjadi \verb|enc_pghd|, klien pasien menyimpan batch PGHD ke dalam \textit{local database} dengan struktur format data pada Tabel~\ref{tab:field-batch-pghd-local}.
     Setelah penyimpanan berhasil, klien pasien melanjutkan ke Poin~\ref{fungsionalitas-pembangkitan-outer-signature} untuk batch yang baru dibuat, sementara batch dengan status selain \verb|sent| (gagal dikirim) akan diproses oleh mekanisme \textit{retry} pada Poin~\ref{fungsionalitas-retry-mechanism}.
     
     \item\label{fungsionalitas-pembangkitan-outer-signature} \textbf{Pembangkitan \textit{outer digital signature} atas ciphertext.}
-    Untuk menjamin integritas dan \textit{non-repudiation} tanpa membebani komputasi \textit{on-chain}, klien pasien menghitung nilai \textit{hash} dari \verb|enc_pghd| (yang dapat berukuran besar) secara lokal di memori klien menggunakan fungsi SHA-256:
+    Untuk menjamin integritas dan \textit{non-repudiation} tanpa membebani \textit{on-chain}, klien pasien menghitung nilai \textit{hash} dari \verb|enc_pghd| (yang dapat berukuran besar) secara lokal di memori klien menggunakan fungsi SHA-256:
     \[
         h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}).
     \]
@@ -40,10 +39,10 @@
     Klien pasien mengirimkan payload lengkap (\verb|enc_pghd|, \verb|h_cipher|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan \verb|pghd_outer_signature|) ke proxy. 
     Proxy bertindak sebagai perantara \textit{off-chain} dengan mengunggah \verb|enc_pghd| ke kluster IPFS terlebih dahulu untuk mendapatkan \textit{Content Identifier} (CID). 
     Setelah CID diperoleh, proxy memanggil fungsi \texttt{submit\_pghd} pada \textit{smart contract} DecMed. 
-    Payload yang dikirimkan ke jaringan IOTA\@: CID, \verb|h_cipher|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan \verb|pghd_outer_signature|.
+    Payload yang dikirimkan ke jaringan IOTA meliputi CID, \verb|h_cipher|, \verb|enc_aes_key_nonce|, \verb|capsule|, dan \verb|pghd_outer_signature|.
     
-    \item\label{fungsionalitas-retry-mechanism} \textbf{Mekanisme \textit{retry} dan sinkronisasi \textit{offline}}. 
-    Klien pasien menjalankan \textit{background service} yang secara periodik (setiap 5 menit) melakukan langkah-langkah berikut untuk batch yang gagal dikirim:
+    \item\label{fungsionalitas-retry-mechanism} \textbf{Mekanisme \textit{retry}, sinkronisasi \textit{offline}, dan \textit{early trigger}}. 
+    Klien pasien menjalankan \textit{background service} yang secara periodik (setiap 5 menit) melakukan langkah-langkah berikut:
     
     \begin{enumerate}
         \item Memeriksa ketersediaan koneksi internet. 
@@ -55,7 +54,7 @@
         
         \item Jika pengiriman batch berhasil (proxy mengembalikan kode 201 dan konfirmasi bahwa metadata telah tersimpan di IOTA), klien mengubah status \textit{batch} menjadi \verb|sent| dan dapat menghapus batch dari \textit{local database}.
         
-        \item Jika pengiriman batch gagal (misalnya karena timeout, proxy error, atau error jaringan), klien memperbarui:
+        \item Jika pengiriman batch gagal, klien memperbarui:
         
         \begin{itemize}
             \item \verb|retry_count = retry_count + 1|
@@ -64,18 +63,16 @@
         \end{itemize}
         
         \item Batch dengan status \verb|permanent_failure| tidak akan dicoba lagi secara otomatis, tetapi tetap tersimpan di \textit{local database} untuk dapat dikirim ulang secara manual oleh pasien melalui halaman pengaturan aplikasi.
-        
     \end{enumerate}
-
-Mekanisme retry eksponensial diterapkan dengan interval: percobaan pertama setelah 5 menit, kedua setelah 15 menit, ketiga setelah 30 menit. Pemilihan interval ini didasarkan pada keseimbangan antara peluang pemulihan koneksi dan konsumsi baterai perangkat.
     
     \item \textbf{Verifikasi \textit{outer digital signature} dan penyimpanan state di IOTA.}
     Setelah menerima pemanggilan fungsi, \textit{smart contract} memproses metadata dengan langkah berikut:
     \begin{enumerate}
-        \item memuat \verb|pghd_public_key| pasien dari state \textit{on-chain}, dan
-        \item memverifikasi \verb|pghd_outer_signature| terhadap nilai \verb|h_cipher| yang diterima sebagai parameter menggunakan algoritma ECDSA\@.
+        \item Memuat \verb|pghd_public_key| pasien dari state \textit{on-chain}.
+        \item Memverifikasi \verb|pghd_outer_signature| terhadap nilai \verb|h_cipher| yang diterima sebagai parameter menggunakan algoritma ECDSA dan \verb|pghd_public_key|\@.
     \end{enumerate}
     
-    Jika verifikasi gagal, transaksi dibatalkan dan metadata tidak disimpan. Jika verifikasi berhasil, \textit{smart contract} secara permanen menyimpan kaitan antara CID IPFS, \verb|h_cipher|, dan metadata kriptografis lainnya pada ledger IOTA\@. 
+    Jika verifikasi gagal, transaksi dibatalkan dan metadata tidak disimpan. 
+    Jika verifikasi berhasil, \textit{smart contract} secara permanen menyimpan kaitan antara CID IPFS, \verb|h_cipher|, dan metadata kriptografis lainnya pada ledger IOTA\@. 
     \textit{Smart contract} sama sekali tidak berinteraksi dengan data \verb|enc_pghd|.
 \end{enumerate}
