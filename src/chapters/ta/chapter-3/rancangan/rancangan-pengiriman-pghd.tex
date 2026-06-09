@@ -66,7 +66,7 @@ Setelah \textit{batch} PGHD terbentuk dan disimpan dalam \textit{local database}
     \end{enumerate}
     
     \item \textbf{Verifikasi outer digital signature oleh proxy dan penyimpanan state di IOTA}\@.
-        Karena smart contract IOTA Move tidak mendukung verifikasi tanda tangan digital ECDSA, verifikasi \verb|pghd_outer_signature| dilakukan di proxy sebelum metadata dikirim ke \textit{smart contract}.
+        Verifikasi \verb|pghd_outer_signature| dilakukan di proxy sebelum metadata dikirim ke \textit{smart contract}.
         \begin{enumerate}
             \item Proxy memuat \verb|pghd_public_key| pasien dari state on-chain IOTA melalui inspect transaction.
             \item Proxy memverifikasi \verb|pghd_outer_signature| terhadap nilai \verb|h_cipher| menggunakan algoritma ECDSA dan \verb|pghd_public_key|.
