@@ -51,7 +51,7 @@
         h_{\text{plain}}' = \mathrm{SHA256}(\texttt{pghd\_plaintext}),
     \]
     lalu memuat \verb|pghd_public_key| pasien dari ledger IOTA dan memverifikasi \verb|pghd_inner_signature| menggunakan algoritma ECDSA\@. 
-    Jika verifikasi berhasil, klien menampilkan PGHD kepada tenaga kesehatan untuk digunakan dalam pengambilan keputusan klinis dengan waktu akses baca selama 2 jam.
+    Jika verifikasi berhasil, klien menampilkan PGHD kepada tenaga kesehatan untuk digunakan dalam pengambilan keputusan klinis dengan waktu akses baca selama 24 jam setelah izin akses diberikan.
     
     \item \textbf{Penanganan kegagalan verifikasi \textit{inner signature}.}
     Jika verifikasi \textit{inner signature} gagal, klien tenaga kesehatan akan menolak menampilkan dan menggunakan PGHD tersebut. 
@@ -66,53 +66,50 @@
     \begin{enumerate}
         \item Memverifikasi bahwa pemanggil memiliki otorisasi (tenaga kesehatan yang memiliki akses baca terhadap entri tersebut),
         \item Mengubah status entri PGHD menjadi \verb|INVALID| dan mencatat alasan kegagalan,
-        \item Menambahkan CID ke dalam daftar \textit{blacklist} untuk mencegah akses di masa depan.
     \end{enumerate}
     Setelah status berubah menjadi \verb|INVALID|, proxy akan melakukan \textit{unpin} CID terkait dari kluster IPFS\@. 
     Klien pasien maupun tenaga kesehatan tidak lagi menampilkan entri PGHD yang berstatus \verb|INVALID| dalam daftar data aktif. 
 \end{enumerate}
 
-Dalam kondisi gawat darurat, rawat inap maupun rawat jalan yang memerlukan akses data berkelanjutan seperti dijelaskan pada subbab~\ref{alternatif-pengaksesan-pghd}, diperlukan mekanisme tambahan untuk memastikan bahwa tenaga kesehatan dapat terus mengakses PGHD selama sesi perawatan berlangsung.
+Dalam kondisi gawat darurat, rawat inap maupun rawat jalan yang memerlukan akses data berkelanjutan, sistem menyediakan mekanisme sesi persisten berbasis \textit{refresh token}. 
+Mekanisme ini tetap mengharuskan tenaga kesehatan terlebih dahulu memiliki akses CapBAC biasa yang sah dari pasien (melalui mekanisme pemberian akses standar).
 
 \begin{enumerate}
-    \item \textbf{Aktivasi sesi akses persisten.}
-    Selama tenaga kesehatan masih berada dalam jangka waktu akses yang sah (2 jam sejak pasien memberikan akses baca PGHD), klien menyediakan opsi bagi tenaga kesehatan untuk mengaktifkan sesi akses persisten terhadap PGHD pasien. 
-    Ketika opsi ini dipilih:
+    \item \textbf{Aktivasi sesi persisten.}
+    Selama \textit{access token} baca masih berlaku (15 menit), tenaga kesehatan dapat mengaktifkan sesi persisten melalui klien.
     \begin{enumerate}
-        \item Klien tenaga kesehatan mengirim permintaan \verb|POST /persistent-session| ke proxy dengan melampirkan \verb|access_token_read| yang valid.
-        \item Proxy memvalidasi \textit{access token} dan memverifikasi bahwa tenaga kesehatan memiliki akses sah terhadap pasien tersebut.
-        \item Jika valid, proxy memanggil fungsi \verb|create_persistent_session| pada \textit{smart contract}. 
-        Fungsi ini membuat \textit{capability} baru bertipe \verb|ReadPersistent| dengan parameter:
-        \begin{itemize}
-            \item \verb|patient_id|: IOTA address pasien
-            \item \verb|medical_personnel_id|: IOTA address tenaga kesehatan
-            \item \verb|reason|: alasan aktivasi (\verb|RAWAT_INAP|, \verb|RAWAT_JALAN|, atau \verb|GAWAT_DARURAT|)
-            \item \verb|token_validity|: boolean menandakan token sudah diinvalidasi atau belum
-        \end{itemize}
-
-        \item \textit{Smart contract} menyimpan \textit{capability} tersebut di IOTA dan mengembalikan \verb|persistent_session_id| ke proxy.
-
-        \item Proxy mengirimkan \verb|persistent_session_id| ke klien tenaga kesehatan sebagai konfirmasi.
+        \item Klien mengirim permintaan \texttt{POST /persistent-session} ke proxy dengan menyertakan \textit{access token} baca yang valid.
+        \item Proxy memvalidasi \textit{access token} (masa berlaku, klaim \texttt{role=MedicalPersonnel}, \texttt{purpose=Read}) dan memverifikasi bahwa tenaga kesehatan memiliki akses sah terhadap pasien tersebut dengan \textit{inspect transaction} ke \textit{smart contract}.
+        \item Jika valid, proxy membangkitkan \textit{refresh token} berupa UUID acak. Proxy menyimpan di Redis dengan struktur:
+        \begin{verbatim}
+            key: "persistent:{refresh_token}"
+            value: {
+                "patient_iota_address": "...",
+                "medical_personnel_iota_address": "...",
+                "reason": "RAWAT_INAP | RAWAT_JALAN | GAWAT_DARURAT"
+            }
+            expiry: 365 hari
+        \end{verbatim}
+        \item Proxy mengembalikan \textit{refresh token} ke klien tenaga kesehatan.
     \end{enumerate}
 
-    \item \textbf{Penggunaan sesi persisten selama periode perawatan.}
-    Setelah sesi persisten aktif, klien tenaga kesehatan dapat mengakses PGHD pasien dengan cara:
-    \begin{itemize}
-        \item Mengirim request \verb|GET /pghd| ke proxy dengan melampirkan \verb|persistent_session_id| sebagai \verb|bearer| token.
-        \item Proxy memverifikasi bahwa \verb|persistent_session_id| masih valid (\verb|token_validity = true|) dengan melakukan inspect transaction ke IOTA untuk membaca capability yang tersimpan.
-        \item Jika valid, proxy melanjutkan proses pengambilan dan re-encryption data PGHD seperti biasa
-    \end{itemize}
+    \item \textbf{Pembaruan \textit{access token} menggunakan \textit{refresh token}.}
+    Klien tenaga kesehatan secara otomatis mengirim permintaan \texttt{POST /refresh} ke proxy dengan menyertakan \textit{refresh token} ketika \textit{access token} mendekati kedaluwarsa.
+    \begin{enumerate}
+        \item Proxy memverifikasi keberadaan \textit{refresh token} di Redis. 
+        Jika tidak ditemukan atau sudah dihapus, permintaan ditolak.
+        \item Proxy melakukan \textit{move call} (inspect transaction) ke \textit{smart contract} untuk memverifikasi bahwa pasien \textbf{masih} memberikan akses CapBAC (yaitu belum dicabut) kepada tenaga kesehatan tersebut.
+        \item Jika akses CapBAC masih valid, proxy membangkitkan \textit{access token} baru dengan durasi normal (15 menit) dan mengembalikannya ke klien.
+        \item Jika akses CapBAC sudah dicabut oleh pasien, proxy menghapus \textit{refresh token} dari Redis dan mengembalikan error \texttt{ACCESS\_REVOKED}.
+    \end{enumerate}
 
-    \item \textbf{Pengakhiran sesi persisten}
-    Pengakhiran sesi persisten bisa dilakukan melalui dua cara:
+    \item \textbf{Pengakhiran sesi persisten.}
+    Sesi persisten dapat diakhiri melalui dua cara:
     \begin{itemize}
-        \item Diakhiri oleh tenaga kesehatan: 
-        Ketika periode perawatan dinyatakan selesai, tenaga kesehatan mengakhiri sesi persisten melalui klien dengan mengirim request \verb|DELETE /persistent-session/{id}| ke proxy. 
-        Proxy kemudian memanggil fungsi \verb|revoke_persistent_session| pada \textit{smart contract} untuk menghapus \verb|capability| dari IOTA\@.
-    
-        \item Dicabut oleh pasien: 
-        Pasien dapat melihat daftar sesi persisten yang aktif pada halaman log akses di client pasien. 
-        Pasien dapat mencabut sesi persisten kapan saja tanpa memerlukan konfirmasi dari tenaga kesehatan. 
-        Mekanisme pencabutan ini sama dengan mekanisme pencabutan akses CapBAC yang sudah ada di DecMed.
+        \item \textbf{Oleh tenaga kesehatan (manual).} Tenaga kesehatan mengirim permintaan \texttt{DELETE /persistent-session} dengan menyertakan \textit{refresh token}. Proxy menghapus \textit{refresh token} dari Redis.
+        \item \textbf{Oleh pasien (pencabutan CapBAC).} Pasien mencabut akses biasa melalui mekanisme \texttt{revoke\_access} yang sudah ada di DecMed. Saat berikutnya tenaga kesehatan mencoba \textit{refresh}, verifikasi CapBAC akan gagal dan \textit{refresh token} dihapus.
     \end{itemize}
+    
+    \item \textbf{Ketentuan tambahan.}
+    Material PRE (\texttt{kfrag}, \texttt{enc\_first\_half\_seed}) yang disimpan di Redis tetap memiliki \textit{time-to-live} 2 jam sesuai mekanisme DecMed. Karena \textit{refresh token} hanya digunakan untuk mendapatkan \textit{access token} baru (bukan untuk re-encryption), maka sesi persisten hanya dapat bertahan selama material PRE masih valid. Untuk perawatan lebih dari 2 jam, pasien perlu memberikan akses baru.
 \end{enumerate}

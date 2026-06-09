@@ -1,35 +1,71 @@
 \subsection{Rancangan Format Data Lokal}\label{rancangan-solusi-format-data-lokal}
 
-Untuk menangani mekanisme \textit{retry mechanism}, klien pasien menyimpan setiap \textit{batch} PGHD dalam \textit{local database} dengan struktur pada tabel~\ref{tab:field-batch-pghd-local},
+Untuk menangani mekanisme \textit{retry mechanism}, klien pasien menyimpan
+setiap \textit{batch} PGHD dalam \textit{local database} dengan struktur pada
+Tabel~\ref{tab:field-batch-pghd-local}.
 
 \begin{table}[htbp]
     \centering
-    \caption{Struktur data lokal batch PGHD}\label{tab:field-batch-pghd-local}
+    \caption{Struktur Data Lokal Batch PGHD}\label{tab:field-batch-pghd-local}
     \renewcommand{\arraystretch}{1.25}
     \setlength{\tabcolsep}{6pt}
     \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
         \rowcolor[HTML]{DDEBF7}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+        \textbf{Field}              & \textbf{Tipe}   & \textbf{Deskripsi}                                                                                                                                     \\
         \midrule
-        \verb|batch_id| & UUID & Identitas unik batch, sama dengan field pada skema JSON (Tabel~\ref{tab:field-batch-json-pghd}). \\
+        \verb|batch_id|             & UUID            & Identitas unik batch, sama dengan field pada skema JSON (Tabel~\ref{tab:field-batch-json-pghd}).                                                       \\
         \midrule
-        \verb|enc_pghd| & String (Base64) & Ciphertext hasil enkripsi (AES-GCM) dari payload PGHD\@. \\
+        \verb|enc_pghd|             & String (Base64) & Ciphertext hasil enkripsi (AES-GCM) dari payload PGHD\@.                                                                                               \\
         \midrule
-        \verb|enc_aes_key_nonce| & String (Base64) & Kunci AES dan nonce yang dienkripsi untuk kebutuhan PRE nantinya\@. \\
+        \verb|enc_aes_key_nonce|    & String (Base64) & Kunci AES dan nonce yang dienkripsi untuk kebutuhan PRE nantinya\@.                                                                                    \\
         \midrule
-        \verb|capsule| & String (Base64) & Artefak kriptografis untuk kebutuhan PRE nantinya. \\
+        \verb|capsule|              & String (Base64) & Artefak kriptografis untuk kebutuhan PRE nantinya.                                                                                                     \\
         \midrule
-        \verb|h_cipher| & String (Hex) & Hash SHA-256 dari \verb|enc_pghd|. \\
+        \verb|h_cipher|             & String (Hex)    & Hash SHA-256 dari \verb|enc_pghd|.                                                                                                                     \\
         \midrule
-        \verb|pghd_outer_signature| & String (Base64) & Tanda tangan digital dari \verb|h_cipher|. \\
+        \verb|pghd_outer_signature| & String (Base64) & Tanda tangan digital dari \verb|h_cipher|.                                                                                                             \\
         \midrule
-        \verb|status| & Enum & Status pengiriman: \verb|pending| (belum dikirim), \verb|sent| (berhasil), \verb|failed| (gagal sementara), \verb|permanent_failure| (gagal permanen). \\
+        \verb|status|               & Enum            & Status pengiriman: \verb|pending| (belum dikirim), \verb|sent| (berhasil), \verb|failed| (gagal sementara), \verb|permanent_failure| (gagal permanen). \\
         \midrule
-        \verb|retry_count| & Integer & Jumlah percobaan pengiriman (default 0, maksimal 3). \\
+        \verb|retry_count|          & Integer         & Jumlah percobaan pengiriman (default 0, maksimal 3).                                                                                                   \\
         \midrule
-        \verb|created_at| & Timestamp & Waktu batch dibuat (Unix timestamp). \\
+        \verb|created_at|           & Timestamp       & Waktu batch dibuat (Unix timestamp).                                                                                                                   \\
         \midrule
-        \verb|last_attempt| & Timestamp & Waktu percobaan pengiriman terakhir (Unix timestamp). \\
+        \verb|last_attempt|         & Timestamp       & Waktu percobaan pengiriman terakhir (Unix timestamp).                                                                                                  \\
         \bottomrule
+    \end{tabularx}
+\end{table}
+
+Sebelum PGHD dibentuk menjadi batch dan dienkripsi untuk dikirimkan ke sistem, aplikasi pasien menyimpan data PGHD dalam bentuk lokal raw seperti dapat dilihat pada Tabel~\ref{tab:field-pghd-raw-local}. 
+Data ini digunakan agar pasien dapat melihat kembali data kesehatannya sendiri, termasuk sumber data dan status sinkronisasinya.
+
+\begin{table}[H]
+    \centering
+    \caption{Format Data PGHD Lokal Raw}\label{tab:field-pghd-raw-local}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
+        \rowcolor[HTML]{DDEBF7}
+        \midrule
+        \textbf{Field}  & \textbf{Tipe} & \textbf{Keterangan}                                                  \\
+        \midrule
+        \texttt{record\_id}      & String        & Identitas unik data PGHD lokal.                                      \\
+        \midrule
+        \texttt{patient\_id}     & String        & Identitas pasien pada aplikasi.                                      \\
+        \midrule
+        \texttt{type}            & String        & Jenis data kesehatan, misalnya langkah, detak jantung, atau kalori.  \\
+        \midrule
+        \texttt{value}           & Number        & Nilai pengukuran.                                                    \\
+        \midrule
+        \texttt{unit}            & String        & Satuan pengukuran.                                                   \\
+        \midrule
+        \texttt{timestamp}       & DateTime      & Waktu pengukuran.                                                    \\
+        \midrule
+        \texttt{source}          & String        & Sumber data, misalnya Health Connect atau sensor perangkat.          \\
+        \midrule
+        \texttt{source\_package} & String        & Nama paket aplikasi sumber data apabila berasal dari Health Connect. \\
+        \midrule
+        \texttt{sync\_status}    & Enum          & Status sinkronisasi.   \\
+        \midrule
+        \texttt{created\_at}     & DateTime      & Waktu data disimpan di perangkat.                                    \\
+        \midrule
     \end{tabularx}
 \end{table}

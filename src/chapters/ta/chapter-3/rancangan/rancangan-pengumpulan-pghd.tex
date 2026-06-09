@@ -16,7 +16,7 @@ Sebelum data PGHD dapat dikirim ke sistem, klien pasien harus terlebih dahulu me
     Setiap kali data baru diterima, klien mengkonversinya ke dalam struktur \texttt{data group} dan \texttt{data points} sesuai Tabel~\ref{tab:field-datagroup-json-pghd} dan Tabel~\ref{tab:field-datapoints-json-pghd}.
 
     \item \textbf{Penyimpanan sementara per tipe pengukuran.}
-    Klien menyimpan struktur data dalam memori untuk setiap tipe pengukuran, yang terdiri dari metadata (\texttt{measurement\_type}, \texttt{device\_type}, \texttt{recording\_method}, \texttt{source}) dan daftar \texttt{values} (\texttt{timestamp}, \texttt{value}, \texttt{unit}). 
+    Klien menyimpan struktur data dalam memori untuk setiap tipe pengukuran menggunakan format pada Tabel~\ref{tab:field-pghd-raw-local}. 
     Data ditambahkan (\textit{append}) ke daftar \texttt{data\_points} yang sesuai setiap kali \textit{listener} menerima pembacaan baru.
 
     \item \textbf{Pengecekan estimasi ukuran batch periodik.}
