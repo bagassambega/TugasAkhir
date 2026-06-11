@@ -23,6 +23,7 @@ __pycache__
 **/data
 .DS_Store
 *.bak*
+.git
 
 # Important example
 !thesis.example.pdf

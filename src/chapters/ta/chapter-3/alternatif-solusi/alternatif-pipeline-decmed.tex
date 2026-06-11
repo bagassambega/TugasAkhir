@@ -83,25 +83,6 @@ Mekanisme ini memungkinkan data tetap aman dan tidak hilang meskipun koneksi int
 Untuk memastikan data yang gagal dikirim dapat diproses ulang, diimplementasikan juga mekanisme \textit{retry} dengan interval yang dijalankan secara periodik oleh klien pasien seperti dijelaskan pada solusi pengiriman data pada subbab~\ref{alternatif-trigger-pengiriman-pghd}. 
 Dengan kombinasi penyimpanan lokal dan \textit{retry mechanism}, data PGHD tetap dapat dikirimkan ke sistem ketika koneksi pulih, tanpa kehilangan data akibat kondisi offline.
 
-\subsubsection{Pengaksesan Data PGHD}\label{alternatif-pengaksesan-pghd}
-
-Berdasarkan analisis masalah pada subbab~\ref{analisis-permasalahan}, terdapat dua pola utama pengaksesan PGHD oleh tenaga kesehatan. 
-Pola pertama adalah akses berbasis kunjungan (\textit{visit-based access}), di mana tenaga kesehatan hanya membutuhkan akses PGHD dalam jangka waktu yang terbatas seperti selama konsultasi tatap muka. 
-Pola ini sudah didukung oleh mekanisme akses baca DecMed saat ini yang menggunakan \textit{access token} dengan masa berlaku singkat dan otomatis kedaluwarsa setelah jangka waktu 15 menit untuk akses baca dan 2 jam untuk akses edit/tulis.
-
-Pola kedua adalah akses berbasis kontinuitas perawatan yang muncul pada saat rawat inap, rawat jalan, dan gawat darurat. 
-Pada situasi tersebut, tenaga kesehatan membutuhkan akses baca yang persisten terhadap PGHD pasien untuk memantau perkembangan kondisi secara kontinu selama perawatan berlangsung.
-
-Untuk mengakomodasi kebutuhan ini, dirancang mekanisme akses baca bertipe \textit{persistent session} yang dapat diaktifkan oleh tenaga kesehatan setelah pasien terlebih dahulu memberikan akses baca biasa melalui mekanisme CapBAC yang sudah ada di DecMed. 
-Selama masih berada dalam jendela waktu akses baca yang sah (15 menit) dan selama hubungan perawatan klinis masih berlangsung, tenaga kesehatan dapat mengubah status akses menjadi persisten yang berlaku sepanjang perawatan.
-
-Pengaktifan sesi persisten tidak memerlukan persetujuan tambahan dari pasien pada saat perubahan status dilakukan. 
-Hal ini didasarkan pada dua pertimbangan. 
-Pertama, tenaga kesehatan yang mengubah status akses sudah memiliki akses sah yang sebelumnya diberikan oleh pasien, sehingga perubahan status hanya memperpanjang cara akses dalam periode perawatan yang sama. 
-Kedua, dalam konteks kegawatdaruratan medis, diberikan pengecualian terhadap kewajiban mendapatkan persetujuan tindakan medis terlebih dahulu apabila penundaan tindakan berpotensi mengancam nyawa atau menyebabkan kecacatan yang lebih berat \parencite{UUKesehatan2023}.
-
-Setelah tenaga kesehatan menyatakan perawatan selesai, sesi persisten diakhiri oleh tenaga kesehatan dan akses baca terhadap PGHD kembali ke pola biasa yang harus dimulai lagi dengan pemberian izin oleh pasien.
-
 % Dengan demikian, mekanisme sesi persisten dirancang untuk tetap
 % menghormati prinsip kontrol akses berbasis pasien—karena inisiasi akses
 % tetap berasal dari persetujuan pasien—sekaligus memberikan kelonggaran

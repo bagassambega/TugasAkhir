@@ -36,8 +36,11 @@ Tabel~\ref{tab:field-batch-pghd-local}.
     \end{tabularx}
 \end{table}
 
-Sebelum PGHD dibentuk menjadi batch dan dienkripsi untuk dikirimkan ke sistem, aplikasi pasien menyimpan data PGHD dalam bentuk lokal raw seperti dapat dilihat pada Tabel~\ref{tab:field-pghd-raw-local}. 
-Data ini digunakan agar pasien dapat melihat kembali data kesehatannya sendiri, termasuk sumber data dan status sinkronisasinya.
+Sebelum PGHD dibentuk menjadi batch dan dienkripsi untuk dikirimkan ke sistem,
+aplikasi pasien menyimpan data PGHD dalam bentuk lokal raw seperti dapat
+dilihat pada Tabel~\ref{tab:field-pghd-raw-local}. Data ini digunakan agar
+pasien dapat melihat kembali data kesehatannya sendiri, termasuk sumber data
+dan status sinkronisasinya.
 
 \begin{table}[H]
     \centering
@@ -45,7 +48,7 @@ Data ini digunakan agar pasien dapat melihat kembali data kesehatannya sendiri, 
     \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
         \rowcolor[HTML]{DDEBF7}
         \midrule
-        \textbf{Field}  & \textbf{Tipe} & \textbf{Keterangan}                                                  \\
+        \textbf{Field}           & \textbf{Tipe} & \textbf{Keterangan}                                                  \\
         \midrule
         \texttt{record\_id}      & String        & Identitas unik data PGHD lokal.                                      \\
         \midrule
@@ -63,7 +66,7 @@ Data ini digunakan agar pasien dapat melihat kembali data kesehatannya sendiri, 
         \midrule
         \texttt{source\_package} & String        & Nama paket aplikasi sumber data apabila berasal dari Health Connect. \\
         \midrule
-        \texttt{sync\_status}    & Enum          & Status sinkronisasi.   \\
+        \texttt{sync\_status}    & Enum          & Status sinkronisasi.                                                 \\
         \midrule
         \texttt{created\_at}     & DateTime      & Waktu data disimpan di perangkat.                                    \\
         \midrule
