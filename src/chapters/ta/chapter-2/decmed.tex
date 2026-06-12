@@ -26,53 +26,51 @@ Pembagian aktivitas dan aksi yang dapat dilakukan oleh masing-masing aktor terca
 
 
 \begin{table}[htbp]
-	\centering
-	\caption{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025}}\label{decmed-actor-privileges}
-	\renewcommand{\arraystretch}{1.25}
-	\setlength{\tabcolsep}{8pt}
-	\rowcolors{2}{white}{white}
-	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
-		\rowcolor[HTML]{DDEBF7}
-		\textbf{Aktor} & \textit{Privileges} \\
-		\midrule
-		Pasien & \begin{minipage}[t]{\linewidth}
-			\begin{itemize}
-				\item Membaca data RME yang ia miliki,
-				\item Memberikan akses baca dan tulis terhadap data RME yang ia miliki,
-				\item Mencabut akses baca dan tulis terhadap data RME yang ia miliki, dan
-				\item Membaca log akses terhadap data RME yang ia miliki.
-			\end{itemize}
-		\end{minipage} \\
-		\midrule
-		Tenaga kesehatan & \begin{minipage}[t]{\linewidth}
-			\begin{itemize}
-				\item Membaca data RME (bagian administratif dan klinis) milik pasien setelah diberikan akses oleh pasien,
-				\item Menambahkan data RME baru (hanya bagian klinis) milik pasien setelah diberikan akses oleh pasien, dan
-				\item Mengedit data RME baru (hanya bagian klinis) yang sebelumnya telah dibuat pada kunjungan yang sama setelah diberikan akses oleh pasien.
-\end{itemize}
-\end{minipage} \\
-\midrule
-Petugas rekam medis & \begin{minipage}[t]{\linewidth}
-	\begin{itemize}
-		\item Membaca data RME (hanya bagian administratif) milik pasien setelah diberikan akses oleh pasien
-	\end{itemize}
-\end{minipage} \\
-\midrule
-Admin fasyankes & \begin{minipage}[t]{\linewidth}
-	\begin{itemize}
-		\item Menambahkan personel fasyankes, dan
-		\item Membuat kunci aktivasi untuk personel fasyankes.
-	\end{itemize}
-\end{minipage} \\
-\midrule
-Kementerian kesehatan & \begin{minipage}[t]{\linewidth}
-	\begin{itemize}
-		\item Menambahkan fasyankes sekaligus admin dari fasyankes tersebut, dan
-		\item Membuat kunci aktivasi untuk admin fasyankes.
-	\end{itemize}
-\end{minipage} \\
-\bottomrule
-\end{tabularx}
+    \centering
+    \caption{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025}}\label{decmed-actor-privileges}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}X|}
+        \toprule
+        \rowcolor{headerBg}
+        \textbf{Aktor} & \textbf{\textit{Privileges}} \\
+        \midrule
+        Pasien & \begin{minipage}[t]{\linewidth}
+            \begin{itemize}
+                \item Membaca data RME yang ia miliki,
+                \item Memberikan akses baca dan tulis terhadap data RME yang ia miliki,
+                \item Mencabut akses baca dan tulis terhadap data RME yang ia miliki, dan
+                \item Membaca log akses terhadap data RME yang ia miliki.
+            \end{itemize}
+        \end{minipage} \\
+        \midrule
+        Tenaga kesehatan & \begin{minipage}[t]{\linewidth}
+            \begin{itemize}
+                \item Membaca data RME (bagian administratif dan klinis) milik pasien setelah diberikan akses oleh pasien,
+                \item Menambahkan data RME baru (hanya bagian klinis) milik pasien setelah diberikan akses oleh pasien, dan
+                \item Mengedit data RME baru (hanya bagian klinis) yang sebelumnya telah dibuat pada kunjungan yang sama setelah diberikan akses oleh pasien.
+            \end{itemize}
+        \end{minipage} \\
+        \midrule
+        Petugas rekam medis & \begin{minipage}[t]{\linewidth}
+            \begin{itemize}
+                \item Membaca data RME (hanya bagian administratif) milik pasien setelah diberikan akses oleh pasien
+            \end{itemize}
+        \end{minipage} \\
+        \midrule
+        Admin fasyankes & \begin{minipage}[t]{\linewidth}
+            \begin{itemize}
+                \item Menambahkan personel fasyankes, dan
+                \item Membuat kunci aktivasi untuk personel fasyankes.
+            \end{itemize}
+        \end{minipage} \\
+        \midrule
+        Kementerian kesehatan & \begin{minipage}[t]{\linewidth}
+            \begin{itemize}
+                \item Menambahkan fasyankes sekaligus admin dari fasyankes tersebut, dan
+                \item Membuat kunci aktivasi untuk admin fasyankes.
+            \end{itemize}
+        \end{minipage} \\
+        \bottomrule
+    \end{styledtable}
 \end{table}
 
 DecMed sudah mendefinisikan mekanisme-mekanisme penting dalam sistem rekam medis seperti registrasi dan login akun, pemberian akses rekam medis kepada personel fasyankes, dan penambahan rekam medis elektronik oleh tenaga medis.

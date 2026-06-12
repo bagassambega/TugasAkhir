@@ -55,6 +55,23 @@
 \usepackage{afterpage}
 \usepackage{relsize}
 \usepackage{xcolor, colortbl}
+
+\definecolor{rowOdd}{HTML}{FFFFFF}
+\definecolor{rowEven}{HTML}{F2F2F2}
+\definecolor{headerBg}{HTML}{BEBEBE}
+
+\newenvironment{styledtable}[1]{%
+    \renewcommand{\arraystretch}{1.25}
+    \setlength{\tabcolsep}{6pt}
+    % Menghilangkan padding spasi dari booktabs agar garis vertikal tersambung
+    \setlength{\aboverulesep}{0pt}
+    \setlength{\belowrulesep}{0pt}
+    \rowcolors{1}{rowOdd}{rowEven}
+    \tabularx{\textwidth}{#1}
+}{%
+    \endtabularx
+}
+
 \usepackage{setspace}
 \usepackage{pifont}
 \usepackage{listings}
@@ -131,6 +148,7 @@
 
 \definecolor{WarnaBaris}{HTML}{F2F4F7}
 \definecolor{WarnaHeader}{HTML}{DDEBF7}
+\definecolor{WarnaBarisGanjil}{HTML}{F2F2F2}
 
 % Setel title pada chapter-chapter di toc, lof, lot
 \titlecontents{chapter}

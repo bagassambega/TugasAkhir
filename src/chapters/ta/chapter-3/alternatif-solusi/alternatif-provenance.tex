@@ -18,11 +18,9 @@ Perbandingan setiap teknologi untuk menjamin \textit{data provenance} dapat dili
 \begin{table}[htbp]
     \centering
     \caption{Perbandingan teknik \textit{data provenance}}\label{tab:perbandingan-provenance}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{8pt}
-    \rowcolors{2}{white}{white}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
-        \rowcolor[HTML]{DDEBF7}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \toprule
+        \rowcolor{headerBg}
         \textbf{Teknik} & \textbf{DP1} & \textbf{DP2} & \textbf{DP3} & \textbf{DP4} & \textbf{DP5} & \textbf{DP6} & \textbf{DP7} \\
         \midrule
         \textit{Log-based}          & Parsial & Parsial & Parsial        & Tidak & Baik    & Tidak   & Parsial \\
@@ -32,7 +30,8 @@ Perbandingan setiap teknologi untuk menjamin \textit{data provenance} dapat dili
         \textit{Ontology-based}     & Parsial & Parsial & Baik           & Tidak & Parsial & Tidak   & Baik    \\
         \midrule
         \textit{Blockchain-based}   & Baik    & Parsial & Parsial        & Baik  & Parsial & Parsial & Parsial \\
-    \end{tabularx}
+        \bottomrule
+    \end{styledtable}
 \end{table}
 
 Teknik \textit{log-based} unggul dalam hal \textit{overhead} karena hanya menambahkan beberapa \textit{field} pada rekam data tanpa transaksi jaringan tambahan, namun lemah pada \textit{unforgeability} karena rekam log dapat dimodifikasi secara sepihak tanpa mekanisme kriptografis yang mencegah pemalsuan. 

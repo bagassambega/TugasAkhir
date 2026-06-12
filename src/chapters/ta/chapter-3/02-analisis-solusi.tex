@@ -6,19 +6,22 @@ Tabel~\ref{tab:mapping-gap-analisis-solusi} memetakan setiap gap ke subbab anali
 \begin{table}[htbp]
     \centering
     \caption{Pemetaan kesenjangan (\textit{gap}) ke analisis solusi}\label{tab:mapping-gap-analisis-solusi}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.35\textwidth}}
-        \rowcolor[HTML]{DDEBF7}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.13\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.35\textwidth}|}
+        \toprule
+        \rowcolor{headerBg}
         \textbf{Gap} & \textbf{Permasalahan} & \textbf{Analisis Solusi} \\
         \midrule
         Gap 1 & Tidak adanya jalur \textit{ingest} PGHD di sisi pasien & Solusi mekanisme pengumpulan dari sumber data PGHD \\
+        \midrule
         Gap 2 & Tidak adanya mekanisme \textit{offline-first} di sisi klien pasien & Solusi arsitektur pengolahan dan pengiriman data \\
+        \midrule
         Gap 3 & Tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD & Solusi arsitektur pengolahan data dan pengiriman data \\
+        \midrule
         Gap 4 & Tidak adanya \textit{data provenance} untuk menjamin keandalan data yang berasal dari pasien & Solusi mekanisme penjaminan kelengkapan untuk menjamin \textit{data provenance} \\
+        \midrule
         Gap 5 & Tidak adanya mekanisme penjaminan kerahasiaan, integritas dan ketersediaan untuk data PGHD & Solusi mekanisme untuk menjamin kerahasiaan, integritas dan ketersediaan data \\
         \bottomrule
-    \end{tabularx}
+    \end{styledtable}
 \end{table}
 
 Berdasarkan analisis permasalahan pada Bab~\ref{analisis-permasalahan}, alternatif solusi untuk menyelesaikan permasalahan tersebut dapat dibagi menjadi tiga kategori utama, yaitu,
