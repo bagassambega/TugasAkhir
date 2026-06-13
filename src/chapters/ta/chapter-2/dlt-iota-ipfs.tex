@@ -41,7 +41,10 @@ Jika dibandingkan dengan IOTA 2.0 yang menargetkan DAG tanpa biaya dan tanpa pem
 \subsection{InterPlanetary File System (IPFS)}
 
 \textit{InterPlanetary File System} (IPFS) adalah protokol dan jaringan \textit{peer-to-peer} untuk penyimpanan dan distribusi konten secara terdistribusi dengan mekanisme \textit{content-addressed} alih-alih berbasis lokasi seperti HTTP \parencite{Benet_2014_ipfs}.
-Pada IPFS, setiap objek atau berkas diidentifikasi dengan \textit{content identifier} (CID) yang diperoleh dengan menerapkan fungsi \textit{hash} terhadap isi berkas, sehingga setiap perubahan terhadap isi berkas akan menghasilkan CID yang berbeda dan memberikan jaminan integritas konten secara inheren \parencite{Benet_2014_ipfs}.
+Pada IPFS, setiap objek atau berkas diidentifikasi dengan \textit{content identifier} (CID) yang diperoleh dengan menerapkan fungsi \textit{hash} terhadap isi berkas, sehingga setiap perubahan terhadap isi berkas akan menghasilkan CID yang berbeda dan memberikan jaminan integritas konten \parencite{Benet_2014_ipfs}.
+Setiap berkas diidentifikasi berdasarkan hash isinya (CID), bukan lokasi penyimpanannya, sehingga berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari node mana pun yang tersedia \parencite{Benet_2014_ipfs}.
+% IPFS has no single point of failure, and nodes do not need to trust each other. (Benet IPFS)
+% Modelled as a market, weakly incentivizes data replication. Trade Strategies swappable (Benet IPFS)
 Objek-objek di IPFS disusun dalam bentuk DAG yang menghubungkan blok-blok data dan referensinya, sedangkan distribusi dan pencarian konten antar \textit{node} dilakukan dengan kombinasi protokol \textit{gossip} dan \textit{distributed hash table} (DHT) \parencite{Benet_2014_ipfs}.
 
 IPFS sendiri tidak menyediakan konsensus global seperti pada DLT, melainkan berfungsi sebagai lapisan penyimpanan terdistribusi yang dapat dikombinasikan dengan DLT atau blockchain untuk menyimpan \textit{hash} atau CID sebagai \textit{anchor} yang tidak dapat diubah pada \textit{ledger} \parencite{Benet_2014_ipfs}.

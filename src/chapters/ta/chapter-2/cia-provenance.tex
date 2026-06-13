@@ -2,55 +2,57 @@
 
 \subsection{Kerahasiaan (\textit{Confidentiality})}\label{studi-confidentiality}
 Kerahasiaan (\textit{confidentiality}) adalah properti keamanan yang memastikan bahwa informasi hanya dapat diakses oleh pihak yang memiliki otorisasi, serta mencegah pengungkapan data kepada individu atau sistem yang tidak berwenang \parencite{tripathi2025cia}. 
-Dalam konteks PGHD, kerahasiaan menjadi parameter penting karen data tersebut mengandung informasi medis sensitif pasien \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
 Mekanisme utama untuk mendapatkan kerahasiaan adalah enkripsi, di mana data diubah ke bentuk \textit{ciphertext} yang hanya dapat dibaca oleh pihak yang memiliki kunci dekripsi yang sah \parencite{gowthamani_edgecrypto_2025}.
 Selain enkripsi, mekanisme lain yang dapat digunakan untuk menjamin kerahasiaan adalah kontrol akses yang memastikan hanya entitas yang berwenang dapat mengakses data, autentikasi, dan protokol komunikasi yang aman \parencite{tripathi2025cia}. %table 7 & 8 khatiwada, 
 
-%3.1. Data acquisition from IoT medical devices
-% In smart healthcare IoT systems, patient information
-% such as vital signs and medication details is collected
-% through interconnected devices, including wearable
-% sensors, physiological monitors, and intelligent med-
-% ical equipment. These devices continuously monitor
-% parameters like heart rate, blood pressure, or oxygen
-% saturation, transmitting the data securely over wire-
-% less networks. To ensure confidentiality and safeguard
-% patient privacy, the data is encrypted at the source
-% using robust cryptographic algorithms before being
-% transmitted to edge servers or cloud platforms. These
-% platforms handle real-time processing, secure storage,
-% and advanced analytics while maintaining end-to-end
-% privacy throughout the data acquisition and transfer
-% processes. % gowthamani empowering
+% 3.1 Data acquisition from IoT medical devices
+% In smart healthcare IoT systems, patient information such as vital signs and medication details is collected through interconnected devices, including wearable sensors, physiological monitors, and intelligent medical equipment. These devices continuously monitor parameters like heart rate, blood pressure, or oxygen saturation, transmitting the data securely over wireless networks. 
+% To ensure confidentiality and safeguard patient privacy, the data is encrypted at the source using robust cryptographic algorithms before being transmitted to edge servers or cloud platforms. 
+% These platforms handle real-time processing, secure storage, and advanced analytics while maintaining end-to-end privacy throughout the data acquisition and transfer processes. (gowthamani empowering)
+
+Dalam konteks PGHD, kerahasiaan menjadi parameter penting karen data tersebut mengandung informasi sensitif pasien.
+Setiap data yang dihasilkan harus dijamin keamanannya melalui mekanisme enkripsi \textit{end-to-end}, baik ketika pengiriman data maupun penyimpanan data \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
+% Utilize end-to-end encryption methods to secure the transmission of PGHD from patients’ devices to healthcare systems. This ensures that data remains confidential and is protected against interception or unauthorized access during transmission. (Khatiwada)
 
 \subsection{Integritas (\textit{Integrity})}\label{studi-integrity}
 Integritas adalah properti keamanan yang menjamin bahwa data tidak mengalami modifikasi, penghapusan, atau pemalsuan yang tidak sah. 
 Dua mekanisme kriptografi utama yang digunakan untuk menjamin integritas adalah fungsi \textit{hash} kriptografis dan tanda tangan digital (\textit{digital signature}) \parencite{tripathi2025cia}. 
 % A key strategy to preserve integrity is the use of hashing and checksums. Similarly, digital signatures combine hashing with cryptography to not only detect changes but also to verify the source of the data, ensuring authenticity along with integrity. For instance, software updates are often signed by the vendor; your system will verify the signature before installing to confirm that the update indeed comes from the legitimate source and hasn’t been tampered with in transit. Insecure software update mechanisms that lack these checks have been exploited in the past by attackers to distribute malware (a notable example being certain supply chain attacks where attackers compromised an update server to push out malicious updates). Such incidents highlight why integrity checks are vital. (tripathi)
 Fungsi \textit{hash} menghasilkan nilai ringkasan berukuran tetap dari data masukan, di mana perubahan sekecil apapun pada data akan menghasilkan nilai \textit{hash} yang sepenuhnya berbeda sehingga modifikasi dapat langsung dideteksi \parencite{NIST_FIPS186-5}. 
-Tanda tangan digital menggabungkan fungsi \textit{hash} dengan kriptografi kunci privat untuk memverifikasi integritas sekaligus mengautentikasi identitas pengirim \parencite{NIST_FIPS186-5}.
+Fungsi \textit{hash} saja dapat mendeteksi perubahan data, namun tidak memiliki mekanisme untuk menjamin apakah baik data maupun hash dimodifikasi atau tidak \parencite{NIST_FIPS186-5}. 
+% In other words, signatures are designed so that they cannot be forged (NIST)
+
 Variasi lain yang menggunakan hash adalah MAC (\textit{Message Authentication Code}) yang menggabungkan fungsi hash dengan kriptografi kunci simetri yang sama untuk mengenkripsi dan mendekripsi \parencite{nistMessageAuthentication}.
+MAC membuktikan integritas dan memungkinkan modifikasi data dan hash dapat dideteksi, namun memerlukan kunci simetris yang dibagikan.
+Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa menggunakan kunci privat itu untuk menghasilkan hash yang valid dari data dan hash yang sudah dimodifikasi \parencite{NIST_FIPS186-5}.
+% In order to prevent other entities from claiming to be the key pair owner and using the private key to generate fraudulent signatures, the private key must remain secret. (NIST)
+
+Tanda tangan digital menggabungkan fungsi \textit{hash} dengan kriptografi kunci privat untuk memverifikasi integritas sekaligus mengautentikasi identitas pengirim \parencite{NIST_FIPS186-5}.
+\textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan diverifikasi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
 
 \subsection{Ketersediaan (\textit{Availability})}\label{studi-availability}
 Ketersediaan (\textit{availability}) memastikan bahwa sistem dan data dapat diakses secara tepat waktu dan andal oleh pengguna yang berwenang setiap kali dibutuhkan \parencite{tripathi2025cia}.
 Dalam konteks PGHD, karakteristik data yang dikumpulkan sensor perangkat seluler dan wearable bertipe \textit{time-series} dengan laju pengiriman data tinggi berpotensi membebani jaringan blockchain dan menyebabkan degradasi \textit{throughput}.
 Terdapat beberapa mekanisme untuk menjamin ketersediaan data pada sistem berbasis DLT dan penyimpanan terdistribusi,
 \begin{enumerate}
-    \item \textbf{\textit{Sharding/batching}}: pengelompokan data dan pemecahan data untuk mengurangi frekuensi transaksi dan mencegah lonjakan yang dapat menyebabkan penurunan \textit{throughput} \parencite{Wen_2024_Performance_Blockchain}
+    \item \textbf{\textit{Sharding/batching}}: pengelompokan data dan pemecahan data untuk mengurangi frekuensi transaksi dan mencegah lonjakan yang dapat menyebabkan penurunan \textit{throughput} \parencite{Haque_2024_Performance_Blockchain}
     % IoT network layer: This network architecture establishes connections between multiple global blockchain instances, enhancing the scalability, resilience, and accessibility of the blockchain ecosystem. User shards are discrete segments within a blockchain responsible for grouping specific users and their associated data
     % Furthermore, our sharding technique partitions the blockchain into smaller groups (shards), which reduces the likelihood of a single malicious entity gaining control over the entire system. (wen haque performance)
 
-    \item \textbf{Penyimpanan terdistribusi}: Penyimpanan terdistribusi seperti IPFS menggunakan mekanisme \textit{content-addressed} dan replikasi antar node, sehingga dampak dari kegagalan sebuah node tunggal bisa dikurangi (\textit{single point of failure}) \parencite{Wen_2024_Performance_Blockchain} 
+    \item \textbf{Penyimpanan terdistribusi}: Penyimpanan terdistribusi seperti IPFS menggunakan mekanisme \textit{content-addressed} dan replikasi antar node, sehingga dampak dari kegagalan sebuah node tunggal bisa dikurangi (\textit{single point of failure}) \parencite{Haque_2024_Performance_Blockchain} 
     % The utilization of IPFS has the potential to reduce the cost burden on blockchain nodes by decreasing the amount of data they store and process
     
-    \item \textbf{Redundansi}: penyimpanan salinan data di beberapa lokasi fisik atau logis yang berbeda \parencite{tripathi2025cia}
+    \item \textbf{Redundansi}: penyimpanan salinan data di beberapa lokasi fisik atau \textit{logic} yang berbeda \parencite{tripathi2025cia}
     % Ensuring availability therefore involves both preventative measures and redundancy (tripathi)
     
     \item \textbf{\textit{Rate limiting/throttling}}: pembatasan laju pengiriman data untuk mencegah kondisi \textit{Denial of Service} \parencite{tripathi2025cia}.    
     % Threats to availability are perhaps the most visibly disruptive types of cyber incidents because they can cause immediate loss of service. The most notorious are Denial-of-Service (DoS) attacks, including Distributed Denial-of-Service (DDoS) attacks. In a DDoS attack, an attacker harnesses a large number of compromised machines (a botnet) or otherwise uses techniques to flood a target server or network with traffic, overwhelming its capacity and rendering it unable to respond to legitimate users (tripath rate limit)
+    \textit{Rate limit} bekerja dengan melakukan identifikasi IP address yang mengirimkan \textit{request} per satuan waktu.
+    Ketika terlalu banyak \textit{request} dikirimkan dalam jangka waktu tertentu, rate limit akan memberhentikan beberapa \textit{requests} sehingga \textit{requests} tidak akan diproses oleh sistem \parencite{Cloudflare_Rate_Limit}.
+    % A rate limiting solution measures the amount of time between each request from each IP address, and also measures the number of requests within a specified timeframe. If there are too many requests from a single IP within the given timeframe, the rate limiting solution will not fulfill the IP address's requests for a certain amount of time. (Cloudflare)
 \end{enumerate}
 
-\subsection{Threat Model}
+\subsection{Threat Model}\label{threat-model-studi}
 \textit{Threat modelling} adalah mekanisme untuk mengidentifikasi, memahami, dan memitigasi \textit{threats} (ancaman) untuk melindungi aset \parencite{owaspThreatModeling}.
 Ancaman (\textit{threat}) adalah segala sesuatu atau segala kejadian yang memiliki potensi berdampak negatif terhadap operasional, aset, ataupun informasi melalui akses yang tidak sah, penghancuran, pengambilan data tidak sah, modifikasi informasi ataupun penolakan layanan \parencite{Dodson2021_Threat}.
 
@@ -61,22 +63,55 @@ Daftar \textit{threat} yang diidentifikasi oleh STRIDE dan \textit{security cont
 \begin{table}[htbp]
     \centering
     \caption{Daftar Ancaman STRIDE dan Parameter Keamanannya}\label{tab:stride-threats}
-    \renewcommand{\arraystretch}{1.3}
-    \setlength{\tabcolsep}{12pt}
-    \rowcolors{2}{white}{WarnaBaris} 
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{0.25\textwidth}}
-        \toprule
-        \rowcolor{WarnaHeader}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{0.25\textwidth}|}
+        \midrule
+        \rowcolor{headerBg}
         \textbf{Ancaman} & \textbf{Penjelasan} & \textbf{Parameter Keamanan} \\
         \midrule
-        \textit{Spoofing} & Peniruan identitas entitas sah. & Autentikasi (\textit{Authentication}) \\
-        \textit{Tampering} & Modifikasi data tanpa otorisasi. & Integritas (\textit{Integrity}) \\
-        \textit{Repudiation} & Penyangkalan tindakan yang sebenarnya dilakukan (\textit{log}). & Nir-sangkalan (\textit{Non-repudiation}) \\
-        \textit{Information Disclosure} & Pengungkapan data kepada pihak tanpa hak akses. & Kerahasiaan (\textit{Confidentiality}) \\
-        \textit{Denial of Service} & Eksploitasi \textit{resources} hingga layanan lumpuh. & Ketersediaan (\textit{Availability}) \\
-        \textit{Elevation of Privilege} & Upaya untuk mendapatkan hak akses lebih tinggi. & Otorisasi (\textit{Authorization}) \\
-        \bottomrule
-    \end{tabularx}
+        \textit{Spoofing} & Peniruan identitas entitas sah. & Autentikasi \\
+        \midrule
+        \textit{Tampering} & Modifikasi data tanpa otorisasi. & Integritas \\
+        \midrule
+        \textit{Repudiation} & Penyangkalan tindakan yang sebenarnya dilakukan. & Nir-sangkalan \\
+        \midrule
+        \textit{Information Disclosure} & Pengungkapan data kepada pihak tanpa hak akses. & Kerahasiaan \\
+        \midrule
+        \textit{Denial of Service} & Eksploitasi sumber daya hingga layanan lumpuh. & Ketersediaan \\
+        \midrule
+        \textit{Elevation of Privilege} & Upaya untuk mendapatkan hak akses lebih tinggi. & Otorisasi \\
+        \midrule
+    \end{styledtable}
+\end{table}
+
+Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan oleh perangkat pasien dapat dipetakan menjadi daftar ancaman pada Tabel~\ref{tab:stride-pghd-studi} \parencite{Nadifi_2025_STRIDE_IoT}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Daftar Ancaman Keamanan PGHD Berdasarkan Kategori STRIDE \parencite{Nadifi_2025_STRIDE_IoT}}\label{tab:stride-pghd-studi}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}p{0.16\textwidth}|>{\raggedright\arraybackslash}X|}
+        \midrule
+        \rowcolor{headerBg}
+        \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Ancaman} \\
+        \midrule
+        \multirow{4}{0.18\textwidth}{\raggedright~\textit{Tampering}} & \multirow{4}{0.16\textwidth}{\centering Integritas} & Data yang diberikan sensor ke \textit{mobile app} dapat dimodifikasi, baik melalui interaksi manusia langsung atau perubahan pengaturan sensor. \\
+        \cline{3-3}
+        & & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
+        \cline{3-3}
+        & & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
+        \cline{3-3}
+        & & Serangan \textit{SQL injection} terjadi ketika kode berbahaya dimasukkan ke dalam string yang diteruskan ke server SQL\@. \\
+        \midrule
+        \multirow{3}{0.18\textwidth}{\raggedright~\textit{Information Disclosure}} & \multirow{3}{0.16\textwidth}{\centering Kerahasiaan} & Perlindungan data yang tidak tepat pada ponsel pasien atau \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
+        \cline{3-3}
+        & & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
+        \cline{3-3}
+        & & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
+        \midrule
+        \multirow{2}{0.18\textwidth}{\raggedright~\textit{Denial of Service}} & \multirow{2}{0.16\textwidth}{\centering Ketersediaan} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
+        \cline{3-3}
+        & & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
+        \midrule
+    \end{styledtable}
 \end{table}
 
 \subsection{\textit{Data Provenance}}\label{studi-data-provenance}

@@ -16,6 +16,7 @@ Decmed sendiri mendefinisikan dua tipe data, data administratif (identitas pasie
 
 \textit{Client Layer} terdiri dari tiga jenis aplikasi: \textit{client} pasien berbasis \textit{mobile}, \textit{client} personel fasilitas pelayanan kesehatan (fasyankes) berbasis \textit{desktop}, dan \textit{client} untuk otoritas pengelola yang digunakan untuk registrasi fasilitas serta personel \parencite{Purnama_2026,Hari_2025}. 
 \textit{Proxy Layer} berperan sebagai lapisan \textit{middleware} keamanan yang mengimplementasikan mekanisme PRE, validasi token akses, orkestrasi permintaan ke \textit{smart contract} di IOTA, dan interaksi dengan IPFS \parencite{Purnama_2026,Hari_2025}. 
+Mekanisme akses kontrol dan proxy reencryption menjamin pertukaran data tanpa perlu mempertukarkan kredensial, sehingga informasi kredensial dapat tetap tersimpan aman di perangkat masing-masing dan tidak dikirimkan ke manapun \parencite{Purnama_2026,Hari_2025}.
 
 \textit{Storage Layer} dibagi menjadi penyimpanan \textit{on-chain} dan \textit{off-chain} \parencite{Purnama_2026,Hari_2025}. 
 Penyimpanan \textit{on-chain} merujuk pada \textit{ledger} IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026,Hari_2025}. 

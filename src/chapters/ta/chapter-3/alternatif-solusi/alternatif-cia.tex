@@ -1,41 +1,71 @@
 \subsection{Analisis Solusi Kerahasiaan, Integritas dan Ketersediaan}\label{alternatif-analisis-solusi-cia}
 
+Mengacu pada Tabel~\ref{tab:stride-pghd-studi} dan Subbab~\ref{threat-model-studi} mengenai \textit{threat model}, terdapat beberapa ancaman yang perlu dipertimbangkan mengenai implementasi PGHD dan sistem DecMed.
+Daftar ancaman yang akan ditangani tertera pada Tabel~\ref{tab:stride-pghd-analisis}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Daftar Ancaman Keamanan untuk Sistem DecMed-PGHD}\label{tab:stride-pghd-analisis}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}p{0.15\textwidth}|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}X|}
+        \midrule
+        \rowcolor{headerBg}
+        \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Kode} & \textbf{Penjelasan} \\
+        \midrule
+        \multirow{2}{0.18\textwidth}{\raggedright~\textit{Tampering}} & \multirow{2}{0.15\textwidth}{\centering Integritas} & \texttt{V-T01} & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
+        \cline{3-4}
+        & & \texttt{V-T02} & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
+        \midrule
+        \multirow{3}{0.18\textwidth}{\raggedright~\textit{Information Disclosure}} & \multirow{3}{0.15\textwidth}{\centering Kerahasiaan} & \texttt{V-I01} & Perlindungan data yang tidak tepat pada \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
+        \cline{3-4}
+        & & \texttt{V-I02} & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
+        \cline{3-4}
+        & & \texttt{V-I03} & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
+        \midrule
+        \multirow{2}{0.18\textwidth}{\raggedright~\textit{Denial of Service}} & \multirow{2}{0.15\textwidth}{\centering Ketersediaan} & \texttt{V-D01} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
+        \cline{3-4}
+        & & \texttt{V-D02} & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
+        \midrule
+    \end{styledtable}
+\end{table}
+
+Ancaman terkait kalibrasi dan validitas data yang dihasilkan sensor tidak termasuk dalam cakupan tugas akhir ini.
+Sementara itu ancaman terkait \textit{SQL injection} tidak valid karena DecMed tidak menggunakan \textit{SQL-based storage}, melainkan menggunakan IPFS yang diidentifikasi menggunakan CID\@.
+
 \subsubsection{Analisis Solusi Kerahasiaan (\textit{Confidentiality})}
 
-Berdasarkan pengertian dan mekanisme penjaminan kerahasiaan data pada subbab~\ref{studi-confidentiality}, mekanisme yang digunakan untuk menjamin kerahasiaan PGHD yaitu enkripsi, akses kontrol, autentikasi, dan protokol komunikasi yang aman. 
-Berdasarkan kondisi DecMed saat ini (subbab~\ref{studi-decmed}) dan analisis permasalahan pada subbab~\ref{analisis-permasalahan}, DecMed sudah mengimplementasikan akses kontrol berbasis CapBac, mekanisme enkripsi data baik saat pengiriman, penyimpanan maupun pengaksesan data, dan autentikasi menggunakan manajemen akun, kunci dan \textit{address} IOTA\@.
+Berdasarkan pengertian dan mekanisme penjaminan kerahasiaan data pada Subbab~\ref{studi-confidentiality}, mekanisme yang digunakan untuk menjamin kerahasiaan PGHD yaitu enkripsi, akses kontrol, autentikasi, dan protokol komunikasi yang aman. 
+Berdasarkan kondisi DecMed saat ini (Subbab~\ref{studi-decmed}) dan analisis permasalahan pada Subbab~\ref{analisis-permasalahan}, DecMed sudah mengimplementasikan akses kontrol berbasis CapBac, mekanisme enkripsi data baik saat pengiriman, penyimpanan maupun pengaksesan data, dan autentikasi menggunakan manajemen akun, kunci dan \textit{address} IOTA\@.
 Namun seluruh mekanisme tersebut baru diimplementasikan pada rekam medis elektronik yang ditambahkan oleh tenaga kesehatan saja.
 
 Untuk menjaga kerahasiaan data PGHD, keseluruhan mekanisme yang sudah ada di DecMed akan digunakan juga untuk data PGHD\@.
-Hal ini bersesuaian dengan kebutuhan penjaminan keamanan pada PGHD yang membutuhkan mekanisme \textit{end-to-end encryption}, akses kontrol, pengamanan protokol komunikasi, dan autentikasi seperti dijelaskan di subbab~\ref{studi-confidentiality} \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding} yang seluruhnya sudah didukung di DecMed.
+Hal ini bersesuaian dengan kebutuhan penjaminan keamanan pada PGHD yang membutuhkan mekanisme \textit{end-to-end encryption}, akses kontrol, pengamanan protokol komunikasi, dan autentikasi seperti dijelaskan di Subbab~\ref{studi-confidentiality} yang seluruhnya sudah didukung di DecMed.
 % Utilize end-to-end encryption methods to secure the transmission of PGHD from patients’ devices to healthcare systems. This ensures that data remains confidential and is protected against interception or unauthorized access during transmission. (Khatiwada)
 
-Data PGHD akan dienkripsi di sisi klien pasien dan baru dapat didekripsi dan diakses oleh tenaga kesehatan yang resmi dan sudah diverifikasi oleh pasien ketika pasien memberikan izin melalui akses kontrol CapBac dan proxy reencryption.
-Mekanisme ini menjamin data terenkripsi dan dapat dijamin kerahasiaannya baik dari segi komunikasi pertukaran data, dan hanya bisa diakses oleh personel yang terautentikasi dan diizinkan oleh akses kontrol.
-
+Data PGHD akan dienkripsi di sisi klien pasien dan baru dapat didekripsi dan diakses oleh tenaga kesehatan yang resmi dan sudah diverifikasi oleh pasien ketika pasien memberikan izin.
+Mekanisme ini menjamin data terenkripsi dan dapat dijamin kerahasiaannya baik dari segi komunikasi pertukaran data, dan hanya bisa diakses oleh personel yang terautentikasi dan diizinkan oleh akses kontrol, dan menyelesaikan masalah ancaman \verb|V-I01| dan \verb|V-I02| terkait kerahasiaan data saat penyimpanan dan pengiriman data.
+Selain itu, mekanisme \textit{proxy reencryption} dan CapBac yang sudah diterapkan oleh DecMed juga memungkinkan pertukaran data dan informasi tanpa perlu memberikan kredensial apapun melalui jaringan, seperti \textit{private key}, PIN, ataupun kredensial lainnya, sehingga menyelesaikan masalah ancaman \verb|I-03| pada Tabel~\ref{tab:stride-pghd-analisis}.
 
 \subsubsection{Analisis Solusi Integritas (\textit{Integrity})}
 
-Terdapat tiga mekanisme yang dapat dipertimbangkan untuk menjamin integritas PGHD berdasarkan penjelasan mengenai integritas data pada subbab~\ref{studi-integrity}\@:
+Terdapat tiga mekanisme yang dapat dipertimbangkan untuk menjamin integritas PGHD berdasarkan penjelasan mengenai integritas data pada Subbab~\ref{studi-integrity}\@:
 \begin{enumerate}
-      \item Fungsi \textit{hash} kriptografis saja, 
-      \item \textit{Message Authentication Code}, menggabungkan hash dengan enkripsi berbasis kunci simetris, dan 
-      \item Tanda tangan digital/\textit{digital signature}, menggabungkan hash dengan enkripsi berbasis kunci asimetris. 
+    \item Fungsi \textit{hash} kriptografis saja, 
+    \item \textit{Message Authentication Code}, menggabungkan hash dengan enkripsi berbasis kunci simetris, dan 
+    \item Tanda tangan digital/\textit{digital signature}, menggabungkan hash dengan enkripsi berbasis kunci asimetris. 
 \end{enumerate}
 
-Fungsi \textit{hash} saja dapat mendeteksi perubahan data, namun tidak memiliki mekanisme untuk menjamin apakah baik data maupun hash dimodifikasi atau tidak \parencite{NIST_FIPS186-5}. 
-% In other words, signatures are designed so that they cannot be forged (NIST)
+Fungsi \textit{hash} saja dapat mendeteksi perubahan data, namun tidak memiliki mekanisme untuk menjamin apakah baik data maupun hash dimodifikasi atau tidak. 
 MAC membuktikan integritas dan memungkinkan modifikasi data dan hash dapat dideteksi, namun memerlukan kunci simetris yang dibagikan.
-Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa menggunakan kunci privat itu untuk menghasilkan hash yang valid dari data dan hash yang sudah dimodifikasi \parencite{NIST_FIPS186-5}.
-% In order to prevent other entities from claiming to be the key pair owner and using the private key to generate fraudulent signatures, the private key must remain secret. (NIST)
-Selain itu, pembagian kunci privat juga tidak sesuai dengan DecMed yang menggunakan prinsip untuk tidak pernah membagikan kunci privat/enkripsi menggunakan proxy reencryption \parencite{Hari_2025}. 
+Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa menggunakan kunci privat itu untuk menghasilkan hash yang valid dari data dan hash yang sudah dimodifikasi.
+Selain itu, pembagian kunci privat juga tidak sesuai dengan DecMed yang menggunakan prinsip untuk tidak pernah membagikan kunci privat/enkripsi menggunakan proxy reencryption. 
 
-\textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan diverifikasi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
 Untuk menjamin integritas data sehingga baik data maupun bukti hash tidak dimodifikasi, dan menyesuaikan kondisi DecMed yang tidak membagikan kunci privat, mekanisme yang dipilih untuk menjaga integritas adalah menggunakan \textit{digital signature} untuk data PGHD\@.
+Mekanisme ini menjamin integritas data terjamin sepanjang pertukaran, pengiriman dan penyimpanan data, dan bukti \textit{tampering} data dapat dideteksi untuk mencegah ancaman \verb|V-T01|.
+Selain itu, setiap data PGHD yang dihasilkan perlu disanitasi agar data aplikasi tidak disisipkan \textit{malicious code} untuk mencegah ancaman \verb|V-T02| pada Tabel~\ref{tab:stride-pghd-analisis}.
 
 \subsubsection{Analisis Solusi Ketersediaan (\textit{Availability})}
 
-Seperti sudah dijelaskan pada pembahasan mengenai ketersediaan pada subbab~\ref{studi-availability}, terdapat empat mekanisme penjaminan ketersediaan data PGHD yang dipertimbangkan, yaitu,
+Seperti sudah dijelaskan pada pembahasan mengenai ketersediaan pada Subbab~\ref{studi-availability}, terdapat empat mekanisme penjaminan ketersediaan data PGHD yang dipertimbangkan, yaitu,
 
 \begin{enumerate}
     \item \textit{Sharding/batching}, yaitu pengelompokan data dan pemecahan data
@@ -49,12 +79,11 @@ Seperti sudah dijelaskan pada pembahasan mengenai ketersediaan pada subbab~\ref{
 
 Berdasarkan kondisi DecMed saat ini, DecMed sudah mengimplementasikan penyimpanan terdistribusi berbasis IPFS\@.
 IPFS menyelesaikan kebutuhan redundansi dan \textit{sharding} melalui mekanisme \textit{content-addressing}.
-Setiap berkas diidentifikasi berdasarkan hash isinya (CID), bukan lokasi penyimpanannya, sehingga berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari node mana pun yang tersedia \parencite{Benet_2014_ipfs}.
-% IPFS has no single point of failure, and nodes do not need to trust each other. (Benet IPFS)
-% Modelled as a market, weakly incentivizes data replication. Trade Strategies swappable (Benet IPFS)
+Setiap berkas diidentifikasi berdasarkan hash isinya (CID) sehingga berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari node mana pun yang tersedia.
 
 Solusi mekanisme lain yang akan diimplementasikan adalah \textit{rate limiting} dan \textit{batching}.
-Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan} dan mekanisme penjaminan ketersediaan pada subbab~\ref{studi-availability}, data PGHD umumnya dari sensor yang bersifat \textit{time-series} dan bervolume tinggi, sehingga pengiriman secara terus menerus dapat membebani kerja sistem DecMed dan berpotensi menyebabkan Denial of Service.
-\textit{Rate limit} tidak diterapkan pada sisi server ataupun DecMed karena berpotensi melakukan \textit{drop request} untuk data rekam medis atau PGHD yang valid, sehingga mengurangi kontinuitas dan menghilangkan data yang seharusnya didapatkan oleh tenaga kesehatan \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+Berdasarkan analisis permasalahan pada Subbab~\ref{analisis-permasalahan} dan mekanisme penjaminan ketersediaan pada Subbab~\ref{studi-availability}, data PGHD umumnya dari sensor yang bersifat \textit{time-series} dan bervolume tinggi, sehingga pengiriman secara terus menerus dapat membebani kerja sistem DecMed dan berpotensi menyebabkan Denial of Service.
+\textit{Rate limit} tidak diterapkan pada sisi server ataupun DecMed karena berpotensi melakukan \textit{drop request} untuk data rekam medis atau PGHD yang valid, sehingga mengurangi kontinuitas dan menghilangkan data yang seharusnya didapatkan oleh tenaga kesehatan.
 Untuk itu data akan dikumpulkan (\textit{grouping}) dalam waktu tertentu di sisi klien sebelum dikirimkan dalam satuan waktu tetap untuk menghindari frekuensi pengiriman data yang terlalu sering.
 
+Mekanisme \textit{batching} dapat mengurangi frekuensi pengiriman data yang terlalu sering sehingga \textit{client} pasien tidak \textit{overwhelmed} (\verb|V-D01| dan \verb|V-D02|), dan penggunaan IPFS memungkinkan data disimpan di beberapa node sehingga akses tidak hanya terbatas pada satu node saja (\verb|V-D02|).

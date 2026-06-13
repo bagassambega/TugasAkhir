@@ -9,9 +9,9 @@ DecMed menyediakan kerangka kerja manajemen RME terdesentralisasi dengan tiga ko
 Kombinasi ketiga komponen tersebut memungkinkan siklus hidup RME dari pendaftaran akun pasien, pemberian akses, pembacaan, hingga penambahan entri rekam medis oleh tenaga kesehatan.
 
 Saat ini seluruh jalur penambahan data pada DecMed berasal dari sisi tenaga kesehatan melalui kunjungan klinis di fasilitas pelayanan kesehatan (fasyankes), sementara pasien hanya bertindak sebagai pemilik data yang dapat memberi atau mencabut izin akses, bukan sebagai produsen data yang dapat mendorong informasi kesehatan ke dalam sistem secara mandiri \parencite{Hari_2025,Purnama_2026}. 
-Akibatnya, data yang tersimpan di dalam ekosistem DecMed merepresentasikan kondisi klinis yang bersifat episodik dan terbatas pada waktu kunjungan.
+Akibatnya, rekam medis yang tersimpan di dalam ekosistem DecMed hanya mencerminkan kondisi klinis pada saat kunjungan berlangsung, dan tidak mencakup data kondisi pasien yang terjadi di antara kunjungan tersebut.
 
-Pola akuisisi data yang episodik ini bertolak belakang dengan karakteristik \textit{Patient-Generated Health Data} (PGHD) yang bersifat kontinu. 
+Kesenjangan informasi ini menjadi hambatan bagi tenaga kesehatan dalam memperoleh gambaran kondisi pasien yang lebih lengkap pada saat melakukan evaluasi klinis misalnya untuk kondisi yang memerlukan pemantauan berkala.
 PGHD mencakup aktivitas harian, gejala subjektif, dan parameter fisiologis pasien, dan ketika diintegrasikan dengan sistem rekam medis elektronik terbukti membantu mengurangi \textit{information gap} antar kunjungan, mendukung intervensi lebih dini, dan meningkatkan personalisasi rencana perawatan \parencite{Tiase2020-PGHD_EHR_Integration,Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Mars_Scott_2022_PGHD_Healthcare}. 
 Dengan menelusuri alur kerja DecMed (Subbab~\ref{studi-decmed}) dan mencocokkannya dengan karakteristik PGHD (Subbab~\ref{studi-pghd}), dapat diidentifikasi beberapa kesenjangan (\textit{gap}) antara kapabilitas DecMed saat ini dan kebutuhan integrasi PGHD\@.
 
@@ -31,7 +31,8 @@ Mengirimkan setiap pembacaan sensor secara langsung sebagai transaksi terpisah k
 Saat ini, DecMed belum memiliki mekanisme \textit{batching} yang dirancang untuk menangani volume data \textit{time-series} tinggi seperti PGHD, sehingga terbentuk \textbf{Gap 3}: \emph{tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD}.
 
 Kemudian dari segi kepercayaan dan asal-usul data, seluruh data klinis yang tersimpan di DecMed saat ini berasal dari tenaga kesehatan yang terverifikasi dan dicatat dalam konteks pelayanan klinis, sehingga memiliki tingkat kepercayaan tinggi secara medis. 
-PGHD sebaliknya dihasilkan secara mandiri oleh pasien di luar pengawasan langsung penyedia layanan kesehatan, sehingga tidak secara otomatis memiliki tingkat kepercayaan yang setara.
+PGHD sebaliknya dihasilkan secara mandiri oleh pasien di luar pengawasan langsung penyedia layanan kesehatan, sehingga tidak secara otomatis memiliki tingkat kepercayaan yang setara dengan data klinis \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Meskipun demikian, PGHD tetap memiliki nilai klinis sebagai data pendukung yang melengkapi rekam medis berbasis kunjungan, selama keaslian dan keutuhan datanya dapat diverifikasi oleh tenaga kesehatan \parencite{ahima_fountain_2014_using_pghd_provenance}.
 Kebutuhan akan pencatatan asal-usul, riwayat pemrosesan, dan rantai kepemilikan data sejak pertama kali dikumpulkan menjadi hal yang penting dalam bagi PGHD\@ \parencite{Ahmed_2023_Data_Provenance}. 
 Tanpa \textit{provenance} yang terdokumentasi dengan baik, tenaga kesehatan tidak dapat memverifikasi apakah suatu data PGHD benar-benar berasal dari pasien yang bersangkutan, kapan diukur, menggunakan perangkat apa, dan apakah telah mengalami transformasi selama pengiriman.
 Kondisi ini membentuk \textbf{Gap 4}: \emph{tidak adanya \textit{data provenance} untuk menjamin keandalan data yang berasal dari pasien}.
