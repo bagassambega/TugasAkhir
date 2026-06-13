@@ -1,35 +1,33 @@
-\subsection{Analisis Kebutuhan Offline First dan Batching Mechanism}
+\subsection{Kebutuhan Fungsional}
 
-Ini menjawab RM2 di level analisis. Gunakan literatur offline-first:
+Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan} dan analisis solusi pada subbab~\ref{analisis-solusi}, dirancang kebutuhan fungsional pada Tabel~\ref{tab:kebutuhan-fungsional-pghd}.
+Kebutuhan fungsional dikodekan dengan \verb|FXX|, di mana \verb|XX| adalah kode unik kebutuhan fungsional.
 
-\begin{enumerate}
-    \item Paper / artikel arsitektur offline-first untuk sistem enterprise \& healthcare:
-    \begin{itemize}
-        \item full data sync vs action queue.
-
-        \item case study field apps healthcare/banking.
-    \end{itemize}
-
-    \item Kaitkan dengan PGHD:
-    \begin{itemize}
-        \item pasien mungkin di area sinyal buruk; data harus tetap terkumpul.
-        
-        \item offline-first bukan fitur tambahan, tapi requirement.
-    \end{itemize}
-\end{enumerate}
-
-Hal yang bisa kamu diskusikan:
-\begin{enumerate}
-    \item Dua pendekatan offline-first: full sync (local mirror server state) vs action queue (antrian data/write).
-    
-    \item Untuk kasusmu (PGHD → mostly write-heavy: log data sensor): action queue / event log (data queuing dan batching) lebih cocok, tidak perlu full mirror state dari server.
-\end{enumerate}
-
-Dari sini kamu turunkan kebutuhan:
-\begin{enumerate}
-    \item O1: harus ada local storage (DB) untuk log PGHD,
-    
-    \item O2: harus ada mekanisme penjadwalan pengiriman (batch) ketika koneksi tersedia,
-    
-    \item O3: harus ada mekanisme penanganan kegagalan (retry, penanda status).
-\end{enumerate}
+\begin{table}[htbp]
+    \centering
+    \caption{Kebutuhan fungsional integrasi PGHD pada DecMed}\label{tab:kebutuhan-fungsional-pghd}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.2\textwidth}|>{\raggedright\arraybackslash}X|}
+        \toprule
+        \rowcolor{headerBg}
+        \textbf{ID} & \textbf{Deskripsi Kebutuhan Fungsional} \\
+        \midrule
+        F01 & Pasien dapat mengambil data PGHD otomatis dari perangkat atau memasukkan data PGHD secara manual melalui antarmuka aplikasi. \\
+        \midrule
+        F02 & Data PGHD yang dikumpulkan di perangkat pasien tidak hilang meskipun dalam kondisi tanpa koneksi internet. \\
+        \midrule
+        F03 & Sistem secara otomatis mengirimkan data PGHD pasien yang telah terkumpul ke server ketika koneksi internet tersedia. \\
+        \midrule
+        F04 & Pasien dapat melihat riwayat data PGHD yang telah dikirimkan beserta informasi waktu pengukuran. \\
+        \midrule
+        F05 & Pasien dapat memberikan akses baca PGHD kepada tenaga kesehatan. \\
+        \midrule
+        F06 & Tenaga kesehatan yang telah menerima izin akses dari pasien dapat melihat daftar data PGHD\@. \\
+        \midrule
+        F07 & Tenaga kesehatan dapat membuka dan melihat isi detail dari entri data PGHD pasien yang dipilih. \\
+        \midrule
+        F08 & Sistem menampilkan peringatan kepada tenaga kesehatan apabila data PGHD pasien yang diakses terbukti telah rusak atau tidak sah. \\
+        \midrule
+        F09 & Pasien dapat mencabut izin akses terhadap data PGHD-nya kapan saja, dan pencabutan tersebut langsung berlaku (akses tenaga kesehatan terputus secara otomatis). \\
+        \bottomrule
+    \end{styledtable}
+\end{table}
