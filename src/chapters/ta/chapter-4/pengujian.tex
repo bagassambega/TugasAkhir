@@ -1,0 +1,90 @@
+\section{Pengujian dan Evaluasi}
+
+\subsection{Evaluasi Fungsional}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Skenario Pengujian Fungsional Sistem DecMed-PGHD}\label{tab:skenario-fungsional}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+        \midrule
+        \rowcolor{headerBg}
+        \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
+        \midrule
+        T-F01 & F01 & Pasien login, membuka aplikasi Android, memberi izin Health Connect/sensor, menekan Start Collecting, lalu menambahkan data manual PGHD. & Data PGHD otomatis dan manual muncul pada halaman PGHD lokal dengan waktu pengukuran dan sumber data. \\
+        \midrule
+        T-F02 & F02 & Matikan internet, lakukan pengumpulan PGHD otomatis/manual, tutup lalu buka ulang aplikasi. & Data tetap tersimpan di perangkat dan batch belum terkirim tetap muncul pada halaman PGHD/Batches. \\
+        \midrule
+        T-F03 & F03 & Saat offline, kumpulkan PGHD sampai ada batch menunggu pengiriman. Aktifkan kembali internet. & Sistem mencoba mengirim batch secara otomatis ketika koneksi tersedia dan status berubah menjadi terkirim atau gagal dengan alasan yang tampil. \\
+        \midrule
+        T-F04 & F04 & Setelah batch berhasil dikirim, pasien membuka halaman PGHD/Batches dan detail data. & Riwayat PGHD yang dikirim tampil dengan waktu pengukuran, waktu pengiriman, status sinkronisasi, dan sumber data. \\
+        \midrule
+        T-F05 & F05 & Tenaga kesehatan membuka QR berisi identitas/PRE public key. Pasien scan QR dan memberi akses baca PGHD. & Akses PGHD tercatat sebagai grant aktif untuk tenaga kesehatan tersebut. \\
+        \midrule
+        T-F06 & F06 & Tenaga kesehatan yang sudah diberi akses membuka daftar PGHD pasien. & Daftar metadata PGHD pasien tampil pada client tenaga kesehatan. \\
+        \midrule
+        T-F07 & F07 & Tenaga kesehatan memilih salah satu entri PGHD dari daftar dan membuka detail. & Isi PGHD berhasil didekripsi dan ditampilkan, termasuk nilai data, waktu, dan metadata provenance. \\
+        \midrule
+        T-F08 & F08 & Gunakan data PGHD uji yang payload/hash/signature-nya dimodifikasi, lalu coba dibuka oleh tenaga kesehatan. & Sistem menampilkan peringatan bahwa data tidak valid/rusak dan data tidak diterima sebagai PGHD valid. \\
+        \midrule
+        T-F09 & F09 & Pasien mencabut akses PGHD tenaga kesehatan, lalu tenaga kesehatan mencoba refresh daftar atau membuka detail PGHD. & Akses langsung gagal/ditolak dan tenaga kesehatan tidak dapat lagi membaca PGHD pasien. \\
+        \midrule
+    \end{styledtable}
+\end{table}
+
+\subsection{Pengujian Non-Fungsional}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Skenario Pengujian Non-Fungsional Sistem DecMed-PGHD}\label{tab:skenario-non-fungsional}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+        \midrule
+        \rowcolor{headerBg}
+        \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
+        \midrule
+        T-NF01 & Confidentiality & Bandingkan dua tenaga kesehatan: satu sudah diberi akses PGHD, satu belum. Keduanya mencoba membuka PGHD pasien yang sama. & Tenaga kesehatan dengan akses aktif dapat membuka data, sedangkan yang tidak memiliki akses gagal memperoleh plaintext. \\
+        \midrule
+        T-NF02 & Integrity & Submit PGHD valid, lalu gunakan salinan data uji yang ciphertext/hash/signature-nya diubah. Coba buka melalui client tenaga kesehatan. & Sistem mendeteksi perubahan melalui hash/signature dan menandai data sebagai tidak valid. \\
+        \midrule
+        T-NF03 & Availability & Kumpulkan data PGHD time-series cukup banyak sampai terbentuk batch, termasuk saat offline lalu online kembali. & Aplikasi tidak crash, data tidak hilang, data dikirim dalam batch, dan tidak membuat transaksi per record sensor. \\
+        \midrule
+        T-NF04 & Provenance & Tenaga kesehatan membuka detail PGHD yang valid dan melihat metadata. & Sistem menampilkan asal data: identitas pasien, waktu pengukuran, sumber data, perangkat/aplikasi asal, metode pencatatan, dan status validasi. \\
+        \midrule
+        T-NF05 & Sanitasi Input & Penguji memasukkan data PGHD manual, data medical record, nama profil, activation key, alasan invalidasi PGHD, dan payload data perangkat dengan variasi input tidak valid seperti karakter kontrol, spasi berlebih, teks terlalu panjang, nilai kosong, timestamp rusak, serta nilai numerik NaN/Infinity. & Input berbahaya atau tidak valid ditolak/dibersihkan, aplikasi tidak crash, data yang tersimpan tidak mengandung payload mentah yang rusak, dan proses pengiriman/dekripsi/verifikasi tetap berjalan normal. \\
+        \midrule
+    \end{styledtable}
+\end{table}
+
+% Untuk NF03, evaluasinya tidak perlu uji beban besar. Cukup tunjukkan bahwa data time-series dikumpulkan lokal, dibatching, tidak dikirim satu per satu, dan tetap dikirim setelah koneksi kembali. Itu sudah sesuai dengan implementasi sekarang dan tidak terlalu berat.
+
+\subsection{Skenario Pengujian Smart Contract PGHD}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Skenario Pengujian Smart Contract PGHD}\label{tab:skenario-smart-contract}
+    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+        \midrule
+        \rowcolor{headerBg}
+        \textbf{Kode} & \textbf{Skenario Smart Contract} & \textbf{Hasil yang Diharapkan} \\
+        \midrule
+        T-SC01 & Registrasi/pembaruan PGHD public key pasien pada smart contract. & Public key PGHD pasien tersimpan dan dapat dibaca kembali oleh fungsi terkait. \\
+        \midrule
+        T-SC02 & Submit metadata PGHD valid melalui PRE ke smart contract. & Metadata PGHD tersimpan dengan CID, hash, timestamp, dan status VALID. \\
+        \midrule
+        T-SC03 & Submit metadata PGHD dengan field penting kosong/tidak valid. & Transaksi ditolak atau abort sesuai validasi smart contract. \\
+        \midrule
+        T-SC04 & Tenaga kesehatan dengan akses \texttt{READ\_PGHD} mengambil daftar PGHD pasien. & Smart contract mengembalikan daftar metadata PGHD yang valid. \\
+        \midrule
+        T-SC05 & Tenaga kesehatan tanpa akses \texttt{READ\_PGHD} mencoba mengambil daftar PGHD. & Akses ditolak. \\
+        \midrule
+        T-SC06 & Tenaga kesehatan hanya memiliki akses medical record biasa, bukan \texttt{READ\_PGHD}, lalu mencoba membaca PGHD. & Akses PGHD ditolak karena capability medical record dan PGHD terpisah. \\
+        \midrule
+        T-SC07 & Ambil satu entri PGHD berdasarkan index/CID yang valid. & Smart contract mengembalikan metadata entri PGHD yang sesuai. \\
+        \midrule
+        T-SC08 & PRE menandai entri PGHD sebagai INVALID karena hash/signature gagal. & Status data berubah menjadi INVALID dan alasan kegagalan tersimpan. \\
+        \midrule
+        T-SC09 & Ambil daftar PGHD setelah ada entri invalid. & Entri invalid tidak diperlakukan sebagai data valid dan dapat difilter/ditolak. \\
+        \midrule
+        T-SC10 & Pasien mencabut akses \texttt{READ\_PGHD}, lalu tenaga kesehatan mencoba membaca PGHD lagi. & Smart contract/PRE menolak akses karena grant sudah tidak aktif. \\
+        \midrule
+    \end{styledtable}
+\end{table}
