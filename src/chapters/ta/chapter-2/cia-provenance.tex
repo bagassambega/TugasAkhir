@@ -93,7 +93,6 @@ Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan ol
         
         \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Ancaman} \\
         
-        % --- KELOMPOK 1: GANJIL (PUTIH) ---
         \rowcolor{rowOdd}
         \Block{4-1}{\textit{Tampering}} & \Block{4-1}{Integritas} & Data yang diberikan sensor ke \textit{mobile app} dapat dimodifikasi, baik melalui interaksi manusia langsung atau perubahan pengaturan sensor. \\
         \rowcolor{rowOdd}
@@ -103,7 +102,6 @@ Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan ol
         \rowcolor{rowOdd}
         & & Serangan \textit{SQL injection} terjadi ketika kode berbahaya dimasukkan ke dalam string yang diteruskan ke server SQL\@. \\
         
-        % --- KELOMPOK 2: GENAP (ABU-ABU MUDA) ---
         \rowcolor{rowEven}
         \Block{3-1}{\textit{Information Disclosure}} & \Block{3-1}{Kerahasiaan} & Perlindungan data yang tidak tepat pada ponsel pasien atau \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
         \rowcolor{rowEven}
@@ -111,7 +109,6 @@ Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan ol
         \rowcolor{rowEven}
         & & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
         
-        % --- KELOMPOK 3: GANJIL (PUTIH) ---
         \rowcolor{rowOdd}
         \Block{2-1}{\textit{Denial of Service}} & \Block{2-1}{Ketersediaan} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
         \rowcolor{rowOdd}
@@ -121,13 +118,70 @@ Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan ol
 \end{table}
 
 \subsection{\textit{Data Provenance}}\label{studi-data-provenance}
+
 \textit{Data provenance} didefinisikan sebagai pencatatan asal-usul data serta riwayat pembuatan dan pemrosesan data tersebut sepanjang siklus hidupnya \parencite{Ahmed_2023_Data_Provenance}.
 Dalam sistem layanan kesehatan, \textit{provenance} memungkinkan pelacakan sumber dan alasan di balik setiap perubahan atau masalah pada data \parencite{Ahmed_2023_Data_Provenance}. 
+
+\textit{Data provenance} sendiri perlu menjamin empat hal berikut \parencite{Johns2023_Data_Provenance},
+
+\begin{enumerate}
+    \item Dari mana data berasal,
+    \item Bagaimana data dihasilkan,
+    \item Siapa yang memiliki/menghasilkan data, dan
+    \item Mengapa data dibuat/bagaimana data diolah
+\end{enumerate}
+
+% Provenance aspects
+% Where provenance	The contribution addresses the aspect of where the data originated from
+% How provenance	The contribution addresses the aspect of how a specific result was produced (ie, the preceding processing steps)
+% Who provenance	The contribution addresses the aspect of who (or which entity, such as organization, software, or device) was responsible or claimed ownership for the data or data processing
+% Why provenance	The contribution addresses the aspect of why a certain result or data point was produced, which requires capturing all preceding processing steps and data sources (Johan)
 
 Terdapat empat teknologi untuk mencapai \textit{data provenance} \parencite{Ahmed_2023_Data_Provenance}:
 \begin{enumerate}
     \item \textbf{\textit{Logging-based provenance}}: mencatat riwayat akses dan modifikasi data dalam berkas log. 
     \item \textbf{\textit{Cryptography-based provenance}}: memanfaatkan mekanisme kriptografis seperti tanda tangan digital dan fungsi \textit{hash} untuk membuktikan asal-usul dan integritas data secara matematis. 
     \item \textbf{\textit{Blockchain-based provenance}}: menyimpan catatan \textit{provenance} pada \textit{distributed ledger} yang bersifat \textit{immutable} dan dapat diaudit oleh semua pihak.
-    \item \textbf{\textit{Ontology-based provenance}}: menggunakan format data untuk merepresentasikan struktur dan hubungan antara entitas data, aktor dan aktivitas.
+    \item \textbf{\textit{Ontology-based provenance}}: menggunakan format data untuk merepresentasikan struktur, konteks dan hubungan antara entitas data, aktor dan aktivitas. 
+    Contoh ontologi dapat dilihat melalui Listing~\ref{lst:prov-o-example} \parencite{w3PROVOPROV}.
+\end{enumerate}
+
+\begin{lstlisting}[caption={Contoh Implementasi Data Provenance Berdasarkan W3C PROV-O}, label={lst:prov-o-example}, float=htb]
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix :     <http://example.org#> .
+
+# 1. Mendefinisikan Agen (Siapa yang melakukan?)
+:derek a prov:Agent ;
+    prov:actedOnBehalfOf :national_newspaper_inc .
+
+# 2. Mendefinisikan Entitas Sumber (Data awal sebelum diproses)
+:crimeData a prov:Entity ;
+    prov:wasAttributedTo :government .
+
+# 3. Mendefinisikan Aktivitas (Proses pengolahan data)
+:aggregationActivity a prov:Activity ;
+    prov:startedAtTime "2011-07-14T01:01:01Z"^^xsd:dateTime ;
+    prov:endedAtTime "2011-07-14T02:02:02Z"^^xsd:dateTime ;
+    prov:wasAssociatedWith :derek ;
+    prov:used :crimeData .
+
+# 4. Mendefinisikan Entitas Baru (Hasil data setelah diagregasi)
+:aggregatedByRegions a prov:Entity ;
+    prov:wasGeneratedBy :aggregationActivity ;
+    prov:wasAttributedTo :derek ;
+    prov:wasDerivedFrom :crimeData .
+\end{lstlisting}
+
+Terdapat tujuh parameter yang perlu dipertimbangkan dalam pemakaian teknologi untuk menjamin \textit{data provenance} \parencite{Ahmed_2023_Data_Provenance}:
+% The essential requirements of data provenance are provenance security, 5.1. compliance, Taxonomy storage, unforgeability, overhead, revocability, and metadata protection.
+
+\begin{enumerate}
+    \item \textbf{\textit{Provenance Security}}: \textit{data provenance} terlindungi dari manipulasi.
+    \item \textbf{\textit{Compliance}}: mendukung \textit{audit trail} atau mekanisme untuk membuktikan keberadaan dan asal-usul data.
+    \item \textbf{\textit{Storage/Taxonomy}}: pendefinisian dan penyimpanan kategori/tipe data secara eksplisit.
+    \item \textbf{\textit{Unforgeability}}: tidak dapat dibuat atau dimodifikasi tanpa terdeteksi.
+    \item \textbf{\textit{Overhead}}: biaya komputasi dan penyimpanan.
+    \item \textbf{\textit{Revocability}}: akses terhadap \textit{metadata record} bisa dicabut.
+    \item \textbf{\textit{Metadata Protection}}: metadata \textit{provenance} terlindungi dari akses tidak sah.
 \end{enumerate}

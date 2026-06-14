@@ -1,7 +1,7 @@
-\subsection{Analisis Alternatif Solusi Data Provenance}\label{alternatif-provenance}
+\subsection{Analisis Alternatif Solusi \textit{Data Provenance}}\label{alternatif-provenance}
 
 Seperti yang sudah dibahas pada Subbab~\ref{studi-data-provenance}, terdapat empat metode untuk mendapatkan \textit{data provenance}, yaitu \textit{logging-based}, \textit{cryptography-based}, \textit{blockchain-based}, dan \textit{ontology-based}.
-Terdapat tujuh parameter yang perlu dipertimbangkan dalam pemakaian teknologi untuk menjamin \textit{data provenance} \parencite{Ahmed_2023_Data_Provenance}:
+Terdapat tujuh parameter yang perlu dipertimbangkan dalam pemakaian teknologi untuk menjamin \textit{data provenance}, yaitu:
 
 \begin{enumerate}
     \item \textbf{\textit{Provenance Security}} (\textbf{DP1}): \textit{data provenance} terlindungi dari manipulasi.
@@ -33,7 +33,7 @@ Perbandingan setiap teknologi untuk menjamin \textit{data provenance} dapat dili
     \end{styledtable}
 \end{table}
 
-Teknik \textit{log-based} unggul dalam hal \textit{overhead} karena hanya menambahkan beberapa \textit{field} pada rekam data tanpa transaksi jaringan tambahan, namun lemah pada \textit{unforgeability} karena rekam log dapat dimodifikasi secara sepihak tanpa mekanisme kriptografis yang mencegah pemalsuan. 
+Teknik \textit{log-based} unggul dalam hal \textit{overhead} karena hanya menambahkan beberapa \textit{field} pada rekam data tanpa transaksi jaringan tambahan, namun lemah pada \textit{unforgeability} karena rekam log dapat dimodifikasi secara sepihak tanpa mekanisme yang mencegah pemalsuan data. 
 Teknik \textit{cryptography-based} memenuhi \textit{unforgeability} karena \textit{provenance} terikat secara kriptografis pada identitas pengirim, namun teknik kriptografi tidak memberikan informasi mengenai informasi penting data dan metadata sehingga ia tidak mampu memenuhi \textit{storage \& taxonomy} yang membutuhkan representasi data dan riwayat pemrosesan data.
 
 Teknik \textit{ontology-based} merupakan satu-satunya teknik yang memenuhi \textit{storage \& taxonomy} karena mendefinisikan informasi penting mengenai struktur data dan informasi mengenai data.
@@ -47,19 +47,48 @@ Setiap teknik memiliki kelebihan dan kekurangan.
 Berdasarkan analisis di atas, solusi \textit{data provenance} pada sistem ini adalah dengan mengombinasikan empat kandidat berikut.
 
 \begin{itemize}
-    \item \textbf{Kriptografi}. Tanda tangan digital (\textit{digital signature}) akan menjadi mekanisme kriptografis utama untuk menemukan asal-usul data dan menjaga \textit{provenance security} dengan \textit{overhead} yang kecil. 
-    Pada sistem ini, setiap entri PGHD akan di-hash ditandatangani menggunakan kunci privat pasien sehingga \textit{provenance} terikat secara kriptografis pada identitas sumber data. 
+    \item \textbf{Kriptografi}. Mekanisme kriptografi digunakan untuk menjamin asal-usul, integritas, dan keaslian data.
+    Tanda tangan digital (\textit{digital signature}) akan menjadi mekanisme kriptografis utama untuk menemukan asal-usul data dan menjaga \textit{provenance security} dengan \textit{overhead} yang kecil. 
     Pendekatan ini memenuhi \textit{unforgeability} dan \textit{provenance security} dari sisi integritas, sekaligus efisien untuk data PGHD yang bersifat \textit{time-series} karena komputasinya ringan.
+    Penggunaan \textit{digital signature} juga bersesuaian dengan solusi yang kita pilih untuk menjaga \textit{integrity} pada pemilihan alternatif solusi pada Subbab~\ref{alternatif-analisis-solusi-cia}.
 
     \item \textbf{Blockchain}. Sistem DecMed sudah memakai IOTA sebagai lapisan \textit{distributed ledger}.
-    Setiap transaksi juga dicatat \textit{on-chain} melalui \textit{smart contract} Move sehingga menjamin \textit{immutability} rekam \textit{provenance} dan menyediakan audit trail permanen yang memenuhi kebutuhan \textit{compliance}.
+    Setiap transaksi juga dicatat \textit{on-chain} melalui \textit{smart contract} sehingga menjamin \textit{immutability} rekam \textit{provenance} dan menyediakan audit trail permanen.
 
     \item \textbf{Log dan \textit{ontology information} dalam bentuk metadata kontekstual} seperti \textit{device type}, \textit{timestamp}, \textit{platform}, OS, dan sejenisnya. 
-    Informasi ini termasuk dalam kategori \textit{log-based} dan \textit{ontology-based} karena log mencatat riwayat kejadian secara kronologis, sementara ontologi mengklasifikasikan atribut metadata untuk menjelaskan informasi penting mengenai data yang disimpan. 
+    Informasi ini termasuk dalam kategori \textit{log-based} dan \textit{ontology-based} karena log mencatat riwayat kejadian secara kronologis, sementara ontologi menggunakan metadata untuk menjelaskan informasi penting mengenai data yang disimpan. 
     Metadata kontekstual ini memenuhi \textit{storage \& taxonomy} yang tidak dapat dipenuhi oleh kriptografi maupun blockchain.
 \end{itemize}
 
+Mengacu pada pembahasan mengenai informasi apa saja yang perlu dijamin pada \textit{data provenance}, mekanisme penjaminan \textit{data provenance} PGHD dan DecMed akan mencakup informasi-informasi mengenai dari mana data berasal, bagaimana data dihasilkan, siapa yang memiliki dan menghasilkan data, dan mengapa data dibuat/diolah.
+Pemetaan informasi-informasi tersebut terhadap data PGHD untuk sistem DecMed tertera pada Tabel~\ref{tab:provenance-mapping}.
 
+\begin{table}[htbp]
+    \centering
+    \caption{Pemetaan aspek \textit{data provenance} ke struktur metadata PGHD}\label{tab:provenance-mapping}
+    \begin{styledtable}{%
+        >{\raggedright\arraybackslash}p{0.35\textwidth}
+        >{\raggedright\arraybackslash}X}
+        \textbf{Aspek provenance} & \textbf{Informasi yang dijamin} \\
+
+        Dari mana data berasal
+        & 
+        Identitas pasien sebagai subjek data, identitas perangkat yang digunakan untuk mengumpulkan data, sumber platform atau layanan yang menyuplai data, serta rentang waktu pengukuran yang dicakup oleh suatu batch. \\
+
+        Bagaimana data dihasilkan
+        &
+        Cara data dikumpulkan (otomatis oleh sensor, sesi aktif, atau input manual), jenis pengukuran yang dilakukan, pengelompokan data berdasarkan jenis pengukuran dan tipe perangkat, serta struktur batching yang digunakan saat pengiriman. \\
+
+        Siapa yang memiliki/menghasilkan data
+        &
+        Pasien sebagai pemilik dan penghasil data, serta perangkat dan aplikasi yang bertindak sebagai agen teknis yang mengumpulkan dan mengirimkan data. \\
+
+        Mengapa data dibuat / bagaimana data diolah
+        &
+        Alasan terbentuknya data, kapan pembentukan/pengiriman data dan status hasil verifikasi dan kegagalan jika terjadi. \\
+
+    \end{styledtable}
+\end{table}
 
 
 
