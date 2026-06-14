@@ -309,3 +309,10 @@ Mekanisme pencabutan akses di DecMed dilakukan dengan langkah-langkah sebagai be
     
     \item Setelah transaksi berhasil dieksekusi, client pasien memperbarui tampilan halaman \textit{log akses} untuk mencerminkan bahwa akses telah dicabut.
 \end{enumerate}
+
+
+% Berbeda dengan skema dasar \textit{Proxy Re-Encryption} (PRE) konvensional yang secara langsung mentransformasi struktur aljabar \textit{ciphertext} pesan utama, DecMed mengimplementasikan varian PRE berbasis kapsul (\textit{Capsule-based PRE} atau \textit{Key Encapsulation Mechanism} / KEM). Dalam arsitektur DecMed, data rekam medis yang berukuran besar dieksekusi menggunakan enkripsi simetris AES-GCM yang jauh lebih efisien secara komputasi. Kunci simetris tersebut (\verb|aes_key| dan \verb|aes_nonce|) kemudian dibungkus dan dilindungi di dalam sebuah entitas kriptografis asimetris yang disebut \textbf{kapsul} (\verb|capsule|) menggunakan kunci publik pasien. Konsep ini dibutuhkan untuk memisahkan beban komputasi; algoritme PRE tidak perlu mengenkripsi ulang seluruh data medis pasien yang sangat besar, melainkan cukup mengenkripsi ulang kapsul kecil yang menyimpan kunci AES-nya saja.
+
+
+% Untuk merealisasikan delegasi akses tersebut, mekanisme PRE pada DecMed mendayagunakan \verb|kfrag| (\textit{Key Fragment}) dan \verb|cfrag| (\textit{Capsule Fragment}). Saat pasien memberikan izin akses, \textit{client} pasien akan menghitung sebuah \verb|kfrag| menggunakan kunci publik pasien dan tenaga kesehatan, yang berfungsi sebagai token enkripsi ulang. \textit{Proxy server} kemudian mengeksekusi \verb|kfrag| ini terhadap \verb|capsule| asli milik pasien untuk menghasilkan \verb|cfrag| (kapsul yang telah dienkripsi ulang). Secara algoritmik, \verb|cfrag| adalah bentuk kapsul yang orientasi matematisnya telah digeser agar dapat dibuka oleh pihak tujuan. Tenaga kesehatan kemudian menggabungkan \verb|cfrag| ini dengan kunci privat lokal mereka untuk mengekstraksi kunci AES di dalamnya, lalu mendekripsi dokumen rekam medis tanpa pernah sekalipun membutuhkan atau mengekspos kunci privat utama milik pasien.
+
