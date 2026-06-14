@@ -96,5 +96,13 @@
   "latex-workshop.synctex.afterBuild.enabled": true,
   "latex-workshop.latex.outDir": "%DIR%/../build",
   "latex-workshop.latex.autoBuild.run": "onSave",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "latex-workshop.linting.chktex.exec.args": [
+    "-wall",
+    "-n22",
+    "-n30",
+    "-n8",
+    "-e16",
+    "-q"
+  ]
 }

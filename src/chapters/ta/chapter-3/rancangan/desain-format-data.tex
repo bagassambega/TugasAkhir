@@ -7,29 +7,16 @@ Tabel~\ref{tab:field-batch-json-pghd} menjelaskan \textit{fields} pada tingkat \
 \begin{table}[htbp]
     \centering
     \caption{Deskripsi field tingkat batch pada skema JSON untuk PGHD}\label{tab:field-batch-json-pghd}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    \rowcolors{2}{white}{white}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X}
-        \toprule
-        \rowcolor[HTML]{DDEBF7}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}X}
         \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-        \midrule
         \texttt{schema\_version} & String & Ya & Versi skema JSON PGHD yang digunakan. \\
-        \midrule
         \texttt{batch\_id} & UUID & Ya & Identitas unik batch. \\
-        \midrule
         \texttt{patient\_id} & String & Ya & Identitas pasien di sistem DecMed, diisi dengan \textit{address} IOTA akun pasien. \\
-        \midrule
         \texttt{source\_device} & Objek & Ya & Metadata perangkat pengirim batch, meliputi: \texttt{type}, \texttt{platform}, \texttt{app\_version}, \texttt{device\_manufacturer}, dan \texttt{device\_model}. \\
-        \midrule
         \texttt{batch\_period} & Objek & Ya & Rentang waktu yang dicakup oleh batch, terdiri atas \texttt{start\_timestamp} dan \texttt{end\_timestamp} dalam format Unix timestamp (detik). \\
-        \midrule
         \texttt{trigger\_reason} & String & Tidak & Alasan pembentukan batch: \texttt{time\_based} untuk interval 15 menit, atau \texttt{size\_threshold} untuk \textit{early trigger}. \\
-        \midrule
         \texttt{data\_group} & Array & Ya & Daftar pengukuran individual yang dikelompokkan pada setiap grup (dijelaskan pada Tabel~\ref{tab:field-datagroup-json-pghd}). \\
-        \bottomrule
-    \end{tabularx}
+    \end{styledtable}
 \end{table}
 
 Setiap elemen di dalam \textit{array} \verb|data_group| tersusun atas sekumpulan \textit{data group} yang dikelompokkan berdasarkan tipe pengukuran dan asal perangkat.
@@ -38,25 +25,14 @@ Tabel~\ref{tab:field-datagroup-json-pghd} menjelaskan \textit{fields} pada tingk
 \begin{table}[htbp]
     \centering
     \caption{Deskripsi field tingkat \textit{data group} pada skema JSON untuk PGHD}\label{tab:field-datagroup-json-pghd}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    \rowcolors{2}{white}{white}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X}
-        \toprule
-        \rowcolor[HTML]{DDEBF7}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.25\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}X}
         \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-        \midrule
         \texttt{measurement\_type} & String & Ya & Jenis pengukuran dalam format \textit{snake\_case}, misalnya \texttt{heart\_rate} atau \texttt{steps}. \\
-        \midrule
         \texttt{device\_type} & String & Ya & Tipe perangkat penghasil pengukuran, misalnya \texttt{smartphone} atau \texttt{wearable}. \\
-        \midrule
         \texttt{recording\_method} & String & Opsional & Cara data direkam: \texttt{auto} (otomatis oleh sensor), \texttt{active} (pengguna memulai sesi), atau \texttt{manual} (pengguna memasukkan data secara manual). \\
-        \midrule
         \texttt{source} & String & Ya & Sumber data tempat pengukuran diperoleh, misalnya \texttt{health\_connect} atau \texttt{android\_sensor}. \\
-        \midrule
         \texttt{data\_points} & Array & Ya & Daftar nilai pengukuran aktual (dijelaskan pada Tabel~\ref{tab:field-datapoints-json-pghd}). \\
-        \bottomrule
-    \end{tabularx}
+    \end{styledtable}
 \end{table}
 
 Data group berisi kumpulan \textit{data points} individual yang merupakan hasil pengukuran individual dari sensor untuk setiap satuan waktu/jumlah.
@@ -65,19 +41,10 @@ Tabel~\ref{tab:field-datapoints-json-pghd} berisi skema data untuk level \textit
 \begin{table}[htbp]
     \centering
     \caption{Deskripsi field tingkat \textit{data points} pada skema JSON untuk PGHD}\label{tab:field-datapoints-json-pghd}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    \rowcolors{2}{white}{white}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X}
-        \toprule
-        \rowcolor[HTML]{DDEBF7}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}X}
         \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-        \midrule
         \texttt{timestamp} & Unix timestamp & Ya & Waktu pengambilan pengukuran (Unix timestamp dalam detik). \\
-        \midrule
         \texttt{value} & Number / Objek & Ya & Nilai pengukuran. Untuk pengukuran skalar (detak jantung, langkah) diisi sebagai bilangan. Untuk pengukuran komposit (tekanan darah) diisi sebagai objek, misalnya \texttt{\{systolic: 118, diastolic: 76\}}. \\
-        \midrule
         \texttt{unit} & String & Ya & Satuan pengukuran, misalnya \texttt{beats/min} atau \texttt{mm[Hg]}. \\
-        \bottomrule
-    \end{tabularx}
+    \end{styledtable}
 \end{table}

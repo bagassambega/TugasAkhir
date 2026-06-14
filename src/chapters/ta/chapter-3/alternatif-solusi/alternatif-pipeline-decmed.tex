@@ -2,8 +2,6 @@
 
 Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan}, terdapat beberapa komponen dari arsitektur \textit{pipeline} integrasi PGHD yang perlu dipertimbangkan, yaitu sumber data, pengumpulan dan pengolahan data, pengiriman data, dan pengaksesan data.
 
-(Seluruh subbab ini butuh justifikasi berbasis referensi)
-
 \subsubsection{Sumber Data}\label{alternatif-sumber-data}
 
 Data PGHD bisa diambil dari \textit{wearable device} seperti smartwatch ataupun IoT \textit{device} lainnya dan juga dari perangkat \textit{mobile} menggunakan aplikasi kesehatan seperti FitBit atau Google Health Connect \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
@@ -17,6 +15,8 @@ Terdapat beberapa pertimbangan terkait sumber data yang akan digunakan.
 Sumber data yang akan digunakan adalah kombinasi dari data yang dihasilkan oleh \textit{wearable} dan juga informasi kesehatan dari perangkat seluler.
 Implementasi ini dipilih agar data yang didapatkan lengkap dan sudah diadopsi secara luas \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 
+Tipe data yang dikumpulkan adalah \dots.
+
 \subsubsection{Pengiriman Data}\label{alternatif-trigger-pengiriman-pghd}
 
 Terdapat dua mekanisme bagaimana pengiriman data dilakukan mempertimbangkan pengiriman data pada \textit{distributed system}, yaitu dengan \textit{time-triggered} (pengiriman berdasarkan interval waktu tetap) dan \textit{event-triggered} (pengiriman dipicu oleh kejadian atau perubahan kondisi tertentu) \parencite{Albert2004_Event_Time_Triggered_Comparison}.
@@ -26,19 +26,14 @@ Perbandingan antara penggunaan \textit{time-triggered} dan \textit{event-trigger
 \begin{table}[htbp]
     \centering
     \caption{Perbandingan \textit{time-triggered} dan \textit{event-triggered} untuk pengiriman PGHD}\label{tab:time-event-comparison}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
-        \rowcolor[HTML]{DDEBF7}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
         \textbf{Kriteria} & \textbf{\textit{Time-based periodic}} & \textbf{\textit{Event-based periodic}} \\
-        \midrule
         Prediktabilitas beban jaringan & Tinggi (interval tetap) & Rendah (bergantung pada kondisi pasien) \\
         Risiko lonjakan transaksi & Rendah & Tinggi (saat pasien aktif atau terjadi anomali) \\
         Kemampuan respons cepat & Rendah (tunggu interval berikutnya) & Tinggi (langsung saat kondisi terdeteksi) \\
         Ketergantungan pada akurasi \textit{threshold} & Tidak ada & Tinggi (rentan \textit{false positive}) \\
         Konsumsi baterai perangkat & Bisa diperkirakan & Tidak terprediksi (bergantung frekuensi \textit{event}) \\
-        \bottomrule
-    \end{tabularx}
+    \end{styledtable}
 \end{table}
 
 \textit{Event-triggered} membuat data dapat tersedia secara cepat terhadap suatu kejadian, karena pengiriman dapat dilakukan segera setelah \textit{event} terdeteksi tanpa harus menunggu interval waktu berikutnya.
@@ -65,7 +60,7 @@ Untuk mengantisipasi skenario ekstrim tersebut, diterapkan mekanisme \textit{ear
 Jika ukuran batch yang sedang dikumpulkan dalam memori mencapai \textit{threshold} tersebut sebelum interval 15 menit tercapai, klien pasien akan segera mengirim batch tersebut tanpa menunggu interval waktu berikutnya. 
 Pemilihan \textit{threshold} 10 MB didasarkan pada pertimbangan bahwa ukuran tersebut masih dapat ditangani oleh perangkat mobile dengan RAM terbatas (2~-~4 GB) dan koneksi jaringan yang stabil.
 
-\subsubsection{Pengolahan Data PGHD}\label{alternatif-aliran-pghd}
+\subsubsection{Pengolahan Data PGHD}\label{alternatif-pengolahan-pghd}
 
 Terdapat tiga alternatif mekanisme pengummpulan dan pengolahan data yang dapat dipertimbangkan.
 
@@ -76,15 +71,42 @@ Terdapat tiga alternatif mekanisme pengummpulan dan pengolahan data yang dapat d
 \end{enumerate}
 
 Mekanisme yang dipilih adalah data \textit{raw} disimpan di \textit{storage} lokal dan dikirim dalam \textit{batch} ke DecMed tanpa agregasi di sisi klien pasien.
-Pilihan ini memberikan nilai klinis yang lebih tinggi karena data asli tetap tersedia \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR} dan data asli dapat diakses oleh tenaga kesehatan tanpa kehilangan informasi apapun, namun tetap memperhatikan frekuensi pengiriman data dan \textit{throughput} jaringan agar \textit{availability} tetap terjamin seperti yang sudah dijelaskan pada subbab~\ref{alternatif-analisis-solusi-cia} \parencite{Wen_2024_Performance_Blockchain}. 
+Pilihan ini memberikan nilai klinis yang lebih tinggi karena data asli tetap tersedia \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR} dan data asli dapat diakses oleh tenaga kesehatan tanpa kehilangan informasi apapun, namun tetap memperhatikan frekuensi pengiriman data dan \textit{throughput} jaringan agar \textit{availability} tetap terjamin seperti yang sudah dijelaskan pada subbab~\ref{alternatif-analisis-solusi-cia} \parencite{Haque_2024_Performance_Blockchain}. 
 Selain itu pilihan ini juga menjadi salah satu mekanisme untuk \textit{handling} saat perangkat \textit{offline} atau tidak terkoneksi jaringan internet.
 Mekanisme ini memungkinkan data tetap aman dan tidak hilang meskipun koneksi internet tidak tersedia untuk sementara waktu.
 
 Untuk memastikan data yang gagal dikirim dapat diproses ulang, diimplementasikan juga mekanisme \textit{retry} dengan interval yang dijalankan secara periodik oleh klien pasien seperti dijelaskan pada solusi pengiriman data pada subbab~\ref{alternatif-trigger-pengiriman-pghd}. 
 Dengan kombinasi penyimpanan lokal dan \textit{retry mechanism}, data PGHD tetap dapat dikirimkan ke sistem ketika koneksi pulih, tanpa kehilangan data akibat kondisi offline.
 
-% Dengan demikian, mekanisme sesi persisten dirancang untuk tetap
-% menghormati prinsip kontrol akses berbasis pasien—karena inisiasi akses
-% tetap berasal dari persetujuan pasien—sekaligus memberikan kelonggaran
-% operasional bagi tenaga kesehatan untuk memastikan kontinuitas akses PGHD
-% selama episode perawatan klinis berlangsung. 
+\subsubsection{Pengaksesan Data PGHD}\label{alternatif-pengaksesan-pghd}
+
+Setelah mempertimbangkan mekanisme pengumpulan dan pengiriman PGHD dari
+sisi pasien, perlu ditetapkan pula mekanisme pengaksesannya oleh tenaga
+kesehatan.
+Terdapat pertimbangan untuk membuat mekanisme akses PGHD berbeda dari
+mekanisme akses rekam medis klinis yang sudah ada di DecMed, misalnya
+dengan memberikan akses baca persisten kepada tenaga kesehatan tanpa
+batasan kunjungan.
+Namun, pendekatan tersebut tidak dipilih karena beberapa alasan yang
+saling memperkuat.
+Pertama, data kesehatan pasien --- termasuk PGHD --- bersifat sangat
+sensitif dan memerlukan kontrol akses yang ketat, di mana pasien harus
+tetap memiliki kendali penuh atas siapa yang dapat mengakses datanya
+\parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Akses baca persisten akan melemahkan prinsip kontrol data pasien
+(\textit{patient data sovereignty}) yang menjadi fondasi utama DecMed.
+Kedua, pola pemanfaatan PGHD secara klinis pada dasarnya memang
+terikat pada konteks kunjungan: PGHD dikumpulkan pasien secara mandiri
+di antara kunjungan, dan diakses oleh tenaga kesehatan pada saat
+kunjungan untuk memperkaya pengambilan keputusan klinis
+\parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Data PGHD bersifat pendukung, bukan pengganti data klinis, dan
+penggunaannya selalu memerlukan interpretasi klinis yang dilakukan
+dalam konteks konsultasi langsung \parencite{ahima_fountain_2014_using_pghd_provenance}.
+Ketiga, mekanisme CapBAC yang sudah diimplementasikan DecMed sudah
+menyediakan kerangka kontrol akses berbasis kapabilitas yang dapat
+langsung digunakan untuk PGHD tanpa memerlukan modifikasi komponen
+inti DecMed \parencite{Hari_2025}\parencite{Purnama_2026}.
+Dengan demikian, mekanisme pengaksesaan PGHD menggunakan mekanisme
+CapBAC yang sama dengan rekam medis klinis DecMed adalah pilihan yang
+secara teknis konsisten dan secara prinsip tepat.

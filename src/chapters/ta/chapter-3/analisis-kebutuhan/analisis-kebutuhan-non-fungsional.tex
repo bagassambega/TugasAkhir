@@ -6,20 +6,12 @@ Kebutuhan non-fungsional dikodekan dengan \verb|NFXX|, di mana \verb|XX| adalah 
 \begin{table}[htbp]
     \centering
     \caption{Kebutuhan Non-Fungsional Integrasi PGHD pada DecMed}\label{tab:kebutuhan-non-fungsional-pghd}
-    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}X|}
-        \toprule
-        \rowcolor{headerBg}
-        \textcolor{black}{\textbf{Kode}} & \textcolor{black}{\textbf{Aspek}} & \textcolor{black}{\textbf{Kebutuhan Non-Fungsional}} \\
-        \midrule
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.10\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{Kode} & \textbf{Aspek} & \textbf{Kebutuhan Non-Fungsional} \\
         NF01 & \textit{Confidentiality} & Sistem harus menjamin data PGHD yang dikirim keluar dari perangkat pasien hanya dapat dibuka oleh tenaga kesehatan yang telah menerima izin akses aktif dari pasien. \\
-        \midrule
         NF02 & \textit{Integrity} & Sistem harus mampu mendeteksi perubahan atau kerusakan data PGHD dan menginvalidasi data tersebut. \\
-        \midrule
         NF03 & \textit{Integrity} & Sistem harus membersihkan, membatasi, dan memvalidasi seluruh \textit{input} yang berasal dari pasien, tenaga kesehatan, maupun sumber data perangkat sebelum data disimpan, diproses, atau dikirimkan. \\
-        \midrule
         NF04 & \textit{Availability} & Sistem harus mampu menangani pengiriman data PGHD bervolume tinggi yang bersifat \textit{time-series} dari sensor wearable tanpa mengalami kegagalan layanan (\textit{denial of service}) akibat lonjakan transaksi yang berlebihan. \\
-        \midrule
         NF05 & \textit{Provenance} & Data PGHD yang disimpan dalam sistem harus menyertakan informasi yang dapat diverifikasi mengenai asal-usul data, meliputi identitas pasien sebagai sumber, waktu pengukuran, perangkat yang digunakan, serta riwayat validasi data. \\
-        \bottomrule
     \end{styledtable}
 \end{table}

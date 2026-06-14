@@ -17,8 +17,35 @@ Oleh karena itu, PGHD tidak dipandang sebagai pengganti data klinis, melainkan s
 
 PGHD berbeda dengan data klinis karena PGHD tidak dikumpulkan oleh tenaga kesehatan ataupun memakai alat medis yang tersertifikasi dan terverifikasi \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
 % PGHD is patient-directed and patient-informed and is not collected through clinic tools but through a range of readily available commercial off-the-shelf tools such as mobile phone apps and wearable activity trackers (Cohen)
-Merujuk pada \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}, sumber-sumber data yang dapat digunakan untuk mengumpulkan data PGHD yaitu,
+Merujuk pada \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}, sumber-sumber data yang dapat digunakan untuk mengumpulkan data PGHD secara garis besar terbagi menjadi lima kategori pada Tabel~\ref{tab:pghd-data-sources}.
 
+\begin{table}[htbp]
+    \centering
+    \caption{Sumber Data PGHD dan Karakteristiknya \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}}\label{tab:pghd-data-sources}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.25\textwidth} >{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}X}
+        
+        \textbf{Sumber Data} & \textbf{Contoh Perangkat/Platform} & \textbf{Karakteristik Data} \\
+        
+        Perangkat wearable dan sensor & Smartwatch, fitness tracker (Fitbit, Apple Watch, Mi Watch) & Time-series kontinu, frekuensi tinggi, otomatis \\
+        
+        Perangkat pemantauan di rumah & Tensimeter digital, monitor glukosa darah, pulse oximeter & Periodik, semi-otomatis, memerlukan tindakan aktif pasien \\
+        
+        Perangkat mobile dan aplikasi & Aplikasi kesehatan (Google Health Connect, Apple HealthKit), aplikasi pencatatan diet dan gejala & Campuran otomatis dan manual, bergantung pada partisipasi pasien \\
+        
+        Perangkat medis terhubung & CGM (\textit{continuous glucose monitor}), alat EKG portable, spirometer digital & Frekuensi tinggi untuk kondisi spesifik, memerlukan peresepan atau rekomendasi klinis \\
+        
+        Laporan mandiri pasien & Kuesioner digital, buku harian gejala, platform \textit{patient-reported outcomes} (PRO) & Data terstruktur dari input aktif pasien, frekuensi rendah hingga harian \\
+        
+        Data lingkungan,\textit{lifestyle} dan media sosial & \textit{Posts} di media sosial, sensor udara lingkungan & Tergantung pada aktivitas sosial media ataupun sumber data lingkungan
+    \end{styledtable}
+\end{table}
+
+Adapun tipe data yang dapat dikumpulkan dari berbagai sumber PGHD tersebut dapat diklasifikasikan menjadi tiga kategori utama: data fisiologis (\textit{physiological data}), data aktivitas dan perilaku (\textit{behavioral and activity data}), serta data yang dilaporkan secara mandiri oleh pasien (\textit{patient-reported data}) \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% PGHD collected through a range of different types of smart devices and other new technologies can provide patients with innovative ways to actively manage their health, improving patient self-knowledge, and management of health concerns, including diabetes, physical activity, and behavioral health triggers such as anxiety (Cohen)
+% Patients are generating PGHD through the use of wearable devices and mobile health apps that allow them to track metrics such as physical activity, heart rate, blood pressure, weight, sleep, and more. This type of data is often used by patients for their own health monitoring and management, or is shared with healthcare providers to facilitate data-driven care. Other sources of PGHD include patient portals and electronic health records, which allow patients to directly submit information like food/symptom logs, mood ratings, and customized health data to their providers. (Khatiwada)
+Data fisiologis misalnya detak jantung, saturasi oksigen, tekanan darah, dan suhu tubuh yang umumnya dikumpulkan secara otomatis oleh sensor wearable.
+Data aktivitas dan perilaku misalnya adalah jumlah langkah, kalori terbakar, jarak tempuh, durasi dan kualitas tidur, serta pola aktivitas fisik lainnya.
+Data yang dilaporkan pasien contohnya seperti gejala subjektif, nyeri, dan mood yang dimasukkan secara manual \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 
 \subsection{Manfaat dan Tantangan PGHD}
 

@@ -40,7 +40,6 @@
 \usepackage{subfig}
 \usepackage{titling}
 \usepackage{booktabs}
-\usepackage{tabularx}
 \usepackage{blindtext}
 \usepackage{sectsty}
 \usepackage{chngcntr}
@@ -54,25 +53,36 @@
 \usepackage{parskip}
 \usepackage{afterpage}
 \usepackage{relsize}
-\usepackage{xcolor, colortbl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % Tambahkan baris ini
 
-\definecolor{rowOdd}{HTML}{FFFFFF}
-\definecolor{rowEven}{HTML}{F2F2F2}
-\definecolor{headerBg}{HTML}{BEBEBE}
+\usepackage{xcolor}
+\usepackage{nicematrix}
 
+% Definisi Warna Sesuai Spesifikasi
+\definecolor{rowOdd}{HTML}{FFFFFF} % Putih
+\definecolor{rowEven}{HTML}{F2F2F2} % Abu-abu muda
+\definecolor{headerBg}{HTML}{BEBEBE} % Abu-abu gelap
+
+% Pembaruan Environment styledtable
 \newenvironment{styledtable}[1]{%
     \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    % Menghilangkan padding spasi dari booktabs agar garis vertikal tersambung
-    \setlength{\aboverulesep}{0pt}
-    \setlength{\belowrulesep}{0pt}
-    \rowcolors{1}{rowOdd}{rowEven}
-    \tabularx{\textwidth}{#1}
+    % NiceTabularX secara otomatis menggantikan tabularx
+    % hvlines: Otomatis menggambar SEMUA garis vertikal dan horizontal
+    \NiceTabularX{\textwidth}{#1}[
+        hvlines,
+        cell-space-limits = 4pt, % Memberikan padding antar teks dan border
+        code-before = {
+            % Baris 1 (Header) diwarnai abu gelap
+            \rowcolor{headerBg}{1}
+            % Baris 2 ke bawah diberi warna selang-seling (Even, lalu Odd)
+            \rowcolors{2}{rowEven}{rowOdd}
+        }
+    ]
 }{%
-    \endtabularx
+    \endNiceTabularX
 }
 
-\usepackage{multirow}
 \usepackage{setspace}
 \usepackage{pifont}
 \usepackage{listings}

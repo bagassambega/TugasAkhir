@@ -143,29 +143,16 @@ Setiap entri PGHD yang berhasil diverifikasi akan disimpan pada ledger IOTA dala
 \begin{table}[htbp]
     \centering
     \caption{Struktur metadata PGHD pada ledger IOTA}\label{tab:iota-pghd-metadata}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}X}
-        \rowcolor[HTML]{DDEBF7}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X}
         \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \midrule
-        \verb|patient_id| & String & Alamat IOTA pasien (\verb|iota_address|) \\
-        \midrule
-        \verb|cid| & String & \textit{Content Identifier} IPFS yang merujuk ke \verb|enc_pghd| (ciphertext PGHD terenkripsi) \\
-        \midrule
-        \verb|h_cipher| & String & Nilai hash SHA-256 dari \verb|enc_pghd| yang dihitung oleh klien pasien \\
-        \midrule
-        \verb|enc_aes_key_nonce| & Byte[] & Ciphertext yang berisi gabungan kunci AES dan nonce yang telah dienkripsi menggunakan \verb|pre_public_key| pasien melalui mekanisme PRE \\
-        \midrule
-        \verb|capsule| & Byte[] & Parameter PRE yang akan digunakan untuk membangun ulang kunci AES di sisi klien yang diizinkan \\
-        \midrule
-        \verb|pghd_outer_signature| & Byte[] & \textit{Digital signature} yang dihasilkan dari \textit{signing} \verb|h_cipher| menggunakan \verb|pghd_secret_key| pasien \\
-        \midrule
-        \verb|status| & Byte & Status entri PGHD\@: \verb|0| = \texttt{VALID}, \verb|1| = \texttt{INVALID} \\
-        \midrule
-        \verb|failure_reason| & String & Alasan kegagalan jika status = \texttt{INVALID} \\
-        \midrule
-        \verb|timestamp| & Unix timestamp & Waktu pencatatan data ke dalam sistem (Unix timestamp milisekon) \\
-        \bottomrule
-    \end{tabularx}
+        \texttt{patient\_id} & String & Alamat IOTA pasien (\texttt{iota\_address}) \\
+        \texttt{cid} & String & \textit{Content Identifier} IPFS yang merujuk ke \texttt{enc\_pghd} (ciphertext PGHD terenkripsi) \\
+        \texttt{h\_cipher} & String & Nilai hash SHA-256 dari \texttt{enc\_pghd} yang dihitung oleh klien pasien \\
+        \texttt{enc\_aes\_key\_nonce} & Byte[] & Ciphertext yang berisi gabungan kunci AES dan nonce yang telah dienkripsi menggunakan \texttt{pre\_public\_key} pasien melalui mekanisme PRE \\
+        \texttt{capsule} & Byte[] & Parameter PRE yang akan digunakan untuk membangun ulang kunci AES di sisi klien yang diizinkan \\
+        \texttt{pghd\_outer\_signature} & Byte[] & \textit{Digital signature} yang dihasilkan dari \textit{signing} \texttt{h\_cipher} menggunakan \texttt{pghd\_secret\_key} pasien \\
+        \texttt{status} & Byte & Status entri PGHD\@: \texttt{0} = \texttt{VALID}, \texttt{1} = \texttt{INVALID} \\
+        \texttt{failure\_reason} & String & Alasan kegagalan jika status = \texttt{INVALID} \\
+        \texttt{timestamp} & Unix timestamp & Waktu pencatatan data ke dalam sistem (Unix timestamp milisekon) \\
+    \end{styledtable}
 \end{table}

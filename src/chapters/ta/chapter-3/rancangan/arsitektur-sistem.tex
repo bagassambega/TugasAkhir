@@ -27,42 +27,24 @@ Frekuensi pengambilan data dari setiap sumber mengikuti rekomendasi Google Healt
 Pemilihan interval 15 menit untuk pengiriman \textit{batch} (dijelaskan pada Subbab~\ref{alternatif-trigger-pengiriman-pghd}).
 
 \begin{table}[htbp]
-	\centering
-	\caption{Panduan Interval Pengambilan Data}\label{health-connect-get-data-interval}
-	\renewcommand{\arraystretch}{1.25}
-	\setlength{\tabcolsep}{8pt}
-	\rowcolors{2}{white}{white}
-	\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}X}
-		\rowcolor[HTML]{DDEBF7}
-		\textbf{Tipe Data} & \textbf{Ekspektasi (Frekuensi Penulisan)} \\
-		\midrule
-		Steps & Setiap 1 menit \\
-		\midrule
-		StepsCadence & Setiap 1 menit \\
-		\midrule
-		WheelchairPushes & Setiap 1 menit \\
-		\midrule
-		ActiveCaloriesBurned & Setiap 15 menit \\
-		\midrule
-		TotalCaloriesBurned & Setiap 15 menit \\
-		\midrule
-		Distance & Setiap 1 menit \\
-		\midrule
-		ElevationGained & Setiap 1 menit \\
-		\midrule
-		FloorsClimbed & Setiap 1 menit \\
-		\midrule
-		HeartRate & 4 kali per menit \\
-		\midrule
-		HeartRateVariabilityRmssd & Setiap 1 menit \\
-		\midrule
-		RespiratoryRate & Setiap 1 menit \\
-		\midrule
-		OxygenSaturation & Setiap jam \\
-		\bottomrule
-	\end{tabularx}
+    \centering
+    \caption{Panduan Interval Pengambilan Data}\label{health-connect-get-data-interval}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.40\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{Tipe Data} & \textbf{Ekspektasi (Frekuensi Penulisan)} \\
+        Steps & Setiap 1 menit \\
+        StepsCadence & Setiap 1 menit \\
+        WheelchairPushes & Setiap 1 menit \\
+        ActiveCaloriesBurned & Setiap 15 menit \\
+        TotalCaloriesBurned & Setiap 15 menit \\
+        Distance & Setiap 1 menit \\
+        ElevationGained & Setiap 1 menit \\
+        FloorsClimbed & Setiap 1 menit \\
+        HeartRate & 4 kali per menit \\
+        HeartRateVariabilityRmssd & Setiap 1 menit \\
+        RespiratoryRate & Setiap 1 menit \\
+        OxygenSaturation & Setiap jam \\
+    \end{styledtable}
 \end{table}
-
 \subsubsection{Penyimpanan Lokal}
 
 Klien pasien menyimpan setiap \textit{batch} PGHD dalam \textit{local database} sebelum dikirim ke sistem. 

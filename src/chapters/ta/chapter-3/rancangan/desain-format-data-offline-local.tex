@@ -7,33 +7,19 @@ Tabel~\ref{tab:field-batch-pghd-local}.
 \begin{table}[htbp]
     \centering
     \caption{Struktur Data Lokal Batch PGHD}\label{tab:field-batch-pghd-local}
-    \renewcommand{\arraystretch}{1.25}
-    \setlength{\tabcolsep}{6pt}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
-        \rowcolor[HTML]{DDEBF7}
-        \textbf{Field}              & \textbf{Tipe}   & \textbf{Deskripsi}                                                                                                                                     \\
-        \midrule
-        \verb|batch_id|             & UUID            & Identitas unik batch, sama dengan field pada skema JSON (Tabel~\ref{tab:field-batch-json-pghd}).                                                       \\
-        \midrule
-        \verb|enc_pghd|             & String (Base64) & Ciphertext hasil enkripsi (AES-GCM) dari payload PGHD\@.                                                                                               \\
-        \midrule
-        \verb|enc_aes_key_nonce|    & String (Base64) & Kunci AES dan nonce yang dienkripsi untuk kebutuhan PRE nantinya\@.                                                                                    \\
-        \midrule
-        \verb|capsule|              & String (Base64) & Artefak kriptografis untuk kebutuhan PRE nantinya.                                                                                                     \\
-        \midrule
-        \verb|h_cipher|             & String (Hex)    & Hash SHA-256 dari \verb|enc_pghd|.                                                                                                                     \\
-        \midrule
-        \verb|pghd_outer_signature| & String (Base64) & Tanda tangan digital dari \verb|h_cipher|.                                                                                                             \\
-        \midrule
-        \verb|status|               & Enum            & Status pengiriman: \verb|pending| (belum dikirim), \verb|sent| (berhasil), \verb|failed| (gagal sementara), \verb|permanent_failure| (gagal permanen). \\
-        \midrule
-        \verb|retry_count|          & Integer         & Jumlah percobaan pengiriman (default 0, maksimal 3).                                                                                                   \\
-        \midrule
-        \verb|created_at|           & Timestamp       & Waktu batch dibuat (Unix timestamp).                                                                                                                   \\
-        \midrule
-        \verb|last_attempt|         & Timestamp       & Waktu percobaan pengiriman terakhir (Unix timestamp).                                                                                                  \\
-        \bottomrule
-    \end{tabularx}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.3\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+        \texttt{batch\_id} & UUID & Identitas unik batch, sama dengan field pada skema JSON (Tabel~\ref{tab:field-batch-json-pghd}). \\
+        \texttt{enc\_pghd} & String (Base64) & Ciphertext hasil enkripsi (AES-GCM) dari payload PGHD\@. \\
+        \texttt{enc\_aes\_key\_nonce} & String (Base64) & Kunci AES dan nonce yang dienkripsi untuk kebutuhan PRE nantinya\@. \\
+        \texttt{capsule} & String (Base64) & Artefak kriptografis untuk kebutuhan PRE nantinya. \\
+        \texttt{h\_cipher} & String (Hex) & Hash SHA-256 dari \texttt{enc\_pghd}. \\
+        \texttt{pghd\_outer\_signature} & String (Base64) & Tanda tangan digital dari \texttt{h\_cipher}. \\
+        \texttt{status} & Enum & Status pengiriman: \texttt{pending} (belum dikirim), \texttt{sent} (berhasil), \texttt{failed} (gagal sementara), \texttt{permanent\_failure} (gagal permanen). \\
+        \texttt{retry\_count} & Integer & Jumlah percobaan pengiriman (default 0, maksimal 3). \\
+        \texttt{created\_at} & Timestamp & Waktu batch dibuat (Unix timestamp). \\
+        \texttt{last\_attempt} & Timestamp & Waktu percobaan pengiriman terakhir (Unix timestamp). \\
+    \end{styledtable}
 \end{table}
 
 Sebelum PGHD dibentuk menjadi batch dan dienkripsi untuk dikirimkan ke sistem,
@@ -45,30 +31,17 @@ dan status sinkronisasinya.
 \begin{table}[H]
     \centering
     \caption{Format Data PGHD Lokal Raw}\label{tab:field-pghd-raw-local}
-    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
-        \rowcolor[HTML]{DDEBF7}
-        \midrule
-        \textbf{Field}           & \textbf{Tipe} & \textbf{Keterangan}                                                  \\
-        \midrule
-        \texttt{record\_id}      & String        & Identitas unik data PGHD lokal.                                      \\
-        \midrule
-        \texttt{patient\_id}     & String        & Identitas pasien pada aplikasi.                                      \\
-        \midrule
-        \texttt{type}            & String        & Jenis data kesehatan, misalnya langkah, detak jantung, atau kalori.  \\
-        \midrule
-        \texttt{value}           & Number        & Nilai pengukuran.                                                    \\
-        \midrule
-        \texttt{unit}            & String        & Satuan pengukuran.                                                   \\
-        \midrule
-        \texttt{timestamp}       & DateTime      & Waktu pengukuran.                                                    \\
-        \midrule
-        \texttt{source}          & String        & Sumber data, misalnya Health Connect atau sensor perangkat.          \\
-        \midrule
-        \texttt{source\_package} & String        & Nama paket aplikasi sumber data apabila berasal dari Health Connect. \\
-        \midrule
-        \texttt{sync\_status}    & Enum          & Status sinkronisasi.                                                 \\
-        \midrule
-        \texttt{created\_at}     & DateTime      & Waktu data disimpan di perangkat.                                    \\
-        \midrule
-    \end{tabularx}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.3\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{Field} & \textbf{Tipe} & \textbf{Keterangan} \\
+        \texttt{record\_id} & String & Identitas unik data PGHD lokal. \\
+        \texttt{patient\_id} & String & Identitas pasien pada aplikasi. \\
+        \texttt{type} & String & Jenis data kesehatan, misalnya langkah, detak jantung, atau kalori. \\
+        \texttt{value} & Number & Nilai pengukuran. \\
+        \texttt{unit} & String & Satuan pengukuran. \\
+        \texttt{timestamp} & DateTime & Waktu pengukuran. \\
+        \texttt{source} & String & Sumber data, misalnya Health Connect atau sensor perangkat. \\
+        \texttt{source\_package} & String & Nama paket aplikasi sumber data apabila berasal dari Health Connect. \\
+        \texttt{sync\_status} & Enum & Status sinkronisasi. \\
+        \texttt{created\_at} & DateTime & Waktu data disimpan di perangkat. \\
+    \end{styledtable}
 \end{table}

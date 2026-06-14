@@ -1,3 +1,5 @@
+% chktex-file 8
+
 \section{Kerahasiaan, Integritas, Ketersediaan dan \textit{Data Provenance}}\label{studi-cia-provenance}
 
 \subsection{Kerahasiaan (\textit{Confidentiality})}\label{studi-confidentiality}
@@ -63,23 +65,22 @@ Daftar \textit{threat} yang diidentifikasi oleh STRIDE dan \textit{security cont
 \begin{table}[htbp]
     \centering
     \caption{Daftar Ancaman STRIDE dan Parameter Keamanannya}\label{tab:stride-threats}
-    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{0.25\textwidth}|}
-        \midrule
-        \rowcolor{headerBg}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{0.25\textwidth}}
+        
         \textbf{Ancaman} & \textbf{Penjelasan} & \textbf{Parameter Keamanan} \\
-        \midrule
+        
         \textit{Spoofing} & Peniruan identitas entitas sah. & Autentikasi \\
-        \midrule
+        
         \textit{Tampering} & Modifikasi data tanpa otorisasi. & Integritas \\
-        \midrule
+        
         \textit{Repudiation} & Penyangkalan tindakan yang sebenarnya dilakukan. & Nir-sangkalan \\
-        \midrule
+        
         \textit{Information Disclosure} & Pengungkapan data kepada pihak tanpa hak akses. & Kerahasiaan \\
-        \midrule
+        
         \textit{Denial of Service} & Eksploitasi sumber daya hingga layanan lumpuh. & Ketersediaan \\
-        \midrule
+        
         \textit{Elevation of Privilege} & Upaya untuk mendapatkan hak akses lebih tinggi. & Otorisasi \\
-        \midrule
+        
     \end{styledtable}
 \end{table}
 
@@ -88,29 +89,34 @@ Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan ol
 \begin{table}[htbp]
     \centering
     \caption{Daftar Ancaman Keamanan PGHD Berdasarkan Kategori STRIDE \parencite{Nadifi_2025_STRIDE_IoT}}\label{tab:stride-pghd-studi}
-    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}p{0.16\textwidth}|>{\raggedright\arraybackslash}X|}
-        \midrule
-        \rowcolor{headerBg}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}X}
+        
         \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Ancaman} \\
-        \midrule
-        \multirow{4}{0.18\textwidth}{\raggedright~\textit{Tampering}} & \multirow{4}{0.16\textwidth}{\centering Integritas} & Data yang diberikan sensor ke \textit{mobile app} dapat dimodifikasi, baik melalui interaksi manusia langsung atau perubahan pengaturan sensor. \\
-        \cline{3-3}
+        
+        % --- KELOMPOK 1: GANJIL (PUTIH) ---
+        \rowcolor{rowOdd}
+        \Block{4-1}{\textit{Tampering}} & \Block{4-1}{Integritas} & Data yang diberikan sensor ke \textit{mobile app} dapat dimodifikasi, baik melalui interaksi manusia langsung atau perubahan pengaturan sensor. \\
+        \rowcolor{rowOdd}
         & & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
-        \cline{3-3}
+        \rowcolor{rowOdd}
         & & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
-        \cline{3-3}
+        \rowcolor{rowOdd}
         & & Serangan \textit{SQL injection} terjadi ketika kode berbahaya dimasukkan ke dalam string yang diteruskan ke server SQL\@. \\
-        \midrule
-        \multirow{3}{0.18\textwidth}{\raggedright~\textit{Information Disclosure}} & \multirow{3}{0.16\textwidth}{\centering Kerahasiaan} & Perlindungan data yang tidak tepat pada ponsel pasien atau \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
-        \cline{3-3}
+        
+        % --- KELOMPOK 2: GENAP (ABU-ABU MUDA) ---
+        \rowcolor{rowEven}
+        \Block{3-1}{\textit{Information Disclosure}} & \Block{3-1}{Kerahasiaan} & Perlindungan data yang tidak tepat pada ponsel pasien atau \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
+        \rowcolor{rowEven}
         & & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
-        \cline{3-3}
+        \rowcolor{rowEven}
         & & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
-        \midrule
-        \multirow{2}{0.18\textwidth}{\raggedright~\textit{Denial of Service}} & \multirow{2}{0.16\textwidth}{\centering Ketersediaan} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
-        \cline{3-3}
+        
+        % --- KELOMPOK 3: GANJIL (PUTIH) ---
+        \rowcolor{rowOdd}
+        \Block{2-1}{\textit{Denial of Service}} & \Block{2-1}{Ketersediaan} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
+        \rowcolor{rowOdd}
         & & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
-        \midrule
+        
     \end{styledtable}
 \end{table}
 
