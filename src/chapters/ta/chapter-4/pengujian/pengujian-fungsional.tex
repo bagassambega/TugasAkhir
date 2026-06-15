@@ -1,0 +1,42 @@
+% chktex-file 44
+% chktex-file 1
+
+\subsection{Pengujian Fungsional}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.16\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Skenario Pengujian Fungsional Sistem DecMed-PGHD}\label{tab:skenario-fungsional} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    T-F01 & F01 & Pasien login, membuka aplikasi Android, memberi izin Health Connect/sensor, menekan Start Collecting, lalu menambahkan data manual PGHD\@. & Data PGHD otomatis dan manual muncul pada halaman PGHD lokal dengan waktu pengukuran dan sumber data. \\
+    \hline
+    T-F02 & F02 & Matikan internet, lakukan pengumpulan PGHD otomatis/manual, tutup lalu buka ulang aplikasi. & Data tetap tersimpan di perangkat dan batch belum terkirim tetap muncul pada halaman PGHD/Batches. \\
+    \hline
+    T-F03 & F03 & Saat offline, kumpulkan PGHD sampai ada batch menunggu pengiriman. Aktifkan kembali internet. & Sistem mencoba mengirim batch secara otomatis ketika koneksi tersedia dan status berubah menjadi terkirim atau gagal dengan alasan yang tampil. \\
+    \hline
+    T-F04 & F04 & Setelah batch berhasil dikirim, pasien membuka halaman PGHD/Batches dan detail data. & Riwayat PGHD yang dikirim tampil dengan waktu pengukuran, waktu pengiriman, status sinkronisasi, dan sumber data. \\
+    \hline
+    T-F05 & F05 & Tenaga kesehatan membuka QR berisi identitas/PRE public key. Pasien scan QR dan memberi akses baca PGHD\@. & Akses PGHD tercatat sebagai grant aktif untuk tenaga kesehatan tersebut. \\
+    \hline
+    T-F06 & F06 & Tenaga kesehatan yang sudah diberi akses membuka daftar PGHD pasien. & Daftar metadata PGHD pasien tampil pada client tenaga kesehatan. \\
+    \hline
+    T-F07 & F07 & Tenaga kesehatan memilih salah satu entri PGHD dari daftar dan membuka detail. & Isi PGHD berhasil didekripsi dan ditampilkan, termasuk nilai data, waktu, dan metadata provenance. \\
+    \hline
+    T-F08 & F08 & Gunakan data PGHD uji yang payload/hash/signature-nya dimodifikasi, lalu coba dibuka oleh tenaga kesehatan. & Sistem menampilkan peringatan bahwa data tidak valid/rusak dan data tidak diterima sebagai PGHD valid. \\
+    \hline
+    T-F09 & F09 & Pasien mencabut akses PGHD tenaga kesehatan, lalu tenaga kesehatan mencoba refresh daftar atau membuka detail PGHD\@. & Akses langsung gagal/ditolak dan tenaga kesehatan tidak dapat lagi membaca PGHD pasien. \\
+    \hline
+\end{styledxltabular}

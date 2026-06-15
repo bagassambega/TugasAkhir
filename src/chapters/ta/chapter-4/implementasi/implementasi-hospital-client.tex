@@ -1,0 +1,67 @@
+\subsection{Implementasi Client Tenaga Kesehatan}
+
+Client tenaga kesehatan diimplementasikan menggunakan Tauri, SvelteKit, TypeScript, dan Rust. Frontend SvelteKit digunakan untuk menampilkan halaman aplikasi, sedangkan backend Rust pada Tauri digunakan untuk menyimpan kredensial lokal, melakukan operasi kriptografi, memanggil PRE, memanggil smart contract, dan mendekripsi data yang diterima.
+
+Client ini digunakan oleh admin rumah sakit dan tenaga kesehatan. Admin rumah sakit dapat membuat activation key untuk akun tenaga kesehatan. Tenaga kesehatan menggunakan activation key tersebut untuk mengaktifkan akun, melengkapi profil, dan menghasilkan QR akses. QR akses berisi alamat IOTA tenaga kesehatan dan public key PRE tenaga kesehatan. QR inilah yang kemudian dipindai oleh client Android pasien ketika pasien memberikan akses.
+
+\subsubsection{Halaman dan Fitur Utama}
+
+Client tenaga kesehatan terdiri atas beberapa halaman utama sebagai berikut,
+
+\begin{enumerate}
+    \item Halaman aktivasi, digunakan untuk memasukkan activation key dan data aktivasi akun rumah sakit atau tenaga kesehatan.
+    \item Halaman register dan login, digunakan untuk membuat dan membuka akun lokal pada client tenaga kesehatan.
+    \item Halaman pelengkapan profil, digunakan untuk mengisi nama dan metadata profil tenaga kesehatan.
+    \item Halaman profil, digunakan untuk menampilkan QR tenaga kesehatan yang berisi alamat IOTA dan public key PRE.
+    \item Halaman dashboard, digunakan untuk melihat daftar akses yang diterima dari pasien.
+    \item Halaman medical record, digunakan untuk membaca atau memperbarui medical record pasien apabila akses yang sesuai telah diberikan.
+    \item Halaman PGHD, digunakan untuk melihat daftar batch PGHD pasien, membuka detail batch PGHD, melihat provenance data, dan menginvalidasi data PGHD apabila data terbukti tidak valid.
+\end{enumerate}
+
+\subsubsection{Akses dan Dekripsi PGHD}
+
+Setelah pasien memberikan akses PGHD, tenaga kesehatan memperoleh token akses dari PRE. Token tersebut digunakan untuk memanggil endpoint \texttt{/api/v1/pghd} dan \texttt{/api/v1/pghd/\{index\}}. Client tenaga kesehatan tidak langsung memperoleh plaintext PGHD dari PRE. PRE mengirimkan payload terenkripsi, metadata on-chain, \textit{cfrag}, capsule, public key PGHD pasien, dan material lain yang diperlukan untuk dekripsi. Dekripsi akhir tetap dilakukan pada client tenaga kesehatan.
+
+Pada saat membuka detail PGHD, client melakukan beberapa tahap validasi. Pertama, client membandingkan hash dari ciphertext yang diunduh dengan hash yang tercatat pada metadata. Kedua, client melakukan proses re-encryption menggunakan \textit{cfrag} dan private key tenaga kesehatan. Ketiga, setelah plaintext berhasil diperoleh, client memverifikasi inner signature PGHD. Jika hash atau signature tidak valid, client menampilkan peringatan kepada tenaga kesehatan dan dapat memanggil endpoint invalidasi PGHD pada PRE.
+
+\subsubsection{Pemisahan PGHD dan Medical Record}
+
+PGHD dan medical record ditampilkan sebagai dua jenis data yang berbeda. Medical record tetap mengikuti mekanisme DecMed lama yang berorientasi pada data administratif dan klinis. PGHD menggunakan endpoint dan token akses terpisah dengan tujuan akses \texttt{READ\_PGHD}. Pemisahan ini membuat tenaga kesehatan dapat memiliki akses ke PGHD tanpa harus memiliki akses update medical record, atau sebaliknya sesuai akses yang diberikan pasien.
+
+\subsubsection{Command Tauri yang Digunakan}
+
+Backend Tauri menyediakan command yang dipanggil oleh frontend. Ringkasan command utama pada client tenaga kesehatan dapat dilihat pada Tabel~\ref{tab:implementasi-command-hospital-client}.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Command utama pada client tenaga kesehatan}\label{tab:implementasi-command-hospital-client} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Command} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Command} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{get\_profile} & Mengambil profil tenaga kesehatan dan metadata yang diperlukan untuk menampilkan QR. \\
+    \hline
+    \texttt{get\_medical\_record} & Membaca medical record pasien berdasarkan token akses baca medical record. \\
+    \hline
+    \texttt{new\_medical\_record} & Membuat medical record baru apabila tenaga kesehatan memiliki akses update. \\
+    \hline
+    \texttt{update\_medical\_record} & Memperbarui medical record pasien berdasarkan akses update yang diberikan pasien. \\
+    \hline
+    \texttt{get\_pghd\_list} & Mengambil daftar metadata batch PGHD pasien melalui PRE. \\
+    \hline
+    \texttt{get\_pghd} & Mengambil, melakukan re-encryption, mendekripsi, dan memverifikasi detail batch PGHD. \\
+    \hline
+    \texttt{invalidate\_pghd} & Mengirim permintaan invalidasi PGHD ketika data terbukti rusak atau tidak sah. \\
+    \hline
+\end{styledxltabular}

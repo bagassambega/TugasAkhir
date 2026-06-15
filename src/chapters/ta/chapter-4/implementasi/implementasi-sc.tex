@@ -1,0 +1,103 @@
+\subsection{Implementasi Smart Contract}
+
+Smart contract DecMed-PGHD diimplementasikan menggunakan bahasa pemrograman Move pada jaringan IOTA. Implementasi smart contract tetap menggunakan package \texttt{decmed}, tetapi package tersebut diperluas dengan mekanisme PGHD. Perluasan tersebut meliputi penyimpanan public key PGHD pasien, metadata PGHD, status validasi PGHD, akses \texttt{READ\_PGHD}, dan fungsi invalidasi PGHD.
+
+Secara umum, package \texttt{decmed} terdiri atas module utama dan module struktur data. Ringkasan module yang relevan terhadap PGHD dapat dilihat pada Tabel~\ref{tab:implementasi-module-sc-pghd}.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Module smart contract yang relevan terhadap PGHD}\label{tab:implementasi-module-sc-pghd} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Module} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Module} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{decmed::patient} & Mengelola registrasi pasien, pemberian akses, pencabutan akses, dan public key PGHD pasien. \\
+    \hline
+    \texttt{decmed::hospital\_personnel} & Mengelola akun tenaga kesehatan, role tenaga kesehatan, activation key, dan akses yang dimiliki tenaga kesehatan. \\
+    \hline
+    \texttt{decmed::proxy} & Menjadi module yang dipanggil PRE untuk menyimpan metadata PGHD, membaca daftar PGHD, membaca detail PGHD, dan menginvalidasi PGHD. \\
+    \hline
+    \texttt{decmed::std\_struct\_patient\_account} & Menyimpan struktur akun pasien, termasuk metadata medical record, metadata PGHD, dan public key PGHD. \\
+    \hline
+    \texttt{decmed::std\_struct\_patient\_pghd\_metadata} & Menyimpan struktur metadata PGHD yang berisi index, CID, hash ciphertext, metadata terenkripsi, status, alasan invalidasi, dan timestamp. \\
+    \hline
+    \texttt{decmed::std\_enum\_hospital\_personnel\_access\_data\_type} & Mendefinisikan jenis data yang dapat diakses tenaga kesehatan, termasuk nilai \texttt{Pghd}. \\
+    \hline
+    \texttt{decmed::std\_struct\_hospital\_personnel\_access\_data} & Menyimpan capability akses tenaga kesehatan, termasuk tipe data yang boleh diakses, waktu kedaluwarsa, metadata akses, dan index medical record apabila relevan. \\
+    \hline
+\end{styledxltabular}
+
+\subsubsection{Struktur Metadata PGHD}
+
+Metadata PGHD disimpan dalam struktur \texttt{PatientPghdMetadata}. Struktur tersebut tidak menyimpan plaintext PGHD, melainkan referensi dan metadata yang diperlukan untuk verifikasi. Payload PGHD terenkripsi disimpan pada IPFS, sedangkan smart contract menyimpan CID dan hash ciphertext untuk keperluan integritas.
+
+\begin{lstlisting}[caption={Struktur metadata PGHD pada smart contract}, label={lst:patient-pghd-metadata-struct}, float=htb]
+public struct PatientPghdMetadata has copy, drop, store {
+    index: u64,
+    cid: String,
+    h_cipher: String,
+    metadata: String,
+    status: u8,
+    failure_reason: String,
+    timestamp: u64,
+}
+\end{lstlisting}
+
+Nilai \texttt{status} digunakan untuk membedakan data valid dan invalid. Pada saat metadata PGHD baru dibuat, status bernilai \texttt{0}. Jika data terbukti rusak atau tidak sah, PRE atau tenaga kesehatan dapat menginvalidasi data tersebut sehingga status berubah menjadi \texttt{1} dan \texttt{failure\_reason} diisi dengan alasan invalidasi.
+
+\subsubsection{Capability Akses PGHD}
+
+Mekanisme akses PGHD mengikuti pola CapBAC yang telah digunakan pada DecMed. Perbedaannya, tipe data akses diperluas dengan nilai \texttt{Pghd}. Ketika pasien memberikan akses baca PGHD kepada tenaga kesehatan, smart contract membuat akses baca dengan \texttt{access\_data\_types} berisi \texttt{Pghd}. Akses tersebut memiliki waktu kedaluwarsa dan dicatat pada access log pasien.
+
+Pada module \texttt{patient}, fungsi \texttt{create\_access} membedakan akses PGHD dan akses medical record berdasarkan jumlah metadata yang dikirim. Metadata dengan panjang satu elemen digunakan untuk akses PGHD, sedangkan metadata dengan panjang dua elemen digunakan untuk akses read dan update medical record. Pemisahan ini membuat PGHD dan medical record dapat diberikan secara terpisah.
+
+\subsubsection{Fungsi Smart Contract PGHD}
+
+Fungsi utama PGHD berada pada module \texttt{proxy}. Ringkasan fungsi tersebut dapat dilihat pada Tabel~\ref{tab:implementasi-fungsi-sc-pghd}.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Fungsi smart contract untuk mekanisme PGHD}\label{tab:implementasi-fungsi-sc-pghd} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Fungsi} & \textbf{Fungsi Implementasi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Fungsi} & \textbf{Fungsi Implementasi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{submit\_pghd} & Menambahkan metadata PGHD baru milik pasien. Fungsi ini memvalidasi keberadaan pasien dan menolak metadata PGHD kosong. \\
+    \hline
+    \texttt{get\_pghd\_list} & Mengembalikan daftar metadata PGHD yang masih valid untuk tenaga kesehatan yang memiliki akses \texttt{Pghd}. \\
+    \hline
+    \texttt{get\_pghd} & Mengembalikan metadata PGHD berdasarkan index dan menolak akses apabila data sudah invalid, index tidak tersedia, akses tidak ditemukan, akses salah tipe, atau akses kedaluwarsa. \\
+    \hline
+    \texttt{invalidate\_pghd\_entry} & Mengubah status entri PGHD menjadi invalid berdasarkan CID dan menyimpan alasan invalidasi. \\
+    \hline
+    \texttt{assert\_pghd\_read\_access} & Fungsi internal untuk memastikan tenaga kesehatan memiliki akses baca PGHD yang aktif. \\
+    \hline
+\end{styledxltabular}
+
+\subsubsection{Validasi Akses dan Invalidasi}
+
+Validasi akses dilakukan sebelum daftar maupun detail PGHD dikembalikan. Smart contract memeriksa apakah patient address dan hospital personnel address terdaftar, apakah akses baca terhadap pasien tersedia pada akun tenaga kesehatan, apakah tipe akses mengandung \texttt{Pghd}, dan apakah waktu akses belum kedaluwarsa. Jika akses kedaluwarsa, smart contract menghapus akses tersebut dari map akses tenaga kesehatan dan mengembalikan error \texttt{EAccessExpired}.
+
+Invalidasi PGHD tidak menghapus metadata dari storage. Metadata tetap berada pada smart contract, tetapi statusnya berubah menjadi invalid. Fungsi \texttt{get\_pghd\_list} hanya mengembalikan metadata dengan status valid, sedangkan fungsi \texttt{get\_pghd} menolak pembacaan entri yang sudah invalid. Dengan demikian, riwayat data tetap dapat diaudit, tetapi data yang rusak atau tidak sah tidak lagi ditampilkan sebagai data PGHD valid.

@@ -1,0 +1,112 @@
+\chapter{Kakas Implementasi DecMed-PGHD}
+\label{app:kakas-implementasi-decmed-pghd}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}p{0.16\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Kakas yang digunakan dalam implementasi DecMed-PGHD}\label{tab:kakas-implementasi-decmed-pghd} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Nama} & \textbf{Jenis} & \textbf{Tipe/Versi} & \textbf{Keterangan} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Nama} & \textbf{Jenis} & \textbf{Tipe/Versi} & \textbf{Keterangan} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    Komputer lokal & Perangkat keras & Laptop x86\_64, Intel Core i5-11260H, 12 thread, RAM 15 GiB & Lingkungan utama untuk pengembangan, build, pengujian, dan menjalankan client/backend lokal. \\
+    \hline
+    Sistem operasi & Perangkat lunak & Linux 6.18.35-1-lts & Sistem operasi pada komputer pengembangan. \\
+    \hline
+    Android device & Perangkat keras & Perangkat Android dengan dukungan Health Connect & Perangkat untuk menjalankan client Android PGHD dan membaca data Health Connect/sensor. \\
+    \hline
+    Rust & Perangkat lunak & 1.94.1 & Bahasa pemrograman untuk PRE, client Tauri backend, shared crypto library, dan shared IOTA library. \\
+    \hline
+    Cargo & Perangkat lunak & 1.94.1 & Build tool dan package manager Rust. \\
+    \hline
+    Kotlin & Perangkat lunak & 2.2.10 & Bahasa pemrograman utama client Android PGHD. \\
+    \hline
+    Java/OpenJDK & Perangkat lunak & 26.0.1 & Runtime dan toolchain JVM untuk proses build Android. \\
+    \hline
+    Gradle & Perangkat lunak & 9.4.1 & Build system client Android PGHD. \\
+    \hline
+    Android Gradle Plugin & Perangkat lunak & 9.2.1 & Plugin Gradle untuk build aplikasi Android. \\
+    \hline
+    Android SDK & Perangkat lunak & Compile SDK 36.1, min SDK 30, target SDK 36 & SDK untuk build dan deployment aplikasi Android PGHD. \\
+    \hline
+    Android Build Tools & Perangkat lunak & 36.1.0 & Kakas build Android. \\
+    \hline
+    Jetpack Compose & Framework UI & BOM 2025.12.00 & Framework UI deklaratif untuk client Android PGHD. \\
+    \hline
+    AndroidX Health Connect Client & Library Android & 1.1.0 & API Android untuk membaca data kesehatan dari Health Connect. \\
+    \hline
+    AndroidX Room & Library Android & 2.8.4 & Basis data lokal pada client Android untuk menyimpan PGHD, batch, dan metadata lokal. \\
+    \hline
+    AndroidX WorkManager & Library Android & 2.10.0 & Penjadwalan background worker untuk sinkronisasi Health Connect, pembentukan batch, dan pengiriman PGHD. \\
+    \hline
+    AndroidX DataStore & Library Android & 1.1.7 & Penyimpanan konfigurasi ringan pada client Android. \\
+    \hline
+    ZXing & Library Android & 3.5.3 & Kakas pembacaan QR code untuk mekanisme grant access dari pasien. \\
+    \hline
+    Rust JNI & Library & jni 0.21 & Integrasi shared library Rust dengan client Android. \\
+    \hline
+    decmed-crypto & Shared library & 0.1.0 & Library Rust untuk operasi kriptografi PRE/Umbral yang dipanggil dari Android. \\
+    \hline
+    decmed-iota & Shared library & 0.1.0 & Library Rust untuk operasi IOTA, registrasi pasien, dan publikasi public key PGHD dari Android. \\
+    \hline
+    Umbral PRE & Library kriptografi & 0.11 & Library proxy re-encryption untuk pembuatan capsule, kfrag, cfrag, dan proses dekripsi ulang. \\
+    \hline
+    AES-GCM & Library kriptografi & aes-gcm 0.10 & Enkripsi simetris payload PGHD dan medical record. \\
+    \hline
+    Argon2 & Library kriptografi & 0.5.3 & Derivasi kunci berbasis PIN/secret pada komponen client. \\
+    \hline
+    IOTA SDK Rust & Library blockchain & Git iotaledger/iota, testnet/rev 3d7c588 & Library Rust untuk membangun dan mengeksekusi transaksi IOTA. \\
+    \hline
+    IOTA CLI & Perangkat lunak & 1.24.0-rc-363129423a17 & Kakas CLI untuk build, publish, dan interaksi dengan IOTA testnet. \\
+    \hline
+    IOTA Move & Bahasa smart contract & 2024.beta & Bahasa pemrograman smart contract pada paket DecMed-PGHD. \\
+    \hline
+    IOTA Testnet & Layanan blockchain & Public testnet & Jaringan blockchain untuk publikasi smart contract dan penyimpanan metadata DecMed-PGHD. \\
+    \hline
+    IOTA Gas Station & Layanan pendukung & iotaledger/gas-station:latest & Layanan sponsor transaksi IOTA untuk client dan PRE. \\
+    \hline
+    PRE backend & Backend service & proxy\_reencryption 0.1.0 & Backend Rust yang menangani verifikasi PGHD, IPFS, Redis, smart contract, dan proxy re-encryption. \\
+    \hline
+    Axum & Web framework & 0.8.4 & Framework HTTP server untuk PRE. \\
+    \hline
+    Tokio & Runtime async & 1.44.2 & Runtime asinkron pada PRE dan shared IOTA library. \\
+    \hline
+    Redis & Basis data & redis:8-alpine, crate redis 0.32 & Penyimpanan sementara untuk token akses dan material re-encryption pada PRE. \\
+    \hline
+    IPFS Kubo & Penyimpanan terdistribusi & ipfs/kubo:release & Penyimpanan payload PGHD terenkripsi dan file terenkripsi DecMed. \\
+    \hline
+    IPFS Cluster & Orkestrator IPFS & ipfs/ipfs-cluster:latest & Orkestrasi beberapa node IPFS pada server kampus. \\
+    \hline
+    Docker & Perangkat lunak & 28.5.0 & Containerization untuk Redis, IPFS, IPFS Cluster, Gas Station, dan layanan pendukung lain. \\
+    \hline
+    Nginx & Web server & nginx:alpine & Reverse proxy pada konfigurasi PRE. \\
+    \hline
+    Node.js & Perangkat lunak & 22.20.0 & Runtime JavaScript untuk client SvelteKit/Tauri. \\
+    \hline
+    npm & Perangkat lunak & 11.6.1 & Package manager untuk client web/desktop. \\
+    \hline
+    TypeScript & Bahasa pemrograman & 5.6.2--5.6.3 & Bahasa pemrograman frontend client ministry, client patient Tauri, dan client tenaga kesehatan. \\
+    \hline
+    Svelte & Frontend framework & 5.0.0--5.37.3 & Framework UI untuk client Tauri. \\
+    \hline
+    SvelteKit & Web framework & 2.9.0--2.27.0 & Framework web untuk client Tauri. \\
+    \hline
+    Vite & Build tool frontend & 6.0.3--6.3.5 & Development server dan build tool untuk client SvelteKit. \\
+    \hline
+    Tauri & Desktop framework & 2 & Framework aplikasi desktop untuk client ministry, patient Tauri, dan client tenaga kesehatan. \\
+    \hline
+    Keyring & Library desktop & 3 & Penyimpanan secret lokal pada client Tauri. \\
+    \hline
+    SSH tunneling & Konfigurasi jaringan & OpenSSH & Mekanisme akses lokal ke IPFS dan IOTA Gas Station pada server kampus. \\
+    \hline
+\end{styledxltabular}

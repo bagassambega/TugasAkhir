@@ -11,81 +11,9 @@ Batasan yang diterapkan untuk skenario pengujian sistem DecMed-PGHD ini adalah,
     \item Pengujian dilakukan pada lingkungan \textit{proxy reencryption}, IPFS, dan \textit{client} lokal, dengan menggunakan IOTA testnet publik.
 \end{enumerate}
 
-
 \input{chapters/ta/chapter-4/pengujian/pengujian-sc.tex}
 
-\subsection{Pengujian Fungsional}
+\input{chapters/ta/chapter-4/pengujian/pengujian-fungsional.tex}
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.16\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Skenario Pengujian Fungsional Sistem DecMed-PGHD}\label{tab:skenario-fungsional} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
-    \hline
-    \endhead
-    \hline
-    \endfoot
-    \hline
-    \endlastfoot
-    T-F01 & F01 & Pasien login, membuka aplikasi Android, memberi izin Health Connect/sensor, menekan Start Collecting, lalu menambahkan data manual PGHD\@. & Data PGHD otomatis dan manual muncul pada halaman PGHD lokal dengan waktu pengukuran dan sumber data. \\
-    \hline
-    T-F02 & F02 & Matikan internet, lakukan pengumpulan PGHD otomatis/manual, tutup lalu buka ulang aplikasi. & Data tetap tersimpan di perangkat dan batch belum terkirim tetap muncul pada halaman PGHD/Batches. \\
-    \hline
-    T-F03 & F03 & Saat offline, kumpulkan PGHD sampai ada batch menunggu pengiriman. Aktifkan kembali internet. & Sistem mencoba mengirim batch secara otomatis ketika koneksi tersedia dan status berubah menjadi terkirim atau gagal dengan alasan yang tampil. \\
-    \hline
-    T-F04 & F04 & Setelah batch berhasil dikirim, pasien membuka halaman PGHD/Batches dan detail data. & Riwayat PGHD yang dikirim tampil dengan waktu pengukuran, waktu pengiriman, status sinkronisasi, dan sumber data. \\
-    \hline
-    T-F05 & F05 & Tenaga kesehatan membuka QR berisi identitas/PRE public key. Pasien scan QR dan memberi akses baca PGHD\@. & Akses PGHD tercatat sebagai grant aktif untuk tenaga kesehatan tersebut. \\
-    \hline
-    T-F06 & F06 & Tenaga kesehatan yang sudah diberi akses membuka daftar PGHD pasien. & Daftar metadata PGHD pasien tampil pada client tenaga kesehatan. \\
-    \hline
-    T-F07 & F07 & Tenaga kesehatan memilih salah satu entri PGHD dari daftar dan membuka detail. & Isi PGHD berhasil didekripsi dan ditampilkan, termasuk nilai data, waktu, dan metadata provenance. \\
-    \hline
-    T-F08 & F08 & Gunakan data PGHD uji yang payload/hash/signature-nya dimodifikasi, lalu coba dibuka oleh tenaga kesehatan. & Sistem menampilkan peringatan bahwa data tidak valid/rusak dan data tidak diterima sebagai PGHD valid. \\
-    \hline
-    T-F09 & F09 & Pasien mencabut akses PGHD tenaga kesehatan, lalu tenaga kesehatan mencoba refresh daftar atau membuka detail PGHD\@. & Akses langsung gagal/ditolak dan tenaga kesehatan tidak dapat lagi membaca PGHD pasien. \\
-    \hline
-\end{styledxltabular}
-
-\subsection{Pengujian Non-Fungsional}
-
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Skenario Pengujian Non-Fungsional Sistem DecMed-PGHD}\label{tab:skenario-non-fungsional} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
-    \hline
-    \endhead
-    \hline
-    \endfoot
-    \hline
-    \endlastfoot
-    T-NF01 & Confidentiality & Bandingkan dua tenaga kesehatan: satu sudah diberi akses PGHD, satu belum. Keduanya mencoba membuka PGHD pasien yang sama. & Tenaga kesehatan dengan akses aktif dapat membuka data, sedangkan yang tidak memiliki akses gagal memperoleh plaintext. \\
-    \hline
-    T-NF02 & Integrity & Submit PGHD valid, lalu gunakan salinan data uji yang ciphertext/hash/signature-nya diubah. Coba buka melalui client tenaga kesehatan. & Sistem mendeteksi perubahan melalui hash/signature dan menandai data sebagai tidak valid. \\
-    \hline
-    T-NF03 & Availability & Kumpulkan data PGHD time-series cukup banyak sampai terbentuk batch, termasuk saat offline lalu online kembali. & Aplikasi tidak crash, data tidak hilang, data dikirim dalam batch, dan tidak membuat transaksi per record sensor. \\
-    \hline
-    T-NF04 & Provenance & Tenaga kesehatan membuka detail PGHD yang valid dan melihat metadata. & Sistem menampilkan asal data: identitas pasien, waktu pengukuran, sumber data, perangkat/aplikasi asal, metode pencatatan, dan status validasi. \\
-    \hline
-    T-NF05 & Sanitasi Input & Penguji memasukkan data PGHD manual, data medical record, nama profil, activation key, alasan invalidasi PGHD, dan payload data perangkat dengan variasi input tidak valid seperti karakter kontrol, spasi berlebih, teks terlalu panjang, nilai kosong, timestamp rusak, serta nilai numerik NaN/Infinity. & Input berbahaya atau tidak valid ditolak/dibersihkan, aplikasi tidak crash, data yang tersimpan tidak mengandung payload mentah yang rusak, dan proses pengiriman/dekripsi/verifikasi tetap berjalan normal. \\
-    \hline
-\end{styledxltabular}
-
-% Untuk NF03, evaluasinya tidak perlu uji beban besar. Cukup tunjukkan bahwa data time-series dikumpulkan lokal, dibatching, tidak dikirim satu per satu, dan tetap dikirim setelah koneksi kembali. Itu sudah sesuai dengan implementasi sekarang dan tidak terlalu berat.
-
+\input{chapters/ta/chapter-4/pengujian/pengujian-non-fungsional.tex}
 

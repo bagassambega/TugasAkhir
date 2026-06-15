@@ -1,0 +1,176 @@
+% chktex-file 44
+% chktex-file 1
+
+\subsection{Pengujian Non-Fungsional}
+
+Pengujian non-fungsional dilakukan untuk memastikan sistem memenuhi kebutuhan non-fungsional yang telah didefinisikan pada Tabel~\ref{tab:kebutuhan-non-fungsional-pghd}. Pengujian difokuskan pada lima aspek, yaitu \textit{confidentiality}, \textit{integrity}, sanitasi input, \textit{availability}, dan \textit{provenance}. Skenario pengujian disusun agar sesuai dengan implementasi sistem DecMed-PGHD saat ini, yaitu pengumpulan data PGHD pada client Android, penyimpanan metadata PGHD pada IOTA, penyimpanan data terenkripsi pada IPFS, serta proses akses dan re-encryption melalui PRE\@.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Skenario Pengujian Non-Fungsional Sistem DecMed-PGHD}\label{tab:skenario-non-fungsional} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    T-NF01 & \textit{Confidentiality} (NF01) & Bandingkan dua tenaga kesehatan: satu sudah diberi akses PGHD aktif dan satu belum diberi akses atau sudah dicabut aksesnya. Keduanya mencoba membuka PGHD pasien yang sama. & Tenaga kesehatan dengan akses aktif dapat membuka data. Tenaga kesehatan tanpa akses aktif tidak dapat melihat daftar PGHD, membuka detail, mendapatkan plaintext, mendapatkan ciphertext, ataupun mendapatkan material dekripsi seperti \texttt{c\_frag} dan kunci PRE\@. \\
+    \hline
+    T-NF02 & \textit{Integrity} (NF02) & Submit PGHD valid, lalu gunakan data uji yang ciphertext, hash, atau signature-nya diubah. Data tersebut kemudian dicoba dibuka melalui client tenaga kesehatan. & Sistem mendeteksi perubahan melalui hash atau digital signature, menolak pembukaan data, dan menandai metadata PGHD sebagai tidak valid. \\
+    \hline
+    T-NF03 & \textit{Input Sanitization} (NF03) & Penguji memasukkan data PGHD manual, data medical record, nama profil, activation key, alasan invalidasi PGHD, dan payload data perangkat dengan variasi input tidak valid seperti karakter kontrol, spasi berlebih, teks terlalu panjang, nilai kosong, timestamp rusak, serta nilai numerik \texttt{NaN}/\texttt{Infinity}. & Input berbahaya atau tidak valid ditolak atau dibersihkan. Aplikasi tidak crash, data tersimpan tidak mengandung payload mentah yang rusak, dan proses pengiriman, dekripsi, serta verifikasi tetap berjalan normal. \\
+    \hline
+    T-NF04 & \textit{Availability} (NF04) & Kumpulkan atau simulasikan data PGHD \textit{time-series} bervolume tinggi dari wearable, Health Connect, atau phone sensor sampai melewati ambang pembentukan batch, termasuk saat perangkat offline lalu kembali online. Periksa bahwa data tidak dikirim sebagai transaksi per record sensor. & Aplikasi tidak crash, data tidak hilang, data dibentuk menjadi batch, pengiriman menunggu koneksi ketika offline, dan transaksi ke DecMed/IOTA hanya dilakukan per batch. Pada uji ringan, ribuan record sintetis dapat dikonversi menjadi beberapa batch sehingga lonjakan record sensor tidak menjadi lonjakan transaksi. \\
+    \hline
+    T-NF05 & \textit{Provenance} (NF05) & Tenaga kesehatan membuka detail PGHD yang valid dan memeriksa metadata asal data. & Sistem menampilkan metadata asal data yang dibutuhkan, meliputi identitas pasien, waktu pengukuran, sumber data, perangkat atau aplikasi asal, metode pencatatan, dan status validasi. \\
+    \hline
+\end{styledxltabular}
+
+\begingroup
+\scriptsize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}p{0.10\textwidth}|}
+    \hiderowcolors
+    \caption{Ekspektasi Balikan Pengujian Non-Fungsional}\label{tab:expected-output-non-fungsional} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Aspek} & \textbf{Ekspektasi Hasil} & \textbf{Ekspektasi Balikan} & \textbf{Hasil} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Aspek} & \textbf{Ekspektasi Hasil} & \textbf{Ekspektasi Balikan} & \textbf{Hasil} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    T-NF01 & \textit{Confidentiality} & Akses dengan grant aktif berhasil, sedangkan akses tanpa grant aktif ditolak sebelum plaintext atau material dekripsi dikirim. & HTTP 400/401/403 atau \texttt{EAccessNotFound}; tidak ada field \texttt{enc\_pghd}/\texttt{c\_frag}. & Sukses \\
+    \hline
+    T-NF02 & \textit{Integrity} & Data yang diubah terdeteksi dan tidak dapat dibuka sebagai data valid. & \texttt{ERR\_DATA\_CORRUPTED}, signature error, atau status \texttt{INVALID}. & Sukses \\
+    \hline
+    T-NF03 & \textit{Input Sanitization} & Input tidak valid ditolak atau dinormalisasi sebelum disimpan/dikirim. & Unit test sanitizer \texttt{PASS}; validasi client/backend berhasil. & Sukses \\
+    \hline
+    T-NF04 & \textit{Availability} & Data \textit{time-series} dikumpulkan lokal sebagai unbatched records, dibentuk menjadi batch, menunggu koneksi saat offline, dan dikirim per batch saat online. & Pemeriksaan script menunjukkan local buffering, threshold 10 MB, \texttt{NetworkType.CONNECTED}, \texttt{submitPendingBatches}, dan tidak ada jalur submit per record sensor. & Sukses \\
+    \hline
+    T-NF05 & \textit{Provenance} & Metadata asal data tersedia pada payload dan dapat dilihat oleh tenaga kesehatan. & Field provenance ditemukan pada payload/detail PGHD\@. & Sukses \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+\subsubsection{Skenario T-NF01}
+
+Skenario T-NF01 dilakukan untuk menguji aspek \textit{confidentiality}. Pada skenario ini, sistem harus menjamin bahwa data PGHD yang keluar dari perangkat pasien hanya dapat dibuka oleh tenaga kesehatan yang memiliki izin akses aktif dari pasien. Tenaga kesehatan yang tidak memiliki akses aktif tidak boleh dapat melihat daftar PGHD, membuka detail PGHD, mendapatkan plaintext, mendapatkan ciphertext PGHD, ataupun mendapatkan material dekripsi seperti \texttt{c\_frag}, \texttt{enc\_aes\_key\_nonce}, dan kunci PRE\@.
+
+Prosedur yang dilakukan pada skenario ini adalah sebagai berikut.
+\begin{enumerate}
+    \item Pasien sudah memiliki minimal satu batch PGHD yang berhasil dikirim ke sistem.
+    \item Pasien memberikan akses \texttt{READ\_PGHD} kepada tenaga kesehatan pertama.
+    \item Pasien tidak memberikan akses, atau mencabut akses, kepada tenaga kesehatan kedua.
+    \item Tenaga kesehatan pertama membuka daftar PGHD dan detail salah satu PGHD pasien.
+    \item Tenaga kesehatan kedua mencoba membuka daftar PGHD dan detail PGHD pasien yang sama.
+    \item Respons dari tenaga kesehatan kedua diperiksa untuk memastikan tidak terdapat plaintext, ciphertext PGHD, \texttt{c\_frag}, atau material dekripsi lain.
+\end{enumerate}
+
+Pengujian ini juga dapat dibantu dengan script pada Kode~\ref{lst:nf01-confidentiality}. Token \texttt{UNAUTHORIZED\_ACCESS\_TOKEN\_READ\_PGHD} diisi dengan token tenaga kesehatan yang tidak memiliki akses aktif terhadap pasien yang diuji. Jika endpoint mengembalikan data atau material dekripsi, script akan menghasilkan status gagal.
+
+\begin{lstlisting}[caption={Pengujian confidentiality PGHD}, label={lst:nf01-confidentiality}, float=htb]
+PRE_BASE_URL=http://127.0.0.1:4100 \
+PATIENT_IOTA_ADDRESS=0x... \
+AUTHORIZED_ACCESS_TOKEN_READ_PGHD=eyJ... \
+UNAUTHORIZED_ACCESS_TOKEN_READ_PGHD=eyJ... \
+./scripts/non-functional/nf01_confidentiality.sh
+\end{lstlisting}
+
+Berdasarkan implementasi saat ini, mekanisme tersebut dijaga pada dua lapisan. Lapisan pertama berada pada \textit{smart contract}, yaitu fungsi \texttt{get\_pghd\_list} dan \texttt{get\_pghd} yang memanggil pemeriksaan \texttt{assert\_pghd\_read\_access}. Jika tenaga kesehatan tidak memiliki akses, kontrak akan mengembalikan \texttt{EAccessNotFound}. Lapisan kedua berada pada PRE melalui pemeriksaan token \texttt{ReadPghd} dan keberadaan key \texttt{read\_pghd} pada Redis. Jika key tidak ada atau sudah kedaluwarsa, PRE menolak permintaan sebelum mengambil data dari IPFS dan sebelum membentuk \texttt{c\_frag}. Dengan demikian, tenaga kesehatan tanpa akses tidak dapat memperoleh plaintext maupun material yang diperlukan untuk dekripsi PGHD\@.
+
+\subsubsection{Skenario T-NF02}
+
+Skenario T-NF02 dilakukan untuk menguji aspek \textit{integrity}. Sistem harus mampu mendeteksi apabila data PGHD rusak atau dimodifikasi setelah dikirim. Pengujian dilakukan dengan membandingkan data PGHD valid dengan data uji yang sudah diubah pada bagian ciphertext, hash, atau signature.
+
+Prosedur yang dilakukan pada skenario ini adalah sebagai berikut.
+\begin{enumerate}
+    \item Pasien mengirimkan satu batch PGHD valid.
+    \item Penguji membuat salinan payload atau fixture PGHD yang nilai ciphertext, hash, atau signature-nya diubah.
+    \item Tenaga kesehatan mencoba membuka data PGHD yang sudah dimodifikasi.
+    \item Sistem melakukan verifikasi hash dan digital signature.
+    \item Jika data tidak valid, sistem menolak pembukaan data dan menandai metadata sebagai \texttt{INVALID}.
+\end{enumerate}
+
+Script pengujian integrity ditunjukkan pada Kode~\ref{lst:nf02-integrity}. Script ini menjalankan pengujian pada PRE untuk signature PGHD dan pengujian \textit{smart contract} untuk memastikan entri PGHD yang invalid tidak dapat dibuka.
+
+\begin{lstlisting}[caption={Pengujian integrity PGHD}, label={lst:nf02-integrity}, float=htb]
+./scripts/non-functional/nf02_integrity.sh
+\end{lstlisting}
+
+\subsubsection{Skenario T-NF03}
+
+Skenario T-NF03 dilakukan untuk menguji sanitasi input. Sistem harus membersihkan, membatasi, dan memvalidasi input sebelum data disimpan, diproses, atau dikirim. Input yang diuji berasal dari pasien, tenaga kesehatan, dan sumber data perangkat.
+
+Prosedur yang dilakukan pada skenario ini adalah sebagai berikut.
+\begin{enumerate}
+    \item Penguji memasukkan data PGHD manual dengan nilai kosong, teks terlalu panjang, karakter kontrol, timestamp rusak, dan nilai numerik tidak valid.
+    \item Penguji memasukkan atau memproses payload dari Health Connect, Mi Fitness, dan phone sensor dengan nilai yang berada di luar batas valid.
+    \item Penguji memasukkan data pada client tenaga kesehatan, seperti nama profil, data medical record, activation key, dan alasan invalidasi PGHD\@.
+    \item Sistem melakukan validasi dan normalisasi pada input.
+    \item Hasil yang tersimpan dan dikirim diperiksa agar tidak mengandung payload mentah yang rusak.
+\end{enumerate}
+
+Script pengujian sanitasi input ditunjukkan pada Kode~\ref{lst:nf03-sanitization}. Script ini menjalankan unit test sanitizer pada client Android, pemeriksaan type-safety pada frontend client tenaga kesehatan, dan pemeriksaan kompilasi backend Tauri.
+
+\begin{lstlisting}[caption={Pengujian sanitasi input}, label={lst:nf03-sanitization}, float=htb]
+./scripts/non-functional/nf03_input_sanitization.sh
+\end{lstlisting}
+
+\subsubsection{Skenario T-NF04}
+
+Skenario T-NF04 dilakukan untuk menguji aspek \textit{availability}. Sistem harus mampu menangani data PGHD \textit{time-series} dalam jumlah besar dari wearable, Health Connect, atau phone sensor tanpa menimbulkan lonjakan transaksi yang dapat mengganggu layanan. Oleh karena itu, data dikumpulkan terlebih dahulu secara lokal sebagai unbatched records, dibentuk menjadi satu batch terenkripsi, dan baru dikirim ketika koneksi internet tersedia. Mekanisme ini memastikan kenaikan jumlah record sensor tidak langsung berubah menjadi kenaikan jumlah transaksi ke PRE maupun IOTA\@.
+
+Prosedur yang dilakukan pada skenario ini adalah sebagai berikut.
+\begin{enumerate}
+    \item Pasien mengaktifkan fitur pengumpulan PGHD otomatis pada client Android.
+    \item Data PGHD dikumpulkan dari Health Connect, wearable, atau phone sensor dalam jumlah besar. Pada pengujian otomatis, digunakan 2.400 record sintetis dari wearable.
+    \item Data yang terkumpul disimpan pada penyimpanan lokal sebagai unbatched records.
+    \item Ketika periode pengumpulan selesai, pengiriman manual dilakukan, atau ukuran data melewati threshold 10 MB, sistem membentuk batch dari record yang belum memiliki \texttt{batchId}.
+    \item Perangkat dibuat offline sehingga batch tidak dapat dikirim dan harus menunggu koneksi.
+    \item Setelah perangkat kembali online, sistem mencoba mengirim batch yang menunggu koneksi.
+    \item Penguji memastikan aplikasi tidak crash, data tidak hilang, dan pengiriman dilakukan per batch, bukan per record sensor. Pada pengujian otomatis, 2.400 record sintetis harus dapat dikonversi menjadi 4 batch.
+\end{enumerate}
+
+Script pengujian availability ditunjukkan pada Kode~\ref{lst:nf04-availability}. Script ini melakukan pemeriksaan statis terhadap mekanisme penyimpanan lokal data \textit{time-series}, pembentukan batch dari unbatched records, threshold 10 MB, WorkManager dengan kebutuhan \texttt{NetworkType.CONNECTED}, status pengiriman batch, serta jalur submit yang mengirimkan satu encrypted envelope per batch. Script juga memeriksa bahwa DAO record PGHD tidak memiliki jalur submit langsung ke PRE/IOTA sehingga pengiriman tidak dilakukan per record sensor. Selain itu, script menjalankan unit stress test ringan pada client Android dengan membuat 2.400 record PGHD sintetis dan memverifikasi bahwa data tersebut dikonversi menjadi 4 batch.
+
+\begin{lstlisting}[caption={Pengujian availability PGHD}, label={lst:nf04-availability}, float=htb]
+./scripts/non-functional/nf04_availability.sh
+\end{lstlisting}
+
+\subsubsection{Skenario T-NF05}
+
+Skenario T-NF05 dilakukan untuk menguji aspek \textit{provenance}. Data PGHD yang dibuka oleh tenaga kesehatan harus menyertakan informasi asal data yang cukup untuk membantu penilaian klinis dan validasi sumber data.
+
+Prosedur yang dilakukan pada skenario ini adalah sebagai berikut.
+\begin{enumerate}
+    \item Pasien mengumpulkan PGHD dari salah satu sumber data, misalnya Health Connect, wearable, phone sensor, atau input manual.
+    \item Pasien mengirimkan batch PGHD ke sistem.
+    \item Pasien memberikan akses \texttt{READ\_PGHD} kepada tenaga kesehatan.
+    \item Tenaga kesehatan membuka detail PGHD\@.
+    \item Tenaga kesehatan memeriksa metadata provenance, seperti identitas pasien, waktu pengukuran, sumber data, tipe perangkat, aplikasi asal, metode pencatatan, dan status validasi.
+\end{enumerate}
+
+Script pengujian provenance ditunjukkan pada Kode~\ref{lst:nf05-provenance}. Pengujian dapat dilakukan sebagai pemeriksaan statis pada source code atau menggunakan file JSON PGHD hasil ekspor.
+
+\begin{lstlisting}[caption={Pengujian provenance PGHD}, label={lst:nf05-provenance}, float=htb]
+./scripts/non-functional/nf05_provenance.sh
+
+PGHD_JSON=/path/to/exported-PGHD\@.json \
+./scripts/non-functional/nf05_provenance.sh
+\end{lstlisting}

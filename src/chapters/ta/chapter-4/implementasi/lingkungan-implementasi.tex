@@ -1,0 +1,138 @@
+\subsection{Batasan Implementasi}
+
+Batasan-batasan yang diterapkan pada implementasi prototipe integrasi DecMed-PGHD ditetapkan sebagai berikut,
+
+\begin{enumerate}
+    \item Aplikasi PGHD pasien diimplementasikan sebagai aplikasi Android. Pengujian integrasi PGHD dilakukan pada satu perangkat Android dan satu komputer pengembangan.
+    \item Data PGHD otomatis diperoleh melalui Health Connect dan sensor perangkat Android. 
+    Data dari \textit{wearable}, seperti Mi Fitness atau Smart Band, diasumsikan telah disinkronkan terlebih dahulu ke Health Connect oleh aplikasi bawaan perangkat tersebut.
+    \item Data yang berasal dari sensor perangkat Android dikonversi menjadi tipe data kesehatan yang lebih mudah dipahami pengguna, seperti langkah, detak jantung, jarak, dan tipe pengukuran lain yang didukung oleh implementasi.
+    \item Data PGHD disimpan secara lokal pada perangkat pasien sebelum dibentuk menjadi batch dan dikirim. 
+    Penyimpanan lokal pada prototipe ini tidak menerapkan enkripsi basis data lokal.
+    \item Jaringan blockchain yang digunakan adalah IOTA testnet publik. 
+    Implementasi tidak menjalankan jaringan IOTA lokal dan tidak melakukan pengujian pada IOTA mainnet.
+    \item IPFS dan IOTA Gas Station yang digunakan berada pada server kampus dan diakses dari komputer pengembangan melalui SSH tunneling. Implementasi tidak menjalankan IPFS dan Gas Station lokal sebagai konfigurasi akhir.
+    \item Smart contract yang digunakan merupakan paket Move DecMed yang telah diperluas dengan mekanisme PGHD\@. Publikasi smart contract dilakukan ulang apabila terdapat perubahan alamat package, object, atau akun admin.
+    \item Mekanisme persistent session untuk akses PGHD tidak diimplementasikan pada prototipe ini. Akses baca PGHD bergantung pada izin aktif pasien dan material re-encryption yang tersedia pada PRE\@.
+    \item Pengujian dilakukan untuk skenario satu pasien, satu perangkat Android, dan sejumlah client tenaga kesehatan/ministry/hospital yang dijalankan dari komputer pengembangan.
+\end{enumerate}
+
+\subsection{Kakas dan Lingkungan yang Digunakan}
+
+Implementasi DecMed-PGHD dilakukan pada lingkungan komputer lokal dengan dukungan layanan eksternal berupa IOTA testnet publik, IPFS, dan IOTA Gas Station yang dijalankan pada server kampus. Kakas yang digunakan terdiri atas perangkat keras, bahasa pemrograman, framework client, framework backend, kakas Android, kakas blockchain, dan kakas containerization. Ringkasan kakas dan teknologi yang digunakan dapat dilihat pada Tabel~\ref{tab:kakas-implementasi-decmed-pghd} pada Lampiran~\ref{app:kakas-implementasi-decmed-pghd}.
+
+Secara umum, implementasi dibagi ke dalam beberapa komponen. Client Android pasien dibangun menggunakan Kotlin, Jetpack Compose, Health Connect, Room, WorkManager, dan shared library Rust melalui JNI\@. Client ministry dan client tenaga kesehatan dibangun menggunakan Tauri, SvelteKit, TypeScript, dan Rust. Komponen PRE dibangun menggunakan Rust dengan framework Axum, Redis sebagai penyimpanan material akses sementara, IPFS sebagai penyimpanan payload terenkripsi, dan IOTA testnet sebagai penyimpanan metadata serta mekanisme akses berbasis smart contract Move.
+
+JNI (\textit{Java Native Interface}) adalah mekanisme interoperabilitas yang memungkinkan kode pada lingkungan Java/Kotlin memanggil fungsi native yang dikompilasi ke shared library. Pada client Android PGHD, JNI digunakan untuk menghubungkan kode Kotlin dengan dua shared library Rust, yaitu \texttt{decmed\_crypto} dan \texttt{decmed\_iota}. Kebutuhan ini muncul karena operasi kriptografi PRE, pembuatan keypair, pembuatan \textit{kfrag}, tanda tangan PGHD, serta transaksi IOTA telah diimplementasikan menggunakan Rust. Dengan menggunakan JNI, aplikasi Android dapat memakai implementasi Rust yang sama tanpa perlu menulis ulang seluruh logika kriptografi dan IOTA pada Kotlin. Selain itu, JNI membantu menjaga konsistensi hasil kriptografi antara client Android, PRE, dan client tenaga kesehatan. Pada implementasi ini, pemanggilan JNI dilakukan melalui kelas Kotlin \texttt{DecmedCryptoNative} dan \texttt{DecmedIotaNative}, sedangkan shared library Rust dibangun untuk target Android dan dipaketkan ke dalam aplikasi melalui direktori \texttt{jniLibs}.
+
+\subsection{Konfigurasi Implementasi}
+
+Terdapat beberapa konfigurasi yang harus dilakukan sebelum sistem DecMed-PGHD dapat dijalankan. Konfigurasi tersebut meliputi konfigurasi jaringan IOTA testnet, publikasi smart contract, konfigurasi IOTA Gas Station, konfigurasi IPFS, konfigurasi PRE, konfigurasi client desktop, serta konfigurasi pengembangan aplikasi Android.
+
+\subsubsection{Konfigurasi Jaringan IOTA Testnet}
+
+Implementasi DecMed-PGHD menggunakan IOTA testnet publik sebagai jaringan blockchain. IOTA testnet digunakan untuk mempublikasikan smart contract DecMed-PGHD, menyimpan metadata akun, menyimpan metadata PGHD, menyimpan capability akses, dan mencatat status validasi data. Karena jaringan yang digunakan adalah testnet publik, komputer pengembangan tidak menjalankan validator IOTA lokal.
+
+Konfigurasi client IOTA dilakukan dengan memastikan IOTA CLI terhubung ke endpoint RPC testnet. Endpoint tersebut juga digunakan oleh PRE dan client Android melalui variabel lingkungan \texttt{IOTA\_RPC\_URL}. Secara konseptual, konfigurasi yang diperlukan adalah sebagai berikut,
+
+\begin{lstlisting}[caption={Konfigurasi endpoint IOTA testnet}, label={lst:konfigurasi-iota-testnet}, float=htb]
+IOTA_RPC_URL=https://api.testnet.IOTA\@.cafe
+iota client envs
+iota client switch --env testnet
+\end{lstlisting}
+
+Apabila smart contract dipublikasikan ulang, nilai \texttt{DECMED\_PACKAGE\_ID} dan object ID hasil publikasi harus diperbarui pada file konfigurasi PRE, client Android, client ministry, dan client tenaga kesehatan.
+
+\subsubsection{Konfigurasi Publikasi Smart Contract}
+
+Smart contract DecMed-PGHD berada pada paket Move DecMed. Paket tersebut memuat mekanisme DecMed asli dan perluasan PGHD, seperti registrasi pasien PGHD, penyimpanan public key PGHD, metadata PGHD, status validasi PGHD, serta capability akses \texttt{READ\_PGHD}. Sebelum dipublikasikan, paket Move dibangun untuk memastikan tidak terdapat kesalahan kompilasi.
+
+\begin{lstlisting}[caption={Build paket Move DecMed-PGHD}, label={lst:build-move-decmed-pghd}, float=htb]
+cd move/decmed
+iota move build
+\end{lstlisting}
+
+Setelah build berhasil, paket dipublikasikan ke IOTA testnet dengan akun admin/publisher. Pada implementasi ini transaksi publikasi dan transaksi client dapat disponsori oleh IOTA Gas Station. Nilai hasil publikasi yang perlu dicatat meliputi package ID, object ID global/admin, object ID metadata akun, dan object ID lain yang digunakan oleh client atau PRE\@.
+
+\subsubsection{Konfigurasi IOTA Gas Station}
+
+IOTA Gas Station digunakan agar transaksi yang dibuat oleh client atau PRE dapat disponsori tanpa mengharuskan setiap client memiliki saldo gas sendiri. Gas Station yang digunakan pada konfigurasi akhir berada pada server kampus dan diakses dari komputer pengembangan melalui SSH tunneling. Dengan konfigurasi ini, client lokal mengakses Gas Station melalui alamat loopback atau alamat lokal hasil tunnel.
+
+Contoh konfigurasi endpoint yang digunakan oleh client adalah sebagai berikut,
+
+\begin{lstlisting}[caption={Konfigurasi endpoint IOTA Gas Station}, label={lst:konfigurasi-gas-station}, float=htb]
+GAS_STATION_BASE_URL=http://127.0.0.1:9527
+GAS_STATION_TOKEN=token
+IOTA_GAS_BUDGET=10000000
+IOTA_GAS_RESERVE_SECONDS=10
+\end{lstlisting}
+
+Pada aplikasi Android, alamat \texttt{127.0.0.1} tidak menunjuk ke komputer pengembangan, melainkan ke perangkat Android itu sendiri. Oleh karena itu, endpoint Gas Station yang digunakan pada Android disesuaikan menjadi alamat IP komputer pada jaringan lokal, misalnya \texttt{http://192.168.1.10:9527}, atau alamat lain yang dapat dijangkau oleh perangkat Android.
+
+\subsubsection{Konfigurasi IPFS}
+
+Payload PGHD terenkripsi disimpan pada IPFS\@. Pada konfigurasi akhir, IPFS yang digunakan adalah IPFS Kubo pada server kampus. Client lokal dan PRE mengakses IPFS melalui SSH tunneling ke API Kubo. Konfigurasi IPFS pada PRE menggunakan endpoint API Kubo, bukan endpoint gateway publik.
+
+\begin{lstlisting}[caption={Konfigurasi endpoint IPFS pada PRE}, label={lst:konfigurasi-ipfs-pre}, float=htb]
+IPFS_API_URL=http://127.0.0.1:5001
+\end{lstlisting}
+
+Pada implementasi ini, IPFS digunakan sebagai penyimpanan payload terenkripsi dan metadata hasil submit PGHD\@. Hash atau CID hasil penyimpanan kemudian disimpan pada metadata on-chain.
+
+\subsubsection{Konfigurasi Proxy Re-encryption}
+
+PRE berfungsi sebagai komponen backend yang melakukan verifikasi signature PGHD, penyimpanan payload terenkripsi ke IPFS, pembuatan cfrag untuk proses re-encryption, serta komunikasi dengan smart contract IOTA\@. PRE dijalankan sebagai service Rust berbasis Axum. PRE membutuhkan konfigurasi alamat IOTA, object ID smart contract, endpoint IPFS, endpoint Gas Station, serta Redis.
+
+Redis digunakan untuk menyimpan material akses sementara seperti token akses dan material re-encryption. Contoh konfigurasi utama PRE adalah sebagai berikut,
+
+\begin{lstlisting}[caption={Konfigurasi utama PRE}, label={lst:konfigurasi-pre}, float=htb]
+PRE_BASE_URL=http://127.0.0.1:4100
+IOTA_RPC_URL=https://api.testnet.IOTA\@.cafe
+GAS_STATION_BASE_URL=http://127.0.0.1:9527
+IPFS_API_URL=http://127.0.0.1:5001
+REDIS_URL=redis://:password@127.0.0.1:6379
+DECMED_PACKAGE_ID=0x...
+GLOBAL_ADMIN_IOTA_ADDRESS=0x...
+GLOBAL_ADMIN_IOTA_KEY_PAIR=iotaprivkey1...
+\end{lstlisting}
+
+Setiap kali smart contract dipublikasikan ulang, konfigurasi \texttt{DECMED\_PACKAGE\_ID}, object ID, alamat admin, dan keypair admin yang digunakan PRE harus disesuaikan agar transaksi yang dibuat oleh PRE ditandatangani oleh akun yang benar.
+
+\subsubsection{Konfigurasi Client Android PGHD}
+
+Client Android PGHD dibangun menggunakan Gradle, Android SDK, Kotlin, Jetpack Compose, Room, WorkManager, Health Connect, dan shared library Rust. Sebelum build Android dilakukan, shared library Rust untuk kriptografi dan integrasi IOTA dibangun untuk target Android dan diletakkan pada direktori \texttt{jniLibs}.
+
+\begin{lstlisting}[caption={Build shared library Rust untuk Android}, label={lst:build-shared-library-android}, float=htb]
+export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/<versi-ndk>
+./crypto/decmed-crypto/build-android.sh
+./crypto/decmed-iota/build-android.sh
+\end{lstlisting}
+
+Client Android membutuhkan konfigurasi endpoint PRE, endpoint IOTA, endpoint Gas Station, package ID smart contract, object ID smart contract, dan parameter batching PGHD\@. Contoh parameter yang digunakan adalah sebagai berikut,
+
+\begin{lstlisting}[caption={Konfigurasi client Android PGHD}, label={lst:konfigurasi-android-pghd}, float=htb]
+PRE_BASE_URL=http://192.168.1.10:4100
+IOTA_RPC_URL=https://api.testnet.IOTA\@.cafe
+GAS_STATION_BASE_URL=http://192.168.1.10:9527
+DECMED_PACKAGE_ID=0x...
+PGHD_BATCH_INTERVAL_MINUTES=15
+PGHD_EARLY_TRIGGER_BYTES=10485760
+\end{lstlisting}
+
+Selain konfigurasi endpoint, aplikasi Android juga membutuhkan izin Android untuk akses kamera, aktivitas fisik, sensor, serta izin Health Connect. Izin Health Connect digunakan untuk membaca data kesehatan dari aplikasi eksternal seperti Mi Fitness atau Google Fit yang telah tersinkronisasi dengan Health Connect.
+
+\subsubsection{Konfigurasi Client Ministry dan Client Tenaga Kesehatan}
+
+Client ministry dan client tenaga kesehatan dijalankan sebagai aplikasi desktop berbasis Tauri. Keduanya menggunakan frontend SvelteKit dan backend Rust. Client ministry digunakan untuk membuat rumah sakit dan activation key, sedangkan client tenaga kesehatan digunakan untuk aktivasi akun, melengkapi profil, mengakses medical record, dan mengakses PGHD berdasarkan izin pasien.
+
+Konfigurasi kedua client memuat endpoint IOTA, endpoint Gas Station, package ID, object ID smart contract, dan secret key akun yang berwenang. Contoh konfigurasi umum client desktop adalah sebagai berikut,
+
+\begin{lstlisting}[caption={Konfigurasi client desktop DecMed}, label={lst:konfigurasi-client-desktop}, float=htb]
+IOTA_RPC_URL=https://api.testnet.IOTA\@.cafe
+GAS_STATION_BASE_URL=http://127.0.0.1:9527
+DECMED_PACKAGE_ID=0x...
+DECMED_MINISTRY_ADMIN_ADDRESS=0x...
+DECMED_MINISTRY_ADMIN_SECRET_KEY=iotaprivkey1...
+\end{lstlisting}
+
+Jika smart contract dipublikasikan ulang, seluruh nilai \texttt{DECMED\_*} yang menunjuk pada package ID dan object ID on-chain harus diperbarui pada client ministry, client tenaga kesehatan, client Android, dan PRE\@.
