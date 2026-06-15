@@ -87,6 +87,18 @@
     \endNiceTabularX
 }
 
+\usepackage{xltabular}
+\usepackage{colortbl}
+
+% Environment untuk tabel panjang yang dapat terpotong antar halaman
+\newenvironment{styledxltabular}[1]{%
+    \renewcommand{\arraystretch}{1.25}%
+    \rowcolors{2}{rowEven}{rowOdd}%
+    \xltabular{\textwidth}{#1}%
+}{%
+    \endxltabular%
+}
+
 \usepackage{setspace}
 \usepackage{pifont}
 \usepackage{listings}
