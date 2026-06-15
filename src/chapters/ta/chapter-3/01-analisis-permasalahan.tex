@@ -1,4 +1,10 @@
+% chktex-file 44
+% chktex-file 1
+% chktex-file 8
+
 \section{Analisis Permasalahan}\label{analisis-permasalahan}
+
+\subsection{Analisis Kondisi DecMed dan PGHD}
 
 DecMed menyediakan kerangka kerja manajemen RME terdesentralisasi dengan tiga komponen utama:
 \begin{enumerate}
@@ -41,3 +47,57 @@ Data kesehatan yang dihasilkan pasien bersifat sensitif dan memerlukan perlindun
 DecMed telah memiliki infrastruktur identitas kriptografis, akses kontrol, autentikasi, penyimpanan dan sistem terdistribusi, tetapi belum ada modul yang memanfaatkan komponen tersebut untuk menjamin kerahasiaan, integritas dan ketersediaan PGHD\@.
 Hal ini memunculkan \textbf{Gap 5}: \emph{tidak adanya mekanisme penjaminan kerahasiaan, integritas dan ketersediaan untuk data PGHD pada sistem DecMed}.
 
+\begin{table}[htbp]
+    \centering
+    \caption{Rangkuman Gap Integrasi DecMed dan PGHD}\label{tab:rangkuman-gap-pghd}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.10\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{Kode Gap} & \textbf{Deskripsi Permasalahan} \\
+        
+        Gap 1 & Tidak adanya jalur pemasukan (\textit{ingest}) PGHD dari sisi pasien; seluruh entri data pada DecMed saat ini hanya berasal dari tenaga kesehatan melalui kunjungan klinis. \\
+        
+        Gap 2 & Tidak adanya mekanisme \textit{offline-first} di sisi klien pasien, sehingga PGHD yang dikumpulkan saat perangkat luring berisiko tidak pernah terkirim ke sistem. \\
+        
+        Gap 3 & Tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD, padahal data dari \textit{wearable} dan perangkat mobile dapat berfrekuensi tinggi dan bervolume besar. \\
+        
+        Gap 4 & Tidak adanya mekanisme \textit{data provenance} untuk PGHD, sehingga asal-usul, waktu pengukuran, dan perangkat penghasil data tidak dapat ditelusuri dan diverifikasi. \\
+        
+        Gap 5 & Tidak adanya mekanisme khusus untuk menjamin kerahasiaan, integritas, dan ketersediaan PGHD, meskipun infrastruktur identitas dan kontrol akses sudah tersedia di DecMed. \\
+    \end{styledtable}
+\end{table}
+
+Kelima \textit{gap} pada Tabel~\ref{tab:rangkuman-gap-pghd} menjadi dasar perumusan kebutuhan fungsional dan non-fungsional pada Subbab berikutnya, serta menjadi acuan dalam menyusun alternatif solusi dan rancangan integrasi PGHD pada DecMed.
+
+\subsection{Analisis Kerahasiaan, Integritas dan Ketersediaan DecMed - PGHD}
+
+Mengacu pada Tabel~\ref{tab:stride-pghd-studi} dan Subbab~\ref{threat-model-studi} mengenai \textit{threat model}, terdapat beberapa ancaman yang perlu dipertimbangkan mengenai implementasi PGHD dan sistem DecMed.
+Daftar ancaman yang akan ditangani tertera pada Tabel~\ref{tab:stride-pghd-analisis}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Daftar Ancaman Keamanan untuk Sistem DecMed-PGHD}\label{tab:stride-pghd-analisis}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.08\textwidth} >{\raggedright\arraybackslash}X}
+        
+        \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Kode} & \textbf{Penjelasan} \\
+        
+        \rowcolor{rowOdd}
+        \Block{2-1}{\textit{Tampering}} & \Block{2-1}{\centering Integritas} & \texttt{V-T01} & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
+        \rowcolor{rowOdd}
+        & & \texttt{V-T02} & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
+        
+        \rowcolor{rowEven}
+        \Block{3-1}{\textit{Information Disclosure}} & \Block{3-1}{\centering Kerahasiaan} & \texttt{V-I01} & Perlindungan data yang tidak tepat pada \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
+        \rowcolor{rowEven}
+        & & \texttt{V-I02} & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
+        \rowcolor{rowEven}
+        & & \texttt{V-I03} & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
+        
+        \rowcolor{rowOdd}
+        \Block{2-1}{\textit{Denial of Service}} & \Block{2-1}{\centering Ketersediaan} & \texttt{V-D01} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
+        \rowcolor{rowOdd}
+        & & \texttt{V-D02} & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
+        
+    \end{styledtable}
+\end{table}
+
+Ancaman terkait kalibrasi dan validitas data yang dihasilkan sensor tidak termasuk dalam cakupan tugas akhir ini.
+Sementara itu ancaman terkait \textit{SQL injection} tidak valid karena DecMed tidak menggunakan \textit{SQL-based storage}, melainkan menggunakan IPFS yang diidentifikasi menggunakan CID\@.

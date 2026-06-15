@@ -1,39 +1,6 @@
 % chktex-file 8
 \subsection{Analisis Solusi Kerahasiaan, Integritas dan Ketersediaan}\label{alternatif-analisis-solusi-cia}
 
-Mengacu pada Tabel~\ref{tab:stride-pghd-studi} dan Subbab~\ref{threat-model-studi} mengenai \textit{threat model}, terdapat beberapa ancaman yang perlu dipertimbangkan mengenai implementasi PGHD dan sistem DecMed.
-Daftar ancaman yang akan ditangani tertera pada Tabel~\ref{tab:stride-pghd-analisis}.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Daftar Ancaman Keamanan untuk Sistem DecMed-PGHD}\label{tab:stride-pghd-analisis}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.08\textwidth} >{\raggedright\arraybackslash}X}
-        
-        \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Kode} & \textbf{Penjelasan} \\
-        
-        \rowcolor{rowOdd}
-        \Block{2-1}{\textit{Tampering}} & \Block{2-1}{\centering Integritas} & \texttt{V-T01} & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
-        \rowcolor{rowOdd}
-        & & \texttt{V-T02} & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
-        
-        \rowcolor{rowEven}
-        \Block{3-1}{\textit{Information Disclosure}} & \Block{3-1}{\centering Kerahasiaan} & \texttt{V-I01} & Perlindungan data yang tidak tepat pada \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
-        \rowcolor{rowEven}
-        & & \texttt{V-I02} & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
-        \rowcolor{rowEven}
-        & & \texttt{V-I03} & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
-        
-        \rowcolor{rowOdd}
-        \Block{2-1}{\textit{Denial of Service}} & \Block{2-1}{\centering Ketersediaan} & \texttt{V-D01} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
-        \rowcolor{rowOdd}
-        & & \texttt{V-D02} & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
-        
-    \end{styledtable}
-\end{table}
-
-Ancaman terkait kalibrasi dan validitas data yang dihasilkan sensor tidak termasuk dalam cakupan tugas akhir ini.
-Sementara itu ancaman terkait \textit{SQL injection} tidak valid karena DecMed tidak menggunakan \textit{SQL-based storage}, melainkan menggunakan IPFS yang diidentifikasi menggunakan CID\@.
-
 \subsubsection{Analisis Solusi Kerahasiaan (\textit{Confidentiality})}
 
 Berdasarkan pengertian dan mekanisme penjaminan kerahasiaan data pada Subbab~\ref{studi-confidentiality}, mekanisme yang digunakan untuk menjamin kerahasiaan PGHD yaitu enkripsi, akses kontrol, autentikasi, dan protokol komunikasi yang aman. 

@@ -6,16 +6,27 @@ Kebutuhan fungsional dikodekan dengan \verb|FXX|, di mana \verb|XX| adalah kode 
 \begin{table}[htbp]
     \centering
     \caption{Kebutuhan fungsional integrasi PGHD pada DecMed}\label{tab:kebutuhan-fungsional-pghd}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.2\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{ID} & \textbf{Deskripsi Kebutuhan Fungsional} \\
-        F01 & Pasien dapat mengambil data PGHD otomatis dari perangkat atau memasukkan data PGHD secara manual melalui antarmuka aplikasi. \\
-        F02 & Data PGHD yang dikumpulkan di perangkat pasien tidak hilang meskipun dalam kondisi tanpa koneksi internet. \\
-        F03 & Sistem secara otomatis mengirimkan data PGHD pasien yang telah terkumpul ke server ketika koneksi internet tersedia. \\
-        F04 & Pasien dapat melihat riwayat data PGHD yang telah dikirimkan beserta informasi waktu pengukuran. \\
-        F05 & Pasien dapat memberikan akses baca PGHD kepada tenaga kesehatan. \\
-        F06 & Tenaga kesehatan yang telah menerima izin akses dari pasien dapat melihat daftar data PGHD\@. \\
-        F07 & Tenaga kesehatan dapat membuka dan melihat isi detail dari entri data PGHD pasien yang dipilih. \\
-        F08 & Sistem menampilkan peringatan kepada tenaga kesehatan apabila data PGHD pasien yang diakses terbukti telah rusak atau tidak sah. \\
-        F09 & Pasien dapat mencabut izin akses terhadap data PGHD-nya kapan saja, dan pencabutan tersebut langsung berlaku (akses tenaga kesehatan terputus secara otomatis). \\
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.08\textwidth} >{\raggedright\arraybackslash}p{0.10\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{ID} & \textbf{Gap} & \textbf{Deskripsi Kebutuhan Fungsional} \\
+
+        F01 & Gap 1 & Pasien dapat mengambil data PGHD secara otomatis dari perangkat (misalnya \textit{wearable} dan sensor) atau memasukkan data PGHD secara manual melalui antarmuka aplikasi klien. \\
+
+        F02 & Gap 2 & Data PGHD yang dikumpulkan di perangkat pasien disimpan secara lokal sehingga tidak hilang meskipun perangkat dalam kondisi tanpa koneksi internet. \\
+
+        F03 & Gap 2, Gap 3 & Sistem secara otomatis mengirimkan data PGHD yang sudah terkumpul ke server DecMed ketika koneksi internet tersedia, dengan mekanisme \textit{batch} yang mendukung pengiriman bertahap. \\
+
+        F04 & Gap 1 & Sistem mengelompokkan dan menyajikan data PGHD berdasarkan sumber (perangkat \textit{wearable}, aplikasi seluler, dan laporan mandiri) sehingga dapat dibedakan oleh pasien maupun tenaga kesehatan. \\
+
+        F05 & Gap 4 & Sistem menyimpan metadata PGHD yang mencakup waktu pengukuran, jenis sumber data, dan identitas pasien sebagai penghasil data untuk mendukung penelusuran asal-usul (\textit{data provenance}). \\
+
+        F06 & Gap 5 & Pasien dapat memberikan izin akses baca PGHD kepada tenaga kesehatan untuk kunjungan tertentu melalui mekanisme kontrol akses yang terintegrasi dengan DecMed. \\
+
+        F07 & Gap 5 & Tenaga kesehatan yang telah menerima izin akses dari pasien dapat melihat daftar entri PGHD yang terkait dengan pasien dan kunjungan yang sedang berlangsung. \\
+
+        F08 & Gap 5 & Tenaga kesehatan dapat membuka dan melihat isi detail dari entri PGHD pasien yang dipilih, termasuk metadata asal-usul data (waktu, perangkat, dan jenis sumber). \\
+
+        F09 & Gap 5 & Sistem menampilkan peringatan kepada tenaga kesehatan apabila data PGHD yang diakses terdeteksi telah rusak, dimodifikasi secara tidak sah, atau gagal melalui pemeriksaan integritas. \\
+
+        F10 & Gap 5 & Pasien dapat mencabut izin akses terhadap data PGHD yang dimilikinya kapan saja, dan pencabutan tersebut langsung berlaku sehingga tenaga kesehatan tidak lagi dapat mengakses data terkait. \\
     \end{styledtable}
 \end{table}
