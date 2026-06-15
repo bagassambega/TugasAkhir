@@ -60,3 +60,53 @@ Dalam konteks \textit{remote patient monitoring}, adopsi PGHD masih rendah karen
 Selain itu, isu kualitas data yang diidentifikasi mencakup literasi digital pasien, akurasi dan reliabilitas perangkat \textit{wearable}, kesulitan interpretasi laporan, volume data yang besar, serta ketiadaan integrasi dengan sistem rekam medis elektronik \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
 Kendala integrasi teknis dan seperti kebutuhan antarmuka dan standar interoperabilitas, kebutuhan sumber daya tambahan untuk pengembangan dan pemeliharaan integrasi, serta beban tambahan untuk mencocokkan data ke rekam pasien yang tepat \parencite{Tiase2020-PGHD_EHR_Integration,Mars_Scott_2022_PGHD_Healthcare}.
 Masalah lainnya adalah keamanan dan privasi, karena data ini sering dikumpulkan dan disimpan di luar infrastruktur klinis tradisional \parencite{Mars_Scott_2022_PGHD_Healthcare,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+
+\subsection{Pengolahan dan Pengelolaan PGHD}\label{studi-pengolahan-pengelolaan-pghd}
+
+Terdapat beberapa mekanisme yang dapat digunakan untuk mengelola data PGHD, di antaranya \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding},
+
+\begin{enumerate}
+    \item Pengumpulan data melalui agregasi pada \textit{smartphone}.
+    Saat ini sudah banyak sistem operasi pada smartphone yang mengintegrasikan data dari berbagai sumber data dan aplikasi sehingga data dapat dikumpulkan melalui satu platform dan informasi data yang sama.
+    % Integration with Health Platforms: Operating systems like Apple’s iOS have integrated health platforms (e.g., Apple Health) that aggregate data from various health and fitness apps, creating a comprehensive health profile.
+    \item Integrasi data langsung ke sistem rekam medis.
+    Data bisa langsung dikirim dan diintegrasikan ke sistem rekam medis.
+    % Telehealth Integration: PGHD can be seamlessly integrated into telehealth platforms, allowing clinicians to provide remote care based on actual patient-generated metrics.
+    % Real-Time Data Sharing: Devices can instantly upload data to the cloud, allowing real-time sharing with healthcare providers or integration with electronic health records (EHRs)
+    \item Integrasi dengan komponen eksternal untuk melakukan agregasi dan analitik data.
+    Data PGHD dapat dikirim terlebih dahulu ke komponen tambahan (misalnya platform analitik atau AI) untuk mengolah data PGHD terlebih dahulu.
+    % Predictive Analysis: With a large amount of PGHD being generated, advanced analytics and AI can identify patterns, predict potential health problems, and offer personalized health recommendations.
+\end{enumerate}
+
+Selain mekanisme pengolahan dan pengambilan data di atas, mekanisme pengiriman data juga berbeda-beda.
+Pada sistem yang menggunakan sensor dan perangkat IoT seperti PGHD, pola pengiriman data umumnya diklasifikasikan menjadi tiga kategori, yaitu mekanisme \textit{periodic} (\textit{time-driven}), \textit{event-driven}, dan \textit{query-driven} (\textit{on-demand}) \parencite{Akyildiz_Vuran_2010_WSN_Algorithms}.
+% There are three types of applications for WSNs and each has its corresponding data communication modes: event-driven, periodic, and on-demand reporting. In the event-driven mode, sensors report the sensing data to the sink once a specified event (e.g., fire) has been detected. In the periodic reporting (or time-driven) mode, sensor nodes gather information from the environment at predetermined times and periodically send the data to the sink. In the on-demand (or query-driven) mode, users decide when to gather data.
+
+\begin{itemize}
+    \item \textbf{\textit{Periodic (time-driven)}.}
+    Pada mekanisme ini, perangkat mengumpulkan dan mengirimkan data pada interval waktu yang tetap, misalnya setiap beberapa menit atau jam, tanpa memperhatikan ada tidaknya perubahan atau kejadian khusus pada data.
+    Pengiriman berbasis \textit{time-driven} perilaku dan konsumsi daya lebih \textit{predictable} karena pengiriman data stabil \parencite{Albert2004_Event_Time_Triggered_Comparison}.
+    % Within a time-triggered communication the permission to access the bus is controlled by predefined time windows (TDMA, time division multiple access), leading to the advantage of a quasideterministic behavior during regular operation.
+    % Therefore, time-triggered concepts potentially provide a higher dependability, since e.g. missing messages are immediately detected
+
+    \item \textbf{\textit{Event-driven}.}
+    Pada mekanisme \textit{event-driven}, pengiriman data dipicu oleh suatu peristiwa tertentu yang telah didefinisikan sebelumnya.
+    Misalnya sensor hanya melaporkan data ketika sebuah \textit{event} terdeteksi, misalnya perubahan besar atau nilai yang melampaui ambang tertentu \parencite{Akyildiz_Vuran_2010_WSN_Algorithms}.
+    \textit{Event-driven} membuat data dapat tersedia secara cepat terhadap suatu kejadian, karena pengiriman dapat dilakukan segera setelah \textit{event} terdeteksi tanpa harus menunggu interval waktu berikutnya.
+    Namun \textit{event-driven} sangat bergantung pada volume dan frekuensi data yang dikirim karena lonjakan pengiriman data ketika \textit{event} muncul secara terus menerus dapat membuat pengiriman data terjadi terus menerus.
+    % The main advantage of event-triggered systems is their ability to fastly react to asynchronous external events which are not known in advance. Thus, they show a better real-time performance in comparison with time-triggered systems. In addition, event-triggered systems possess a higher flexibility and allow in many cases the adaptation to the actual demand without a redesign of the complete system.
+    % It can be summarized that event-triggered bus concepts are more efficient for small bus loads, since they generate lower latencies and less jitter when reacting to asynchronous events. But as has been shown a bus load or a load on the micro controller arbitrarily worsen the behavior of the CAN bus
+
+    \item \textbf{\textit{Query-driven (on-demand)}.}
+    Pada mekanisme \textit{query-driven}, pengiriman data dipicu oleh permintaan eksplisit dari server atau pengguna; node tidak mengirim data secara rutin, tetapi hanya ketika ada permintaan yang mendeskripsikan jenis dan ruang lingkup data yang dibutuhkan \parencite{Akyildiz_Vuran_2010_WSN_Algorithms}.
+    % Dalam konteks PGHD, pola ini dekat dengan model \textit{access-at-visit}, di mana tenaga kesehatan meminta atau menarik data PGHD ketika diperlukan untuk mendukung suatu episode perawatan (misalnya menjelang atau saat kunjungan), sementara di luar episode tersebut data tidak diakses secara aktif \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+\end{itemize}
+
+Karena PGHD berasal dari pasien dan didapatkan ketika pasien tidak sedang berkunjung ke fasyankes, mekanisme pengaksesan PGHD memungkinkan PGHD untuk diakses secara \textit{remote} dan \textit{real-time}, atau tetap diberikan/diakses ketika kunjungan ke fasyankes berlangsung \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% The continuous nature of this data collection ensures real-time monitoring, facilitating prompt interventions should anomalies arise. In a more significant manner, the utilization of PGHD has effectively encouraged patients to assume a major role in shaping their health narratives, thus promoting increased participation and compliance with medical treatment plans (Khatiwada).
+% They found that PGHD provides valuable insights between visits and reveals patient problems that may be missed during appointments.
+Pasien menganggap bahwa pemberian PGHD ketika kunjungan ke fasyankes memberatkan karena waktu kunjungan yang singkat dan perlu mengidentifikasi data apa saja yang perlu dipersiapkan \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% Sharing PGHD during clinical visits is perceived by some patients as burdensome. They have to select what is most relevant to share, given a limited visit time (Khatiwada).
+Sementara itu, tenaga kesehatan lebih memilih mekanisme pemberian dan pengaksesan PGHD ketika kunjungan karena akses data PGHD secara \textit{real-time} membuat \textit{workflow} tenaga kesehatan terpecah dan memerlukan konteks medis yang didapatkan ketika kunjungan saja \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding,Bruckner2025_Healthcare_PGHD_Attitudes}.
+% For remote access to PGHD, HCPs emphasised the need for clear protocols and responsibilities for dealing with incoming data and suggested building on existing workflow strategies (Bruckner)
+% Epilepsy care professionals were less supportive of real-time alarm systems, preferring to use PGHD for assessing seizure events before or during consultations rather than for real-time monitoring (Bruckner)

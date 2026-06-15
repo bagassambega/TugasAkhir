@@ -4,109 +4,94 @@ Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan}, terda
 
 \subsubsection{Sumber Data}\label{alternatif-sumber-data}
 
-Data PGHD bisa diambil dari \textit{wearable device} seperti smartwatch ataupun IoT \textit{device} lainnya dan juga dari perangkat \textit{mobile} menggunakan aplikasi kesehatan seperti FitBit atau Google Health Connect \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
-Terdapat beberapa pertimbangan terkait sumber data yang akan digunakan.
+Mengacu pada Subbab~\ref{studi-sumber-tipe-pghd} mengenai sumber data PGHD, terdapat beberapa sumber data yang dapat dipertimbangkan, yaitu,
 
 \begin{enumerate}
-    \item Hanya menggunakan sensor bawaan \textit{mobile phone} (tanpa \textit{wearable}).
-    \item Mengintegrasikan data dari wearable fisik ke \textit{mobile phone}.
+    \item Perangkat sensor dan \textit{wearable},
+    \item Perangkat pemantauan di rumah dan lingkungan sekitar,
+    \item Perangkat mobile dan aplikasi,
+    \item Perangkat medis,
+    \item Laporan mandiri pasien, dan
+    \item Data eksternal lainnya seperti media sosial
 \end{enumerate}
 
-Sumber data yang akan digunakan adalah kombinasi dari data yang dihasilkan oleh \textit{wearable} dan juga informasi kesehatan dari perangkat seluler.
-Implementasi ini dipilih agar data yang didapatkan lengkap dan sudah diadopsi secara luas \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+Pada integrasi DecMed dan PGHD, sumber data yang dipilih dibatasi pada:
+\begin{enumerate}
+  \item Perangkat sensor dan \textit{wearable},
+  \item Perangkat mobile dan aplikasi, dan
+  \item Laporan mandiri pasien.
+\end{enumerate}
 
-Tipe data yang dikumpulkan adalah \dots.
+Perangkat medis, perangkat pemantauan dan sensor rumahan maupun lingkungan tidak dipertimbangkan karena memerlukan mekanisme validasi medis resmi sehingga berada di luar lingkup tugas akhir ini.
+Data eksternal seperti data yang berasal dari media sosial tidak dipertimbangkan karena memerlukan mekanisme tambahan untuk memfilter data yang merupakan data PGHD ataupun bukan dan berada di luar \textit{scope} tugas akhir ini.
+
+Selain itu, perkembangan, jumlah dan ketersediaan perangkat \textit{mobile}, aplikasi \textit{mobile} dan \textit{wearable} yang masif dan menjadi penghasil data PGHD terbanyak saat ini juga menjadi pertimbangan pemilihan.
+Laporan mandiri pasien tetap dipertimbangkan karena menjadi salah satu tipe data PGHD yang memerlukan intervensi dan masukan dari pasien dan tidak dapat dipenuhi oleh perangkat mobile maupun sensor dari \textit{wearable} saja.
+
+\subsubsection{Pengumpulan dan Pengolahan Data PGHD}\label{alternatif-pengolahan-pghd}
+
+Mengacu pada Subbab~\ref{studi-pengolahan-pengelolaan-pghd}, terdapat beberapa mekanisme yang dapat digunakan untuk mengelola PGHD, yaitu dengan mengumpulkan data melalui agregasi pada \textit{smartphone}, mengirim data langsung ke sistem rekam medis, atau mengirimnya ke komponen eksternal seperti platform analitik dan AI\@. 
+Jika dikaitkan dengan kebutuhan integrasi DecMed dan PGHD, mekanisme pengumpulan dan pengolahan data pada sisi pasien dapat disederhanakan menjadi tiga alternatif berikut.
+
+\begin{enumerate}
+  \item Data \textit{raw} dikirim langsung dari perangkat \textit{wearable} dan aplikasi ke DecMed tanpa disimpan atau diolah terlebih dahulu.
+  \item Data dikumpulkan di \textit{smartphone} dan diolah terlebih dahulu sebelum dikirim ke DecMed.
+  \item Data \textit{raw} dari perangkat dikumpulkan dan disimpan di \textit{smartphone} terlebih dahulu, kemudian dikirim ke DecMed tanpa diubah atau diagregasi.
+\end{enumerate}
+
+Pada alternatif pertama, data selalu bergantung pada koneksi jaringan yang tersedia dan frekuensi pengiriman data akan sangat bergantung pada deteksi/pengambilan data oleh sensor, karena ketika data langsung dikirim tanpa disimpan dan kondisi internet tidak \textit{reliable}, \textit{request} bisa di-\textit{drop} atau tidak sampai ke server DecMed. 
+Alternatif kedua memanfaatkan fungsi agregasi di \textit{smartphone} untuk mengurangi ukuran data yang dikirim, tetapi berisiko menghilangkan detail dari data asli yang mungkin dibutuhkan untuk analisis atau penilaian klinis di kemudian hari. 
+Alternatif ketiga menjaga data tetap dalam bentuk \textit{raw} di sisi pasien dan hanya mengelompokkannya dalam bentuk \textit{batch} sebelum dikirim ke DecMed untuk mengurangi frekuensi pengiriman data dan menjaga agar data tetap tersimpan meskipun dalam kondisi tanpa internet.
+
+Pada integrasi DecMed dan PGHD ini, mekanisme yang dipilih adalah alternatif ketiga, yaitu mengumpulkan dan menyimpan data \textit{raw} terlebih dahulu di penyimpanan lokal \textit{smartphone}, kemudian mengirimkannya ke DecMed dalam bentuk \textit{batch}. 
+Dengan cara ini, data asli dari perangkat tetap terjaga dan tidak akan hilang meskipun ketika \textit{offline} dan tidak terus menerus dikirim dalam frekuensi tinggi, sekaligus tetap mendukung skenario ketika perangkat pasien sementara tidak memiliki koneksi internet karena data masih tersimpan aman di sisi klien.
 
 \subsubsection{Pengiriman Data}\label{alternatif-trigger-pengiriman-pghd}
 
-Terdapat dua mekanisme bagaimana pengiriman data dilakukan mempertimbangkan pengiriman data pada \textit{distributed system}, yaitu dengan \textit{time-triggered} (pengiriman berdasarkan interval waktu tetap) dan \textit{event-triggered} (pengiriman dipicu oleh kejadian atau perubahan kondisi tertentu) \parencite{Albert2004_Event_Time_Triggered_Comparison}.
-Pada pengiriman berdasarkan \textit{time-triggered}, data dikirim setiap interval waktu tetap, sementara pada \textit{event-triggered}, pengiriman dipicu oleh suatu kondisi atau perubahan tertentu, misalnya ketika detak jantung tiba-tiba naik drastis atau anomali terjadi.
+Pada Subbab~\ref{studi-pengolahan-pengelolaan-pghd} dijelaskan bahwa pada sistem yang menggunakan sensor dan perangkat IoT seperti PGHD, mekanisme pengiriman data umumnya dibagi menjadi tiga kategori, yaitu \textit{periodic} (\textit{time-driven}), \textit{event-driven}, dan \textit{query-driven} (\textit{on-demand}). 
+Jika difokuskan pada pengiriman data dari \textit{smartphone} pasien ke DecMed, alternatif yang relevan adalah mekanisme \textit{periodic}, \textit{event-driven}, dan kombinasi keduanya.
 
-Perbandingan antara penggunaan \textit{time-triggered} dan \textit{event-triggered} berdasarkan kebutuhan PGHD dan juga karakteristik sistem terdistribusi terlampir pada Tabel~\ref{tab:time-event-comparison}.
-\begin{table}[htbp]
-    \centering
-    \caption{Perbandingan \textit{time-triggered} dan \textit{event-triggered} untuk pengiriman PGHD}\label{tab:time-event-comparison}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
-        \textbf{Kriteria} & \textbf{\textit{Time-based periodic}} & \textbf{\textit{Event-based periodic}} \\
-        Prediktabilitas beban jaringan & Tinggi (interval tetap) & Rendah (bergantung pada kondisi pasien) \\
-        Risiko lonjakan transaksi & Rendah & Tinggi (saat pasien aktif atau terjadi anomali) \\
-        Kemampuan respons cepat & Rendah (tunggu interval berikutnya) & Tinggi (langsung saat kondisi terdeteksi) \\
-        Ketergantungan pada akurasi \textit{threshold} & Tidak ada & Tinggi (rentan \textit{false positive}) \\
-        Konsumsi baterai perangkat & Bisa diperkirakan & Tidak terprediksi (bergantung frekuensi \textit{event}) \\
-    \end{styledtable}
-\end{table}
-
-\textit{Event-triggered} membuat data dapat tersedia secara cepat terhadap suatu kejadian, karena pengiriman dapat dilakukan segera setelah \textit{event} terdeteksi tanpa harus menunggu interval waktu berikutnya.
-Namun \textit{event-triggered} sangat bergantung pada volume dan frekuensi data yang dikirim karena lonjakan pengiriman data ketika \textit{event} muncul secara terus menerus dapat membuat pengiriman data terjadi terus menerus.
-% The main advantage of event-triggered systems is their ability to fastly react to asynchronous external events which are not known in advance [AG03]. Thus, they show a better real-time performance in comparison with time-triggered systems. In addition, event-triggered systems possess a higher flexibility and allow in many cases the adaptation to the actual demand without a redesign of the complete system.
-% It can be summarized that event-triggered bus concepts are more efficient for small bus loads, since they generate lower latencies and less jitter when reacting to asynchronous events. But as has been shown a bus load or a load on the micro controller arbitrarily worsen the behavior of the CAN bus
-Sementara itu pengiriman berbasis \textit{time-triggered} perilaku dan konsumsi daya lebih \textit{predictable} karena pengiriman data stabil \parencite{Albert2004_Event_Time_Triggered_Comparison}.
-% Within a time-triggered communication the permission to access the bus is controlled by predefined time windows (TDMA, time division multiple access), leading to the advantage of a quasideterministic behavior during regular operation.
-% Therefore, time-triggered concepts potentially provide a higher dependability, since e.g. missing messages are immediately detected
-
-Mekanisme yang dipilih untuk pengiriman PGHD ke DecMed adalah pengiriman batch berbasis interval waktu (\textit{time-based periodic batching}).
-Pengiriman berbasis waktu memberikan prediktabilitas konsumsi baterai dan jaringan yang lebih baik dibanding \textit{event-based trigger} \parencite{Albert2004_Event_Time_Triggered_Comparison}.
-Hal ini dikarenakan PGHD adalah data yang memiliki frekuensi tinggi, sementara pengiriman berbasis \textit{event-triggered} sangat bergantung pada frekuensi pengiriman data.
-Pengiriman berbasis \textit{event} berisiko menghasilkan lonjakan transaksi (\textit{burst traffic}) ketika pasien mengalami perubahan yang signifikan (misalnya saat olahraga atau kondisi sakit berkepanjangan) yang justru merupakan situasi kritis di mana ketersediaan sistem paling dibutuhkan.
-Selain itu, mekanisme \textit{event-triggered} juga rentan terhadap \textit{error} pada perangkat ataupun anomali yang disebabkan faktor eksternal lainnya.
-
-Namun, meskipun mekanisme \textit{time-based periodic} dipilih sebagai mekanisme utama pengiriman data, perlu dipertimbangkan jika terjadi skenario ekstrim di mana volume data yang terkumpul dalam interval 15 menit melebihi ukuran data yang wajar. 
-Pemilihan durasi 15 menit didasarkan pada standar Android yang menetapkan maksimum pengiriman data ke server per tiap 15 menit \parencite{android_hc_write}.
-Dalam kondisi normal, data PGHD dari perangkat \textit{wearable} dan smartphone dalam interval 15 menit berukuran relatif kecil (diperkirakan kurang dari 10 MB). 
-Namun, skenario seperti penggunaan \textit{multiple wearable} dengan frekuensi pengambilan data tinggi atau penyimpanan data dalam jangka waktu lama karena perangkat terus-menerus \textit{offline} dapat menyebabkan akumulasi data yang sangat besar.
-
-Untuk mengantisipasi skenario ekstrim tersebut, diterapkan mekanisme \textit{early trigger} sebagai \textit{fallback}. 
-\textit{Threshold} yang digunakan adalah 10 MB untuk satu \textit{batch} sebelum enkripsi. 
-Jika ukuran batch yang sedang dikumpulkan dalam memori mencapai \textit{threshold} tersebut sebelum interval 15 menit tercapai, klien pasien akan segera mengirim batch tersebut tanpa menunggu interval waktu berikutnya. 
-Pemilihan \textit{threshold} 10 MB didasarkan pada pertimbangan bahwa ukuran tersebut masih dapat ditangani oleh perangkat mobile dengan RAM terbatas (2~-~4 GB) dan koneksi jaringan yang stabil.
-
-\subsubsection{Pengolahan Data PGHD}\label{alternatif-pengolahan-pghd}
-
-Terdapat tiga alternatif mekanisme pengummpulan dan pengolahan data yang dapat dipertimbangkan.
+Secara garis besar, alternatif mekanisme pengiriman yang dipertimbangkan adalah:
 
 \begin{enumerate}
-	\item Data \textit{raw} dikirim langsung ke sistem DecMed
-	\item Data diagregasi/diringkas di mobile sebelum dikirim ke DecMed
-	\item Data \textit{raw} disimpan lokal, hanya agregat/ringkasan yang dikirim ke DecMed
+  \item \textbf{Pengiriman murni periodik.} 
+  Data dikirim dalam bentuk \textit{batch} pada interval waktu yang tetap, misalnya setiap beberapa menit atau jam, tanpa pengiriman di luar jadwal tersebut. 
+  Mekanisme ini membuat beban jaringan dan konsumsi daya lebih mudah diprediksi karena pola pengiriman stabil.
+
+  \item \textbf{Pengiriman murni \textit{event-driven}.}
+  Data dikirim hanya ketika terjadi suatu \textit{event} tertentu, misalnya ketika nilai sensor melewati ambang batas atau ketika sistem lokal mendeteksi perubahan yang besar. 
+  Mekanisme ini bisa sangat efisien jika \textit{event} jarang terjadi, tetapi pola pengiriman menjadi sulit diprediksi dan bergantung penuh pada frekuensi \textit{event}.
+
+  \item \textbf{Pengiriman \textit{hybrid} periodik dan \textit{event-driven}.}
+  Data tetap dikirim secara periodik, tetapi ada tambahan pengiriman ketika kondisi tertentu tercapai, sehingga sistem tidak hanya bergantung pada satu jenis mekanisme saja.
 \end{enumerate}
 
-Mekanisme yang dipilih adalah data \textit{raw} disimpan di \textit{storage} lokal dan dikirim dalam \textit{batch} ke DecMed tanpa agregasi di sisi klien pasien.
-Pilihan ini memberikan nilai klinis yang lebih tinggi karena data asli tetap tersedia \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR} dan data asli dapat diakses oleh tenaga kesehatan tanpa kehilangan informasi apapun, namun tetap memperhatikan frekuensi pengiriman data dan \textit{throughput} jaringan agar \textit{availability} tetap terjamin seperti yang sudah dijelaskan pada subbab~\ref{alternatif-analisis-solusi-cia} \parencite{Haque_2024_Performance_Blockchain}. 
-Selain itu pilihan ini juga menjadi salah satu mekanisme untuk \textit{handling} saat perangkat \textit{offline} atau tidak terkoneksi jaringan internet.
-Mekanisme ini memungkinkan data tetap aman dan tidak hilang meskipun koneksi internet tidak tersedia untuk sementara waktu.
+Pengiriman murni periodik cocok ketika yang dibutuhkan adalah aliran data yang stabil dan dapat diprediksi, tetapi kurang fleksibel ketika volume data yang dikumpulkan sangat bervariasi. 
+Sebaliknya, pengiriman murni \textit{event-driven} dapat mengurangi jumlah pengiriman pada kondisi normal, tetapi bisa menghasilkan lonjakan pengiriman data ketika \textit{event} sering terjadi dan sulit dikendalikan beban jaringan maupun konsumsi daya. 
 
-Untuk memastikan data yang gagal dikirim dapat diproses ulang, diimplementasikan juga mekanisme \textit{retry} dengan interval yang dijalankan secara periodik oleh klien pasien seperti dijelaskan pada solusi pengiriman data pada subbab~\ref{alternatif-trigger-pengiriman-pghd}. 
-Dengan kombinasi penyimpanan lokal dan \textit{retry mechanism}, data PGHD tetap dapat dikirimkan ke sistem ketika koneksi pulih, tanpa kehilangan data akibat kondisi offline.
+Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah kombinasi antara pengiriman periodik dan \textit{event-driven}. 
+Pengiriman utama dilakukan secara periodik, sehingga pola pengiriman tetap stabil dan deret waktu PGHD dapat dibentuk dengan baik.
+Selain itu, klien pasien memantau ukuran data yang terkumpul, dan jika ukuran \textit{batch} melebihi batas tertentu sebelum interval waktu berikutnya, klien dapat memicu pengiriman lebih awal (\textit{early trigger}) berbasis ukuran data.
+
+Dengan metode ini, \textit{event} yang digunakan bukanlah \textit{event} klinis (misalnya nilai sensor melewati ambang kesehatan tertentu), tetapi \textit{event} sistem berupa ukuran data yang terlalu besar. 
+Hal ini dilakukan untuk menghindari ketergantungan pada data kesehatan yang berasal dari sensor atau perangkat yang rentan terhadap \textit{noise} dan \textit{outlier}, sekaligus mencegah data yang dikumpulkan secara periodik menjadi terlalu besar ataupun sering dan membebani perangkat maupun jaringan. 
 
 \subsubsection{Pengaksesan Data PGHD}\label{alternatif-pengaksesan-pghd}
 
-Setelah mempertimbangkan mekanisme pengumpulan dan pengiriman PGHD dari
-sisi pasien, perlu ditetapkan pula mekanisme pengaksesannya oleh tenaga
-kesehatan.
-Terdapat pertimbangan untuk membuat mekanisme akses PGHD berbeda dari
-mekanisme akses rekam medis klinis yang sudah ada di DecMed, misalnya
-dengan memberikan akses baca persisten kepada tenaga kesehatan tanpa
-batasan kunjungan.
-Namun, pendekatan tersebut tidak dipilih karena beberapa alasan yang
-saling memperkuat.
-Pertama, data kesehatan pasien --- termasuk PGHD --- bersifat sangat
-sensitif dan memerlukan kontrol akses yang ketat, di mana pasien harus
-tetap memiliki kendali penuh atas siapa yang dapat mengakses datanya
-\parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Akses baca persisten akan melemahkan prinsip kontrol data pasien
-(\textit{patient data sovereignty}) yang menjadi fondasi utama DecMed.
-Kedua, pola pemanfaatan PGHD secara klinis pada dasarnya memang
-terikat pada konteks kunjungan: PGHD dikumpulkan pasien secara mandiri
-di antara kunjungan, dan diakses oleh tenaga kesehatan pada saat
-kunjungan untuk memperkaya pengambilan keputusan klinis
-\parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-Data PGHD bersifat pendukung, bukan pengganti data klinis, dan
-penggunaannya selalu memerlukan interpretasi klinis yang dilakukan
-dalam konteks konsultasi langsung \parencite{ahima_fountain_2014_using_pghd_provenance}.
-Ketiga, mekanisme CapBAC yang sudah diimplementasikan DecMed sudah
-menyediakan kerangka kontrol akses berbasis kapabilitas yang dapat
-langsung digunakan untuk PGHD tanpa memerlukan modifikasi komponen
-inti DecMed \parencite{Hari_2025}\parencite{Purnama_2026}.
-Dengan demikian, mekanisme pengaksesaan PGHD menggunakan mekanisme
-CapBAC yang sama dengan rekam medis klinis DecMed adalah pilihan yang
-secara teknis konsisten dan secara prinsip tepat.
+Pada Subbab~\ref{studi-pghd} dijelaskan bahwa PGHD dapat dimanfaatkan baik secara \textit{remote} maupun ketika kunjungan. 
+Pasien menganggap pemberian PGHD saat kunjungan dapat memberatkan, sementara tenaga kesehatan khawatir jika PGHD tersedia secara \textit{real-time} tanpa konteks klinis yang jelas akan membuat \textit{workflow} menjadi terpecah dan beban kerja bertambah.
+Berdasarkan studi tersebut, mekanisme pengaksesan PGHD yang dipertimbangkan adalah:
+
+\begin{enumerate}
+  \item Akses PGHD secara \textit{real-time} di luar kunjungan.
+  \item Akses PGHD secara bebas (\textit{on-demand}) oleh tenaga kesehatan kapan pun dibutuhkan.
+  \item Akses PGHD berbasis kunjungan (\textit{visit-based}), di mana PGHD hanya diakses ketika ada kunjungan dan pasien memberikan izin akses untuk kunjungan tersebut.
+\end{enumerate}
+
+Akses \textit{real-time} di luar kunjungan memberikan visibilitas penuh terhadap kondisi pasien, tetapi menuntut adanya protokol yang jelas untuk menangani data yang terus menerus dikirim dan dapat mengganggu alur kerja jika tidak dikelola dengan baik.
+Akses \textit{on-demand} memberi fleksibilitas bagi tenaga kesehatan, tetapi tetap menyisakan pertanyaan kapan dan dalam konteks apa data tersebut seharusnya diakses dan justru menjadi beban bagi pasien karena permintaan data tidak terjadwal atau tidak dapat diprediksi oleh pasien.
+
+Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah akses berbasis kunjungan.
+PGHD dikumpulkan oleh pasien di antara kunjungan, tetapi hanya dapat diakses oleh tenaga kesehatan ketika pasien melakukan kunjungan dan memberikan izin akses untuk kunjungan tersebut. 
+Pendekatan ini sejalan dengan pola pemanfaatan PGHD sebagai data pelengkap yang digunakan untuk mendukung keputusan klinis dalam konteks konsultasi, bukan sebagai aliran data yang harus dimonitor terus-menerus.
+Selain itu, mekanisme ini juga sesuai dengan desain DecMed yang mengatur akses data berdasarkan kunjungan dan memanfaatkan CapBAC sebagai mekanisme kontrol akses, sehingga integrasi PGHD tidak akan merusak mekanisme sistem DecMed yang sudah ada.
