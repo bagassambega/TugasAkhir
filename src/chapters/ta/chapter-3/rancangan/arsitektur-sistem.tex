@@ -1,64 +1,52 @@
 \subsection{Arsitektur Sistem}\label{rancangan-solusi-arsitektur-sistem}
 
 Arsitektur sistem DecMed yang diperluas untuk mendukung integrasi PGHD ditunjukkan pada Gambar~\ref{fig:pghd-decmed-architecture}. 
-Arsitektur ini menggunakan arsitektur utama DecMed (Client Layer, Proxy Layer, dan Storage Layer) dengan penambahan komponen-komponen untuk mendukung pengumpulan, penyimpanan lokal, pengiriman, dan pengaksesan PGHD\@.
+Arsitektur ini menggunakan arsitektur utama DecMed, dengan penyesuaian pada sisi \textit{client} pasien, \textit{client} tenaga kesehatan, \textit{smart contract}, dan \textit{proxy reencryption}.
+Gambaran arsitektur sistem secara keseluruhan dapat dilihat pada Gambar~\ref{fig:pghd-decmed-architecture}.
+Warna merah digunakan untuk merepresentasikan komponen yang diubah dari rancangan DecMed awal.
 
 \begin{figure}[htbp]
     \centering
-	\includegraphics[width=\textwidth]{resources/chapter-3/arsitektur-pghd-decmed-total.png}
-	\caption{Arsitektur DecMed \parencite{Hari_2025}}\label{fig:pghd-decmed-architecture}
+	\includegraphics[width=\textwidth]{resources/chapter-3/architecture-decmed-pghd-diff.drawio.png}
+	\caption{Arsitektur Sistem DecMed-PGHD}\label{fig:pghd-decmed-architecture}
 \end{figure}
+
+Perubahan arsitektur yang dilakukan adalah mengganti \textit{client} pasien untuk mendukung pengumpulan, pengolahan, dan pengiriman PGHD, menambah fungsionalitas akses, baca, dan invalidasi PGHD pada \textit{client} tenaga kesehatan, dan penyesuaian PRE, \textit{smart contract}, dan data yang disimpan pada IOTA dan IPFS untuk mendukung penyimpanan, validasi dan pengambilan PGHD\@.
 
 \subsubsection{Pengumpulan Data dari Sumber PGHD}
 
-Klien pasien mengumpulkan data dari tiga sumber utama:
+Client pasien mengumpulkan PGHD dari beberapa sumber data seperti yang sudah dipilih pada Subbab~\ref{alternatif-sumber-data}. 
+Sumber pertama adalah API sistem operasi untuk data \textit{wellness}, \textit{fitness}, dan \textit{activity}. 
+API ini digunakan sebagai lapisan interoperabilitas antara aplikasi pasien, aplikasi kesehatan eksternal, dan perangkat \textit{wearable}. 
+Sumber kedua adalah sensor internal perangkat pasien. 
+Sumber ketiga adalah input manual yang diberikan langsung oleh pasien melalui antarmuka aplikasi.
 
-\begin{enumerate}
-    \item \textbf{Sensor internal perangkat}: 
-    Klien mengakses sensor bawaan \textit{smartphone} yang tersedia melalui API Android/iOS\@. 
-    Izin akses diminta saat pertama kali aplikasi dijalankan.
-    
-    \item \textbf{Perangkat \textit{wearable}}: Klien terhubung ke perangkat \textit{wearable} (smartwatch, fitness tracker) melalui Bluetooth. 
-\end{enumerate}
+Data dari seluruh sumber tersebut dinormalisasi menjadi struktur PGHD lokal pada Tabel~\ref{tab:field-pghd-raw-local}. 
+Ketika data akan dikirim, \textit{record} lokal dibentuk menjadi \textit{batch} sesuai struktur pada Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
 
-\subsubsection{Frekuensi Pengambilan Data}
+% Implementasi Android saat ini menggunakan Health Connect sebagai API OS untuk wellness/fitness/activity. Data wearable Mi Smart Band 9 Active dikumpulkan melalui Mi Fitness yang menulis data ke Health Connect.
 
-Frekuensi pengambilan data dari setiap sumber mengikuti rekomendasi Google Health Connect API seperti tercantum pada Tabel~\ref{health-connect-get-data-interval}. 
-Pemilihan interval 15 menit untuk pengiriman \textit{batch} (dijelaskan pada Subbab~\ref{alternatif-trigger-pengiriman-pghd}).
+\subsubsection{Frekuensi Pengambilan dan Pengiriman Data}
 
-\begin{table}[htbp]
-    \centering
-    \caption{Panduan Interval Pengambilan Data}\label{health-connect-get-data-interval}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.40\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Tipe Data} & \textbf{Ekspektasi (Frekuensi Penulisan)} \\
-        Steps & Setiap 1 menit \\
-        StepsCadence & Setiap 1 menit \\
-        WheelchairPushes & Setiap 1 menit \\
-        ActiveCaloriesBurned & Setiap 15 menit \\
-        TotalCaloriesBurned & Setiap 15 menit \\
-        Distance & Setiap 1 menit \\
-        ElevationGained & Setiap 1 menit \\
-        FloorsClimbed & Setiap 1 menit \\
-        HeartRate & 4 kali per menit \\
-        HeartRateVariabilityRmssd & Setiap 1 menit \\
-        RespiratoryRate & Setiap 1 menit \\
-        OxygenSaturation & Setiap jam \\
-    \end{styledtable}
-\end{table}
+Frekuensi pengambilan data dari setiap sumber dirancang mengikuti karakteristik sumber data dan kebutuhan ketersediaan sistem seperti yang sudah dijelaskan dan dipilih pada Subbab~\ref{alternatif-pengolahan-pghd}. 
+Data dapat diambil per satuan waktu atau secara periodik atau sampai ukuran data mencapai batasan ukuran tertentu. 
+Data yang telah terkumpul tidak langsung dikirim per \textit{record}, tetapi disimpan secara lokal dan dibentuk menjadi batch sebelum dikirim. 
+Pemicu pembentukan atau pengiriman batch dijelaskan pada Subbab~\ref{mekanisme-pengumpulan-pghd} dan Subbab~\ref{subsubsec:pengiriman-pghd}.
+
+% Implementasi Android saat ini menggunakan interval sensor default 60 detik, sinkronisasi Health Connect minimum 15 menit, pengiriman periodik minimum 15 menit, dan trigger ukuran 10 MB. Nilai tersebut dijelaskan pada Bab IV.
+
 \subsubsection{Penyimpanan Lokal}
 
-Klien pasien menyimpan setiap \textit{batch} PGHD dalam \textit{local database} sebelum dikirim ke sistem. 
+\textit{Client} pasien menyimpan PGHD pada penyimpanan lokal sebelum data dikirim ke sistem. 
+Penyimpanan lokal terdiri atas \textit{record} PGHD yang belum masuk \textit{batch}, envelope batch PGHD, dan \textit{data point batch}. 
 Struktur data lokal dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
+Mekanisme ini memastikan data tidak hilang ketika perangkat pasien berada dalam ko  ndisi offline.
 
 \subsubsection{Proxy Layer dan Smart Contract}
 
-Proxy Layer berperan sebagai \textit{middleware} yang memproses permintaan dari klien pasien dan klien tenaga kesehatan. 
-Untuk PGHD, proxy menyediakan \textit{endpoint} berikut:
+Proxy Layer berperan sebagai \textit{middleware} yang memproses permintaan dari \textit{client} pasien dan \textit{client} tenaga kesehatan. 
+Untuk PGHD, \textit{proxy} menerima batch terenkripsi, memverifikasi hash dan tanda tangan digital, menyimpan \textit{ciphertext} ke penyimpanan \textit{off-chain}, mencatat metadata ke \textit{smart contract}, serta menyediakan artefak \textit{proxy re-encryption} untuk tenaga kesehatan yang memiliki akses aktif untuk mendekripsi PGHD nantinya.
 
-\begin{itemize}
-    \item \verb|POST /pghd|: menerima \textit{batch} PGHD dari klien pasien, mengunggah \verb|enc_pghd| ke IPFS, dan memanggil \verb|submit_pghd| pada \textit{smart contract}
-    \item \verb|GET /pghd|: mengembalikan daftar PGHD milik pasien untuk tenaga kesehatan
-    \item \verb|GET /pghd/{index}|: mengambil satu entri PGHD tertentu, melakukan verifikasi hash, re-encryption, dan mengembalikan data ke klien
-\end{itemize}
-
-\textit{Smart contract} di IOTA menyimpan metadata PGHD untuk setiap entri mengikuti format pada Tabel~\ref{tab:iota-pghd-metadata}.
+\textit{Smart contract} di IOTA menyimpan metadata PGHD untuk setiap entri mengikuti format pada Tabel~\ref{tab:iota-pghd-metadata}. 
+Metadata tambahan seperti \textit{identifier} batch, \textit{key} dan \textit{nonce} terenkripsi, \texttt{capsule}, dan \textit{digital signature} diserialisasi mengikuti Tabel~\ref{tab:iota-pghd-serialized-metadata}. 
+\textit{Smart contract} juga menyimpan informasi akses PGHD dan status validasi data.
