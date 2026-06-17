@@ -1,3 +1,7 @@
+% chktex-file 44
+% chktex-file 1
+% chktex-file 8
+
 \subsection{Implementasi Proxy Re-encryption Server}
 
 Proxy re-encryption server atau PRE diimplementasikan menggunakan bahasa pemrograman Rust dengan Axum sebagai framework HTTP. PRE berperan sebagai komponen penghubung antara client pasien, client tenaga kesehatan, IPFS, Redis, dan smart contract IOTA. PRE tidak menyimpan plaintext PGHD. Komponen ini menerima payload PGHD terenkripsi, melakukan verifikasi, menyimpan ciphertext ke IPFS, mencatat metadata ke smart contract, dan menyediakan material re-encryption ketika tenaga kesehatan yang berwenang membuka data PGHD.
@@ -52,13 +56,13 @@ Endpoint utama yang digunakan pada implementasi PGHD dapat dilihat pada Tabel~\r
 
 Endpoint \texttt{POST /api/v1/pghd/submit} menerima batch PGHD dari client Android. PRE terlebih dahulu memvalidasi alamat IOTA pasien dan melakukan decode ciphertext PGHD dari format Base64. Setelah itu, PRE menghitung hash SHA-256 dari ciphertext dan membandingkannya dengan \texttt{h\_cipher} yang dikirim client. Jika hash tidak sesuai, request ditolak.
 
-Jika hash sesuai, PRE mengambil public key PGHD pasien dari smart contract atau cache Redis. Public key tersebut digunakan untuk memverifikasi outer signature PGHD. Verifikasi ini memastikan bahwa ciphertext PGHD benar-benar dibuat oleh pasien pemilik key PGHD. Setelah signature valid, PRE menyimpan ciphertext ke IPFS dan memperoleh CID. CID, hash, signature, capsule, dan metadata batch kemudian dikemas sebagai metadata PGHD dan dicatat ke smart contract melalui fungsi \texttt{submit\_pghd}.
+Jika hash sesuai, PRE mengambil public key PGHD pasien dari smart contract atau cache Redis. Public key tersebut digunakan untuk memverifikasi \texttt{signature} PGHD atas \texttt{h\_cipher}. Verifikasi ini memastikan bahwa ciphertext PGHD benar-benar dibuat oleh pasien pemilik key PGHD. Setelah signature valid, PRE menyimpan ciphertext ke IPFS dan memperoleh CID. CID, hash, signature, capsule, dan metadata batch kemudian dikemas sebagai metadata PGHD dan dicatat ke smart contract melalui fungsi \texttt{submit\_pghd}.
 
 \subsubsection{Alur Baca PGHD}
 
-Endpoint baca PGHD hanya dapat dipanggil dengan token akses yang memiliki purpose \texttt{ReadPghd}. Saat tenaga kesehatan meminta daftar PGHD, PRE memeriksa token akses dan memastikan material re-encryption untuk pasangan pasien dan tenaga kesehatan masih tersedia pada Redis. Setelah itu, PRE memanggil smart contract untuk mengambil daftar metadata PGHD yang masih berstatus valid.
+Endpoint baca PGHD hanya dapat dipanggil dengan token akses yang memiliki purpose \texttt{ReadPghd}. Saat tenaga kesehatan meminta daftar PGHD, PRE memeriksa token akses dan memastikan material re-encryption untuk pasangan pasien dan tenaga kesehatan masih tersedia pada Redis. Setelah itu, PRE memanggil smart contract untuk mengambil daftar metadata PGHD yang masih berstatus valid. Metadata lama yang masih memakai field \texttt{pghd\_outer\_signature} atau tidak memiliki \texttt{signature} diinvalidasi otomatis dengan alasan \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA} dan tidak dikembalikan sebagai data valid.
 
-Saat tenaga kesehatan membuka satu entri PGHD, PRE mengambil ciphertext dari IPFS berdasarkan CID yang tercatat di IOTA. PRE kemudian menghitung hash ciphertext dan membandingkannya dengan hash on-chain. Jika hash tidak cocok, PRE menginvalidasi entri PGHD tersebut dan mengembalikan error kepada client tenaga kesehatan. Jika hash cocok, PRE membuat \textit{cfrag} dari \textit{kfrag} yang tersimpan pada Redis dan mengembalikannya kepada client tenaga kesehatan. Client tenaga kesehatan kemudian melakukan dekripsi akhir dan verifikasi inner signature.
+Saat tenaga kesehatan membuka satu entri PGHD, PRE mengambil ciphertext dari IPFS berdasarkan CID yang tercatat di IOTA. PRE kemudian menghitung hash ciphertext dan membandingkannya dengan hash on-chain. PRE juga memverifikasi \texttt{signature} atas \texttt{h\_cipher}. Jika hash atau signature tidak cocok, PRE menginvalidasi entri PGHD tersebut dan mengembalikan error kepada client tenaga kesehatan. Jika verifikasi berhasil, PRE membuat \textit{cfrag} dari \textit{kfrag} yang tersimpan pada Redis dan mengembalikannya kepada client tenaga kesehatan. Client tenaga kesehatan kemudian melakukan dekripsi akhir dan verifikasi \texttt{h\_plain}.
 
 \subsubsection{Material Akses Sementara}
 

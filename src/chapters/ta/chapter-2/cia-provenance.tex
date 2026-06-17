@@ -31,6 +31,15 @@ Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa mengguna
 
 Tanda tangan digital menggabungkan fungsi \textit{hash} dengan kriptografi kunci privat untuk memverifikasi integritas sekaligus mengautentikasi identitas pengirim \parencite{NIST_FIPS186-5}.
 \textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan diverifikasi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
+\textit{Digital signature} dihasilkan dengan menghitung hash dari data yang kemudian ditandatangani sebelum dikirim.
+Kemudian untuk memverifikasi \textit{digital signature}, penerima kembali menghitung hash data yang diterima, dan memverifikasinya menggunakan operasi kriptografis memakai \textit{public key} pengirim dan \textit{digital signature} yang diterima.
+Mekanisme \textit{digital siganture} dapat dilihat pada Gambar.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{resources/chapter-2/digital-signature.png}
+	\caption{Algoritma \textit{Digital Signature} \parencite{NIST_FIPS186-5}}\label{fig:digital-signature-mechanism}
+\end{figure}
 
 \subsection{Ketersediaan (\textit{Availability})}\label{studi-availability}
 Ketersediaan (\textit{availability}) memastikan bahwa sistem dan data dapat diakses secara tepat waktu dan andal oleh pengguna yang berwenang setiap kali dibutuhkan \parencite{tripathi2025cia}.

@@ -1,50 +1,76 @@
 \subsection{Rancangan Format dan Skema PGHD}\label{rancangan-format-data-pghd}
 
-Berdasarkan pemilihan solusi pada Subbab~\ref{alternatif-provenance} dan landasan teori pada Subbab~\ref{studi-cia-provenance}, bagian ini merancang format data yang akan digunakan PGHD untuk menjamin \textit{data provenance}.
-Payload PGHD yang disimpan di IPFS terdiri dari tingkat \textit{batch} yang berisi seluruh data PGHD dan tingkat \textit{data group} yang berisi kumpulan \textit{data point} yang merupakan data pengukuran individual.
-Tabel~\ref{tab:field-batch-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{batch} dari skema JSON tersebut.
+Berdasarkan pemilihan solusi pada Subbab~\ref{alternatif-provenance} dan landasan teori pada Subbab~\ref{studi-cia-provenance}, bagian ini merancang format data yang digunakan PGHD untuk mendukung \textit{data provenance}. 
+Payload PGHD yang disimpan di penyimpanan \textit{off-chain} terdiri atas tingkat \textit{batch}, tingkat \textit{data group}, dan tingkat \textit{data point}. 
+Tingkat \textit{batch} merepresentasikan satu paket pengiriman PGHD\@. 
+Tingkat \textit{data group} mengelompokkan data berdasarkan jenis pengukuran dan sumber data. 
+Tingkat \textit{data point} merepresentasikan nilai pengukuran individual.
+Tabel~\ref{tab:field-batch-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{batch}.
 
 \begin{table}[htbp]
     \centering
-    \caption{Deskripsi field tingkat batch pada skema JSON untuk PGHD}\label{tab:field-batch-json-pghd}
+    \caption{Deskripsi \textit{field} tingkat batch pada skema JSON untuk PGHD}\label{tab:field-batch-json-pghd}
     \begin{styledtable}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}X}
         \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
         \texttt{schema\_version} & String & Ya & Versi skema JSON PGHD yang digunakan. \\
         \texttt{batch\_id} & UUID & Ya & Identitas unik batch. \\
-        \texttt{patient\_id} & String & Ya & Identitas pasien di sistem DecMed, diisi dengan \textit{address} IOTA akun pasien. \\
-        \texttt{source\_device} & Objek & Ya & Metadata perangkat pengirim batch, meliputi: \texttt{type}, \texttt{platform}, \texttt{app\_version}, \texttt{device\_manufacturer}, dan \texttt{device\_model}. \\
-        \texttt{batch\_period} & Objek & Ya & Rentang waktu yang dicakup oleh batch, terdiri atas \texttt{start\_timestamp} dan \texttt{end\_timestamp} dalam format Unix timestamp (detik). \\
-        \texttt{trigger\_reason} & String & Tidak & Alasan pembentukan batch: \texttt{time\_based} untuk interval 15 menit, atau \texttt{size\_threshold} untuk \textit{early trigger}. \\
-        \texttt{data\_group} & Array & Ya & Daftar pengukuran individual yang dikelompokkan pada setiap grup (dijelaskan pada Tabel~\ref{tab:field-datagroup-json-pghd}). \\
+        \texttt{patient\_id} & String & Ya & Identitas pasien pada sistem DecMed, diisi dengan alamat IOTA akun pasien. \\
+        \texttt{source\_device} & Objek & Ya & Metadata perangkat pengirim batch, meliputi \texttt{type}, \texttt{platform}, \texttt{app\_version}, \texttt{device\_manufacturer}, dan \texttt{device\_model}. \\
+        \texttt{batch\_period} & Objek & Ya & Rentang waktu yang dicakup oleh batch, terdiri atas \texttt{start\_timestamp} dan \texttt{end\_timestamp} dalam format Unix timestamp. \\
+        \texttt{trigger\_reason} & String & Tidak & Alasan pembentukan atau pengiriman batch, misalnya pengiriman berkala, ambang ukuran data, pengiriman manual, atau koneksi tersedia kembali. \\
+        \texttt{data\_group} & Array & Ya & Daftar grup data PGHD yang dijelaskan pada Tabel~\ref{tab:field-datagroup-json-pghd}. \\
     \end{styledtable}
 \end{table}
 
-Setiap elemen di dalam \textit{array} \verb|data_group| tersusun atas sekumpulan \textit{data group} yang dikelompokkan berdasarkan tipe pengukuran dan asal perangkat.
+% Implementasi Android saat ini menggunakan nilai trigger time_based, size_threshold, manual_submit, dan network_available.
+
+
+Sebelum batch PGHD dienkripsi, sistem membungkus \textit{plaintext} batch dengan hash \textit{plaintext}. 
+Struktur ini menjadi payload yang dienkripsi menjadi \texttt{enc\_pghd}. 
+Field pembungkus \textit{plaintext} dapat dilihat pada Tabel~\ref{tab:field-encrypted-plaintext-pghd}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Deskripsi \textit{field} pembungkus \textit{plaintext} PGHD sebelum enkripsi}\label{tab:field-encrypted-plaintext-pghd}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.25\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+        \texttt{pghd\_data} & Objek & Payload batch PGHD sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. \\
+        \texttt{pghd\_data\_json} & String & Serialisasi JSON dari \texttt{pghd\_data} yang digunakan sebagai basis perhitungan hash \textit{plaintext}. \\
+        \texttt{h\_plain} & String (Hex) & Hash SHA-256 dari \texttt{pghd\_data\_json}. Nilai ini diverifikasi kembali setelah \textit{ciphertext} berhasil didekripsi. \\
+    \end{styledtable}
+\end{table}
+
+Setiap elemen di dalam \texttt{data\_group} mengelompokkan data berdasarkan tipe pengukuran dan asal data. 
 Tabel~\ref{tab:field-datagroup-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{data group}.
 
 \begin{table}[htbp]
     \centering
-    \caption{Deskripsi field tingkat \textit{data group} pada skema JSON untuk PGHD}\label{tab:field-datagroup-json-pghd}
+    \caption{Deskripsi \textit{field} tingkat \textit{data group} pada skema JSON untuk PGHD}\label{tab:field-datagroup-json-pghd}
     \begin{styledtable}{>{\raggedright\arraybackslash}p{0.25\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}X}
         \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-        \texttt{measurement\_type} & String & Ya & Jenis pengukuran dalam format \textit{snake\_case}, misalnya \texttt{heart\_rate} atau \texttt{steps}. \\
-        \texttt{device\_type} & String & Ya & Tipe perangkat penghasil pengukuran, misalnya \texttt{smartphone} atau \texttt{wearable}. \\
-        \texttt{recording\_method} & String & Opsional & Cara data direkam: \texttt{auto} (otomatis oleh sensor), \texttt{active} (pengguna memulai sesi), atau \texttt{manual} (pengguna memasukkan data secara manual). \\
-        \texttt{source} & String & Ya & Sumber data tempat pengukuran diperoleh, misalnya \texttt{health\_connect} atau \texttt{android\_sensor}. \\
-        \texttt{data\_points} & Array & Ya & Daftar nilai pengukuran aktual (dijelaskan pada Tabel~\ref{tab:field-datapoints-json-pghd}). \\
+        \texttt{measurement\_type} & String & Ya & Jenis pengukuran dalam format \textit{snake\_case}, misalnya \texttt{heart\_rate}, \texttt{steps}, atau tipe pengukuran kesehatan lain yang didukung sistem. \\
+        \texttt{device\_type} & String & Ya & Tipe perangkat atau sumber penghasil pengukuran, misalnya telepon pintar, perangkat wearable, atau input manual. \\
+        \texttt{recording\_method} & String & Tidak & Cara data direkam, misalnya otomatis oleh perangkat, sesi aktif, input manual, atau hasil transformasi dari data sensor. \\
+        \texttt{source} & String & Ya & Kategori sumber data secara konseptual, misalnya API OS untuk wellness/fitness/activity, sensor perangkat, atau input manual. \\
+        \texttt{source\_label} & String & Tidak & Label sumber yang lebih mudah dibaca pengguna atau tenaga kesehatan. \\
+        \texttt{source\_package\_name} & String & Tidak & Identitas aplikasi atau paket sumber data apabila tersedia dari API OS\@. \\
+        \texttt{device\_source} & String & Tidak & Informasi sumber perangkat atau metode derivasi, misalnya perangkat wearable, sensor telepon, atau algoritma transformasi. \\
+        \texttt{data\_points} & Array & Ya & Daftar nilai pengukuran aktual yang dijelaskan pada Tabel~\ref{tab:field-datapoints-json-pghd}. \\
     \end{styledtable}
 \end{table}
 
-Data group berisi kumpulan \textit{data points} individual yang merupakan hasil pengukuran individual dari sensor untuk setiap satuan waktu/jumlah.
+% Implementasi Android saat ini menggunakan label sumber Health Connect, Phone Sensor, dan Manual Input. Nama API spesifik tersebut dijelaskan pada Bab IV.
+
+Data group berisi kumpulan \textit{data points} individual yang merupakan hasil pengukuran untuk setiap satuan waktu atau setiap periode pengukuran. 
 Tabel~\ref{tab:field-datapoints-json-pghd} berisi skema data untuk level \textit{data points}.
 
 \begin{table}[htbp]
     \centering
-    \caption{Deskripsi field tingkat \textit{data points} pada skema JSON untuk PGHD}\label{tab:field-datapoints-json-pghd}
+    \caption{Deskripsi \textit{field} tingkat \textit{data points} pada skema JSON untuk PGHD}\label{tab:field-datapoints-json-pghd}
     \begin{styledtable}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}X}
         \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
-        \texttt{timestamp} & Unix timestamp & Ya & Waktu pengambilan pengukuran (Unix timestamp dalam detik). \\
-        \texttt{value} & Number / Objek & Ya & Nilai pengukuran. Untuk pengukuran skalar (detak jantung, langkah) diisi sebagai bilangan. Untuk pengukuran komposit (tekanan darah) diisi sebagai objek, misalnya \texttt{\{systolic: 118, diastolic: 76\}}. \\
-        \texttt{unit} & String & Ya & Satuan pengukuran, misalnya \texttt{beats/min} atau \texttt{mm[Hg]}. \\
+        \texttt{timestamp} & Unix timestamp & Ya & Waktu pengukuran atau waktu akhir periode pengukuran. \\
+        \texttt{value} & Number / Objek & Ya & Nilai pengukuran. Untuk pengukuran skalar diisi sebagai bilangan. Untuk pengukuran komposit diisi sebagai objek. \\
+        \texttt{unit} & String & Ya & Satuan pengukuran. \\
     \end{styledtable}
 \end{table}

@@ -25,7 +25,7 @@ Pengujian non-fungsional dilakukan untuk memastikan sistem memenuhi kebutuhan no
     \endlastfoot
     T-NF01 & \textit{Confidentiality} (NF01) & Bandingkan dua tenaga kesehatan: satu sudah diberi akses PGHD aktif dan satu belum diberi akses atau sudah dicabut aksesnya. Keduanya mencoba membuka PGHD pasien yang sama. & Tenaga kesehatan dengan akses aktif dapat membuka data. Tenaga kesehatan tanpa akses aktif tidak dapat melihat daftar PGHD, membuka detail, mendapatkan plaintext, mendapatkan ciphertext, ataupun mendapatkan material dekripsi seperti \texttt{c\_frag} dan kunci PRE\@. \\
     \hline
-    T-NF02 & \textit{Integrity} (NF02) & Submit PGHD valid, lalu gunakan data uji yang ciphertext, hash, atau signature-nya diubah. Data tersebut kemudian dicoba dibuka melalui client tenaga kesehatan. & Sistem mendeteksi perubahan melalui hash atau digital signature, menolak pembukaan data, dan menandai metadata PGHD sebagai tidak valid. \\
+    T-NF02 & \textit{Integrity} (NF02) & Submit PGHD valid, lalu lakukan dua bentuk pengujian kerusakan data: payload submit dirusak sebelum diterima PRE, dan objek ciphertext PGHD pada IPFS diganti dengan objek uji yang rusak. Pengujian juga mencakup perubahan \texttt{enc\_pghd}/\texttt{h\_cipher}, \texttt{signature}, dan \texttt{h\_plain} setelah dekripsi. & Sistem menolak payload rusak saat submit, mendeteksi perubahan data saat akses melalui hash ciphertext, signature, atau hash plaintext, menolak pembukaan data, dan menandai metadata PGHD sebagai tidak valid. \\
     \hline
     T-NF03 & \textit{Input Sanitization} (NF03) & Penguji memasukkan data PGHD manual, data medical record, nama profil, activation key, alasan invalidasi PGHD, dan payload data perangkat dengan variasi input tidak valid seperti karakter kontrol, spasi berlebih, teks terlalu panjang, nilai kosong, timestamp rusak, serta nilai numerik \texttt{NaN}/\texttt{Infinity}. & Input berbahaya atau tidak valid ditolak atau dibersihkan. Aplikasi tidak crash, data tersimpan tidak mengandung payload mentah yang rusak, dan proses pengiriman, dekripsi, serta verifikasi tetap berjalan normal. \\
     \hline
@@ -57,7 +57,7 @@ Pengujian non-fungsional dilakukan untuk memastikan sistem memenuhi kebutuhan no
     \endlastfoot
     T-NF01 & \textit{Confidentiality} & Akses dengan grant aktif berhasil, sedangkan akses tanpa grant aktif ditolak sebelum plaintext atau material dekripsi dikirim. & HTTP 400/401/403 atau \texttt{EAccessNotFound}; tidak ada field \texttt{enc\_pghd}/\texttt{c\_frag}. & Sukses \\
     \hline
-    T-NF02 & \textit{Integrity} & Data yang diubah terdeteksi dan tidak dapat dibuka sebagai data valid. & \texttt{ERR\_DATA\_CORRUPTED}, signature error, atau status \texttt{INVALID}. & Sukses \\
+    T-NF02 & \textit{Integrity} & Payload submit rusak ditolak oleh PRE, sedangkan data IPFS atau plaintext yang berubah terdeteksi dan tidak dapat dibuka sebagai data valid. & HTTP 400 pada submit rusak; \texttt{OUTER\_HASH\_MISMATCH}, \texttt{SIGNATURE\_INVALID}, \texttt{PLAIN\_HASH\_MISMATCH}, \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA}, atau status \texttt{INVALID} pada akses. & Sukses \\
     \hline
     T-NF03 & \textit{Input Sanitization} & Input tidak valid ditolak atau dinormalisasi sebelum disimpan/dikirim. & Unit test sanitizer \texttt{PASS}; validasi client/backend berhasil. & Sukses \\
     \hline
@@ -96,21 +96,47 @@ Berdasarkan implementasi saat ini, mekanisme tersebut dijaga pada dua lapisan. L
 
 \subsubsection{Skenario T-NF02}
 
-Skenario T-NF02 dilakukan untuk menguji aspek \textit{integrity}. Sistem harus mampu mendeteksi apabila data PGHD rusak atau dimodifikasi setelah dikirim. Pengujian dilakukan dengan membandingkan data PGHD valid dengan data uji yang sudah diubah pada bagian ciphertext, hash, atau signature.
+Skenario T-NF02 dilakukan untuk menguji aspek \textit{integrity}. Sistem harus mampu mendeteksi apabila data PGHD rusak atau dimodifikasi, baik sebelum payload diterima oleh PRE maupun setelah ciphertext PGHD tersimpan pada IPFS\@. Pengujian dilakukan pada tiga lapisan verifikasi, yaitu hash ciphertext \texttt{h\_cipher}, tanda tangan digital \texttt{signature}, dan hash plaintext \texttt{h\_plain} yang berada di dalam payload terenkripsi.
 
-Prosedur yang dilakukan pada skenario ini adalah sebagai berikut.
+Prosedur pengujian payload submit rusak adalah sebagai berikut.
 \begin{enumerate}
-    \item Pasien mengirimkan satu batch PGHD valid.
-    \item Penguji membuat salinan payload atau fixture PGHD yang nilai ciphertext, hash, atau signature-nya diubah.
-    \item Tenaga kesehatan mencoba membuka data PGHD yang sudah dimodifikasi.
-    \item Sistem melakukan verifikasi hash dan digital signature.
-    \item Jika data tidak valid, sistem menolak pembukaan data dan menandai metadata sebagai \texttt{INVALID}.
+    \item Pasien mengirimkan satu batch PGHD valid atau penguji mengambil payload valid dari log \texttt{PrePghdClient}.
+    \item Penguji membuat salinan payload dengan nilai \texttt{enc\_pghd}, \texttt{h\_cipher}, atau \texttt{signature} yang diubah.
+    \item Payload rusak dikirim ke endpoint \texttt{POST /api/v1/pghd/submit}.
+    \item PRE melakukan verifikasi \texttt{h\_cipher} dan \texttt{signature} sebelum menyimpan data ke IPFS dan IOTA\@.
+    \item Payload rusak harus ditolak dengan status gagal, sehingga tidak tercatat sebagai PGHD valid.
 \end{enumerate}
 
-Script pengujian integrity ditunjukkan pada Kode~\ref{lst:nf02-integrity}. Script ini menjalankan pengujian pada PRE untuk signature PGHD dan pengujian \textit{smart contract} untuk memastikan entri PGHD yang invalid tidak dapat dibuka.
+Prosedur pengujian data IPFS rusak adalah sebagai berikut.
+\begin{enumerate}
+    \item Penguji membuat objek ciphertext PGHD rusak dari payload PGHD valid.
+    \item Karena IPFS bersifat \textit{content-addressed}, CID lama tidak diubah. Objek rusak diunggah sebagai CID uji baru.
+    \item Metadata PGHD uji dibuat agar menunjuk ke CID objek rusak, tetapi tetap menggunakan \texttt{h\_cipher} dan \texttt{signature} dari payload valid.
+    \item Tenaga kesehatan mencoba membuka PGHD tersebut melalui client.
+    \item Sistem menghitung ulang hash ciphertext dari IPFS, membandingkannya dengan \texttt{h\_cipher}, memverifikasi \texttt{signature}, lalu menolak data apabila verifikasi gagal.
+    \item Jika data tidak valid, sistem menampilkan pesan eror verifikasi, menjalankan mekanisme invalidasi PGHD, dan memperbarui daftar PGHD pada client tenaga kesehatan.
+\end{enumerate}
+
+Script pengujian integrity ditunjukkan pada Kode~\ref{lst:nf02-integrity}. Script ini menjalankan pengujian pada PRE untuk signature PGHD, pengujian pada client tenaga kesehatan untuk hash plaintext, dan pengujian \textit{smart contract} untuk memastikan entri PGHD yang invalid tidak dapat dibuka.
 
 \begin{lstlisting}[caption={Pengujian integrity PGHD}, label={lst:nf02-integrity}, float=htb]
 ./scripts/non-functional/nf02_integrity.sh
+\end{lstlisting}
+
+Apabila tersedia payload submit PGHD valid dari logcat, pengujian payload rusak dapat dijalankan dengan Kode~\ref{lst:nf02-integrity-live}. Script tersebut membuat variasi payload dengan \texttt{enc\_pghd}, \texttt{h\_cipher}, dan \texttt{signature} yang sudah diubah, lalu mengirimkannya ke PRE\@. Skenario dinyatakan berhasil apabila semua payload rusak ditolak oleh PRE\@.
+
+\begin{lstlisting}[caption={Pengujian submit payload PGHD rusak}, label={lst:nf02-integrity-live}, float=htb]
+PRE_BASE_URL=http://127.0.0.1:4100 \
+PGHD_VALID_SUBMIT_PAYLOAD=tmp/pghd-valid-submit.json \
+./scripts/non-functional/nf02_integrity.sh
+\end{lstlisting}
+
+Untuk skenario data IPFS rusak, fixture objek ciphertext dapat dibuat menggunakan Kode~\ref{lst:nf02-ipfs-tamper}. Script tersebut menghasilkan objek ciphertext PGHD rusak dan petunjuk metadata uji. Jika objek tersebut digunakan sebagai CID pada metadata PGHD uji dengan \texttt{h\_cipher} dan \texttt{signature} lama, client tenaga kesehatan harus menolak data dengan \texttt{OUTER\_HASH\_MISMATCH} atau \texttt{SIGNATURE\_INVALID}.
+
+\begin{lstlisting}[caption={Pembuatan objek IPFS PGHD rusak}, label={lst:nf02-ipfs-tamper}, float=htb]
+IPFS_BASE_URL=http://127.0.0.1:9094/api/v0 \
+./scripts/pghd_make_tampered_ipfs_object.py \
+  tmp/pghd-valid-submit.json --post
 \end{lstlisting}
 
 \subsubsection{Skenario T-NF03}

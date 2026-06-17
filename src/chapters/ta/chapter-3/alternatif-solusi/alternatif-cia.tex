@@ -27,7 +27,7 @@ Terdapat tiga mekanisme yang dapat dipertimbangkan untuk menjamin integritas PGH
 Fungsi \textit{hash} saja dapat mendeteksi perubahan data, namun tidak memiliki mekanisme untuk menjamin apakah baik data maupun hash dimodifikasi atau tidak. 
 MAC membuktikan integritas dan memungkinkan modifikasi data dan hash dapat dideteksi, namun memerlukan kunci simetris yang dibagikan.
 Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa menggunakan kunci privat itu untuk menghasilkan hash yang valid dari data dan hash yang sudah dimodifikasi.
-Selain itu, pembagian kunci privat juga tidak sesuai dengan DecMed yang menggunakan prinsip untuk tidak pernah membagikan kunci privat/enkripsi menggunakan proxy reencryption. 
+Selain itu, pembagian kunci privat juga tidak sesuai dengan DecMed yang menggunakan prinsip untuk tidak pernah membagikan kunci privat/enkripsi menggunakan \textit{proxy reencryption}. 
 
 Untuk menjamin integritas data sehingga baik data maupun bukti hash tidak dimodifikasi, dan menyesuaikan kondisi DecMed yang tidak membagikan kunci privat, mekanisme yang dipilih untuk menjaga integritas adalah menggunakan \textit{digital signature} untuk data PGHD\@.
 Mekanisme ini menjamin integritas data terjamin sepanjang pertukaran, pengiriman dan penyimpanan data, dan bukti \textit{tampering} data dapat dideteksi untuk mencegah ancaman \verb|V-T01|.

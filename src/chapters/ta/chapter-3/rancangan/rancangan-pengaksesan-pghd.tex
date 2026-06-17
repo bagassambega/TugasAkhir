@@ -1,72 +1,53 @@
 \subsubsection{Mekanisme Pengaksesan PGHD oleh Tenaga Kesehatan}\label{subsubsec:akses-pghd}
 
+Pengaksesan PGHD oleh tenaga kesehatan dilakukan melalui client tenaga kesehatan dan server PRE. PRE tidak mengembalikan plaintext PGHD. PRE hanya mengembalikan ciphertext, metadata, dan artefak proxy re-encryption yang diperlukan agar client tenaga kesehatan yang memiliki akses aktif dapat melakukan dekripsi di sisi client. Metadata yang digunakan pada proses ini mengikuti struktur pada Tabel~\ref{tab:iota-pghd-metadata} dan Tabel~\ref{tab:iota-pghd-serialized-metadata}, sedangkan plaintext hasil dekripsi mengikuti struktur batch pada Tabel~\ref{tab:field-batch-json-pghd}.
+
+
 \begin{enumerate}
-    \item \textbf{Pengambilan daftar PGHD dari IOTA.}
-    Tenaga kesehatan yang telah menerima akses baca dari pasien melalui mekanisme CapBAC dan proxy re-encryption dapat melihat daftar PGHD milik pasien. Klien tenaga kesehatan memanggil proxy untuk memperoleh daftar entri PGHD\@. 
-    Proxy memvalidasi \textit{access token} dan melakukan \textit{inspect transaction} ke \textit{smart contract} di IOTA untuk mengambil metadata PGHD yang masih berlaku. 
-    Setiap entri metadata minimal memuat \verb|cid| IPFS, \verb|enc_aes_key_nonce|, \verb|capsule|, \verb|pghd_outer_signature|, dan status entri PGHD (\texttt{VALID} atau \texttt{INVALID}).
-    
-    \item \textbf{Permintaan akses ke satu entri PGHD.}
-    Ketika tenaga kesehatan memilih salah satu entri PGHD dengan status \texttt{VALID}, klien tenaga kesehatan mengirim permintaan ke proxy dengan melampirkan \textit{access token}, identitas pasien, dan indeks entri PGHD\@. 
-    Proxy memvalidasi \textit{access token} dan memanggil fungsi pada \textit{smart contract} untuk mengecek kembali apakah tenaga kesehatan memiliki hak akses terhadap entri tersebut dan apakah statusnya masih \texttt{VALID}.
-    
-    \item \textbf{Pengambilan ciphertext dari IPFS dan metadata dari IOTA.}
-    Jika akses dinyatakan valid, proxy mengambil metadata PGHD yang bersangkutan dari ledger IOTA dan mengambil ciphertext PGHD \verb|enc_pghd| dari IPFS dengan menggunakan \verb|cid| yang tercatat pada metadata. 
-    Sebelum melanjutkan ke proses re-encryption, proxy menghitung nilai SHA-256 dari \verb|enc_pghd| yang diambil dan membandingkannya dengan \verb|h_cipher| yang diperoleh dari metadata IOTA\@. 
-    Jika kedua nilai hash tidak cocok, proxy langsung mengembalikan error \verb|ERR_DATA_CORRUPTED| ke klien tenaga kesehatan tanpa melanjutkan proses re-encryption. 
-    Proxy juga memicu event untuk menginvalidasi entri PGHD tersebut melalui mekanisme yang dijelaskan pada Poin~\ref{fungsionalitas-verifikasi-outer-signature-tenaga-kesehatan}. 
-    Langkah verifikasi ini mencegah pemborosan komputasi pada proses re-encryption untuk data yang sudah terbukti rusak.
-    
-    \item\label{fungsionalitas-verifikasi-outer-signature-tenaga-kesehatan} \textbf{Verifikasi integritas ciphertext (\textit{Outer Verification}).}
-    Sebelum melakukan dekripsi, klien tenaga kesehatan wajib memastikan bahwa ciphertext \verb|enc_pghd| yang diunduh dari IPFS belum mengalami modifikasi (misalnya akibat serangan pada proxy atau node IPFS). 
-    Klien menghitung nilai SHA-256 dari \verb|enc_pghd| yang diunduh:
+    \item \textbf{Prasyarat akses baca PGHD.}
+    Tenaga kesehatan harus menerima akses baca PGHD dari pasien sebelum dapat mengambil daftar atau detail PGHD. Pemberian akses menghasilkan material akses PRE dan catatan akses pada smart contract. Material PRE digunakan untuk menghasilkan artefak re-encryption, sedangkan catatan on-chain digunakan untuk memeriksa apakah akses masih aktif.
+
+    \item \textbf{Pengambilan daftar PGHD.}
+    Client tenaga kesehatan meminta daftar PGHD pasien ke PRE dengan membawa identitas pasien, identitas tenaga kesehatan, dan token akses yang sesuai. PRE memvalidasi token dan memastikan material akses masih tersedia. Jika token atau material akses tidak ditemukan, PRE menolak permintaan dan client menampilkan pesan bahwa akses belum diberikan atau sudah tidak aktif.
+
+    \item \textbf{Validasi akses melalui smart contract.}
+    Setelah token valid, PRE membaca metadata PGHD dari smart contract. Smart contract memeriksa apakah tenaga kesehatan memiliki akses baca PGHD terhadap pasien, apakah akses belum kedaluwarsa, dan apakah akses belum dicabut. Metadata dengan status invalid tidak dapat dibuka sebagai data valid.
+
+    \item \textbf{Deteksi metadata legacy.}
+    Pada saat daftar atau detail PGHD dibaca, PRE memeriksa metadata tambahan. Jika metadata masih menggunakan skema lama yang memuat \texttt{pghd\_outer\_signature} atau tidak memiliki \texttt{signature}, PRE menginvalidasi entri dengan alasan \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA} dan tidak menampilkan entri tersebut sebagai PGHD valid.
+
+    \item \textbf{Pemilihan satu entri PGHD.}
+    Ketika tenaga kesehatan memilih satu entri PGHD, client mengirim permintaan detail ke PRE. PRE kembali memvalidasi token, material PRE, dan hak akses on-chain sebelum mengambil data.
+
+    \item \textbf{Pengambilan metadata dan ciphertext.}
+    PRE mengambil metadata PGHD dari smart contract. Metadata tersebut memuat CID, \texttt{h\_cipher}, status, alasan kegagalan jika ada, dan metadata kriptografis yang diserialisasi. PRE kemudian mengambil \texttt{enc\_pghd} dari penyimpanan off-chain menggunakan CID tersebut.
+
+    \item \textbf{Verifikasi hash ciphertext dan signature oleh PRE.}
+    PRE menghitung kembali hash ciphertext:
     \[
-        h_{\text{download}} = \mathrm{SHA256}(\texttt{enc\_pghd}_{\text{downloaded}}).
+        h_{\text{download}} = \mathrm{SHA256}(\texttt{enc\_pghd}).
     \]
-    Nilai $h_{\text{download}}$ ini kemudian dibandingkan dengan \verb|h_cipher| yang didapatkan dari metadata IOTA yang \textit{immutable}.
-    Jika nilai hash tidak cocok, klien akan langsung membatalkan proses dan memunculkan peringatan integritas data yang rusak. 
-    Selanjutnya, klien mengirimkan laporan ke proxy yang berisi CID dan alasan kegagalan (\verb|OUTER_SIGNATURE_MISMATCH|). 
-    Proxy kemudian melakukan \textit{unpin} CID terkait dari kluster IPFS sehingga data tidak lagi dijaga secara aktif, kemudian memanggil fungsi \verb|invalidate_pghd_entry| pada \textit{smart contract} untuk mengubah status entri PGHD menjadi \verb|INVALID| dengan alasan \verb|OUTER_SIGNATURE_MISMATCH|\@.
+    Nilai tersebut dibandingkan dengan \texttt{h\_cipher} pada metadata on-chain. Jika tidak cocok, PRE menginvalidasi entri PGHD dan menghentikan proses. PRE juga memverifikasi \texttt{signature} menggunakan kunci publik PGHD pasien. Jika signature tidak valid, PRE menginvalidasi entri dengan alasan \texttt{SIGNATURE\_INVALID}.
+
+    \item \textbf{Proxy re-encryption terhadap kunci simetris.}
+    Jika verifikasi berhasil, PRE menggunakan material akses untuk melakukan re-encryption terhadap \texttt{capsule}. Hasil proses ini adalah \texttt{c\_frag}. PRE tidak mendekripsi ciphertext PGHD dan tidak mengetahui plaintext data pasien.
+
+    \item \textbf{Pengiriman artefak dekripsi ke client tenaga kesehatan.}
+    PRE mengembalikan \texttt{enc\_pghd}, \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, \texttt{c\_frag}, material kunci terenkripsi milik tenaga kesehatan, kunci publik yang dibutuhkan untuk verifikasi, serta metadata PGHD.
+
+    \item \textbf{Verifikasi dan dekripsi di client tenaga kesehatan.}
+    Client tenaga kesehatan kembali menghitung \texttt{h\_cipher} dari \texttt{enc\_pghd} dan memverifikasi \texttt{signature}. Setelah itu, client menggunakan artefak PRE untuk membuka kunci simetris dan mendekripsi \texttt{enc\_pghd}. Setelah plaintext terbuka, client memperoleh payload batch PGHD sesuai Tabel~\ref{tab:field-batch-json-pghd}, data group sesuai Tabel~\ref{tab:field-datagroup-json-pghd}, dan data point sesuai Tabel~\ref{tab:field-datapoints-json-pghd}.
+
+    \item \textbf{Verifikasi hash plaintext di client tenaga kesehatan.}
+    Payload hasil dekripsi memuat \texttt{pghd\_data}, \texttt{pghd\_data\_json}, dan \texttt{h\_plain}. Client menghitung ulang hash dari \texttt{pghd\_data\_json} dan membandingkannya dengan \texttt{h\_plain}. Jika tidak cocok, data tidak ditampilkan sebagai data valid dan entri PGHD diinvalidasi dengan alasan \texttt{PLAIN\_HASH\_MISMATCH}.
+
+    \item \textbf{Invalidasi PGHD.}
+    Invalidasi PGHD dapat terjadi ketika hash ciphertext tidak cocok, signature gagal diverifikasi, hash plaintext tidak cocok, metadata masih menggunakan skema legacy, atau tenaga kesehatan melakukan invalidasi manual melalui antarmuka. Ketika client tenaga kesehatan mendeteksi kegagalan integritas, data tidak langsung ditampilkan sebagai data valid. Client menampilkan peringatan bahwa data rusak atau tidak sah, kemudian setelah beberapa saat menampilkan dialog konfirmasi kepada tenaga kesehatan untuk menginvalidasi entri tersebut. Dialog tersebut memuat alasan teknis, misalnya \texttt{OUTER\_HASH\_MISMATCH}, \texttt{SIGNATURE\_INVALID}, \texttt{PLAIN\_HASH\_MISMATCH}, atau \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA}.
+
+    Pada proses invalidasi, client tenaga kesehatan mengirim CID kanonik, alasan kegagalan, identitas pasien, dan token akses PGHD ke PRE. PRE memvalidasi token, material akses, dan hak akses baca PGHD melalui smart contract. Setelah valid, PRE memanggil smart contract untuk mencari metadata PGHD berdasarkan CID, mengubah status metadata menjadi invalid, dan menyimpan alasan kegagalan. PRE kemudian membaca kembali daftar PGHD valid untuk memastikan CID tersebut tidak lagi dikembalikan sebagai entri valid. Jika CID masih muncul sebagai valid, PRE mengembalikan eror agar client tidak menampilkan keberhasilan invalidasi yang semu. PRE juga mencoba melakukan \textit{unpin} objek IPFS terkait CID tersebut dari node IPFS yang dikelola sistem.
+
+Setelah status invalid tercatat di IOTA, entri PGHD tidak lagi dikembalikan sebagai data valid pada daftar PGHD dan tidak dapat dibuka sebagai data valid. IPFS tidak menjadi sumber kebenaran status data; sumber kebenaran invalidasi tetap berada pada metadata on-chain. Riwayat transaksi IOTA tetap immutable, sedangkan status metadata berubah melalui versi objek baru yang dihasilkan oleh transaksi invalidasi.
     
-    \item \textbf{Proses proxy re-encryption.}
-    Proxy melakukan proses proxy re-encryption terhadap \verb|enc_aes_key_nonce| dengan memanfaatkan \verb|capsule| dan \verb|kfrag| yang sebelumnya disimpan di Redis saat pasien memberikan akses kepada tenaga kesehatan. 
-    Proses ini menghasilkan \verb|cfrag|, yaitu fragmen ciphertext yang dapat digunakan oleh klien tenaga kesehatan untuk memperoleh kunci AES yang dibutuhkan untuk mendekripsi \verb|enc_pghd|.
-    
-    \item \textbf{Pengiriman artefak dekripsi ke klien tenaga kesehatan.}
-    Proxy mengirimkan \verb|enc_pghd|, \verb|enc_aes_key_nonce|, \verb|cfrag|, dan artefak kriptografis lain yang diperlukan (seperti \verb|enc_first_half_seed| dan \verb|med_pre_public_key|) kepada klien tenaga kesehatan. 
-    Proxy tidak pernah melakukan dekripsi terhadap \verb|enc_pghd| maupun \verb|enc_aes_key_nonce|.
-    
-    \item \textbf{Dekripsi PGHD di klien tenaga kesehatan.}
-    Di sisi klien tenaga kesehatan, proses dekripsi mengikuti mekanisme yang telah didefinisikan pada DecMed:
-    \begin{enumerate}
-        \item klien membangkitkan kunci proxy re-encryption lokal \verb|med_pre_secret_key| dari seed yang telah dienkripsi,
-        \item menggunakan \verb|med_pre_secret_key| dan \verb|cfrag| untuk mendekripsi \verb|enc_aes_key_nonce| sehingga diperoleh \verb|aes_key| dan \verb|aes_nonce|,
-        \item menggunakan \verb|aes_key| dan \verb|aes_nonce| untuk mendekripsi \verb|enc_pghd| dengan AES-GCM sehingga diperoleh struktur plaintext PGHD yang memuat \verb|pghd_plaintext| dan 
-        \verb|pghd_inner_signature|.
-    \end{enumerate}
-    
-    \item \textbf{Verifikasi \textit{inner signature} di sisi tenaga kesehatan.}
-    Setelah memperoleh plaintext PGHD, klien tenaga kesehatan menghitung kembali nilai \textit{hash} plaintext,
-    \[
-        h_{\text{plain}}' = \mathrm{SHA256}(\texttt{pghd\_plaintext}),
-    \]
-    lalu memuat \verb|pghd_public_key| pasien dari ledger IOTA dan memverifikasi \verb|pghd_inner_signature| menggunakan algoritma ECDSA\@. 
-    Jika verifikasi berhasil, klien menampilkan PGHD kepada tenaga kesehatan untuk digunakan dalam pengambilan keputusan klinis dengan waktu akses baca selama 24 jam setelah izin akses diberikan.
-    
-    \item \textbf{Penanganan kegagalan verifikasi \textit{inner signature}.}
-    Jika verifikasi \textit{inner signature} gagal, klien tenaga kesehatan akan menolak menampilkan dan menggunakan PGHD tersebut. 
-    Selain itu, klien mengirimkan permintaan ke \textit{smart contract} untuk menginvalidasi entri PGHD yang bersangkutan. 
-    \textit{Smart contract} kemudian mengubah status entri PGHD menjadi \texttt{INVALID} dan menyimpan alasan kegagalan (\texttt{INNER\_SIGNATURE\_INVALID}) dalam metadata.
-    Alasan yang dicatat meliputi \verb|INNER_SIGNATURE_INVALID| (tanda tangan inner tidak valid) atau \verb|DATA_INTEGRITY_FAILED| (hash plaintext tidak cocok). 
-    Proxy juga akan melakukan unpin CID terkait dari kluster IPFS setelah status berubah menjadi \verb|INVALID|, sehingga data yang telah dinyatakan tidak valid tidak lagi tersimpan secara aktif di IPFS\@.
-    
-    \item \textbf{Invalidasi CID IPFS dan koneksi ke IOTA.}
-    Ketika terjadi kegagalan verifikasi (baik \textit{outer signature} maupun \textit{inner signature}), klien tenaga kesehatan memanggil fungsi \verb|invalidate_pghd_entry| pada \textit{smart contract} dengan parameter \verb|cid| dan alasan kegagalan. 
-    Smart contract akan:
-    \begin{enumerate}
-        \item Memverifikasi bahwa pemanggil memiliki otorisasi (tenaga kesehatan yang memiliki akses baca terhadap entri tersebut),
-        \item Mengubah status entri PGHD menjadi \verb|INVALID| dan mencatat alasan kegagalan,
-    \end{enumerate}
-    Setelah status berubah menjadi \verb|INVALID|, proxy akan melakukan \textit{unpin} CID terkait dari kluster IPFS\@. 
-    Klien pasien maupun tenaga kesehatan tidak lagi menampilkan entri PGHD yang berstatus \verb|INVALID| dalam daftar data aktif. 
+    \item \textbf{Efek pencabutan akses.}
+    Jika pasien mencabut akses PGHD, material akses PRE dihapus dan catatan akses pada smart contract ditandai tidak aktif. Setelah itu, tenaga kesehatan tidak dapat mengambil daftar maupun membuka detail PGHD karena validasi di PRE atau smart contract akan gagal.
 \end{enumerate}

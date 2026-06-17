@@ -1,0 +1,60 @@
+\subsection{Rancangan Pemberian Akses PGHD}
+
+Pemberian akses PGHD dilakukan oleh pasien melalui client pasien dengan memindai QR Code milik tenaga kesehatan. QR Code tersebut memuat identitas IOTA tenaga kesehatan dan kunci publik PRE tenaga kesehatan yang dibutuhkan untuk membuat delegasi akses terenkripsi.
+
+\subsubsection{Data Masukan Pemberian Akses}
+
+Data utama yang digunakan pada proses pemberian akses PGHD adalah sebagai berikut.
+
+\begin{longtable}{|p{0.30\textwidth}|p{0.56\textwidth}|}
+    \caption{Data masukan mekanisme pemberian akses PGHD}
+    \label{tab:data-pemberian-akses-pghd} \\
+    \hline
+    \textbf{Data} & \textbf{Keterangan} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Data} & \textbf{Keterangan} \\
+    \hline
+    \endhead
+    \texttt{hospital\_personnel\_iota\_address} & Alamat IOTA tenaga kesehatan penerima akses. \\
+    \hline
+    \texttt{hospital\_personnel\_pre\_public\_key} & Kunci publik PRE tenaga kesehatan yang digunakan untuk mengenkripsi material akses. \\
+    \hline
+    \texttt{patient\_iota\_address} & Alamat IOTA pasien pemberi akses. \\
+    \hline
+    \texttt{patient\_iota\_key\_pair} & Kunci IOTA pasien untuk menandatangani nonce dan transaksi smart contract. \\
+    \hline
+    \texttt{patient\_pghd\_pre\_public\_key} dan \texttt{patient\_pghd\_pre\_secret\_key} & Pasangan kunci PRE PGHD pasien yang digunakan untuk membentuk delegasi re-enkripsi PGHD. \\
+    \hline
+\end{longtable}
+
+Alur pemberian akses baca PGHD adalah sebagai berikut.
+
+\begin{enumerate}
+    \item Tenaga kesehatan membuka halaman profil pada client tenaga kesehatan.
+    \item Client tenaga kesehatan membangkitkan QR Code yang memuat \texttt{hospital\_personnel\_iota\_address} dan \texttt{hospital\_personnel\_pre\_public\_key}.
+    \item Pasien membuka client pasien dan memindai QR Code tenaga kesehatan.
+    \item Client pasien memvalidasi isi QR Code.
+    \item Client pasien meminta \texttt{nonce} ke PRE menggunakan \texttt{patient\_iota\_address}.
+    \item Client pasien menandatangani \texttt{nonce} menggunakan \texttt{patient\_iota\_key\_pair}.
+    \item Client pasien membangkitkan pasangan kunci PRE sementara berupa \texttt{data\_pre\_public\_key} dan \texttt{data\_pre\_secret\_key\_seed}.
+    \item Client pasien mengenkripsi \texttt{data\_pre\_secret\_key\_seed} menggunakan \texttt{hospital\_personnel\_pre\_public\_key}, menghasilkan \texttt{enc\_data\_pre\_secret\_key\_seed} dan \texttt{data\_pre\_secret\_key\_seed\_capsule}.
+    \item Client pasien membangkitkan \texttt{k\_frag} menggunakan \texttt{patient\_pghd\_pre\_secret\_key} sebagai kunci delegasi dan \texttt{data\_pre\_public\_key} sebagai kunci penerima.
+    \item Client pasien mengirimkan \texttt{k\_frag}, \texttt{data\_pre\_public\_key}, \texttt{enc\_data\_pre\_secret\_key\_seed}, \texttt{data\_pre\_secret\_key\_seed\_capsule}, \texttt{signature}, dan \texttt{purpose=ReadPghd} ke PRE.
+    \item PRE memvalidasi tanda tangan, nonce, dan tujuan akses, lalu menyimpan material akses sementara.
+    \item PRE mengembalikan \texttt{access\_token\_read\_pghd}.
+    \item Client pasien mengenkripsi \texttt{access\_token\_read\_pghd} beserta metadata pasien untuk tenaga kesehatan.
+    \item Client pasien memanggil smart contract untuk membuat akses PGHD pada IOTA melalui \texttt{createPghdAccess}.
+    \item Client pasien menyimpan catatan akses lokal, termasuk \texttt{hospital\_personnel\_iota\_address}, tujuan akses, tanggal, dan \texttt{access\_log\_index}.
+\end{enumerate}
+
+Setelah proses ini berhasil, tenaga kesehatan dapat meminta daftar PGHD dan membuka detail PGHD selama akses on-chain masih aktif dan material akses di PRE masih tersedia.
+
+Apabila pasien memberikan akses PGHD kembali kepada tenaga kesehatan yang masih memiliki akses aktif, proses tersebut diperlakukan sebagai pembaruan akses. Client pasien tetap menjalankan alur pemberian akses dari awal, yaitu meminta nonce baru, menandatangani nonce, membangkitkan pasangan kunci PRE sementara baru, membentuk \texttt{k\_frag} baru, dan mengirimkan material akses baru ke PRE.
+
+Pada PRE, material akses PGHD disimpan menggunakan kunci cache yang dibentuk dari tujuan akses, alamat IOTA tenaga kesehatan, dan alamat IOTA pasien, yaitu \texttt{keys:read\_pghd:\{hospital\_personnel\_iota\_address\}@\{patient\_iota\_address\}}. Oleh karena itu, jika pasangan pasien dan tenaga kesehatan yang sama diberikan akses PGHD kembali, material akses pada cache akan diganti dengan material terbaru dan durasi kedaluwarsanya diperbarui. Token akses yang dikembalikan kepada tenaga kesehatan juga merupakan token baru yang mengikuti durasi akses terbaru.
+
+Pada sisi IOTA, pemberian akses ulang tetap dicatat sebagai riwayat akses baru sehingga jejak persetujuan pasien tidak hilang. Dengan demikian, akses yang berlaku secara operasional adalah material akses dan token terbaru yang tersimpan pada PRE, sedangkan smart contract tetap menyimpan catatan pemberian akses sebagai bagian dari riwayat akses. Client pasien juga menyimpan catatan akses lokal beserta \texttt{access\_log\_index} agar pasien dapat melakukan pencabutan akses tanpa perlu memasukkan indeks akses secara manual.
+
+% Implementasi Android saat ini menggunakan kamera/gallery untuk memindai QR dan Redis pada PRE untuk material akses sementara.

@@ -1,44 +1,51 @@
 \subsubsection{Mekanisme Pengumpulan PGHD pada Klien Pasien}\label{mekanisme-pengumpulan-pghd}
 
-Sebelum data PGHD dapat dikirim ke sistem, klien pasien harus terlebih dahulu mengumpulkan data dari berbagai sumber.
+Mekanisme pengumpulan PGHD dirancang agar data kesehatan yang berasal dari perangkat pasien dapat dikumpulkan, dinormalisasi, dan disimpan terlebih dahulu pada perangkat sebelum dikirim ke sistem. 
+Data yang dikumpulkan disimpan ke penyimpanan lokal (\textit{local} DB) dengan struktur seperti pada Tabel~\ref{tab:field-pghd-raw-local}. 
+Ketika data telah memenuhi kondisi pembentukan \textit{batch}, data lokal tersebut disusun menjadi payload PGHD sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram
+
+\begin{figure}[htbp]
+    \centering
+	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-mekanisme-pengumpulan-pghd.png}
+	\caption{\textit{Sequence Diagram} Mekanisme Pengumpulan dan Pengolahan PGHD}\label{fig:seq-diagram-rancangan-pengumpulan}
+\end{figure}
 
 \begin{enumerate}
-    \item \textbf{Inisialisasi sumber data pada saat pertama kali aplikasi dijalankan.}
-    Setelah pasien berhasil login ke akun DecMed, klien pasien meminta izin akses ke:
-    \begin{itemize}
-        \item Sensor perangkat yang tersedia melalui API Android/iOS\@.
-        \item Health Connect API (Android) atau HealthKit (iOS) untuk membaca data dari aplikasi kesehatan pihak ketiga \parencite{android_hc_write}.
-    \end{itemize}
-    Izin yang diberikan pengguna disimpan secara persisten.
+    \item \textbf{Inisialisasi dan permintaan izin pengumpulan data.}
+    Setelah pasien berhasil masuk ke akun DecMed PGHD, client pasien memeriksa izin yang dibutuhkan untuk mengakses sumber data kesehatan. Sumber data tersebut meliputi API sistem operasi untuk data \textit{wellness}, \textit{fitness}, dan \textit{activity}, sensor perangkat, serta input manual dari pasien. Jika izin belum lengkap, client menampilkan penjelasan mengenai jenis data yang akan dikumpulkan dan meminta pasien memberikan izin yang diperlukan.
+    % Implementasi Android saat ini menggunakan izin Health Connect, ACTIVITY_RECOGNITION, BODY_SENSORS apabila tersedia, dan izin kamera untuk pemindaian QR.
 
-    \item \textbf{Registrasi \textit{listener} data untuk setiap tipe pengukuran.}
-    Klien mendaftarkan \textit{listener} untuk setiap tipe data yang akan dikumpulkan sesuai frekuensi pada Tabel~\ref{health-connect-get-data-interval}. 
-    Setiap kali data baru diterima, klien mengkonversinya ke dalam struktur \texttt{data group} dan \texttt{data points} sesuai Tabel~\ref{tab:field-datagroup-json-pghd} dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+    \item \textbf{Aktivasi jendela pengumpulan data.}
+    Ketika pasien mengaktifkan pengumpulan PGHD, client menyimpan status pengumpulan sebagai aktif dan mencatat waktu mulai jendela pengumpulan. Jendela ini digunakan untuk menampilkan data yang sedang dikumpulkan, jumlah data yang belum masuk batch, dan estimasi ukuran data yang masih menunggu pemrosesan.
 
-    \item \textbf{Penyimpanan sementara per tipe pengukuran.}
-    Klien menyimpan struktur data dalam memori untuk setiap tipe pengukuran menggunakan format pada Tabel~\ref{tab:field-pghd-raw-local}. 
-    Data ditambahkan (\textit{append}) ke daftar \texttt{data\_points} yang sesuai setiap kali \textit{listener} menerima pembacaan baru.
+    \item \textbf{Pengambilan data dari API sistem operasi.}
+    Client mengambil data kesehatan terstruktur dari API sistem operasi secara periodik. Data yang diperoleh dari API tersebut dapat berasal dari aplikasi kesehatan, perangkat wearable, atau layanan sistem lain yang telah mendapat izin dari pasien. Client hanya mengambil data sejak timestamp sinkronisasi terakhir agar data yang sama tidak dikumpulkan ulang. Setiap data kemudian dipetakan ke format lokal pada Tabel~\ref{tab:field-pghd-raw-local}.
+    % Implementasi Android saat ini menggunakan Health Connect sebagai API OS. Data Mi Smart Band 9 Active masuk melalui Mi Fitness yang menulis data ke Health Connect. Sinkronisasi Health Connect dijalankan menggunakan WorkManager periodik minimum 15 menit.
 
-    \item \textbf{Pengecekan estimasi ukuran batch periodik.}
-    Klien setiap 1 menit menghitung ukuran batch berdasarkan jumlah total \texttt{data\_points} yang telah terkumpul. 
-    Jika perkiraan ukuran melebihi ambang batas 10 MB (sebelum enkripsi), klien akan segera membuat batch (Tabel~\ref{tab:field-batch-json-pghd}) dan memicu \textit{early trigger} tanpa menunggu interval 15 menit.
+    \item \textbf{Pengambilan data dari sensor perangkat.}
+    Selain melalui API sistem operasi, client dapat mengambil data dari sensor perangkat secara periodik. Data sensor tidak disimpan sebagai nilai teknis mentah untuk ditampilkan kepada pasien, tetapi diproses menjadi tipe data PGHD yang lebih mudah dipahami, misalnya data aktivitas, estimasi gerakan, atau data kesehatan lain yang dapat diturunkan dari sensor yang tersedia. Hasil pemrosesan tetap disimpan menggunakan struktur lokal pada Tabel~\ref{tab:field-pghd-raw-local}.
+    % Implementasi Android saat ini menggunakan interval sensor default 60 detik dan menyimpan hasil transformasi dengan label sumber Phone Sensor.
 
-    \item \textbf{Pembentukan batch periodik (setiap 15 menit atau \textit{early trigger}).}
-    Klien menjalankan \textit{timer} dengan interval 15 menit untuk membentuk batch. 
-    Ketika pembentukan batch di-\textit{trigger} baik oleh \textit{timer} maupun \textit{early trigger}, klien akan melakukan hal berikut,
-    \begin{enumerate}
-        \item Mengambil seluruh data yang telah terkumpul untuk setiap tipe pengukuran.
-        \item Mengosongkan struktur data memori (data yang telah diambil dihapus).
-        \item Membentuk struktur JSON sesuai skema pada Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
-        \item Menyimpan batch ke \textit{local database} dengan status \texttt{pending}.
-        Struktur data yang disimpan mengikuti Tabel~\ref{tab:field-batch-pghd-local}.
-        Batch yang telah disimpan akan diproses lebih lanjut oleh mekanisme pengiriman pada Subbab~\ref{subsubsec:pengiriman-pghd}.
-    \end{enumerate}
+    \item \textbf{Input manual PGHD.}
+    Pasien juga dapat memasukkan PGHD secara manual melalui antarmuka aplikasi. Input manual divalidasi terlebih dahulu, kemudian disimpan sebagai record lokal dengan sumber data manual. Dengan demikian, data yang berasal dari input manual memiliki struktur yang sama dengan data yang berasal dari API sistem operasi maupun sensor perangkat.
 
-    \item \textbf{Penanganan data saat perangkat \textit{offline}.}
-    Jika perangkat tidak terhubung ke internet, batch tetap disimpan di \textit{local database}. 
-    Pengiriman akan ditangani oleh mekanisme \textit{retry} pada Subbab III.4.5.2 Poin 8.
+    \item \textbf{Penyimpanan lokal data PGHD.}
+    Data yang telah dikumpulkan disimpan sebagai record lokal sebelum masuk batch. Selama \texttt{batch\_id} masih kosong, data dianggap belum menjadi bagian dari batch pengiriman. Mekanisme ini membuat data PGHD tetap tersedia walaupun aplikasi ditutup, perangkat sedang offline, atau proses pengiriman belum dapat dilakukan.
 
-    \item \textbf{Cleanup data lama.}
-    Klien secara otomatis menghapus batch dengan status \texttt{sent} dan batch dengan status \texttt{permanent\_failure} setelah 7 hari.
+    \item \textbf{Pemicu pembentukan batch.}
+    Pembentukan batch PGHD dapat dipicu oleh pengiriman periodik, ukuran data yang telah mencapai ambang tertentu, atau aksi pengiriman manual dari pasien. Ketika salah satu pemicu tersebut terjadi, client mengambil data lokal yang belum memiliki \texttt{batch\_id}, mengelompokkannya ke dalam \texttt{data\_group}, dan menyusun data point sesuai skema pada Tabel~\ref{tab:field-datagroup-json-pghd} dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+    % Implementasi Android saat ini menggunakan pemicu periodik 15 menit, ambang ukuran 10 MB, dan tombol Send Now untuk pengiriman manual.
+
+    \item \textbf{Pembentukan batch lokal.}
+    Batch yang terbentuk disimpan ke penyimpanan lokal menggunakan struktur pada Tabel~\ref{tab:field-batch-pghd-local}. Ringkasan data point pada batch disimpan menggunakan struktur pada Tabel~\ref{tab:field-batch-pghd-local-points}. Status awal batch menunjukkan apakah batch masih menunggu pemicu pengiriman atau sudah masuk proses pengiriman.
+
+    \item \textbf{Status batch lokal.}
+    Client membedakan status batch menjadi \texttt{waiting\_for\_trigger}, \texttt{pending}, \texttt{sent}, dan \texttt{failed}. Status \texttt{waiting\_for\_trigger} digunakan ketika data belum dikirim dan masih menunggu pemicu. Status \texttt{pending} digunakan ketika batch sedang dikirim dan belum menerima respons akhir. Status \texttt{sent} digunakan ketika pengiriman berhasil, sedangkan \texttt{failed} digunakan ketika pengiriman gagal karena sebab selain koneksi.
+
+    \item \textbf{Penanganan perangkat offline.}
+    Jika perangkat tidak memiliki koneksi internet, data PGHD dan batch tetap tersimpan di perangkat pasien. Sistem tidak menghapus data yang belum terkirim. Ketika koneksi tersedia kembali, client menjadwalkan pengiriman batch yang masih menunggu atau gagal karena koneksi. Apabila kegagalan terjadi karena sebab lain, pasien tetap dapat memicu pengiriman manual.
+
+    \item \textbf{Retensi data lokal.}
+    Data PGHD yang telah dikumpulkan tidak dihapus otomatis setelah berhasil dikirim. Data yang belum terkirim, gagal terkirim, maupun sudah terkirim tetap dipertahankan untuk mendukung riwayat pasien, evaluasi pengiriman, dan kebutuhan audit pada client.
 \end{enumerate}

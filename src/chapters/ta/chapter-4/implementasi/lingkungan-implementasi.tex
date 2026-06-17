@@ -4,13 +4,10 @@ Batasan-batasan yang diterapkan pada implementasi prototipe integrasi DecMed-PGH
 
 \begin{enumerate}
     \item Aplikasi PGHD pasien diimplementasikan sebagai aplikasi Android. Pengujian integrasi PGHD dilakukan pada satu perangkat Android dan satu komputer pengembangan.
-    \item Data PGHD otomatis diperoleh melalui Health Connect dan sensor perangkat Android. 
-    Data dari \textit{wearable}, seperti Mi Fitness atau Smart Band, diasumsikan telah disinkronkan terlebih dahulu ke Health Connect oleh aplikasi bawaan perangkat tersebut.
-    \item Data yang berasal dari sensor perangkat Android dikonversi menjadi tipe data kesehatan yang lebih mudah dipahami pengguna, seperti langkah, detak jantung, jarak, dan tipe pengukuran lain yang didukung oleh implementasi.
-    \item Data PGHD disimpan secara lokal pada perangkat pasien sebelum dibentuk menjadi batch dan dikirim. 
-    Penyimpanan lokal pada prototipe ini tidak menerapkan enkripsi basis data lokal.
-    \item Jaringan blockchain yang digunakan adalah IOTA testnet publik. 
-    Implementasi tidak menjalankan jaringan IOTA lokal dan tidak melakukan pengujian pada IOTA mainnet.
+    \item Data PGHD otomatis diperoleh melalui Health Connect dan sensor perangkat Android. Data dari wearable pada pengujian berasal dari Mi Smart Band 9 Active yang disinkronkan ke Health Connect melalui aplikasi Mi Fitness.
+    \item Data yang berasal dari sensor perangkat Android dikonversi menjadi tipe data kesehatan yang lebih mudah dipahami pengguna, seperti langkah, aktivitas, jarak, dan tipe pengukuran lain yang didukung oleh implementasi.
+    \item Data PGHD disimpan secara lokal pada perangkat pasien sebelum dibentuk menjadi batch dan dikirim. Penyimpanan lokal pada prototipe ini tidak menerapkan enkripsi basis data lokal.
+    \item Jaringan blockchain yang digunakan adalah IOTA testnet publik. Implementasi tidak menjalankan jaringan IOTA lokal dan tidak melakukan pengujian pada IOTA mainnet.
     \item IPFS dan IOTA Gas Station yang digunakan berada pada server kampus dan diakses dari komputer pengembangan melalui SSH tunneling. Implementasi tidak menjalankan IPFS dan Gas Station lokal sebagai konfigurasi akhir.
     \item Smart contract yang digunakan merupakan paket Move DecMed yang telah diperluas dengan mekanisme PGHD\@. Publikasi smart contract dilakukan ulang apabila terdapat perubahan alamat package, object, atau akun admin.
     \item Mekanisme persistent session untuk akses PGHD tidak diimplementasikan pada prototipe ini. Akses baca PGHD bergantung pada izin aktif pasien dan material re-encryption yang tersedia pada PRE\@.
@@ -23,7 +20,9 @@ Implementasi DecMed-PGHD dilakukan pada lingkungan komputer lokal dengan dukunga
 
 Secara umum, implementasi dibagi ke dalam beberapa komponen. Client Android pasien dibangun menggunakan Kotlin, Jetpack Compose, Health Connect, Room, WorkManager, dan shared library Rust melalui JNI\@. Client ministry dan client tenaga kesehatan dibangun menggunakan Tauri, SvelteKit, TypeScript, dan Rust. Komponen PRE dibangun menggunakan Rust dengan framework Axum, Redis sebagai penyimpanan material akses sementara, IPFS sebagai penyimpanan payload terenkripsi, dan IOTA testnet sebagai penyimpanan metadata serta mekanisme akses berbasis smart contract Move.
 
-JNI (\textit{Java Native Interface}) adalah mekanisme interoperabilitas yang memungkinkan kode pada lingkungan Java/Kotlin memanggil fungsi native yang dikompilasi ke shared library. Pada client Android PGHD, JNI digunakan untuk menghubungkan kode Kotlin dengan dua shared library Rust, yaitu \texttt{decmed\_crypto} dan \texttt{decmed\_iota}. Kebutuhan ini muncul karena operasi kriptografi PRE, pembuatan keypair, pembuatan \textit{kfrag}, tanda tangan PGHD, serta transaksi IOTA telah diimplementasikan menggunakan Rust. Dengan menggunakan JNI, aplikasi Android dapat memakai implementasi Rust yang sama tanpa perlu menulis ulang seluruh logika kriptografi dan IOTA pada Kotlin. Selain itu, JNI membantu menjaga konsistensi hasil kriptografi antara client Android, PRE, dan client tenaga kesehatan. Pada implementasi ini, pemanggilan JNI dilakukan melalui kelas Kotlin \texttt{DecmedCryptoNative} dan \texttt{DecmedIotaNative}, sedangkan shared library Rust dibangun untuk target Android dan dipaketkan ke dalam aplikasi melalui direktori \texttt{jniLibs}.
+JNI (\textit{Java Native Interface}) adalah mekanisme interoperabilitas yang memungkinkan kode pada lingkungan Java/Kotlin memanggil fungsi native yang dikompilasi ke shared library. Pada client Android PGHD, JNI digunakan untuk menghubungkan kode Kotlin dengan dua shared library Rust, yaitu \texttt{decmed\_crypto} dan \texttt{decmed\_iota}. Kebutuhan ini tidak hanya muncul untuk menghindari penulisan ulang kode, tetapi juga untuk menjaga kesesuaian hasil kriptografi dan transaksi IOTA secara byte-level antara client Android, PRE, dan client tenaga kesehatan. Operasi seperti pembangkitan keypair PRE, pembuatan \textit{kfrag}, pembentukan tanda tangan digital PGHD, serialisasi data, serta penandatanganan transaksi IOTA sangat sensitif terhadap perbedaan format byte, encoding, dan struktur data. Apabila seluruh logika tersebut ditulis ulang pada Kotlin, terdapat risiko inkonsistensi hasil kriptografi maupun transaksi yang dapat menyebabkan kegagalan verifikasi, kegagalan dekripsi, atau kesalahan pada pemanggilan smart contract.
+
+Selain itu, implementasi kriptografi dan integrasi IOTA pada sistem telah dibangun dan diuji menggunakan Rust. Dengan menggunakan JNI, client Android dapat menggunakan implementasi Rust yang sama dengan PRE dan client tenaga kesehatan sehingga mekanisme keamanan tetap konsisten pada seluruh komponen sistem. Penggunaan Rust juga memberikan keuntungan dari sisi keamanan memori dan performa untuk operasi kriptografi. Pada implementasi ini, pemanggilan JNI dilakukan melalui kelas Kotlin \texttt{DecmedCryptoNative} dan \texttt{DecmedIotaNative}, sedangkan shared library Rust dibangun untuk target Android dan dipaketkan ke dalam aplikasi melalui direktori \texttt{jniLibs}.
 
 \subsection{Konfigurasi Implementasi}
 
@@ -115,11 +114,13 @@ PRE_BASE_URL=http://192.168.1.10:4100
 IOTA_RPC_URL=https://api.testnet.IOTA\@.cafe
 GAS_STATION_BASE_URL=http://192.168.1.10:9527
 DECMED_PACKAGE_ID=0x...
+PGHD_SENSOR_INTERVAL_SECONDS=60
 PGHD_BATCH_INTERVAL_MINUTES=15
+PGHD_HEALTH_CONNECT_SYNC_INTERVAL_MINUTES=15
 PGHD_EARLY_TRIGGER_BYTES=10485760
 \end{lstlisting}
 
-Selain konfigurasi endpoint, aplikasi Android juga membutuhkan izin Android untuk akses kamera, aktivitas fisik, sensor, serta izin Health Connect. Izin Health Connect digunakan untuk membaca data kesehatan dari aplikasi eksternal seperti Mi Fitness atau Google Fit yang telah tersinkronisasi dengan Health Connect.
+Selain konfigurasi endpoint, aplikasi Android juga membutuhkan izin Android untuk akses kamera, aktivitas fisik, sensor, serta izin Health Connect. Izin Health Connect digunakan untuk membaca data kesehatan dari aplikasi eksternal seperti Mi Fitness yang telah tersinkronisasi dengan Health Connect. Berdasarkan dokumentasi Android, Health Connect menyediakan berbagai tipe data kesehatan, struktur data time-series seperti sampel detak jantung, serta mekanisme izin yang harus diminta aplikasi sebelum membaca atau menulis data \parencite{android_hc_write}.
 
 \subsubsection{Konfigurasi Client Ministry dan Client Tenaga Kesehatan}
 

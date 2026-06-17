@@ -1,0 +1,83 @@
+\subsection{Rancangan Pencabutan Akses PGHD}
+
+Pencabutan akses PGHD dilakukan oleh pasien dari client pasien. Tujuan pencabutan adalah menghentikan kemampuan tenaga kesehatan untuk membaca PGHD pasien melalui dua lapisan, yaitu penghapusan material akses pada PRE dan penandaan akses sebagai dicabut pada smart contract IOTA.
+
+\subsubsection{Data Masukan Pencabutan Akses}
+
+Data utama yang digunakan untuk pencabutan akses adalah sebagai berikut.
+
+\begin{longtable}{|p{0.30\textwidth}|p{0.56\textwidth}|}
+    \caption{Data masukan mekanisme pencabutan akses PGHD}
+    \label{tab:data-pencabutan-akses-pghd} \\
+    \hline
+    \textbf{Data} & \textbf{Keterangan} \\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Data} & \textbf{Keterangan} \\
+    \hline
+    \endhead
+    \texttt{hospital\_personnel\_iota\_address} & Alamat IOTA tenaga kesehatan yang aksesnya akan dicabut. \\
+    \hline
+    \texttt{patient\_iota\_address} & Alamat IOTA pasien pemilik data. \\
+    \hline
+    \texttt{patient\_iota\_key\_pair} & Kunci IOTA pasien untuk menandatangani nonce dan transaksi pencabutan. \\
+    \hline
+    \texttt{purpose} & Tujuan akses yang dicabut, misalnya \texttt{ReadPghd}. \\
+    \hline
+    \texttt{access\_log\_index} & Indeks log akses pada smart contract. Nilai ini disimpan oleh client pasien saat akses dibuat sehingga pasien tidak perlu memasukkan indeks secara manual. \\
+    \hline
+\end{longtable}
+
+\subsubsection{Alur Pencabutan Akses}
+
+Alur pencabutan akses PGHD adalah sebagai berikut.
+
+\begin{enumerate}
+    \item Pasien membuka daftar akses aktif pada client pasien.
+    \item Client membaca catatan akses lokal, termasuk \texttt{hospital\_personnel\_iota\_address}, \texttt{purpose}, dan \texttt{access\_log\_index}.
+    \item Pasien memilih akses yang ingin dicabut dan menekan tombol \textit{Revoke Access}.
+    \item Client meminta \texttt{nonce} ke PRE menggunakan \texttt{patient\_iota\_address}.
+    \item Client menandatangani \texttt{nonce} menggunakan \texttt{patient\_iota\_key\_pair}.
+    \item Client memanggil endpoint pencabutan material akses pada PRE dengan membawa \texttt{patient\_iota\_address}, \texttt{hospital\_personnel\_iota\_address}, \texttt{purpose}, dan \texttt{signature}.
+    \item PRE menghapus material akses yang sesuai dari penyimpanan sementara.
+    \item Client memanggil smart contract \texttt{revokePghdAccess} menggunakan \texttt{access\_log\_index}.
+    \item Smart contract menandai log akses tersebut sebagai dicabut.
+    \item Client memperbarui catatan akses lokal menjadi status dicabut.
+    \item Client menampilkan notifikasi bahwa akses telah dicabut.
+\end{enumerate}
+
+Setelah pencabutan berhasil, tenaga kesehatan tidak lagi dapat membuka PGHD pasien. Jika tenaga kesehatan mencoba mengakses data setelah pencabutan, PRE tidak dapat menemukan material akses yang valid atau smart contract menolak akses karena log akses telah dicabut.
+
+\subsubsection{Sequence Diagram Pencabutan Akses PGHD}
+
+\begin{lstlisting}[caption={Sequence diagram pencabutan akses PGHD}, label={lst:mermaid-pencabutan-akses-pghd}, float=htb]
+sequenceDiagram
+    autonumber
+    actor P as Pasien
+    participant C as Client Pasien
+    participant Local as Penyimpanan Preferensi Lokal
+    participant PRE as Server PRE
+    participant Cache as Penyimpanan Material Akses
+    participant IOTA as Smart Contract IOTA
+    participant Crypto as Modul Kriptografi
+
+    P->>C: Membuka daftar akses aktif
+    C->>Local: Membaca grant lokal
+    Local-->>C: hospital_personnel_iota_address, purpose, access_log_index
+    P->>C: Menekan Revoke Access
+    C->>PRE: Meminta nonce autentikasi
+    PRE-->>C: nonce
+    C->>Crypto: Menandatangani nonce dengan kunci pasien
+    Crypto-->>C: signature
+    C->>PRE: Mengirim request pencabutan material akses
+    PRE->>Cache: Menghapus key akses sesuai patient, personnel, purpose
+    Cache-->>PRE: revoked_keys
+    PRE-->>C: Konfirmasi revoke material akses
+    C->>IOTA: revokePghdAccess(hospital_personnel_address, access_log_index)
+    IOTA-->>C: Konfirmasi akses dicabut
+    C->>Local: Tandai grant lokal sebagai revoked
+    C-->>P: Menampilkan akses berhasil dicabut
+\end{lstlisting}
+
+% Implementasi Android saat ini menyimpan grant lokal pada DataStore dan memakai helper JNI DecMed IOTA untuk tanda tangan serta transaksi revoke.
