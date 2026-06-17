@@ -118,6 +118,17 @@ Struktur yang disimpan oleh \textit{smart contract} dapat dilihat pada Tabel~\re
     \end{styledtable}
 \end{table}
 
-Metadata tambahan diserialisasi dan dipisahkan dari field utama metadata on-chain agar struktur yang disimpan langsung pada smart contract tetap ringkas dan stabil. Field utama pada ledger hanya memuat informasi yang diperlukan untuk pencarian, status validasi, dan verifikasi dasar, seperti \texttt{cid}, \texttt{h\_cipher}, \texttt{status}, dan \texttt{failure\_reason}. Sementara itu, artefak kriptografi seperti \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, \texttt{signature}, dan metadata batch ditempatkan dalam metadata tambahan yang diserialisasi.
+Metadata tambahan diserialisasi dan dipisahkan dari \textit{field} utama metadata \textit{on-chain} supaya jika struktur metadata PGHD berubah, \textit{ledger} yang sebelumnya masih menggunakan format metadata lama masih valid. 
+Pada rancangan ini, \textit{field} utama pada struktur \texttt{PatientPghdMetadata} merupakan metadata yang perlu diakses langsung oleh \textit{smart contract}. 
+\textit{Field} seperti \texttt{index}, \texttt{cid}, \texttt{h\_cipher}, \texttt{status}, \texttt{failure\_reason}, dan \texttt{timestamp} disimpan sebagai \textit{field} langsung karena digunakan untuk pencarian entri PGHD, penentuan status validasi, dan proses invalidasi. 
+Sebaliknya, \textit{field} \texttt{metadata} merupakan metadata yang disimpan sebagai string terserialisasi (dianggap sebagai \textit{object} saja), sehingga tidak di-\textit{parsing} dan dijadikan \textit{field} dengan struktur \textit{rigid} yang harus sesuai dengan skema \textit{smart contract}. 
+Isi \textit{serialized} metadata digunakan oleh PRE dan \textit{client}, misalnya untuk menyimpan \texttt{batch\_id}, \texttt{patient\_iota\_address}, \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, \texttt{signature}, dan informasi pembuatan metadata.
 
-Pemilahan ini memberikan dua keuntungan. Pertama, perubahan format artefak kriptografi PGHD dapat dilakukan pada metadata serialisasi tanpa harus selalu mengubah struktur objek utama pada smart contract. Kedua, ukuran dan kompleksitas data yang diproses oleh ledger dapat ditekan karena payload besar tetap disimpan di IPFS, sedangkan IOTA berperan sebagai ledger untuk rujukan, status, dan metadata verifikasi.
+Pemisahan ini dilakukan untuk menjaga stabilitas skema \textit{smart contract}. 
+Apabila seluruh informasi seperti \texttt{batch\_id}, \texttt{signature}, artefak PRE, dan informasi \textit{provenance} dijadikan \textit{field} langsung pada struktur Move, maka setiap perubahan format metadata PGHD dapat memerlukan perubahan struktur \textit{smart contract}, \textit{republish} paket, dan penyesuaian komponen lain. 
+Dengan metadata ter-serialisasi, perubahan format metadata yang hanya dibutuhkan oleh PRE atau \textit{client} dapat dilakukan tanpa mengubah struktur utama objek \textit{on-chain}, selama \textit{field} utama seperti \texttt{cid}, \texttt{h\_cipher}, dan \texttt{status} tetap sama.
+
+Mekanisme invalidasi atau pengubahan status PGHD juga mengikuti model \textit{state} pada IOTA Move. 
+Riwayat transaksi pada \textit{ledger} bersifat \textit{immutable}, jadi transaksi pencatatan PGHD yang telah terjadi tidak diubah ataupun dihapus. 
+Ketika suatu entri PGHD diinvalidasi atau statusnya diubah, \textit{smart contract} membuat transaksi baru yang memperbarui \textit{state} terkini dari objek metadata PGHD, misalnya dengan mengubah \texttt{status} menjadi \textit{invalid} dan mengisi \texttt{failure\_reason}. 
+Dengan demikian, histori pencatatan dan histori invalidasi tetap dapat diaudit sebagai transaksi yang berbeda, sementara aplikasi membaca \textit{state} terbaru objek \texttt{PatientPghdMetadata} untuk menentukan apakah suatu entri PGHD masih valid atau sudah invalid.

@@ -1,6 +1,13 @@
 \subsubsection{Mekanisme Pengiriman PGHD oleh Pasien}\label{subsubsec:pengiriman-pghd}
 
 Setelah PGHD dikumpulkan dan dibentuk menjadi batch lokal, client pasien menjalankan mekanisme pengamanan dan pengiriman data. Plaintext batch PGHD mengikuti struktur pada Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. Setelah data diamankan, batch lokal menyimpan artefak pengiriman menggunakan struktur pada Tabel~\ref{tab:field-batch-pghd-local}. Metadata hasil pengiriman dicatat pada ledger menggunakan struktur Tabel~\ref{tab:iota-pghd-metadata} dan Tabel~\ref{tab:iota-pghd-serialized-metadata}.
+Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengiriman}.
+
+\begin{figure}[htbp]
+    \centering
+	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-mekanisme-pengiriman-pghd.png}
+	\caption{\textit{Sequence Diagram} Mekanisme Pengiriman PGHD}\label{fig:seq-diagram-rancangan-pengiriman}
+\end{figure}
 
 
 \begin{enumerate}
