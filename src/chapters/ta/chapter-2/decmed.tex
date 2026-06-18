@@ -83,30 +83,31 @@ Mekanisme pendaftaran akun pasien adalah,
 
 \begin{enumerate}
 	\item Pasien membuat 6 digit PIN dan konfirmasi 6 digit PIN
-	\item Client membangkitkan 12 frasa pemulihan (\verb|seed_words|) (BIP39). 
+	\item Client membangkitkan 12 frasa pemulihan (\verb|seed_words|) (BIP39).
 	Frasa ini tidak disimpan permanen sehingga harus disimpan, jika hilang tidak bisa dibuat lagi.
 	\item Pasien input NIK dan konfirmasi NIK\@.
 	\item Client \textit{generate seed} berukuran 64 bytes yang berasal dari \verb|seed_words|/frasa pemulihan digabungkan dengan NIK\@.
-	\item 64 bytes \textit{seed} digunakan untuk membangkitkan \verb|iota_key_pair| dan \verb|iota_address|. 
-	\verb|iota_address| berfungsi sebagai alamat unik yang merepresentasikan identitas akun pengguna di dalam jaringan IOTA\@. 
+	\item 64 bytes \textit{seed} digunakan untuk membangkitkan \verb|iota_key_pair| dan \verb|iota_address|.
+	\verb|iota_address| berfungsi sebagai alamat unik yang merepresentasikan identitas akun pengguna di dalam jaringan IOTA\@.
 	\verb|iota_key_pair| berfungsi sebagai pasangan kunci standar (publik dan privat) IOTA yang digunakan untuk mengotorisasi serta menandatangani (\textit{signing}) transaksi saat berinteraksi dengan jaringan \textit{smart contract} IOTA\@.
 	\item 32 bytes awal dari \textit{seed} digunakan untuk membangkitkan \verb|pre_secret_key| dan \verb|pre_public_key|.
-	\item Data administratif yang bersifat \textit{private} dienkripsi memakai AES-GCM menghasilkan \verb|enc_private_administrative_data|. 
+	\item Data administratif yang bersifat \textit{private} dienkripsi memakai AES-GCM menghasilkan \verb|enc_private_administrative_data|.
 	Enkripsi ini membutuhkan key (\verb|aes_key|) dan nonce (\verb|aes_nonce|). Key dan nonce di-\textit{generate} acak oleh client.
 	AES key (\verb|aes_key|) dan AES nonce (\verb|aes_nonce|) juga dienkripsi menggunakan \verb|pre_public_key| pasien, menghasilkan pasangan \verb|enc_aes_key_nonce| dan \verb|capsule|.
 	AES-GCM merupakan algoritma kriptografis simetrik sehingga kunci untuk melakukan enkripsi akan sama dengan kunci untuk melakukan dekripsi.
 	\item Semua elemen ini (\verb|capsule|, pasangan kunci dan nonce AES yang telah dienkripsi (\verb|enc_aes_key_nonce|), \verb|enc_private_administrative_data|, dan data administratif yang bersifat publik (\verb|public_administrative_data|)) dikumpulkan sebagai objek \textit{administrative\_metadata} dan disimpan pada \textit{ledger} IOTA sebagai metadata administratif\@.
-	\item Client menginisiasi transaksi bersponsor untuk menyimpan \verb|administrative_metadata| pada IOTA\@. 
-	Nama transaksi yang dipakai adalah \texttt{signup} untuk pendaftaran awal dan \verb|update_administrative_data| untuk melengkapi atau memperbarui data administratif. 
+	\item Client menginisiasi transaksi bersponsor untuk menyimpan \verb|administrative_metadata| pada IOTA\@.
+	Nama transaksi yang dipakai adalah \texttt{signup} untuk pendaftaran awal dan \verb|update_administrative_data| untuk melengkapi atau memperbarui data administratif.
 	Transaksi ini dijalankan melalui \textit{gas station} server sehingga client tidak perlu mengeluarkan biaya gas.
-	\item Setelah \texttt{signup} selesai, \verb|iota_key_pair| dan 32 bytes awal dari \verb|seed| dienkripsi pada sisi client menggunakan AES-GCM, di mana kunci enkripsi adalah 6 digit PIN pasien dan \textit{nonce} dibangkitkan secara acak. 
+	\item Setelah \texttt{signup} selesai, \verb|iota_key_pair| dan 32 bytes awal dari \verb|seed| dienkripsi pada sisi client menggunakan AES-GCM, di mana kunci enkripsi adalah 6 digit PIN pasien dan \textit{nonce} dibangkitkan secara acak.
 	Perlu dicatat bahwa \textit{nonce} untuk enkripsi \verb|iota_key_pair| berbeda dari \textit{nonce} untuk enkripsi setengah bagian awal \verb|seed|.
 	Hasil enkripsi disimpan sebagai \verb|enc_iota_key_pair| dan \verb|enc_first_half_seed|.
 	\item Selanjutnya, data administratif pasien (publik dan privat), \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|iota_address|, \verb|pre_public_key|, serta \verb|iota_key_pair_nonce| dan \verb|first_half_seed_nonce| disimpan di penyimpanan aman perangkat (\textit{secure storage}).
 \end{enumerate}
 
 Pendaftaran akun personel fasilitas pelayanan kesehatan mengikuti langkah yang serupa dengan pendaftaran pasien, dengan beberapa perbedaan.
-identifikasi personel menggunakan \verb|CID| (Content Identifier), bukan \verb|NIK|, dan CID harus diaktivasi dulu oleh admin fasyankes. 
+Identifikasi personel menggunakan \verb|CID| personel, bukan \verb|NIK|, dan CID tersebut harus diaktivasi terlebih dahulu menggunakan \textit{activation key} yang diterbitkan oleh otoritas atau admin fasyankes.
+CID personel pada konteks ini merupakan pengenal akun personel dan berbeda dari CID IPFS yang digunakan sebagai rujukan konten.
 Secara teknis, semua artefak administratif (termasuk \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|pre_public_key|, dan \textit{nonce} terkait) disiapkan oleh \textit{client} personel dan kemudian disimpan pada IOTA melalui transaksi bersponsor yang sama seperti pada pendaftaran pasien.
 
 \subsection{Mekanisme Login Akun}
@@ -114,17 +115,91 @@ Secara teknis, semua artefak administratif (termasuk \verb|enc_iota_key_pair|, \
 Setelah pasien atau personel fasyankes memiliki akun, mereka dapat melakukan login untuk mengakses operasi-operasi yang diizinkan pada tabel~\ref{decmed-actor-privileges}.
 
 \begin{enumerate}
-\item Pasien/personal fasyankes memasukkan 6 digit PIN (untuk membongkar \textit{secure storage}), konfirmasi 6 digit PIN, frasa pemulihan (\verb|seed_words|), dan \verb|NIK|. 
-Pada mekanisme login, PIN tidak harus sama dengan PIN pada pendaftaran, karena PIN bersifat lokal pada perangkat dan hanya hidup di memori selama sesi autentikasi. 
-PIN tidak disimpan di server manapun.
-\item Client merekonstruksi \verb|seed| (64 bytes) dari kombinasi \verb|seed_words| dan \verb|NIK|. 
-Kemudian dari \verb|seed| diregenerasi \verb|iota_key_pair|, \verb|iota_address|, serta \verb|pre_secret_key|/\verb|pre_public_key|. 
-Karena proses regenerasi deterministik, hasilnya konsisten antar perangkat yang menggunakan kombinasi frasa pemulihan dan \verb|NIK| yang sama.
+\item Pasien memasukkan 6 digit PIN, konfirmasi PIN, frasa pemulihan (\verb|seed_words|), dan NIK\@.
+Personel fasyankes memasukkan PIN, konfirmasi PIN, dan \textit{seed words}; CID personel dan \textit{activation key} telah disimpan secara lokal ketika proses aktivasi dilakukan.
+Dengan demikian, CID dan \textit{activation key} tidak harus dimasukkan kembali pada setiap \textit{login} normal.
+Keduanya perlu dimasukkan kembali apabila penyimpanan aplikasi dihapus, aplikasi di-\textit{reset}, atau proses aktivasi dilakukan pada instalasi perangkat yang baru.
+
+\item Client merekonstruksi \verb|seed| sepanjang 64 byte dari kombinasi \verb|seed_words| dan pengenal pengguna.
+Untuk pasien, pengenal tersebut adalah NIK, sedangkan untuk personel fasyankes pengenal tersebut adalah CID personel.
+Kemudian dari \verb|seed| diregenerasi \verb|iota_key_pair|, \verb|iota_address|, serta \verb|pre_secret_key|/\verb|pre_public_key|.
+Karena proses regenerasi deterministik, hasilnya hanya akan sama apabila \textit{seed words} dan pengenal yang digunakan juga sama dengan saat pendaftaran.
+Penggunaan kombinasi yang berbeda akan menghasilkan alamat lain sehingga pemeriksaan akun terdaftar akan gagal.
 \item Client melakukan pemeriksaan pendaftaran terhadap jaringan IOTA menggunakan mekanisme \textit{inspect transaction} (tanpa biaya gas) untuk memastikan apakah \verb|iota_address| yang dihasilkan telah terdaftar.
-\item Jika pemeriksaan menunjukkan akun terdaftar, client akan menyiapkan kembali artefak yang harus disimpan secara lokal: \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|iota_address|, \verb|pre_public_key|, \verb|iota_key_pair_nonce|, dan \verb|first_half_seed_nonce|. 
-Untuk menyimpan ulang artefak yang terenkripsi, client menggunakan PIN sebagai kunci simetris AES (PIN digunakan sebagai key dan nonce di-generate oleh \textit{client}).
+\item Jika pemeriksaan menunjukkan akun terdaftar, client akan menyiapkan kembali artefak yang harus disimpan secara lokal: \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|iota_address|, \verb|pre_public_key|, \verb|iota_key_pair_nonce|, dan \verb|first_half_seed_nonce|.
+Untuk menyimpan ulang artefak yang terenkripsi pada \textit{client} DecMed berbasis Tauri, client menggunakan hash PIN sebagai kunci simetris AES dan membangkitkan \textit{nonce} baru.
+PIN bersifat lokal dan tidak digunakan sebagai sumber pembentukan alamat IOTA\@.
+Oleh karena itu, dalam alur pemulihan akun, pengguna dapat menetapkan PIN lokal baru tanpa mengubah identitas \textit{on-chain}, selama kombinasi \textit{seed words} dan pengenalnya tetap sama.
 \item Setelah login berhasil, data administratif pasien (baik publik maupun privat), bersama artefak terenkripsi dan nonce yang terkait (seperti pada tahap pendaftaran), disimpan atau diperbarui pada \textit{secure storage}.
 \end{enumerate}
+
+Identitas pengguna pada DecMed direpresentasikan oleh alamat IOTA dan pasangan kunci kriptografis.
+Pengguna harus dapat membangkitkan atau memulihkan \textit{private key} yang sama untuk menandatangani transaksi IOTA, membuktikan kepemilikan identitas, dan menjalankan operasi kriptografi PRE\@.
+Oleh karena itu, DecMed menggunakan kombinasi \textit{mnemonic}, \textit{identifier} pengguna, dan penyimpanan kredensial di lokal perangkat.
+
+\textit{Mnemonic} adalah representasi material acak dalam bentuk urutan kata yang lebih mudah dicatat dan dipulihkan oleh manusia dibandingkan \textit{private key} dalam bentuk biner atau heksadesimal.
+DecMed menggunakan BIP-39 (\textit{Bitcoin Improvement Proposal 39}) untuk membangkitkan \textit{mnemonic} yang terdiri atas 12 kata \parencite{bip39_mnemonic}.
+Pada BIP-39, rangkaian 12 kata dibentuk dari entropi 128 bit dan \textit{checksum} 4 bit.
+
+Fungsi utama \textit{mnemonic} dan \textit{seed} adalah untuk membangkitkan \textit{private key} yang tidak layak ditebak menggunakan \textit{bruteforce} karena memiliki entropi tinggi.
+Alur pembentukannya sebagai berikut,
+\[
+    \text{entropi acak}
+    \longrightarrow
+    \textit{mnemonic BIP-39}
+    \longrightarrow
+    \textit{seed}
+    \longrightarrow
+    \text{\textit{private key}}.
+\]
+\textit{Mnemonic} bukan merupakan \textit{private key}, melainkan representasi entropi acak dalam bentuk kata yang dapat dicatat oleh pengguna.
+\textit{Seed} merupakan hasil biner dari proses derivasi \textit{mnemonic}, sedangkan \textit{private key} diperoleh dari \textit{seed} melalui algoritma derivasi kunci.
+Karena proses tersebut bersifat deterministik, masukan yang sama menghasilkan \textit{private key} yang sama sehingga identitas dapat dipulihkan tanpa menyimpan \textit{private key} pada server.
+
+PIN enam digit tidak digunakan sebagai sumber utama pembentukan \textit{private key} dapat diserang menggunakan serangan \textit{brute force}.
+Sebaliknya, \textit{mnemonic} BIP-39 yang terdiri atas 12 kata pada implementasi ini berasal dari entropi acak 128 bit, sehingga memiliki ruang kemungkinan sebesar \(2^{128}\).
+Oleh karena itu, PIN digunakan untuk melindungi atau membuka material rahasia pada perangkat, bukan sebagai keamanan identitas kriptografis.
+
+Proses pembentukan \textit{seed} BIP-39 juga menerima \textit{passphrase}.
+Pada DecMed, NIK digunakan sebagai \textit{passphrase} untuk pasien, sedangkan pengenal personel fasyankes digunakan sebagai \textit{passphrase} untuk personel.
+Dengan demikian, identitas kriptografis tidak hanya ditentukan oleh \textit{seed words}, tetapi oleh kombinasi \textit{seed words} dan pengenal yang digunakan.
+Kombinasi yang sama akan menghasilkan \textit{seed}, alamat IOTA, pasangan kunci IOTA, dan kunci PRE yang sama secara deterministik.
+Sebaliknya, perubahan satu kata, urutan kata, NIK, atau pengenal personel akan menghasilkan material kunci dan alamat IOTA yang berbeda.
+
+Komponen kredensial yang digunakan DecMed dirangkum pada Tabel~\ref{tab:decmed-identity-credentials}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Komponen identitas dan kredensial pada DecMed}\label{tab:decmed-identity-credentials}
+    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}X}
+        \textbf{Komponen} & \textbf{Fungsi} \\
+        \midrule
+        \textit{Seed words}/\textit{mnemonic} & Material pemulihan untuk membangkitkan kembali \textit{seed} dan pasangan kunci pengguna secara deterministik. Nilai ini tidak berfungsi sebagai kata sandi yang dikirimkan ke server. \\
+        \midrule
+        NIK pasien & Pengenal pasien sekaligus \textit{passphrase} pada derivasi \textit{seed}. Kombinasi NIK dan \textit{seed words} mengikat identitas kriptografis kepada pasien. \\
+        \midrule
+        CID personel & Pengenal personel fasyankes yang memuat bagian identitas personel dan institusi. CID dalam konteks akun personel berbeda dari CID IPFS yang berarti \textit{Content Identifier}. \\
+        \midrule
+        \textit{Activation key} & Kredensial aktivasi yang diterbitkan oleh otoritas atau admin fasyankes untuk memastikan bahwa CID personel telah diotorisasi dan terikat pada peran serta institusi yang sesuai. \\
+        \midrule
+        PIN & Rahasia lokal perangkat untuk melindungi atau membuka material kunci yang disimpan secara lokal dan membentuk sesi aplikasi. PIN bukan identitas \textit{on-chain} dan tidak dikirimkan sebagai kata sandi ke server DecMed. \\
+        \midrule
+        Alamat IOTA & Identitas publik pengguna pada jaringan IOTA yang diturunkan dari pasangan kunci IOTA\@. \\
+        \midrule
+        Kunci privat IOTA & Digunakan untuk menandatangani transaksi dan membuktikan bahwa operasi berasal dari pemilik alamat IOTA\@. \\
+        \midrule
+        Kunci PRE & Digunakan dalam pembungkusan kunci enkripsi dan mekanisme \textit{proxy re-encryption} tanpa membagikan \textit{private key} pengguna. \\
+    \end{styledtable}
+\end{table}
+
+Penggunaan \textit{username} dan \textit{password} saja tidak mencukupi kebutuhan tersebut.
+Kredensial tersebut hanya dapat membuktikan pengetahuan pengguna kepada server autentikasi, tetapi tidak secara otomatis menyediakan \textit{private key} yang diperlukan untuk menandatangani transaksi dan menjalankan PRE\@.
+Apabila \textit{private key} disimpan oleh server agar dapat digunakan setelah login biasa, server akan menjadi pengelola kunci terpusat dan memiliki kemampuan untuk bertindak atas nama pengguna.
+
+Jika \textit{seed words} hilang dan tidak terdapat salinan material kunci yang masih dapat digunakan, server tidak dapat melakukan \textit{reset password} untuk merekonstruksi \textit{private key} yang sama.
+Jika \textit{seed words} diketahui pihak lain bersama pengenal yang digunakan sebagai \textit{passphrase}, pihak tersebut berpotensi membangkitkan identitas kriptografis yang sama.
+Oleh sebab itu, \textit{seed words} tidak boleh dikirimkan ke PRE, IOTA, maupun layanan aplikasi lainnya.
+
 
 \subsection{Mekanisme Pemberian Akses Baca dan Tulis Rekam Medis ke Tenaga Kesehatan}\label{mekanisme-pemberian-akses}
 
@@ -208,7 +283,7 @@ Tenaga kesehatan dapat mengakses data administratif dan data klinis pasien setel
     
     \item Selanjutnya, proxy melakukan proses \textit{re-encryption} terhadap \verb|enc_aes_key_nonce| yang diperoleh dari metadata.
     Proses ini melibatkan \verb|kfrag| yang tersimpan di Redis dan \verb|aes_key_nonce_capsule| dari metadata, dengan hasil berupa \verb|cfrag|.
-    Nilai \verb|cfrag| ini nantinya digunakan oleh client tenaga kesehatan untuk memperoleh \verb|aes_key| dan \verb|aes_nonce| tanpa membutuhkan \verb|pre_secret_key| utama milik pasien.
+    Nilai \verb|cfrag| ini nantinya digunakan oleh client tenaga kesehatan untuk memperoleh \verb|aes_key| dan \verb|aes_nonce| tanpa membutuhkan \verb|pre_secret_key| milik pasien.
     
     \item Selain melakukan \textit{re-encryption}, proxy juga mengambil \verb|enc_medical_data| (data kinis rekam medis pasien yang terenkripsi, akan dijelaskan lebih lanjut di subbab~\ref{penambahan-rekam-medis}) milik pasien dari IPFS menggunakan \verb|CID| yang diperoleh dari metadata klinis.
     
@@ -250,7 +325,7 @@ Pada DecMed, penambahan entri rekam medis baru hanya dapat dilakukan menggunakan
     Proses enkripsi PRE ini menghasilkan \verb|enc_aes_key_nonce| dan \verb|capsule|.
     
     \item Dengan demikian, meskipun entri rekam medis baru dibuat oleh tenaga kesehatan, pasangan \verb|aes_key| dan \verb|aes_nonce| tetap dibungkus menggunakan kunci publik PRE milik pasien.
-    Mekanisme ini memastikan bahwa kontrol kriptografis utama atas data klinis baru tetap berada pada domain pasien.
+    Mekanisme ini memastikan bahwa kontrol kriptografis atas data klinis baru tetap berada pada domain pasien.
     
     \item Client tenaga kesehatan kemudian mengirim request \verb|POST /medical-record| ke \textit{proxy re-encryption server}.
     Request tersebut menggunakan header autentikasi Bearer yang memuat \verb|access_token_update| serta request body yang berisi \verb|patient_iota_address|, \verb|enc_medical_data|, \verb|enc_aes_key_nonce|, dan \verb|capsule|.
@@ -314,5 +389,4 @@ Mekanisme pencabutan akses di DecMed dilakukan dengan langkah-langkah sebagai be
 % Berbeda dengan skema dasar \textit{Proxy Re-Encryption} (PRE) konvensional yang secara langsung mentransformasi struktur aljabar \textit{ciphertext} pesan utama, DecMed mengimplementasikan varian PRE berbasis kapsul (\textit{Capsule-based PRE} atau \textit{Key Encapsulation Mechanism} / KEM). Dalam arsitektur DecMed, data rekam medis yang berukuran besar dieksekusi menggunakan enkripsi simetris AES-GCM yang jauh lebih efisien secara komputasi. Kunci simetris tersebut (\verb|aes_key| dan \verb|aes_nonce|) kemudian dibungkus dan dilindungi di dalam sebuah entitas kriptografis asimetris yang disebut \textbf{kapsul} (\verb|capsule|) menggunakan kunci publik pasien. Konsep ini dibutuhkan untuk memisahkan beban komputasi; algoritme PRE tidak perlu mengenkripsi ulang seluruh data medis pasien yang sangat besar, melainkan cukup mengenkripsi ulang kapsul kecil yang menyimpan kunci AES-nya saja.
 
 
-% Untuk merealisasikan delegasi akses tersebut, mekanisme PRE pada DecMed mendayagunakan \verb|kfrag| (\textit{Key Fragment}) dan \verb|cfrag| (\textit{Capsule Fragment}). Saat pasien memberikan izin akses, \textit{client} pasien akan menghitung sebuah \verb|kfrag| menggunakan kunci publik pasien dan tenaga kesehatan, yang berfungsi sebagai token enkripsi ulang. \textit{Proxy server} kemudian mengeksekusi \verb|kfrag| ini terhadap \verb|capsule| asli milik pasien untuk menghasilkan \verb|cfrag| (kapsul yang telah dienkripsi ulang). Secara algoritmik, \verb|cfrag| adalah bentuk kapsul yang orientasi matematisnya telah digeser agar dapat dibuka oleh pihak tujuan. Tenaga kesehatan kemudian menggabungkan \verb|cfrag| ini dengan kunci privat lokal mereka untuk mengekstraksi kunci AES di dalamnya, lalu mendekripsi dokumen rekam medis tanpa pernah sekalipun membutuhkan atau mengekspos kunci privat utama milik pasien.
-
+% Untuk merealisasikan delegasi akses tersebut, mekanisme PRE pada DecMed mendayagunakan \verb|kfrag| (\textit{Key Fragment}) dan \verb|cfrag| (\textit{Capsule Fragment}). Saat pasien memberikan izin akses, \textit{client} pasien akan menghitung sebuah \verb|kfrag| menggunakan kunci publik pasien dan tenaga kesehatan, yang berfungsi sebagai token enkripsi ulang. \textit{Proxy server} kemudian mengeksekusi \verb|kfrag| ini terhadap \verb|capsule| asli milik pasien untuk menghasilkan \verb|cfrag| (kapsul yang telah dienkripsi ulang). Secara algoritmik, \verb|cfrag| adalah bentuk kapsul yang orientasi matematisnya telah digeser agar dapat dibuka oleh pihak tujuan. Tenaga kesehatan kemudian menggabungkan \verb|cfrag| ini dengan \textit{private key} lokal mereka untuk mengekstraksi kunci AES di dalamnya, lalu mendekripsi dokumen rekam medis tanpa pernah sekalipun membutuhkan atau mengekspos \textit{private key} utama milik pasien.
