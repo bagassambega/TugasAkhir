@@ -12,7 +12,7 @@ Selain enkripsi, mekanisme lain yang dapat digunakan untuk menjamin kerahasiaan 
 % To ensure confidentiality and safeguard patient privacy, the data is encrypted at the source using robust cryptographic algorithms before being transmitted to edge servers or cloud platforms. 
 % These platforms handle real-time processing, secure storage, and advanced analytics while maintaining end-to-end privacy throughout the data acquisition and transfer processes. (gowthamani empowering)
 
-Dalam konteks PGHD, kerahasiaan menjadi parameter penting karen data tersebut mengandung informasi sensitif pasien.
+Dalam konteks PGHD, kerahasiaan menjadi parameter penting karena data tersebut mengandung informasi sensitif pasien.
 Setiap data yang dihasilkan harus dijamin keamanannya melalui mekanisme enkripsi \textit{end-to-end}, baik ketika pengiriman data maupun penyimpanan data \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
 % Utilize end-to-end encryption methods to secure the transmission of PGHD from patients’ devices to healthcare systems. This ensures that data remains confidential and is protected against interception or unauthorized access during transmission. (Khatiwada)
 
@@ -33,7 +33,7 @@ Tanda tangan digital menggabungkan fungsi \textit{hash} dengan kriptografi kunci
 \textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan diverifikasi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
 \textit{Digital signature} dihasilkan dengan menghitung hash dari data yang kemudian ditandatangani sebelum dikirim.
 Kemudian untuk memverifikasi \textit{digital signature}, penerima kembali menghitung hash data yang diterima, dan memverifikasinya menggunakan operasi kriptografis memakai \textit{public key} pengirim dan \textit{digital signature} yang diterima.
-Mekanisme \textit{digital siganture} dapat dilihat pada Gambar.
+Mekanisme \textit{digital signature} dapat dilihat pada Gambar~\ref{fig:digital-signature-mechanism}.
 
 \begin{figure}[htbp]
 	\centering
@@ -67,6 +67,16 @@ Terdapat beberapa mekanisme untuk menjamin ketersediaan data pada sistem berbasi
 \textit{Threat modelling} adalah mekanisme untuk mengidentifikasi, memahami, dan memitigasi \textit{threats} (ancaman) untuk melindungi aset \parencite{owaspThreatModeling}.
 Ancaman (\textit{threat}) adalah segala sesuatu atau segala kejadian yang memiliki potensi berdampak negatif terhadap operasional, aset, ataupun informasi melalui akses yang tidak sah, penghancuran, pengambilan data tidak sah, modifikasi informasi ataupun penolakan layanan \parencite{Dodson2021_Threat}.
 
+Proses \textit{threat modelling} dapat dilakukan dalam empat tahap \parencite{owaspThreatModelingProcess}.
+
+\begin{enumerate}
+    \item Tahap pertama adalah analisis sistem, yaitu memahami sistem yang dianalisis melalui pengumpulan informasi, penggambaran \textit{Data Flow Diagram} (DFD), identifikasi \textit{entry point} dan \textit{exit point} sebagai titik interaksi penyerang dengan sistem, identifikasi aset yang perlu dilindungi, identifikasi aktor dan penetapan \textit{trust levels} yang merepresentasikan hak akses yang diberikan sistem kepada entitas sistem.
+    \item Tahap kedua adalah identifikasi ancaman, yaitu mengidentifikasi ancaman-ancaman yang berpotensi terjadi terhadap komponen dan aliran data pada sistem, misalnya memakai model STRIDE\@.
+    \item Tahap ketiga adalah perencanaan langkah mitigasi dan penanganan, yaitu mengidentifikasi langkah-langkah mitigasi untuk setiap ancaman yang telah ditemukan.
+    \item Tahap keempat adalah \textit{assess the work}, yaitu mengevaluasi apakah seluruh tahapan telah dilaksanakan dengan benar.
+\end{enumerate}
+% Pada penelitian ini, keempat tahapan tersebut akan diterapkan pada analisis permasalahan di Subbab~\ref{analisis-permasalahan}, dimulai dari identifikasi aset, penggambaran DFD, penetapan \textit{trust boundary} dan aktor beserta privilegenya, analisis siklus hidup data PGHD, hingga analisis ancaman menggunakan STRIDE\@.
+
 Untuk mengidentifikasi ancaman yang mungkin muncul terhadap suatu sistem atau informasi, dapat digunakan \textit{threat model} seperti STRIDE \parencite{owaspThreatModelingProcess}.
 STRIDE merupakan \textit{threat model} yang mengidentifikasi ancaman-ancaman yang sering dilakukan oleh \textit{attacker}.
 Daftar \textit{threat} yang diidentifikasi oleh STRIDE dan \textit{security control} yang berkaitan dapat dilihat melalui Tabel~\ref{tab:stride-threats} \parencite{owaspThreatModelingProcess}.
@@ -93,38 +103,57 @@ Daftar \textit{threat} yang diidentifikasi oleh STRIDE dan \textit{security cont
     \end{styledtable}
 \end{table}
 
-Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan oleh perangkat pasien dapat dipetakan menjadi daftar ancaman pada Tabel~\ref{tab:stride-pghd-studi} \parencite{Nadifi_2025_STRIDE_IoT}.
+Setelah ancaman diidentifikasi menggunakan STRIDE, diperlukan mekanisme prioritisasi agar mitigasi difokuskan pada ancaman yang paling berdampak. 
+DREAD adalah sistem penilaian risiko yang mengevaluasi ancaman berdasarkan lima parameter, yaitu \textit{Damage}, \textit{Reproducibility}, \textit{Exploitability}, \textit{Affected Users}, dan \textit{Discoverability} \parencite{openStack_StrideDREAD}. 
+Kelima parameter tersebut adalah,
 
-\begin{table}[htbp]
-    \centering
-    \caption{Daftar Ancaman Keamanan PGHD Berdasarkan Kategori STRIDE \parencite{Nadifi_2025_STRIDE_IoT}}\label{tab:stride-pghd-studi}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}X}
+\begin{enumerate}
+    \item \textbf{\textit{Damage}}: tingkat kerusakan atau dampak jika ancaman berhasil dieksploitasi.
+    \item \textbf{\textit{Reproducibility}}: kemudahan serangan diulang.
+    \item \textbf{\textit{Exploitability}}: tingkat kemudahan serangan dilakukan oleh penyerang.
+    \item \textbf{\textit{Affected Users}}: jumlah atau proporsi pengguna yang terdampak.
+    \item \textbf{\textit{Discoverability}}: kemudahan penyerang menemukan kelemahan yang dapat dieksploitasi.
+\end{enumerate}
+
+DREAD dapat menggunakan skala numerik, misalnya 1--10 untuk setiap parameter, lalu nilai total dihitung sebagai jumlah dari lima parameter tersebut. 
+Semakin tinggi nilai total, semakin tinggi prioritas ancaman untuk dimitigasi. 
+% Pada penelitian ini digunakan ambang prioritas \textit{High} untuk total \(\geq 35\), \textit{Medium} untuk total 20--34, dan \textit{Low} untuk total \(< 20\). 
+% Nilai DREAD bersifat kontekstual dan digunakan sebagai alat prioritisasi pada lingkungan prototipe, bukan sebagai ukuran probabilitas absolut atau jaminan tingkat risiko pada lingkungan produksi.
+
+
+% Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan oleh perangkat pasien dapat dipetakan menjadi daftar ancaman pada Tabel~\ref{tab:stride-pghd-studi} \parencite{Nadifi_2025_STRIDE_IoT}.
+
+% \begin{table}[htbp]
+%     \centering
+%     \caption{Daftar Ancaman Keamanan PGHD Berdasarkan Kategori STRIDE \parencite{Nadifi_2025_STRIDE_IoT}}\label{tab:stride-pghd-studi}
+%     \begin{styledtable}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}X}
         
-        \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Ancaman} \\
+%         \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Ancaman} \\
         
-        \rowcolor{rowOdd}
-        \Block{4-1}{\textit{Tampering}} & \Block{4-1}{Integritas} & Data yang diberikan sensor ke \textit{mobile app} dapat dimodifikasi, baik melalui interaksi manusia langsung atau perubahan pengaturan sensor. \\
-        \rowcolor{rowOdd}
-        & & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
-        \rowcolor{rowOdd}
-        & & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
-        \rowcolor{rowOdd}
-        & & Serangan \textit{SQL injection} terjadi ketika kode berbahaya dimasukkan ke dalam string yang diteruskan ke server SQL\@. \\
+%         \rowcolor{rowOdd}
+%         \Block{4-1}{\textit{Tampering}} & \Block{4-1}{Integritas} & Data yang diberikan sensor ke \textit{mobile app} dapat dimodifikasi, baik melalui interaksi manusia langsung atau perubahan pengaturan sensor. \\
+%         \rowcolor{rowOdd}
+%         & & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
+%         \rowcolor{rowOdd}
+%         & & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
+%         \rowcolor{rowOdd}
+%         & & Serangan \textit{SQL injection} terjadi ketika kode berbahaya dimasukkan ke dalam string yang diteruskan ke server SQL\@. \\
         
-        \rowcolor{rowEven}
-        \Block{3-1}{\textit{Information Disclosure}} & \Block{3-1}{Kerahasiaan} & Perlindungan data yang tidak tepat pada ponsel pasien atau \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
-        \rowcolor{rowEven}
-        & & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
-        \rowcolor{rowEven}
-        & & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
+%         \rowcolor{rowEven}
+%         \Block{3-1}{\textit{Information Disclosure}} & \Block{3-1}{Kerahasiaan} & Perlindungan data yang tidak tepat pada ponsel pasien atau \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
+%         \rowcolor{rowEven}
+%         & & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
+%         \rowcolor{rowEven}
+%         & & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
         
-        \rowcolor{rowOdd}
-        \Block{2-1}{\textit{Denial of Service}} & \Block{2-1}{Ketersediaan} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
-        \rowcolor{rowOdd}
-        & & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
+%         \rowcolor{rowOdd}
+%         \Block{2-1}{\textit{Denial of Service}} & \Block{2-1}{Ketersediaan} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
+%         \rowcolor{rowOdd}
+%         & & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
         
-    \end{styledtable}
-\end{table}
+%     \end{styledtable}
+% \end{table}
+
 
 \subsection{\textit{Data Provenance}}\label{studi-data-provenance}
 

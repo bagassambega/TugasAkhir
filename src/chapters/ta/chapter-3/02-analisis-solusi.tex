@@ -1,27 +1,41 @@
+% chktex-file 44
+% chktex-file 1
+
 \section{Analisis Solusi}\label{analisis-solusi}
 
-Berdasarkan enam kesenjangan yang telah diidentifikasi pada Subbab~\ref{analisis-permasalahan}, subbab ini menganalisis alternatif solusi untuk menjawab masing-masing gap. 
+Berdasarkan lima kesenjangan yang telah diidentifikasi pada Subbab~\ref{analisis-permasalahan}, subbab ini menganalisis alternatif solusi untuk menjawab masing-masing gap. 
 Tabel~\ref{tab:mapping-gap-analisis-solusi} memetakan setiap gap ke subbab analisis solusi yang relevan.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Pemetaan kesenjangan (\textit{gap}) ke analisis solusi}\label{tab:mapping-gap-analisis-solusi}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.13\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.35\textwidth}}
-        
-        \textbf{Gap} & \textbf{Permasalahan} & \textbf{Analisis Solusi} \\
-        
-        Gap 1 & Tidak adanya jalur \textit{ingest} PGHD di sisi pasien & Solusi mekanisme pengumpulan dari sumber data PGHD \\
-        
-        Gap 2 & Tidak adanya mekanisme \textit{offline-first} di sisi klien pasien & Solusi arsitektur pengolahan dan pengiriman data \\
-        
-        Gap 3 & Tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD & Solusi arsitektur pengolahan data dan pengiriman data \\
-        
-        Gap 4 & Tidak adanya \textit{data provenance} untuk menjamin keandalan data yang berasal dari pasien & Solusi mekanisme penjaminan kelengkapan untuk menjamin \textit{data provenance} \\
-        
-        Gap 5 & Tidak adanya mekanisme penjaminan kerahasiaan, integritas dan ketersediaan untuk data PGHD & Solusi mekanisme untuk menjamin kerahasiaan, integritas dan ketersediaan data \\
-        
-    \end{styledtable}
-\end{table}
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.13\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.35\textwidth}|}
+\hiderowcolors
+\caption{Pemetaan kesenjangan (\textit{gap}) ke analisis solusi}\label{tab:mapping-gap-analisis-solusi}\\
+\hline
+\rowcolor{headerBg}
+\textbf{Gap} & \textbf{Permasalahan} & \textbf{Analisis Solusi} \\
+\hline
+\showrowcolors
+\endfirsthead
+
+\hiderowcolors
+\caption[]{Pemetaan kesenjangan (\textit{gap}) ke analisis solusi (lanjutan)}\\
+\hline
+\rowcolor{headerBg}
+\textbf{Gap} & \textbf{Permasalahan} & \textbf{Analisis Solusi} \\
+\hline
+\showrowcolors
+\endhead
+
+Gap 1 & Tidak adanya jalur \textit{ingest} PGHD di sisi pasien & Solusi mekanisme pengumpulan dari sumber data PGHD \\
+\hline
+Gap 2 & Tidak adanya mekanisme \textit{offline-first} di sisi klien pasien & Solusi arsitektur pengolahan dan pengiriman data \\
+\hline
+Gap 3 & Tidak adanya strategi pengelolaan volume data \textit{time-series} PGHD & Solusi arsitektur pengolahan data dan pengiriman data \\
+\hline
+Gap 4 & Tidak adanya \textit{data provenance} untuk menjamin keandalan data yang berasal dari pasien & Solusi mekanisme penjaminan kelengkapan untuk menjamin \textit{data provenance} \\
+\hline
+Gap 5 & Tidak adanya mekanisme penjaminan kerahasiaan, integritas dan ketersediaan untuk data PGHD & Solusi mekanisme untuk menjamin kerahasiaan, integritas dan ketersediaan data \\
+\hline
+\end{styledxltabular}
 
 Berdasarkan analisis permasalahan pada Bab~\ref{analisis-permasalahan}, alternatif solusi untuk menyelesaikan permasalahan tersebut dapat dibagi menjadi tiga kategori utama, yaitu,
 
