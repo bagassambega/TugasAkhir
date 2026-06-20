@@ -95,7 +95,7 @@ Mekanisme pendaftaran akun pasien adalah,
 	Enkripsi ini membutuhkan key (\verb|aes_key|) dan nonce (\verb|aes_nonce|). Key dan nonce di-\textit{generate} acak oleh client.
 	AES key (\verb|aes_key|) dan AES nonce (\verb|aes_nonce|) juga dienkripsi menggunakan \verb|pre_public_key| pasien, menghasilkan pasangan \verb|enc_aes_key_nonce| dan \verb|capsule|.
 	AES-GCM merupakan algoritma kriptografis simetrik sehingga kunci untuk melakukan enkripsi akan sama dengan kunci untuk melakukan dekripsi.
-	\item Semua elemen ini (\verb|capsule|, pasangan kunci dan nonce AES yang telah dienkripsi (\verb|enc_aes_key_nonce|), \verb|enc_private_administrative_data|, dan data administratif yang bersifat publik (\verb|public_administrative_data|)) dikumpulkan sebagai objek \textit{administrative\_metadata} dan disimpan pada \textit{ledger} IOTA sebagai metadata administratif\@.
+	\item Semua elemen ini (\verb|capsule|, pasangan kunci dan nonce AES yang telah dienkripsi (\verb|enc_aes_key_nonce|), data administratif pasien yang bersifat rahasia (\verb|enc_private_administrative_data|), dan data administratif yang bersifat publik (\verb|public_administrative_data|)) dikumpulkan sebagai objek \textit{administrative\_metadata} dan disimpan pada \textit{ledger} IOTA sebagai metadata administratif\@.
 	\item Client menginisiasi transaksi bersponsor untuk menyimpan \verb|administrative_metadata| pada IOTA\@.
 	Nama transaksi yang dipakai adalah \texttt{signup} untuk pendaftaran awal dan \verb|update_administrative_data| untuk melengkapi atau memperbarui data administratif.
 	Transaksi ini dijalankan melalui \textit{gas station} server sehingga client tidak perlu mengeluarkan biaya gas.
@@ -106,35 +106,55 @@ Mekanisme pendaftaran akun pasien adalah,
 \end{enumerate}
 
 Pendaftaran akun personel fasilitas pelayanan kesehatan mengikuti langkah yang serupa dengan pendaftaran pasien, dengan beberapa perbedaan.
-Identifikasi personel menggunakan \verb|CID| personel, bukan \verb|NIK|, dan CID tersebut harus diaktivasi terlebih dahulu menggunakan \textit{activation key} yang diterbitkan oleh otoritas atau admin fasyankes.
-CID personel pada konteks ini merupakan pengenal akun personel dan berbeda dari CID IPFS yang digunakan sebagai rujukan konten.
+
 Secara teknis, semua artefak administratif (termasuk \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|pre_public_key|, dan \textit{nonce} terkait) disiapkan oleh \textit{client} personel dan kemudian disimpan pada IOTA melalui transaksi bersponsor yang sama seperti pada pendaftaran pasien.
 
 \subsection{Mekanisme Login Akun}
 
 Setelah pasien atau personel fasyankes memiliki akun, mereka dapat melakukan login untuk mengakses operasi-operasi yang diizinkan pada tabel~\ref{decmed-actor-privileges}.
+Mekanisme login tetap memerlukan pengenal pengguna karena DecMed tidak mengambil \textit{private key} dari server, melainkan membangkitkan kembali identitas kriptografis pengguna secara deterministik.
+Pengenal tersebut adalah NIK untuk pasien dan CID untuk personel fasyankes.
+Pada client pasien, NIK dimasukkan bersama frasa pemulihan saat login.
+Pada client personel, CID tidak perlu diketik ulang pada formulir login karena sudah dimasukkan dan disimpan pada \textit{secure storage} ketika aktivasi client, tetapi nilainya tetap dibaca dan diproses sebagai bagian dari login.
+Dengan demikian, tidak adanya kolom CID pada formulir login personel tidak berarti CID tidak digunakan.
 
 \begin{enumerate}
 \item Pasien memasukkan 6 digit PIN, konfirmasi PIN, frasa pemulihan (\verb|seed_words|), dan NIK\@.
-Personel fasyankes memasukkan PIN, konfirmasi PIN, dan \textit{seed words}; CID personel dan \textit{activation key} telah disimpan secara lokal ketika proses aktivasi dilakukan.
-Dengan demikian, CID dan \textit{activation key} tidak harus dimasukkan kembali pada setiap \textit{login} normal.
-Keduanya perlu dimasukkan kembali apabila penyimpanan aplikasi dihapus, aplikasi di-\textit{reset}, atau proses aktivasi dilakukan pada instalasi perangkat yang baru.
+Personel fasyankes memasukkan PIN, konfirmasi PIN, dan \textit{seed words}.
+Untuk personel, client mengambil CID dan \verb|activation_key| yang sebelumnya tersimpan pada perangkat.
 
-\item Client merekonstruksi \verb|seed| sepanjang 64 byte dari kombinasi \verb|seed_words| dan pengenal pengguna.
-Untuk pasien, pengenal tersebut adalah NIK, sedangkan untuk personel fasyankes pengenal tersebut adalah CID personel.
-Kemudian dari \verb|seed| diregenerasi \verb|iota_key_pair|, \verb|iota_address|, serta \verb|pre_secret_key|/\verb|pre_public_key|.
-Karena proses regenerasi deterministik, hasilnya hanya akan sama apabila \textit{seed words} dan pengenal yang digunakan juga sama dengan saat pendaftaran.
-Penggunaan kombinasi yang berbeda akan menghasilkan alamat lain sehingga pemeriksaan akun terdaftar akan gagal.
-\item Client melakukan pemeriksaan pendaftaran terhadap jaringan IOTA menggunakan mekanisme \textit{inspect transaction} (tanpa biaya gas) untuk memastikan apakah \verb|iota_address| yang dihasilkan telah terdaftar.
-\item Jika pemeriksaan menunjukkan akun terdaftar, client akan menyiapkan kembali artefak yang harus disimpan secara lokal: \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|iota_address|, \verb|pre_public_key|, \verb|iota_key_pair_nonce|, dan \verb|first_half_seed_nonce|.
-Untuk menyimpan ulang artefak yang terenkripsi pada \textit{client} DecMed berbasis Tauri, client menggunakan hash PIN sebagai kunci simetris AES dan membangkitkan \textit{nonce} baru.
+\item Client memproses \verb|seed_words| dengan NIK atau CID sebagai \textit{passphrase} BIP-39 untuk merekonstruksi \verb|seed| sepanjang 64 byte.
+NIK dan CID ikut memengaruhi hasil derivasi \verb|seed|.
+Oleh karena itu, \textit{seed words} yang sama dengan NIK atau CID yang berbeda akan menghasilkan \verb|seed| yang berbeda.
+
+\item Dari \verb|seed| tersebut, client membangkitkan kembali \verb|iota_key_pair| secara deterministik.
+Kunci publik pada pasangan kunci tersebut selanjutnya digunakan untuk memperoleh \verb|iota_address| yang merepresentasikan identitas pengguna pada jaringan IOTA\@.
+Secara terpisah, 32 byte awal dari \verb|seed| digunakan untuk membangkitkan \verb|pre_secret_key| dan \verb|pre_public_key| yang diperlukan dalam mekanisme PRE\@.
+
+\item Sebelum disimpan, \verb|iota_key_pair| dan 32 byte awal \verb|seed| dienkripsi secara lokal menggunakan AES-GCM\@.
+Client menggunakan hash PIN sebagai kunci simetris dan membangkitkan \textit{nonce} acak yang berbeda untuk masing-masing data.
+Hasilnya adalah \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|iota_key_pair_nonce|, dan \verb|first_half_seed_nonce|.
 PIN bersifat lokal dan tidak digunakan sebagai sumber pembentukan alamat IOTA\@.
 Oleh karena itu, dalam alur pemulihan akun, pengguna dapat menetapkan PIN lokal baru tanpa mengubah identitas \textit{on-chain}, selama kombinasi \textit{seed words} dan pengenalnya tetap sama.
-\item Setelah login berhasil, data administratif pasien (baik publik maupun privat), bersama artefak terenkripsi dan nonce yang terkait (seperti pada tahap pendaftaran), disimpan atau diperbarui pada \textit{secure storage}.
+
+\item Client memvalidasi \verb|iota_address| hasil derivasi terhadap jaringan IOTA menggunakan \textit{inspect transaction}, sehingga pemeriksaan ini tidak memerlukan biaya gas.
+
+\item Jika seluruh pemeriksaan berhasil, client menyimpan atau memperbarui \verb|iota_address|, \verb|enc_iota_key_pair|, \verb|enc_first_half_seed|, \verb|pre_public_key|, serta kedua \textit{nonce} pada \textit{secure storage}.
+Client kemudian membentuk sesi lokal agar pengguna dapat mengakses fungsi aplikasi sesuai perannya.
 \end{enumerate}
+
+Kegagalan login setelah masukan lolos pemeriksaan format dapat terjadi pada beberapa titik.
+Jika frasa pemulihan tidak dapat diproses sebagai \textit{mnemonic} yang sah, derivasi \verb|seed| dihentikan dan tidak ada alamat yang diperiksa.
+Jika frasa pemulihan valid tetapi salah satu kata atau urutannya berbeda, atau NIK/CID tidak sama dengan yang digunakan ketika registrasi, client tetap dapat menghasilkan \verb|seed| dan pasangan kunci, tetapi menghasilkan \verb|iota_address| yang berbeda.
+Alamat tersebut tidak ditemukan pada relasi akun di IOTA sehingga \verb|is_account_registered| gagal dan client menampilkan bahwa akun tidak ditemukan.
+Pada personel fasyankes, login juga gagal apabila CID atau \verb|activation_key| yang tersimpan tidak merujuk pada akun yang sama, \verb|activation_key| tidak cocok, atau akun belum diaktivasi.
 
 Identitas pengguna pada DecMed direpresentasikan oleh alamat IOTA dan pasangan kunci kriptografis.
 Pengguna harus dapat membangkitkan atau memulihkan \textit{private key} yang sama untuk menandatangani transaksi IOTA, membuktikan kepemilikan identitas, dan menjalankan operasi kriptografi PRE\@.
+Hal ini dikarenakan kredensial pengguna tidak disimpan atau dikirimkan ke server DecMed dalam bentuk \textit{plaintext}.
+Setiap kali login dilakukan, pasangan kunci IOTA dan PRE dibangkitkan ulang dari kombinasi \textit{seed words} dan NIK/CID\@.
+PIN tidak ikut membentuk pasangan kunci atau alamat IOTA, melainkan digunakan untuk mengenkripsi material rahasia pada perangkat.
+\textit{Activation key} juga tidak ikut dalam derivasi kunci, tetapi digunakan pada pemeriksaan akun personel fasyankes.
 Oleh karena itu, DecMed menggunakan kombinasi \textit{mnemonic}, \textit{identifier} pengguna, dan penyimpanan kredensial di lokal perangkat.
 
 \textit{Mnemonic} adalah representasi material acak dalam bentuk urutan kata yang lebih mudah dicatat dan dipulihkan oleh manusia dibandingkan \textit{private key} dalam bentuk biner atau heksadesimal.
@@ -178,9 +198,9 @@ Komponen kredensial yang digunakan DecMed dirangkum pada Tabel~\ref{tab:decmed-i
         \midrule
         NIK pasien & Pengenal pasien sekaligus \textit{passphrase} pada derivasi \textit{seed}. Kombinasi NIK dan \textit{seed words} mengikat identitas kriptografis kepada pasien. \\
         \midrule
-        CID personel & Pengenal personel fasyankes yang memuat bagian identitas personel dan institusi. CID dalam konteks akun personel berbeda dari CID IPFS yang berarti \textit{Content Identifier}. \\
+        \textit{CID} & Pengenal komposit berformat \texttt{personnel\_id@hospital\_id}. Nilai ini membedakan personel berdasarkan ID lokal dan fasyankes, digunakan sebagai pengganti NIK dalam pembentukan \textit{seed}, serta berbeda dari CID IPFS yang berarti \textit{Content Identifier}. \\
         \midrule
-        \textit{Activation key} & Kredensial aktivasi yang diterbitkan oleh otoritas atau admin fasyankes untuk memastikan bahwa CID personel telah diotorisasi dan terikat pada peran serta institusi yang sesuai. \\
+        \textit{Activation Key} & Kredensial aktivasi yang terikat dengan \textit{Credential ID}, digunakan untuk mengaktifkan \textit{client} serta membuktikan bahwa aktivasi merujuk pada akun personel yang telah dibuat. \\
         \midrule
         PIN & Rahasia lokal perangkat untuk melindungi atau membuka material kunci yang disimpan secara lokal dan membentuk sesi aplikasi. PIN bukan identitas \textit{on-chain} dan tidak dikirimkan sebagai kata sandi ke server DecMed. \\
         \midrule
