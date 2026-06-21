@@ -188,7 +188,7 @@ Struktur utamanya dirangkum pada Tabel~\ref{tab:decmed-capability-structure}.
         \texttt{access\_data\_types} & \textit{Array} enum & Jenis data yang boleh diakses oleh personel, yaitu \texttt{Administrative} dan \texttt{Medical}. \\
         \texttt{exp} & Unix timestamp & Waktu kedaluwarsa akses yang dihitung dari \textit{Clock} IOTA\@. \\
         \texttt{metadata} & String & Metadata akses yang telah dienkripsi menggunakan kunci publik PRE milik personel fasyankes. Metadata ini berisi \texttt{access\_token}, alamat IOTA pasien, \textit{public key} pasien (untuk dekripsi data pasien melalui mekanisme PRE), dan didekripsi nantinya oleh tenaga kesehatan menggunakan \textit{private key}-nya. \\
-        \texttt{medical\_metadata\_index} & Integer / \texttt{None} & Indeks entri data klinis yang terikat dengan akses tulis atau edit apabila relevan. \\
+        \texttt{medical\_metadata}\allowbreak\texttt{\_index} & Integer / \texttt{None} & Indeks entri data klinis yang terikat dengan akses tulis atau edit apabila relevan. \\
     \end{styledtable}
 \end{table}
 
@@ -208,8 +208,8 @@ Struktur log tersebut diringkas pada Tabel~\ref{tab:decmed-access-log-structure}
         \texttt{date} & String & Waktu atau tanggal pemberian akses yang dicatat oleh \textit{client}. \\
         \texttt{exp\_dur} & Integer & Durasi akses dalam menit. \\
         \texttt{hospital\_metadata} & Objek & Metadata fasyankes asal personel. \\
-        \texttt{hospital\_personnel\_address} & Address & Alamat IOTA personel penerima akses. \\
-        \texttt{hospital\_personnel\_metadata} & String & Metadata publik personel yang digunakan untuk ditampilkan pada log akses. \\
+        \texttt{hospital\_personnel}\allowbreak\texttt{\_address} & Address & Alamat IOTA personel penerima akses. \\
+        \texttt{hospital\_personnel}\allowbreak\texttt{\_metadata} & String & Metadata publik personel yang digunakan untuk ditampilkan pada log akses. \\
         \texttt{index} & Integer & Indeks log akses pada akun pasien. \\
         \texttt{is\_revoked} & Boolean & Status pencabutan akses dari sudut pandang log pasien. \\
     \end{styledtable}

@@ -1,72 +1,10 @@
-\subsection{Rancangan Format Data Lokal}\label{rancangan-solusi-format-data-lokal}
+\subsection{Rancangan Penyimpanan Lokal untuk Mekanisme \textit{Offline}}\label{rancangan-solusi-format-data-lokal}
 
-Untuk menjamin data PGHD tidak hilang ketika perangkat pasien tidak memiliki koneksi internet, \textit{client} pasien menyimpan data PGHD pada basis data lokal sebelum data dibentuk menjadi \textit{batch} dan dikirim. 
-Penyimpanan lokal terdiri atas data PGHD yang belum di-\textit{batch}, \textit{batch} PGHD terenkripsi, dan ringkasan \textit{data point} dari \textit{batch}. 
-Struktur penyimpanan lokal dijelaskan pada Tabel~\ref{tab:field-pghd-raw-local}, Tabel~\ref{tab:field-batch-pghd-local}, dan Tabel~\ref{tab:field-batch-pghd-local-points}.
+Skema data PGHD yang menjadi format pertukaran dan penyimpanan \textit{off-chain} telah dijelaskan pada Subbab~\ref{rancangan-format-data-pghd}. 
+Struktur \textit{batch}, \textit{data group}, dan \textit{data point} yang digunakan ketika data dikirim tetap mengikuti Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
 
-\begin{table}[H]
-    \centering
-    \caption{Format Data PGHD Lokal Sebelum \textit{Batch}}\label{tab:field-pghd-raw-local}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Keterangan} \\
-        \texttt{record\_id} & String & Identitas unik data PGHD lokal. \\
-        \texttt{record\_type} & String & Jenis data kesehatan, misalnya langkah, detak jantung, jarak, atau tipe data kesehatan lain. \\
-        \texttt{display\_name} & String & Nama data yang ditampilkan pada antarmuka pengguna. \\
-        \texttt{start\_time} & Timestamp & Waktu mulai periode pengukuran. \\
-        \texttt{end\_time} & Timestamp & Waktu akhir periode pengukuran. \\
-        \texttt{unit} & String & Satuan pengukuran. \\
-        \texttt{value} & String / Number & Nilai pengukuran dalam bentuk teks dan/atau numerik. \\
-        \texttt{source} & String & Kategori sumber data, misalnya API OS untuk wellness/fitness/activity, sensor perangkat, atau input manual. \\
-        \texttt{source\_package} & String & Identitas aplikasi sumber data apabila tersedia. \\
-        \texttt{notes} & String & Catatan provenance tambahan, misalnya metode derivasi atau sensor asal. \\
-        \texttt{synced\_at} & Timestamp & Waktu data disimpan atau disinkronkan ke basis data lokal. \\
-        \texttt{batch\_id} & UUID / Null & Identitas \textit{batch} apabila data telah masuk \textit{batch}. \
-        Nilai kosong menandakan data belum di-\textit{batch}. \\
-    \end{styledtable}
-\end{table}
-
-% Implementasi Android saat ini menyimpan struktur ini pada tabel pghd_records.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Struktur Data Lokal \textit{Batch} PGHD}\label{tab:field-batch-pghd-local}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \texttt{batch\_id} & UUID & Identitas unik batch, sama dengan field pada skema JSON PGHD (Tabel~\ref{tab:field-batch-json-pghd}). \\
-        \texttt{patient\_id} & String & Identitas pasien pemilik \textit{batch}. \\
-        \texttt{start\_timestamp} & Timestamp & Waktu awal periode data dalam \textit{batch}. \\
-        \texttt{end\_timestamp} & Timestamp & Waktu akhir periode data dalam \textit{batch}. \\
-        \texttt{enc\_pghd} & String (Base64) & Ciphertext hasil enkripsi AES-GCM dari payload PGHD\@. \\
-        \texttt{enc\_aes\_key\_nonce} & String (Base64) & Gabungan kunci AES dan nonce yang dienkripsi untuk mekanisme PRE\@. \\
-        \texttt{capsule} & String (Base64) & Artefak PRE yang digunakan pada proses re-encryption. \\
-        \texttt{h\_cipher} & String (Hex) & Hash SHA-256 dari \texttt{enc\_pghd}. \\
-        \texttt{signature} & String (Base64) & Tanda tangan digital atas \texttt{h\_cipher}. \\
-        \texttt{trigger\_reason} & String & Alasan pembentukan \textit{batch}. \\
-        \texttt{last\_submit\_trigger\_reason} & String & Alasan terakhir \textit{batch} dikirim, misalnya manual atau koneksi tersedia kembali. \\
-        \texttt{status} & Enum & Status batch: \texttt{waiting\_for\_trigger}, \texttt{pending}, \texttt{sent}, atau \texttt{failed}. \\
-        \texttt{retry\_count} & Integer & Jumlah percobaan pengiriman yang tercatat untuk kebutuhan monitoring. \\
-        \texttt{created\_at} & Timestamp & Waktu \textit{batch} dibuat. \\
-        \texttt{last\_attempt} & Timestamp & Waktu percobaan pengiriman terakhir. \\
-    \end{styledtable}
-\end{table}
-
-% Implementasi Android saat ini menyimpan struktur ini pada tabel pghd_batches. Status permanent_failure tidak digunakan pada mekanisme terbaru.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Struktur Data Point Lokal pada \textit{Batch} PGHD}\label{tab:field-batch-pghd-local-points}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \texttt{id} & Integer & Identitas lokal data point. \\
-        \texttt{batch\_id} & UUID & Identitas \textit{batch} induk. \\
-        \texttt{measurement\_type} & String & Jenis pengukuran. \\
-        \texttt{timestamp} & Timestamp & Waktu pengukuran. \\
-        \texttt{value\_json} & String & Nilai pengukuran dalam bentuk JSON\@. \\
-        \texttt{unit} & String & Satuan pengukuran. \\
-        \texttt{source} & String & Sumber data. \\
-        \texttt{device\_type} & String & Tipe perangkat sumber data. \\
-        \texttt{recording\_method} & String & Metode pencatatan data apabila tersedia. \\
-    \end{styledtable}
-\end{table}
-
-% Implementasi Android saat ini menyimpan struktur ini pada tabel pghd_batch_data_points.
+Penyimpanan lokal pada \textit{client} pasien hanya berfungsi sebagai mekanisme pendukung agar data PGHD tidak hilang ketika perangkat belum dapat mengirim data ke DecMed, misalnya karena tidak ada koneksi internet atau layanan tujuan sedang tidak tersedia.
+Data yang tersimpan lokal berada dalam dua tahap.
+Pertama, data mentah atau data sementara sebelum dibentuk menjadi \textit{batch}.
+Kedua, \textit{batch} PGHD yang sudah dibentuk, dienkripsi, dan menunggu proses pengiriman atau pengiriman ulang.
+Ketika koneksi tersedia, \textit{client} mengambil \textit{batch} yang masih berstatus menunggu pengiriman, mengirimkan \texttt{enc\_pghd} beserta metadata kriptografisnya, lalu memperbarui status lokal berdasarkan hasil pengiriman.
