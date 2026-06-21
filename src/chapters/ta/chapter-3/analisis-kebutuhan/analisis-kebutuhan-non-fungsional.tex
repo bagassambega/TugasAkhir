@@ -1,22 +1,40 @@
-\subsection{Analisis Kebutuhan Non-Fungsional}
+\subsection{Kebutuhan Non-Fungsional}
 
-Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan} dan analisis solusi pada subbab~\ref{analisis-solusi}, diperlukan kebutuhan non-fungsional yang didefinisikan pada Tabel~\ref{tab:kebutuhan-non-fungsional-pghd}.
-Kebutuhan non-fungsional dikodekan dengan \verb|NFXX|, di mana \verb|XX| adalah kode unik kebutuhan non-fungsional.
+Kebutuhan non-fungsional pada Tabel~\ref{tab:kebutuhan-non-fungsional-pghd} diturunkan dari ancaman pada Tabel~\ref{tab:stride-threat-analysis-decmed-pghd} dan kebutuhan penjaminan \textit{data provenance}. 
+Kebutuhan menyatakan properti yang harus dapat diamati pada sistem.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Kebutuhan non-fungsional integrasi PGHD pada DecMed}\label{tab:kebutuhan-non-fungsional-pghd}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.08\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.10\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Kode} & \textbf{Aspek} & \textbf{Gap / Ancaman} & \textbf{Kebutuhan Non-Fungsional} \\
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.17\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
+\hiderowcolors
+\caption{Kebutuhan Non-Fungsional Integrasi PGHD pada DecMed}\label{tab:kebutuhan-non-fungsional-pghd}\\
+\hline
+\rowcolor{headerBg}
+\textbf{ID} & \textbf{Aspek} & \textbf{Ancaman} & \textbf{Kebutuhan Non-Fungsional} \\
+\hline
+\showrowcolors
+\endfirsthead
 
-        NF01 & \textit{Confidentiality} & Gap 5, V-I01, V-I02, V-I03 & Sistem harus menjamin bahwa data PGHD yang dikirim keluar dari perangkat pasien dan disimpan di DecMed hanya dapat didekripsi dan dibaca oleh pihak yang memiliki izin akses aktif dari pasien sesuai mekanisme kontrol akses DecMed. \\
+\hiderowcolors
+\caption[]{Kebutuhan Non-Fungsional Integrasi PGHD pada DecMed (lanjutan)}\\
+\hline
+\rowcolor{headerBg}
+\textbf{ID} & \textbf{Aspek} & \textbf{Ancaman} & \textbf{Kebutuhan Non-Fungsional} \\
+\hline
+\showrowcolors
+\endhead
 
-        NF02 & \textit{Integrity} & Gap 4, Gap 5, V-T01 & Sistem harus mampu mendeteksi perubahan atau kerusakan pada data PGHD, baik saat transmisi maupun setelah disimpan, dan menginvalidasi data yang tidak lolos pemeriksaan integritas. \\
-
-        NF03 & \textit{Integrity} & V-T02 & Sistem harus membersihkan, membatasi, dan memvalidasi seluruh \textit{input} yang berasal dari pasien, tenaga kesehatan, maupun sumber data perangkat sebelum data disimpan, diproses, atau dikirimkan, untuk mencegah manipulasi data dan serangan berbasis \textit{input}. \\
-
-        NF04 & \textit{Availability} & Gap 2, Gap 3, V-D01, V-D02 & Sistem harus mampu menangani pengiriman data PGHD bervolume tinggi yang bersifat \textit{time-series} dari perangkat pasien tanpa menyebabkan kegagalan layanan (\textit{denial of service}), termasuk dengan menyediakan mekanisme \textit{batching}, \textit{retry}, dan pengiriman bertahap ketika koneksi tidak stabil. \\
-
-        NF05 & \textit{Provenance} & Gap 4 & Setiap entri PGHD yang disimpan dalam sistem harus menyertakan informasi yang dapat diverifikasi mengenai asal-usul data, meliputi identitas pasien sebagai sumber, waktu pengukuran, perangkat atau aplikasi yang digunakan, serta jejak validasi yang dilakukan selama alur pengiriman data. \\
-    \end{styledtable}
-\end{table}
+NF01 & Keraahasiaan & T-T02, T-I01 & Sistem harus menolak pengelolaan akses dan pembacaan PGHD apabila kewenangan pemohon tidak sesuai dengan pemilik data, penerima akses, cakupan, masa berlaku, dan status persetujuan. \\
+\hline
+NF02 & Kerahasiaan & T-I01, T-I02 & Sistem harus menjaga agar isi PGHD dan informasi sensitif yang diperlukan untuk mengaksesnya tidak dapat dipahami/diakses oleh pihak yang tidak berwenang selama pengolahan, pengiriman, penyimpanan, dan penyajian data. \\
+\hline
+NF03 & Integritas & T-T01, T-T02 & Sistem harus mampu mendeteksi perubahan tidak sah terhadap isi PGHD, metadata konteks, informasi persetujuan, dan status data sebelum informasi tersebut diterima atau digunakan; data yang gagal diperiksa tidak boleh diperlakukan sebagai data valid. \\
+\hline
+NF04 & \textit{Provenance} dan keterlacakan status & T-T01, T-T02 & Sistem harus mempertahankan informasi yang memungkinkan penelusuran pemilik data, waktu pengukuran, sumber dan cara perolehan, riwayat pemrosesan yang relevan, serta status validitas PGHD tanpa menjadikan metadata sensitif tersedia dalam bentuk plaintext secara berlebihan. \\
+\hline
+NF05 & Ketersediaan & T-D01 & Sistem harus mampu menerima dan memproses volume serta frekuensi PGHD pada beban uji yang ditentukan tanpa kehilangan data, kegagalan aplikasi, atau peningkatan operasi eksternal yang tidak terkendali. \\
+\hline
+NF06 & Ketersediaan & T-D02 & Ketika konektivitas atau layanan gagal sementara, sistem harus mempertahankan data sah yang belum selesai diproses, menyediakan status kegagalan yang dapat ditelusuri, dan dapat melanjutkan proses setelah kondisi pendukung pulih tanpa duplikasi atau kehilangan data. \\
+\hline
+\end{styledxltabular}
+\endgroup

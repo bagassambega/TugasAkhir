@@ -15,23 +15,37 @@ Terdapat tujuh parameter yang perlu dipertimbangkan dalam pemakaian teknologi un
 
 Perbandingan setiap teknologi untuk menjamin \textit{data provenance} dapat dilihat pada Tabel~\ref{tab:perbandingan-provenance}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Perbandingan teknik \textit{data provenance}}\label{tab:perbandingan-provenance}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X}
-        
-        \textbf{Teknik} & \textbf{DP1} & \textbf{DP2} & \textbf{DP3} & \textbf{DP4} & \textbf{DP5} & \textbf{DP6} & \textbf{DP7} \\
-        
-        \textit{Log-based} & Parsial & Parsial & Parsial & Tidak & Baik & Tidak & Parsial \\
-        
-        \textit{Cryptography-based} & Parsial & Parsial & Tidak & Baik & Baik & Tidak & Parsial \\
-        
-        \textit{Ontology-based} & Parsial & Parsial & Baik & Tidak & Parsial & Tidak & Baik \\
-        
-        \textit{Blockchain-based} & Baik & Parsial & Parsial & Baik & Parsial & Parsial & Parsial \\
-        
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hiderowcolors
+\caption{Perbandingan teknik \textit{data provenance}}\label{tab:perbandingan-provenance}\\
+\hline
+\rowcolor{headerBg}
+\textbf{Teknik} & \textbf{DP1} & \textbf{DP2} & \textbf{DP3} & \textbf{DP4} & \textbf{DP5} & \textbf{DP6} & \textbf{DP7} \\
+\hline
+\showrowcolors
+\endfirsthead
+
+\hiderowcolors
+\caption[]{Perbandingan Teknik \textit{Data Provenance} (lanjutan)}\\
+\hline
+\rowcolor{headerBg}
+\textbf{Teknik} & \textbf{DP1} & \textbf{DP2} & \textbf{DP3} & \textbf{DP4} & \textbf{DP5} & \textbf{DP6} & \textbf{DP7} \\
+\hline
+\showrowcolors
+\endhead
+
+\textit{Log-based} & Parsial & Parsial & Parsial & Tidak & Baik & Tidak & Parsial \\
+\hline
+\textit{Cryptography-based} & Parsial & Parsial & Tidak & Baik & Baik & Tidak & Parsial \\
+\hline
+\textit{Ontology-based} & Parsial & Parsial & Baik & Tidak & Parsial & Tidak & Baik \\
+\hline
+\textit{Blockchain-based} & Baik & Parsial & Parsial & Baik & Parsial & Parsial & Parsial \\
+\hline
+\end{styledxltabular}
+\endgroup
 
 Teknik \textit{log-based} unggul dalam hal \textit{overhead} karena hanya menambahkan beberapa \textit{field} pada rekam data tanpa transaksi jaringan tambahan, namun lemah pada \textit{unforgeability} karena rekam log dapat dimodifikasi secara sepihak tanpa mekanisme yang mencegah pemalsuan data. 
 Teknik \textit{cryptography-based} memenuhi \textit{unforgeability} karena \textit{provenance} terikat secara kriptografis pada identitas pengirim, namun teknik kriptografi tidak memberikan informasi mengenai informasi penting data dan metadata sehingga ia tidak mampu memenuhi \textit{storage \& taxonomy} yang membutuhkan representasi data dan riwayat pemrosesan data.
@@ -63,32 +77,37 @@ Berdasarkan analisis di atas, solusi \textit{data provenance} pada sistem ini ad
 Mengacu pada pembahasan mengenai informasi apa saja yang perlu dijamin pada \textit{data provenance}, mekanisme penjaminan \textit{data provenance} PGHD dan DecMed akan mencakup informasi-informasi mengenai dari mana data berasal, bagaimana data dihasilkan, siapa yang memiliki dan menghasilkan data, dan mengapa data dibuat/diolah.
 Pemetaan informasi-informasi tersebut terhadap data PGHD untuk sistem DecMed tertera pada Tabel~\ref{tab:provenance-mapping}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Pemetaan aspek \textit{data provenance} ke struktur metadata PGHD}\label{tab:provenance-mapping}
-    \begin{styledtable}{%
-        >{\raggedright\arraybackslash}p{0.35\textwidth}
-        >{\raggedright\arraybackslash}X}
-        \textbf{Aspek provenance} & \textbf{Informasi yang dijamin} \\
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.35\textwidth}|>{\raggedright\arraybackslash}X|}
+\hiderowcolors
+\caption{Pemetaan aspek \textit{data provenance} ke struktur metadata PGHD}\label{tab:provenance-mapping}\\
+\hline
+\rowcolor{headerBg}
+\textbf{Aspek \textit{Provenance}} & \textbf{Informasi yang Dijamin} \\
+\hline
+\showrowcolors
+\endfirsthead
 
-        Dari mana data berasal
-        & 
-        Identitas pasien sebagai subjek data, identitas perangkat yang digunakan untuk mengumpulkan data, sumber platform atau layanan yang menyuplai data, serta rentang waktu pengukuran yang dicakup oleh suatu batch. \\
+\hiderowcolors
+\caption[]{Pemetaan aspek \textit{data provenance} ke struktur metadata PGHD (lanjutan)}\\
+\hline
+\rowcolor{headerBg}
+\textbf{Aspek \textit{Provenance}} & \textbf{Informasi yang Dijamin} \\
+\hline
+\showrowcolors
+\endhead
 
-        Bagaimana data dihasilkan
-        &
-        Cara data dikumpulkan (otomatis oleh sensor, sesi aktif, atau input manual), jenis pengukuran yang dilakukan, pengelompokan data berdasarkan jenis pengukuran dan tipe perangkat, serta struktur batching yang digunakan saat pengiriman. \\
-
-        Siapa yang memiliki/menghasilkan data
-        &
-        Pasien sebagai pemilik dan penghasil data, serta perangkat dan aplikasi yang bertindak sebagai agen teknis yang mengumpulkan dan mengirimkan data. \\
-
-        Mengapa data dibuat / bagaimana data diolah
-        &
-        Alasan terbentuknya data, kapan pembentukan/pengiriman data dan status hasil verifikasi dan kegagalan jika terjadi. \\
-
-    \end{styledtable}
-\end{table}
+Dari mana data berasal & Identitas pasien sebagai subjek data, identitas perangkat yang digunakan untuk mengumpulkan data, sumber platform atau layanan yang menyuplai data, serta rentang waktu pengukuran. \\
+\hline
+Bagaimana data dihasilkan & Cara data dikumpulkan (otomatis oleh sensor, perangkat lain, atau input manual), jenis pengukuran yang dilakukan, pengelompokan data berdasarkan jenis pengukuran dan tipe perangkat. \\
+\hline
+Siapa yang memiliki/menghasilkan data & Pasien sebagai pemilik dan penghasil data, serta perangkat dan aplikasi yang bertindak sebagai agen teknis yang mengumpulkan dan mengirimkan data. \\
+\hline
+Mengapa data dibuat / bagaimana data diolah & Alasan terbentuknya data, kapan pembentukan/pengiriman data dan status hasil verifikasi dan kegagalan jika terjadi. \\
+\hline
+\end{styledxltabular}
+\endgroup
 
 
 
