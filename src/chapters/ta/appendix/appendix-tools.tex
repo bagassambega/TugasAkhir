@@ -1,5 +1,6 @@
-\chapter{Kakas Implementasi DecMed-PGHD}
-\label{app:kakas-implementasi-decmed-pghd}
+% chktex-file 8
+
+\chapter{Kakas Implementasi DecMed-PGHD}\label{app:kakas-implementasi-decmed-pghd}
 
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}p{0.16\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
@@ -19,94 +20,88 @@
     \endfoot
     \hline
     \endlastfoot
-    Komputer lokal & Perangkat keras & Laptop x86\_64, Intel Core i5-11260H, 12 thread, RAM 15 GiB & Lingkungan utama untuk pengembangan, build, pengujian, dan menjalankan client/backend lokal. \\
+    Komputer lokal & Perangkat keras & Laptop x86\_64, Intel Core i5-11260H, 12 thread, RAM 16 GB & Lingkungan utama untuk pengembangan, \textit{build}, pengujian, dan menjalankan \textit{client/backend} lokal. \\
     \hline
-    Sistem operasi & Perangkat lunak & Linux 6.18.35-1-lts & Sistem operasi pada komputer pengembangan. \\
+    Sistem operasi & Perangkat lunak & Linux 6.18.35-1-LTS & Sistem operasi pada komputer pengembangan. \\
     \hline
-    Android device & Perangkat keras & Perangkat Android dengan dukungan Health Connect & Perangkat untuk menjalankan client Android PGHD dan membaca data Health Connect/sensor. \\
+    Samsung A15 & Perangkat keras & Android 16 dengan dukungan Health Connect & Perangkat untuk menjalankan \textit{client} Android PGHD dan membaca data Health Connect/sensor. \\
     \hline
-    Rust & Perangkat lunak & 1.94.1 & Bahasa pemrograman untuk PRE, client Tauri backend, shared crypto library, dan shared IOTA library. \\
+    Rust & Perangkat lunak & 1.94.1 & Bahasa pemrograman untuk PRE, \textit{client} Tauri \textit{backend}, \textit{shared crypto library}, dan \textit{shared} IOTA \textit{library}. \\
     \hline
-    Cargo & Perangkat lunak & 1.94.1 & Build tool dan package manager Rust. \\
+    Cargo & Perangkat lunak & 1.94.1 & \textit{Build tool} dan \textit{package manager} Rust. \\
     \hline
-    Kotlin & Perangkat lunak & 2.2.10 & Bahasa pemrograman utama client Android PGHD. \\
+    Kotlin & Perangkat lunak & 2.2.10 & Bahasa pemrograman utama \textit{client} Android PGHD\@. \\
     \hline
-    Java/OpenJDK & Perangkat lunak & 26.0.1 & Runtime dan toolchain JVM untuk proses build Android. \\
+    Java/OpenJDK & Perangkat lunak & 26.0.1 & \textit{Runtime} dan \textit{toolchain} JVM untuk proses \textit{build} Android. \\
     \hline
-    Gradle & Perangkat lunak & 9.4.1 & Build system client Android PGHD. \\
+    Gradle & Perangkat lunak & 9.4.1 & \textit{Build system} \textit{client} Android PGHD\@. \\
     \hline
-    Android Gradle Plugin & Perangkat lunak & 9.2.1 & Plugin Gradle untuk build aplikasi Android. \\
+    Android SDK & Perangkat lunak & Compile SDK 36.1, min SDK 30, target SDK 36 & SDK untuk \textit{build} dan \textit{deployment} aplikasi Android PGHD\@. \\
     \hline
-    Android SDK & Perangkat lunak & Compile SDK 36.1, min SDK 30, target SDK 36 & SDK untuk build dan deployment aplikasi Android PGHD. \\
+    Android Studio & Perangkat lunak & 2026 Quail 1 & Kakas \textit{development} dan \textit{build} Android. \\
     \hline
-    Android Build Tools & Perangkat lunak & 36.1.0 & Kakas build Android. \\
+    Jetpack Compose & \textit{Framework} UI & BOM 2025.12.00 & \textit{Framework} UI untuk \textit{client} Android PGHD\@. \\
     \hline
-    Jetpack Compose & Framework UI & BOM 2025.12.00 & Framework UI deklaratif untuk client Android PGHD. \\
+    AndroidX Health Connect Client & \textit{Library} Android & 1.1.0 & API Android untuk membaca data kesehatan dari Health Connect. \\
     \hline
-    AndroidX Health Connect Client & Library Android & 1.1.0 & API Android untuk membaca data kesehatan dari Health Connect. \\
+    AndroidX Room & \textit{Library} Android & 2.8.4 & Basis data lokal pada \textit{client} Android untuk menyimpan PGHD, \textit{batch}, dan metadata lokal. \\
     \hline
-    AndroidX Room & Library Android & 2.8.4 & Basis data lokal pada client Android untuk menyimpan PGHD, batch, dan metadata lokal. \\
+    AndroidX WorkManager & \textit{Library} Android & 2.10.0 & Penjadwalan \textit{background worker} untuk sinkronisasi Health Connect, pembentukan \textit{batch}, dan pengiriman PGHD\@. \\
+    % \hline
+    % AndroidX DataStore & \textit{Library} Android & 1.1.7 & Penyimpanan konfigurasi ringan pada \textit{client} Android. \\
     \hline
-    AndroidX WorkManager & Library Android & 2.10.0 & Penjadwalan background worker untuk sinkronisasi Health Connect, pembentukan batch, dan pengiriman PGHD. \\
+    ZXing & \textit{Library} Android & 3.5.3 & Kakas pembacaan QR code untuk mekanisme \textit{grant access} dari pasien. \\
     \hline
-    AndroidX DataStore & Library Android & 1.1.7 & Penyimpanan konfigurasi ringan pada client Android. \\
+    Rust JNI & \textit{Library} & jni 0.21 & Integrasi \textit{shared library} Rust dengan \textit{client} Android. \\
     \hline
-    ZXing & Library Android & 3.5.3 & Kakas pembacaan QR code untuk mekanisme grant access dari pasien. \\
+    decmed-crypto & \textit{Shared library} & 0.1.0 & \textit{Library} Rust untuk operasi kriptografi PRE/Umbral yang dipanggil dari Android. \\
     \hline
-    Rust JNI & Library & jni 0.21 & Integrasi shared library Rust dengan client Android. \\
+    decmed-iota & \textit{Shared library} & 0.1.0 & \textit{Library} Rust untuk operasi IOTA, registrasi pasien, dan publikasi \textit{public key} PGHD dari Android. \\
     \hline
-    decmed-crypto & Shared library & 0.1.0 & Library Rust untuk operasi kriptografi PRE/Umbral yang dipanggil dari Android. \\
+    Umbral PRE & \textit{Library} kriptografi & 0.11 & \textit{Library} \textit{proxy re-encryption} untuk pembuatan \texttt{capsule}, \texttt{kfrag}, \texttt{cfrag}, dan proses dekripsi ulang. \\
     \hline
-    decmed-iota & Shared library & 0.1.0 & Library Rust untuk operasi IOTA, registrasi pasien, dan publikasi public key PGHD dari Android. \\
+    AES-GCM & \textit{Library} kriptografi & aes-gcm 0.10 & Enkripsi simetris \textit{payload} PGHD dan \textit{medical record}. \\
     \hline
-    Umbral PRE & Library kriptografi & 0.11 & Library proxy re-encryption untuk pembuatan capsule, kfrag, cfrag, dan proses dekripsi ulang. \\
+    Argon2 & \textit{Library} kriptografi & 0.5.3 & Derivasi kunci berbasis PIN/secret pada komponen \textit{client}. \\
     \hline
-    AES-GCM & Library kriptografi & aes-gcm 0.10 & Enkripsi simetris payload PGHD dan medical record. \\
+    IOTA SDK Rust & \textit{Library} \textit{blockchain} & Git iotaledger/iota, testnet & \textit{Library} Rust untuk membangun dan mengeksekusi transaksi IOTA\@. \\
     \hline
-    Argon2 & Library kriptografi & 0.5.3 & Derivasi kunci berbasis PIN/secret pada komponen client. \\
+    IOTA CLI & Perangkat lunak & 1.24.0-rc-363129423a17 & Kakas CLI untuk \textit{build, publish}, dan interaksi dengan IOTA testnet. \\
     \hline
-    IOTA SDK Rust & Library blockchain & Git iotaledger/iota, testnet/rev 3d7c588 & Library Rust untuk membangun dan mengeksekusi transaksi IOTA. \\
+    IOTA Move & Bahasa \textit{smart contract} & 2024.beta & Bahasa pemrograman \textit{smart contract} pada paket DecMed-PGHD\@. \\
     \hline
-    IOTA CLI & Perangkat lunak & 1.24.0-rc-363129423a17 & Kakas CLI untuk build, publish, dan interaksi dengan IOTA testnet. \\
+    IOTA Testnet & Layanan \textit{blockchain} & \textit{Public} testnet & Jaringan \textit{blockchain} untuk publikasi \textit{smart contract} dan penyimpanan metadata DecMed-PGHD\@. \\
     \hline
-    IOTA Move & Bahasa smart contract & 2024.beta & Bahasa pemrograman smart contract pada paket DecMed-PGHD. \\
+    IOTA Gas Station & Layanan pendukung & Docker iotaledger/gas-station:latest & Layanan sponsor transaksi IOTA untuk \textit{client} dan PRE\@. \\
     \hline
-    IOTA Testnet & Layanan blockchain & Public testnet & Jaringan blockchain untuk publikasi smart contract dan penyimpanan metadata DecMed-PGHD. \\
+    PRE \textit{backend} & \textit{Backend service} & proxy\_reencryption 0.1.0 & \textit{Backend} Rust yang menangani verifikasi PGHD, IPFS, Redis, \textit{smart contract}, dan \textit{proxy re-encryption}. \\
     \hline
-    IOTA Gas Station & Layanan pendukung & iotaledger/gas-station:latest & Layanan sponsor transaksi IOTA untuk client dan PRE. \\
+    Tokio & \textit{Runtime async} & 1.44.2 & \textit{Runtime} asinkron pada PRE dan \textit{shared} IOTA \textit{library}. \\
     \hline
-    PRE backend & Backend service & proxy\_reencryption 0.1.0 & Backend Rust yang menangani verifikasi PGHD, IPFS, Redis, smart contract, dan proxy re-encryption. \\
+    Redis & Basis data & Docker redis:8-alpine, crate redis 0.32 & Penyimpanan sementara untuk token akses dan material \textit{re-encryption} pada PRE\@. \\
     \hline
-    Axum & Web framework & 0.8.4 & Framework HTTP server untuk PRE. \\
+    IPFS Kubo & Penyimpanan terdistribusi & Docker ipfs/kubo & Penyimpanan \textit{payload} PGHD terenkripsi dan file terenkripsi DecMed seperti \textit{medical record}. \\
     \hline
-    Tokio & Runtime async & 1.44.2 & Runtime asinkron pada PRE dan shared IOTA library. \\
+    IPFS Cluster & Orkestrator IPFS & Docker ipfs/ipfs-cluster & Orkestrasi beberapa \textit{node} IPFS pada server kampus. \\
     \hline
-    Redis & Basis data & redis:8-alpine, crate redis 0.32 & Penyimpanan sementara untuk token akses dan material re-encryption pada PRE. \\
+    Docker & Perangkat lunak & 28.5.0 & \textit{Containerization} untuk Redis, IPFS, IPFS Cluster, Gas Station, dan layanan pendukung lain. \\
     \hline
-    IPFS Kubo & Penyimpanan terdistribusi & ipfs/kubo:release & Penyimpanan payload PGHD terenkripsi dan file terenkripsi DecMed. \\
+    Nginx & \textit{Web server} & nginx:alpine & \textit{Reverse proxy} pada konfigurasi PRE\@. \\
     \hline
-    IPFS Cluster & Orkestrator IPFS & ipfs/ipfs-cluster:latest & Orkestrasi beberapa node IPFS pada server kampus. \\
+    Node.js & Perangkat lunak & 22.20.0 & \textit{Runtime} JavaScript untuk \textit{client} SvelteKit/Tauri. \\
     \hline
-    Docker & Perangkat lunak & 28.5.0 & Containerization untuk Redis, IPFS, IPFS Cluster, Gas Station, dan layanan pendukung lain. \\
+    npm & Perangkat lunak & 11.6.1 & \textit{Package manager} untuk \textit{client} web/desktop. \\
     \hline
-    Nginx & Web server & nginx:alpine & Reverse proxy pada konfigurasi PRE. \\
+    TypeScript & Bahasa pemrograman & 5.6.2--5.6.3 & Bahasa pemrograman \textit{frontend} \textit{client} \textit{ministry}, \textit{client} pasien Tauri, dan \textit{client} tenaga kesehatan. \\
     \hline
-    Node.js & Perangkat lunak & 22.20.0 & Runtime JavaScript untuk client SvelteKit/Tauri. \\
+    Svelte & \textit{Frontend framework} & 5.0.0--5.37.3 & \textit{Framework} UI untuk \textit{client} Tauri. \\
     \hline
-    npm & Perangkat lunak & 11.6.1 & Package manager untuk client web/desktop. \\
+    SvelteKit & \textit{Web framework} & 2.9.0--2.27.0 & \textit{Framework} web untuk \textit{client} Tauri. \\
     \hline
-    TypeScript & Bahasa pemrograman & 5.6.2--5.6.3 & Bahasa pemrograman frontend client ministry, client patient Tauri, dan client tenaga kesehatan. \\
+    Vite & \textit{Build tool frontend} & 6.0.3--6.3.5 & \textit{Development server} dan \textit{build tool} untuk \textit{client} SvelteKit. \\
     \hline
-    Svelte & Frontend framework & 5.0.0--5.37.3 & Framework UI untuk client Tauri. \\
+    Tauri & \textit{Desktop framework} & 2 & \textit{Framework} aplikasi desktop untuk \textit{client} \textit{ministry}, pasien Tauri, dan \textit{client} tenaga kesehatan. \\
     \hline
-    SvelteKit & Web framework & 2.9.0--2.27.0 & Framework web untuk client Tauri. \\
-    \hline
-    Vite & Build tool frontend & 6.0.3--6.3.5 & Development server dan build tool untuk client SvelteKit. \\
-    \hline
-    Tauri & Desktop framework & 2 & Framework aplikasi desktop untuk client ministry, patient Tauri, dan client tenaga kesehatan. \\
-    \hline
-    Keyring & Library desktop & 3 & Penyimpanan secret lokal pada client Tauri. \\
-    \hline
-    SSH tunneling & Konfigurasi jaringan & OpenSSH & Mekanisme akses lokal ke IPFS dan IOTA Gas Station pada server kampus. \\
+    SSH \textit{tunneling} & Konfigurasi jaringan & OpenSSH & Mekanisme akses lokal ke IPFS dan IOTA Gas Station pada server kampus. \\
     \hline
 \end{styledxltabular}

@@ -3,7 +3,9 @@
 
 \subsection{Pengujian Fungsional}
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.16\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+Pengujian fungsional memverifikasi alur pengguna dan pipeline F01--F10. Satu skenario dapat mencakup beberapa kebutuhan yang terjadi dalam satu alur, tetapi seluruh kebutuhan memiliki paling sedikit satu bukti pengujian pada Tabel~\ref{tab:skenario-fungsional}.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}p{0.13\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
     \caption{Skenario Pengujian Fungsional Sistem DecMed-PGHD}\label{tab:skenario-fungsional} \\
     \hline
@@ -21,22 +23,26 @@
     \endfoot
     \hline
     \endlastfoot
-    T-F01 & F01 & Pasien login, membuka aplikasi Android, memberi izin Health Connect/sensor, menekan Start Collecting, lalu menambahkan data manual PGHD\@. & Data PGHD otomatis dan manual muncul pada halaman PGHD lokal dengan waktu pengukuran dan sumber data. \\
+    T-F01 & F01 & Pasien memberi izin Health Connect/sensor, menjalankan pengumpulan otomatis, kemudian menambahkan satu record manual. & Record otomatis dan manual tersimpan dengan nilai, waktu pengukuran, dan sumber yang sesuai. \\
     \hline
-    T-F02 & F02 & Matikan internet, lakukan pengumpulan PGHD otomatis/manual, tutup lalu buka ulang aplikasi. & Data tetap tersimpan di perangkat dan batch belum terkirim tetap muncul pada halaman PGHD/Batches. \\
+    T-F02 & F02 & Perangkat dibuat luring, PGHD dikumpulkan, lalu aplikasi ditutup dan dibuka kembali. & Record tetap tersedia pada basis data lokal dan belum ditandai sebagai terkirim. \\
     \hline
-    T-F03 & F03 & Saat offline, kumpulkan PGHD sampai ada batch menunggu pengiriman. Aktifkan kembali internet. & Sistem mencoba mengirim batch secara otomatis ketika koneksi tersedia dan status berubah menjadi terkirim atau gagal dengan alasan yang tampil. \\
+    T-F03 & F03 & Beberapa record yang belum dikirim dibentuk menjadi batch ketika perangkat luring, kemudian koneksi diaktifkan kembali. & Batch tetap tersimpan saat luring dan pengiriman dapat dijalankan ketika koneksi tersedia. \\
     \hline
-    T-F04 & F04 & Setelah batch berhasil dikirim, pasien membuka halaman PGHD/Batches dan detail data. & Riwayat PGHD yang dikirim tampil dengan waktu pengukuran, waktu pengiriman, status sinkronisasi, dan sumber data. \\
+    T-F04 & F04 & Pasien membuka halaman record dan batch setelah proses koleksi serta pengiriman. & Aplikasi menampilkan sumber, waktu, jumlah record, identitas batch, dan status pengiriman. \\
     \hline
-    T-F05 & F05 & Tenaga kesehatan membuka QR berisi identitas/PRE public key. Pasien scan QR dan memberi akses baca PGHD\@. & Akses PGHD tercatat sebagai grant aktif untuk tenaga kesehatan tersebut. \\
+    T-F05 & F05 & PGHD dikumpulkan dari minimal dua sumber, misalnya Health Connect dan input manual, lalu isi payload diperiksa. & Payload mempertahankan identitas pasien, waktu, sumber, perangkat/aplikasi, metode pencatatan, dan status validasi yang tersedia. \\
     \hline
-    T-F06 & F06 & Tenaga kesehatan yang sudah diberi akses membuka daftar PGHD pasien. & Daftar metadata PGHD pasien tampil pada client tenaga kesehatan. \\
+    T-F06 & F06 & Pasien memindai identitas/PRE public key tenaga kesehatan dan memberikan akses \texttt{READ\_PGHD}. & Grant untuk pasangan pasien--tenaga kesehatan tercatat dan material akses sementara dibentuk. \\
     \hline
-    T-F07 & F07 & Tenaga kesehatan memilih salah satu entri PGHD dari daftar dan membuka detail. & Isi PGHD berhasil didekripsi dan ditampilkan, termasuk nilai data, waktu, dan metadata provenance. \\
+    T-F07 & F07 & Tenaga kesehatan dengan grant aktif membuka daftar PGHD pasien. & Daftar metadata PGHD valid milik pasien yang sesuai ditampilkan. \\
     \hline
-    T-F08 & F08 & Gunakan data PGHD uji yang payload/hash/signature-nya dimodifikasi, lalu coba dibuka oleh tenaga kesehatan. & Sistem menampilkan peringatan bahwa data tidak valid/rusak dan data tidak diterima sebagai PGHD valid. \\
+    T-F08 & F08 & Tenaga kesehatan memilih satu entri pada daftar dan membuka detail. & Data berhasil diambil, diverifikasi, didekripsi, dan ditampilkan bersama metadata provenance. \\
     \hline
-    T-F09 & F09 & Pasien mencabut akses PGHD tenaga kesehatan, lalu tenaga kesehatan mencoba refresh daftar atau membuka detail PGHD\@. & Akses langsung gagal/ditolak dan tenaga kesehatan tidak dapat lagi membaca PGHD pasien. \\
+    T-F09 & F09 & Tenaga kesehatan mencoba membuka fixture PGHD dengan hash, tanda tangan, atau plaintext yang telah diubah. & Sistem menolak data, menampilkan peringatan integritas, dan tidak memperlakukannya sebagai PGHD valid. \\
+    \hline
+    T-F10 & F10 & Pasien mencabut grant, lalu tenaga kesehatan mencoba menyegarkan daftar dan membuka detail kembali. & Permintaan baca berikutnya ditolak dan tidak menghasilkan plaintext atau material dekripsi. \\
     \hline
 \end{styledxltabular}
+
+Skenario T-F01--T-F10 berfungsi sebagai pengujian sistem dari perspektif pengguna. Logika negatif yang deterministik, seperti tipe akses salah, pasien berbeda, akses kedaluwarsa, dan status data invalid, diuji lebih rinci pada pengujian \textit{smart contract}.

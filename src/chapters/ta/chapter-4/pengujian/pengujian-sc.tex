@@ -26,23 +26,23 @@ Skenario pengujian yang dilakukan dapat dilihat pada Tabel~\ref{tab:skenario-sma
     \endfoot
     \hline
     \endlastfoot
-    T-SC-01 & F03, F06, F07, NF03, NF04 & Proxy menyimpan metadata PGHD dan tenaga kesehatan dengan akses \texttt{READ\_PGHD} membaca daftar serta detail PGHD pasien. & Metadata PGHD tersimpan dan dapat dibaca oleh tenaga kesehatan yang memiliki akses aktif. \\
+    T-SC-01 & F03, F07, F08, NF01 & Proxy menyimpan metadata PGHD dan tenaga kesehatan dengan akses \texttt{READ\_PGHD} membaca daftar serta detail PGHD pasien. & Metadata PGHD tersimpan dan dapat dibaca oleh tenaga kesehatan yang memiliki akses aktif. \\
     \hline
-    T-SC-02 & F06, NF01 & Tenaga kesehatan mencoba membaca daftar PGHD tanpa akses dari pasien. & Akses ditolak karena tidak ada akses \texttt{READ\_PGHD} yang aktif. \\
+    T-SC-02 & F07, NF01 & Tenaga kesehatan mencoba membaca daftar PGHD tanpa akses dari pasien. & Akses ditolak karena tidak ada akses \texttt{READ\_PGHD} yang aktif. \\
     \hline
-    T-SC-03 & F06, NF01 & Tenaga kesehatan memiliki akses medical record biasa, tetapi mencoba membaca PGHD\@ & Akses ditolak karena tipe akses medical record tidak dapat digunakan untuk membaca PGHD\@. \\
+    T-SC-03 & F07, NF01 & Tenaga kesehatan memiliki akses medical record biasa, tetapi mencoba membaca PGHD\@ & Akses ditolak karena tipe akses medical record tidak dapat digunakan untuk membaca PGHD\@. \\
     \hline
-    T-SC-04 & F06, NF01 & Tenaga kesehatan mencoba membaca PGHD setelah masa akses \texttt{READ\_PGHD} habis. & Akses ditolak karena waktu akses sudah kedaluwarsa. \\
+    T-SC-04 & F07, NF01 & Tenaga kesehatan mencoba membaca PGHD setelah masa akses \texttt{READ\_PGHD} habis. & Akses ditolak karena waktu akses sudah kedaluwarsa. \\
     \hline
-    T-SC-05 & F07 & Tenaga kesehatan membuka detail PGHD dengan index yang tidak tersedia. & Akses detail ditolak karena entri PGHD tidak ditemukan. \\
+    T-SC-05 & F08 & Tenaga kesehatan membuka detail PGHD dengan index yang tidak tersedia. & Akses detail ditolak karena entri PGHD tidak ditemukan. \\
     \hline
-    T-SC-06 & F08, NF02 & Tenaga kesehatan membuka entri PGHD yang sudah diinvalidasi. & Data tidak dapat dibuka sebagai data valid karena status entri sudah \texttt{INVALID}. \\
+    T-SC-06 & F09, NF03 & Tenaga kesehatan membuka entri PGHD yang sudah diinvalidasi. & Data tidak dapat dibuka sebagai data valid karena status entri sudah \texttt{INVALID}. \\
     \hline
-    T-SC-07 & F08, NF02 & PRE mencoba menginvalidasi CID PGHD yang tidak ada pada storage pasien. & Proses invalidasi ditolak karena CID tidak ditemukan. \\
+    T-SC-07 & F09, NF03 & PRE mencoba menginvalidasi CID PGHD yang tidak ada pada storage pasien. & Proses invalidasi ditolak karena CID tidak ditemukan. \\
     \hline
-    T-SC-08 & F03, NF02, NF05 & Proxy mencoba menyimpan metadata PGHD dengan field metadata kosong. & Transaksi ditolak karena metadata PGHD tidak valid. \\
+    T-SC-08 & F03, F05, NF03, NF04 & Proxy mencoba menyimpan metadata PGHD dengan field metadata kosong. & Transaksi ditolak karena metadata PGHD tidak valid. \\
     \hline
-    T-SC-09 & F05, F06, NF01 & Akses PGHD diberikan untuk pasien pertama, tetapi digunakan untuk membaca PGHD pasien kedua. & Akses ditolak karena akses bersifat spesifik terhadap pasangan pasien dan tenaga kesehatan. \\
+    T-SC-09 & F06, F07, NF01 & Akses PGHD diberikan untuk pasien pertama, tetapi digunakan untuk membaca PGHD pasien kedua. & Akses ditolak karena akses bersifat spesifik terhadap pasangan pasien dan tenaga kesehatan. \\
     \hline
 \end{styledxltabular}
 

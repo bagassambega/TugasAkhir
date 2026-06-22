@@ -4,28 +4,55 @@ Client Android PGHD pasien diimplementasikan sebagai aplikasi Android native men
 
 Pada implementasi ini, Health Connect digunakan sebagai API sistem operasi Android untuk mengakses data \textit{wellness}, \textit{fitness}, dan \textit{activity}. Health Connect menyediakan tipe data kesehatan terstruktur beserta metadata sumber data, perangkat, dan metode pencatatan. Data wearable yang digunakan pada pengujian berasal dari Mi Smart Band 9 Active. Data tersebut disinkronkan oleh aplikasi Mi Fitness ke Health Connect, kemudian dibaca oleh client Android PGHD melalui Health Connect API\@.
 
-Secara garis besar, client Android PGHD terdiri atas beberapa halaman sebagai berikut,
+Secara garis besar, client Android PGHD terdiri atas beberapa halaman utama yang dijelaskan sebagai berikut.
 
-\begin{enumerate}
-    \item Halaman persetujuan penggunaan aplikasi, digunakan untuk menampilkan persetujuan awal sebelum pasien menggunakan aplikasi.
-    \item Halaman register, digunakan untuk membuat akun pasien baru, membangkitkan identitas IOTA pasien, membangkitkan key PGHD, dan mempublikasikan public key PGHD.
-    \item Halaman login, digunakan untuk membuka kembali akun pasien berdasarkan kredensial yang tersimpan pada perangkat.
-    \item Halaman pelengkapan profil, digunakan untuk melengkapi identitas dasar pasien setelah akun berhasil dibuat.
-    \item Halaman home, digunakan untuk menampilkan ringkasan data PGHD yang telah dikumpulkan dalam bentuk informasi kesehatan yang mudah dipahami pasien.
-    \item Halaman data PGHD, digunakan untuk melihat data PGHD lokal yang telah dikumpulkan, baik dari Health Connect, input manual, maupun sensor perangkat.
-    \item Halaman pengumpulan PGHD, digunakan untuk mengaktifkan atau menghentikan proses pengumpulan data otomatis.
-    \item Halaman batch PGHD, digunakan untuk melihat batch yang sedang dikumpulkan, batch yang menunggu pengiriman, batch yang sedang dikirim, batch gagal, dan batch yang telah terkirim.
-    \item Halaman pengaturan sensor, digunakan untuk mengatur sumber data perangkat yang akan digunakan.
-    \item Halaman pengaturan aplikasi, digunakan untuk konfigurasi akses, izin, dan preferensi lain pada client Android.
-\end{enumerate}
+\subsubsection{Halaman Persetujuan Penggunaan Aplikasi}
+
+Halaman persetujuan penggunaan aplikasi digunakan untuk menampilkan informasi awal dan persetujuan sebelum pasien menggunakan aplikasi. Halaman ini menjadi titik awal agar pasien memahami bahwa aplikasi akan membaca dan mengelola data kesehatan yang berasal dari perangkat Android maupun sumber eksternal seperti Health Connect.
+
+\subsubsection{Halaman Register}
+
+Halaman register digunakan untuk membuat akun pasien baru. Pada halaman ini, client membangkitkan identitas IOTA pasien, membangkitkan key PGHD, dan mempublikasikan public key PGHD yang diperlukan untuk mekanisme verifikasi dan akses data PGHD.
+
+\subsubsection{Halaman Login}
+
+Halaman login digunakan untuk membuka kembali akun pasien berdasarkan kredensial pasien. Pada proses ini, client menurunkan kembali identitas dan key yang diperlukan, kemudian memeriksa apakah akun pasien yang sesuai telah terdaftar.
+
+\subsubsection{Halaman Pelengkapan Profil}
+
+Halaman pelengkapan profil digunakan untuk melengkapi identitas dasar pasien setelah akun berhasil dibuat. Data profil ini digunakan agar data pasien dapat dikenali pada proses penggunaan aplikasi dan pemberian akses.
+
+\subsubsection{Halaman Home}
+
+Halaman home digunakan untuk menampilkan ringkasan informasi kesehatan yang telah dikumpulkan oleh client Android PGHD. Informasi ditampilkan dalam bentuk yang mudah dipahami pasien tanpa menampilkan detail teknis dari struktur batch PGHD.
+
+\subsubsection{Halaman Data PGHD}
+
+Halaman data PGHD digunakan untuk melihat data PGHD lokal yang telah dikumpulkan dari Health Connect, input manual, maupun sensor perangkat. Halaman ini membantu pasien memeriksa data kesehatan yang tersedia sebelum data tersebut dibentuk menjadi batch.
+
+\subsubsection{Halaman Pengumpulan PGHD}
+
+Halaman pengumpulan PGHD digunakan untuk mengaktifkan atau menghentikan proses pengumpulan data otomatis. Pada halaman ini, pasien dapat melihat status pengumpulan dan sumber data yang digunakan oleh aplikasi.
+
+\subsubsection{Halaman Batch PGHD}
+
+Halaman batch PGHD digunakan untuk melihat status batch yang sedang dikumpulkan, menunggu pengiriman, sedang dikirim, gagal, atau telah terkirim. Halaman ini berfungsi sebagai pemantauan operasional proses pengiriman PGHD dari perangkat pasien.
+
+\subsubsection{Halaman Pengaturan Sensor}
+
+Halaman pengaturan sensor digunakan untuk mengatur sumber data perangkat yang akan digunakan. Pengaturan ini menentukan data sensor atau sumber kesehatan mana yang akan dikumpulkan oleh aplikasi.
+
+\subsubsection{Halaman Pengaturan Aplikasi}
+
+Halaman pengaturan aplikasi digunakan untuk konfigurasi akses, izin, dan preferensi lain pada client Android. Dari halaman ini pasien juga dapat mengelola pengaturan yang berkaitan dengan penggunaan aplikasi dan akses data.
 
 \subsubsection{Penyimpanan Lokal PGHD}
 
 Data PGHD yang dikumpulkan pada perangkat pasien disimpan pada basis data lokal Room/SQLite dengan nama \texttt{sensor\_pghd.db}. Basis data tersebut berada pada \textit{private storage} aplikasi Android sehingga tidak disimpan sebagai file bebas pada penyimpanan publik perangkat. Penyimpanan lokal ini digunakan agar data PGHD tidak hilang ketika perangkat sedang tidak memiliki koneksi internet. Pada implementasi prototipe, basis data lokal PGHD tidak dienkripsi.
 
-Struktur penyimpanan lokal PGHD pada client Android dapat dilihat pada Tabel~\ref{tab:implementasi-local-pghd-storage}. Struktur ini merupakan implementasi dari rancangan format lokal pada Tabel~\ref{tab:field-pghd-raw-local}, Tabel~\ref{tab:field-batch-pghd-local}, dan Tabel~\ref{tab:field-batch-pghd-local-points}.
+Struktur penyimpanan lokal PGHD pada client Android dapat dilihat pada Tabel~\ref{tab:implementasi-local-pghd-storage}. Struktur ini merupakan implementasi dari rancangan penyimpanan lokal pada Subbab~\ref{rancangan-solusi-format-data-lokal}. Tabel-tabel lokal tersebut berfungsi untuk menyimpan data sementara dan antrean \textit{batch}; format PGHD yang dikirim tetap mengikuti skema JSON pada Subbab~\ref{rancangan-format-data-pghd}.
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}X|}
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.4\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
     \caption{Penyimpanan lokal PGHD pada client Android}\label{tab:implementasi-local-pghd-storage} \\
     \hline
@@ -51,7 +78,7 @@ Struktur penyimpanan lokal PGHD pada client Android dapat dilihat pada Tabel~\re
     \hline
     \texttt{pghd\_batches} & Menyimpan envelope PGHD terenkripsi, status pengiriman, alasan trigger batch, jumlah percobaan pengiriman, dan metadata retry. \\
     \hline
-    \texttt{pghd\_batch\_data\_points} & Menyimpan ringkasan titik data dari batch agar detail batch tetap dapat ditampilkan pada UI setelah batch dibuat. \\
+    \texttt{pghd\_batch\_data\_points} & Menyimpan hasil pemetaan \textit{data point} dari payload \textit{batch} untuk kebutuhan internal basis data lokal. Pada UI saat ini, halaman \textit{batch} menampilkan metadata pengiriman dari \texttt{pghd\_batches}, bukan detail dari tabel ini. \\
     \hline
     \texttt{DataStore} & Menyimpan preferensi ringan dan daftar akses PGHD yang pernah diberikan oleh pasien, termasuk status pencabutan akses. \\
     \hline

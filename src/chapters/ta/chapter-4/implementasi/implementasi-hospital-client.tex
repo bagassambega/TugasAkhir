@@ -4,19 +4,37 @@ Client tenaga kesehatan diimplementasikan menggunakan Tauri, SvelteKit, TypeScri
 
 Client ini digunakan oleh admin rumah sakit dan tenaga kesehatan. Admin rumah sakit dapat membuat activation key untuk akun tenaga kesehatan. Tenaga kesehatan menggunakan activation key tersebut untuk mengaktifkan akun, melengkapi profil, dan menghasilkan QR akses. QR akses berisi alamat IOTA tenaga kesehatan dan public key PRE tenaga kesehatan. QR inilah yang kemudian dipindai oleh client Android pasien ketika pasien memberikan akses.
 
-\subsubsection{Halaman dan Fitur Utama}
+\subsubsection{Halaman Aktivasi}
 
-Client tenaga kesehatan terdiri atas beberapa halaman utama sebagai berikut,
+Halaman aktivasi digunakan untuk memasukkan activation key dan data aktivasi akun rumah sakit atau tenaga kesehatan. Proses ini memastikan bahwa akun yang dibuat pada client tenaga kesehatan berasal dari aktivasi yang sah.
 
-\begin{enumerate}
-    \item Halaman aktivasi, digunakan untuk memasukkan activation key dan data aktivasi akun rumah sakit atau tenaga kesehatan.
-    \item Halaman register dan login, digunakan untuk membuat dan membuka akun lokal pada client tenaga kesehatan.
-    \item Halaman pelengkapan profil, digunakan untuk mengisi nama dan metadata profil tenaga kesehatan.
-    \item Halaman profil, digunakan untuk menampilkan QR tenaga kesehatan yang berisi alamat IOTA dan public key PRE.
-    \item Halaman dashboard, digunakan untuk melihat daftar akses yang diterima dari pasien.
-    \item Halaman medical record, digunakan untuk membaca atau memperbarui medical record pasien apabila akses yang sesuai telah diberikan.
-    \item Halaman PGHD, digunakan untuk melihat daftar batch PGHD pasien, membuka detail batch PGHD, melihat provenance data, dan menginvalidasi data PGHD apabila data terbukti tidak valid.
-\end{enumerate}
+\subsubsection{Halaman Register}
+
+Halaman register digunakan untuk membuat akun lokal pada client tenaga kesehatan setelah proses aktivasi berhasil. Pada halaman ini, client menyiapkan kredensial dan material awal yang diperlukan agar akun dapat digunakan pada aplikasi.
+
+\subsubsection{Halaman Login}
+
+Halaman login digunakan untuk membuka akun lokal pada client tenaga kesehatan. Setelah login berhasil, client dapat memuat profil, akses pasien, dan fitur lain sesuai peran pengguna.
+
+\subsubsection{Halaman Pelengkapan Profil}
+
+Halaman pelengkapan profil digunakan untuk mengisi nama dan metadata profil tenaga kesehatan. Data profil ini digunakan ketika tenaga kesehatan menampilkan identitas dan QR akses kepada pasien.
+
+\subsubsection{Halaman Profil}
+
+Halaman profil digunakan untuk menampilkan data administratif tenaga kesehatan dan QR akses. QR tersebut memuat alamat IOTA tenaga kesehatan dan public key PRE yang akan dipindai oleh pasien saat memberikan akses.
+
+\subsubsection{Halaman Dashboard}
+
+Halaman dashboard digunakan untuk melihat daftar akses yang diterima dari pasien. Dari halaman ini, tenaga kesehatan dapat memilih pasien dan jenis data yang akan dibuka sesuai capability yang masih aktif.
+
+\subsubsection{Halaman Medical Record}
+
+Halaman medical record digunakan untuk membaca atau memperbarui medical record pasien apabila akses yang sesuai telah diberikan. Halaman ini tetap mengikuti mekanisme DecMed untuk data administratif dan klinis.
+
+\subsubsection{Halaman PGHD}
+
+Halaman PGHD digunakan untuk melihat daftar batch PGHD pasien, membuka detail batch PGHD, melihat provenance data, dan menginvalidasi data PGHD apabila data terbukti tidak valid. Dekripsi dan verifikasi akhir tetap dilakukan pada client tenaga kesehatan.
 
 \subsubsection{Akses dan Dekripsi PGHD}
 
