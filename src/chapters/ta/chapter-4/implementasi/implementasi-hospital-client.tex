@@ -1,20 +1,26 @@
-\subsection{Implementasi Client Tenaga Kesehatan}
+\subsection{Implementasi \textit{Client} Tenaga Kesehatan}
 
-Client tenaga kesehatan diimplementasikan menggunakan Tauri, SvelteKit, TypeScript, dan Rust. Frontend SvelteKit digunakan untuk menampilkan halaman aplikasi, sedangkan backend Rust pada Tauri digunakan untuk menyimpan kredensial lokal, melakukan operasi kriptografi, memanggil PRE, memanggil smart contract, dan mendekripsi data yang diterima.
+\textit{Client} tenaga kesehatan diimplementasikan menggunakan Tauri, SvelteKit, TypeScript, dan Rust. 
+\textit{Frontend} SvelteKit digunakan untuk menampilkan halaman aplikasi, sedangkan \textit{backend} Rust pada Tauri digunakan untuk menyimpan kredensial lokal, melakukan operasi kriptografi, memanggil PRE, memanggil \textit{smart contract}, dan mendekripsi data yang diterima.
 
-Client ini digunakan oleh admin rumah sakit dan tenaga kesehatan. Admin rumah sakit dapat membuat activation key untuk akun tenaga kesehatan. Tenaga kesehatan menggunakan activation key tersebut untuk mengaktifkan akun, melengkapi profil, dan menghasilkan QR akses. QR akses berisi alamat IOTA tenaga kesehatan dan public key PRE tenaga kesehatan. QR inilah yang kemudian dipindai oleh client Android pasien ketika pasien memberikan akses.
+\textit{Client} ini digunakan oleh admin rumah sakit dan tenaga kesehatan. 
+Admin rumah sakit dapat membuat \textit{activation key} untuk akun tenaga kesehatan. 
+Tenaga kesehatan menggunakan \textit{activation key} tersebut untuk mengaktifkan akun, melengkapi profil, dan menghasilkan QR akses. 
+QR akses berisi alamat IOTA tenaga kesehatan dan \textit{public key} PRE tenaga kesehatan. 
+QR inilah yang kemudian dipindai oleh \textit{client} Android pasien ketika pasien memberikan akses.
 
 \subsubsection{Halaman Aktivasi}
 
-Halaman aktivasi digunakan untuk memasukkan activation key dan data aktivasi akun rumah sakit atau tenaga kesehatan. Proses ini memastikan bahwa akun yang dibuat pada client tenaga kesehatan berasal dari aktivasi yang sah.
+Halaman aktivasi digunakan untuk memasukkan \textit{activation key} dan data aktivasi akun rumah sakit atau tenaga kesehatan. 
+Proses ini memastikan bahwa akun yang dibuat pada \textit{client} tenaga kesehatan berasal dari aktivasi yang sah.
 
 \subsubsection{Halaman Register}
 
-Halaman register digunakan untuk membuat akun lokal pada client tenaga kesehatan setelah proses aktivasi berhasil. Pada halaman ini, client menyiapkan kredensial dan material awal yang diperlukan agar akun dapat digunakan pada aplikasi.
+Halaman register digunakan untuk membuat akun lokal pada \textit{client} tenaga kesehatan setelah proses aktivasi berhasil. Pada halaman ini, \textit{client} menyiapkan kredensial dan material awal yang diperlukan agar akun dapat digunakan pada aplikasi.
 
 \subsubsection{Halaman Login}
 
-Halaman login digunakan untuk membuka akun lokal pada client tenaga kesehatan. Setelah login berhasil, client dapat memuat profil, akses pasien, dan fitur lain sesuai peran pengguna.
+Halaman login digunakan untuk membuka akun lokal pada \textit{client} tenaga kesehatan. Setelah login berhasil, \textit{client} dapat memuat profil, akses pasien, dan fitur lain sesuai peran pengguna.
 
 \subsubsection{Halaman Pelengkapan Profil}
 
@@ -34,13 +40,13 @@ Halaman medical record digunakan untuk membaca atau memperbarui medical record p
 
 \subsubsection{Halaman PGHD}
 
-Halaman PGHD digunakan untuk melihat daftar batch PGHD pasien, membuka detail batch PGHD, melihat provenance data, dan menginvalidasi data PGHD apabila data terbukti tidak valid. Dekripsi dan verifikasi akhir tetap dilakukan pada client tenaga kesehatan.
+Halaman PGHD digunakan untuk melihat daftar batch PGHD pasien, membuka detail batch PGHD, melihat provenance data, dan menginvalidasi data PGHD apabila data terbukti tidak valid. Dekripsi dan verifikasi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
 
 \subsubsection{Akses dan Dekripsi PGHD}
 
-Setelah pasien memberikan akses PGHD, tenaga kesehatan memperoleh token akses dari PRE. Token tersebut digunakan untuk memanggil endpoint \texttt{/api/v1/pghd} dan \texttt{/api/v1/pghd/\{index\}}. Client tenaga kesehatan tidak langsung memperoleh plaintext PGHD dari PRE. PRE mengirimkan payload terenkripsi, metadata on-chain, \textit{cfrag}, capsule, public key PGHD pasien, dan material lain yang diperlukan untuk dekripsi. Dekripsi akhir tetap dilakukan pada client tenaga kesehatan.
+Setelah pasien memberikan akses PGHD, tenaga kesehatan memperoleh token akses dari PRE. Token tersebut digunakan untuk memanggil endpoint \texttt{/api/v1/pghd} dan \texttt{/api/v1/pghd/\{index\}}. \textit{Client} tenaga kesehatan tidak langsung memperoleh plaintext PGHD dari PRE. PRE mengirimkan payload terenkripsi, metadata on-chain, \textit{cfrag}, capsule, public key PGHD pasien, dan material lain yang diperlukan untuk dekripsi. Dekripsi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
 
-Pada saat membuka detail PGHD, client melakukan beberapa tahap validasi. Pertama, client membandingkan hash dari ciphertext yang diunduh dengan hash yang tercatat pada metadata. Kedua, client memverifikasi \texttt{signature} atas \texttt{h\_cipher} menggunakan public key PGHD pasien. Ketiga, client melakukan proses re-encryption menggunakan \textit{cfrag} dan private key tenaga kesehatan. Keempat, setelah plaintext berhasil diperoleh, client memverifikasi \texttt{h\_plain} yang tersimpan di dalam payload terenkripsi. Jika salah satu verifikasi tidak valid, client menampilkan peringatan kepada tenaga kesehatan dan memanggil endpoint invalidasi PGHD pada PRE dengan alasan spesifik seperti \texttt{SIGNATURE\_INVALID}, \texttt{PLAIN\_HASH\_MISMATCH}, atau \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA}.
+Pada saat membuka detail PGHD, \textit{client} melakukan beberapa tahap validasi. Pertama, \textit{client} membandingkan hash dari ciphertext yang diunduh dengan hash yang tercatat pada metadata. Kedua, \textit{client} memverifikasi \texttt{signature} atas \texttt{h\_cipher} menggunakan public key PGHD pasien. Ketiga, \textit{client} melakukan proses re-encryption menggunakan \textit{cfrag} dan private key tenaga kesehatan. Keempat, setelah plaintext berhasil diperoleh, \textit{client} memverifikasi \texttt{h\_plain} yang tersimpan di dalam payload terenkripsi. Jika salah satu verifikasi tidak valid, \textit{client} menampilkan peringatan kepada tenaga kesehatan dan memanggil endpoint invalidasi PGHD pada PRE dengan alasan spesifik seperti \texttt{SIGNATURE\_INVALID}, \texttt{PLAIN\_HASH\_MISMATCH}, atau \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA}.
 
 \subsubsection{Pemisahan PGHD dan Medical Record}
 
@@ -48,11 +54,11 @@ PGHD dan medical record ditampilkan sebagai dua jenis data yang berbeda. Medical
 
 \subsubsection{Command Tauri yang Digunakan}
 
-Backend Tauri menyediakan command yang dipanggil oleh frontend. Ringkasan command utama pada client tenaga kesehatan dapat dilihat pada Tabel~\ref{tab:implementasi-command-hospital-client}.
+Backend Tauri menyediakan command yang dipanggil oleh frontend. Ringkasan command utama pada \textit{client} tenaga kesehatan dapat dilihat pada Tabel~\ref{tab:implementasi-command-hospital-client}.
 
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
-    \caption{Command utama pada client tenaga kesehatan}\label{tab:implementasi-command-hospital-client} \\
+    \caption{Command utama pada \textit{client} tenaga kesehatan}\label{tab:implementasi-command-hospital-client} \\
     \hline
     \rowcolor{headerBg}
     \textbf{Command} & \textbf{Fungsi} \\

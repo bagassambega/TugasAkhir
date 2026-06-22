@@ -1,60 +1,69 @@
-\subsection{Implementasi Client Android PGHD Pasien}
+\subsection{Implementasi \textit{Client} Android PGHD Pasien}
 
-Client Android PGHD pasien diimplementasikan sebagai aplikasi Android native menggunakan Kotlin dan Jetpack Compose. Client ini berfungsi sebagai antarmuka pasien untuk melakukan registrasi akun PGHD, masuk ke akun pasien, mengumpulkan data kesehatan, membentuk batch PGHD, mengirim batch PGHD ke PRE, serta memberikan atau mencabut akses kepada tenaga kesehatan. Berbeda dari client pasien DecMed lama yang menggunakan Tauri, client PGHD pasien diimplementasikan secara native agar dapat mengakses API Android seperti Health Connect, sensor perangkat, kamera, WorkManager, dan penyimpanan lokal Android secara langsung.
+\textit{Client} Android PGHD pasien diimplementasikan sebagai aplikasi Android native menggunakan Kotlin. 
+\textit{Client} ini berfungsi sebagai antarmuka pasien untuk melakukan registrasi akun PGHD, masuk ke akun pasien, mengumpulkan data kesehatan, membentuk \textit{batch} PGHD, mengirim \textit{batch} PGHD ke PRE, serta memberikan atau mencabut akses kepada tenaga kesehatan. Berbeda dari \textit{client} pasien DecMed lama yang menggunakan Tauri, \textit{client} PGHD pasien diimplementasikan secara native agar dapat mengakses API Android seperti Health Connect, sensor perangkat, kamera, WorkManager, dan penyimpanan lokal Android secara langsung.
 
-Pada implementasi ini, Health Connect digunakan sebagai API sistem operasi Android untuk mengakses data \textit{wellness}, \textit{fitness}, dan \textit{activity}. Health Connect menyediakan tipe data kesehatan terstruktur beserta metadata sumber data, perangkat, dan metode pencatatan. Data wearable yang digunakan pada pengujian berasal dari Mi Smart Band 9 Active. Data tersebut disinkronkan oleh aplikasi Mi Fitness ke Health Connect, kemudian dibaca oleh client Android PGHD melalui Health Connect API\@.
+Pada implementasi ini, Health Connect digunakan sebagai API sistem operasi Android untuk mengakses data yang berasal dari aplikasi kesehatan lain dan juga \textit{wearable device}. 
+Health Connect menyediakan tipe data kesehatan terstruktur beserta metadata sumber data, perangkat, dan metode pencatatan. 
+Data \textit{wearable} yang digunakan pada pengujian berasal dari \textit{smart band} yang kemudian dihubungkan dengan aplikasi \textit{properiatery} milik Xiaomi Fitness untuk mengambil datanya. 
+Data tersebut disinkronkan oleh aplikasi Mi Fitness ke Health Connect, kemudian dibaca oleh \textit{client} Android PGHD melalui Health Connect API\@.
 
-Secara garis besar, client Android PGHD terdiri atas beberapa halaman utama yang dijelaskan sebagai berikut.
+Secara garis besar, \textit{client} Android PGHD terdiri atas beberapa halaman utama yang dijelaskan sebagai berikut.
 
 \subsubsection{Halaman Persetujuan Penggunaan Aplikasi}
 
-Halaman persetujuan penggunaan aplikasi digunakan untuk menampilkan informasi awal dan persetujuan sebelum pasien menggunakan aplikasi. Halaman ini menjadi titik awal agar pasien memahami bahwa aplikasi akan membaca dan mengelola data kesehatan yang berasal dari perangkat Android maupun sumber eksternal seperti Health Connect.
+Halaman persetujuan penggunaan aplikasi digunakan untuk menampilkan informasi awal dan persetujuan sebelum pasien menggunakan aplikasi. 
+Halaman ini menjadi titik awal agar pasien memahami bahwa aplikasi akan membaca dan mengelola data kesehatan yang berasal dari perangkat Android maupun sumber eksternal seperti Health Connect.
 
-\subsubsection{Halaman Register}
+\subsubsection{Halaman \textit{Register}}
 
-Halaman register digunakan untuk membuat akun pasien baru. Pada halaman ini, client membangkitkan identitas IOTA pasien, membangkitkan key PGHD, dan mempublikasikan public key PGHD yang diperlukan untuk mekanisme verifikasi dan akses data PGHD.
+Halaman \textit{register} digunakan untuk membuat akun pasien baru. 
+Pada halaman ini, \textit{client} membangkitkan identitas IOTA pasien, membangkitkan key PGHD, dan mempublikasikan \textit{public key} PGHD yang diperlukan untuk mekanisme verifikasi dan akses data PGHD.
 
-\subsubsection{Halaman Login}
+\subsubsection{Halaman \textit{Login}}
 
-Halaman login digunakan untuk membuka kembali akun pasien berdasarkan kredensial pasien. Pada proses ini, client menurunkan kembali identitas dan key yang diperlukan, kemudian memeriksa apakah akun pasien yang sesuai telah terdaftar.
+Halaman \textit{login} digunakan untuk membuka kembali akun pasien berdasarkan kredensial pasien. 
+Pada proses ini, \textit{client} menurunkan kembali identitas dan key yang diperlukan, kemudian memeriksa apakah akun pasien yang sesuai telah terdaftar.
 
 \subsubsection{Halaman Pelengkapan Profil}
 
-Halaman pelengkapan profil digunakan untuk melengkapi identitas dasar pasien setelah akun berhasil dibuat. Data profil ini digunakan agar data pasien dapat dikenali pada proses penggunaan aplikasi dan pemberian akses.
+Halaman pelengkapan profil digunakan untuk melengkapi identitas dasar pasien setelah akun berhasil dibuat. 
+Data profil ini digunakan agar data pasien dapat dikenali pada proses penggunaan aplikasi dan pemberian akses.
 
-\subsubsection{Halaman Home}
+\subsubsection{Halaman \textit{Home}}
 
-Halaman home digunakan untuk menampilkan ringkasan informasi kesehatan yang telah dikumpulkan oleh client Android PGHD. Informasi ditampilkan dalam bentuk yang mudah dipahami pasien tanpa menampilkan detail teknis dari struktur batch PGHD.
+Halaman \textit{home} digunakan untuk menampilkan ringkasan informasi kesehatan yang telah dikumpulkan oleh \textit{client} Android PGHD. Informasi ditampilkan dalam bentuk yang mudah dipahami pasien tanpa menampilkan detail teknis dari struktur \textit{batch} PGHD.
+Halaman ini juga berisi pengumpulan PGHD yang digunakan untuk mengaktifkan atau menghentikan proses pengumpulan data otomatis. 
+Pada halaman ini, pasien dapat melihat status pengumpulan dan sumber data yang digunakan oleh aplikasi.\
+Tampilan halaman \textit{home} dapat dilihat pada Gambar~\ref{halaman-home-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Halaman Data PGHD}
 
 Halaman data PGHD digunakan untuk melihat data PGHD lokal yang telah dikumpulkan dari Health Connect, input manual, maupun sensor perangkat. Halaman ini membantu pasien memeriksa data kesehatan yang tersedia sebelum data tersebut dibentuk menjadi batch.
+Halaman ini juga berisi mekanisme untuk mengirim data PGHD yang sudah dikumpulkan saat ini, sinkronisasi manual data dari Health Connecct, dan pemberian/pencabutan akses data terhadap tenaga kesehatan.
+Tampilan halaman data PGHD dapat dilihat pada Gambar~\ref{halaman-data-pghd-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
-\subsubsection{Halaman Pengumpulan PGHD}
+\subsubsection{Halaman \textit{Batch} PGHD}
 
-Halaman pengumpulan PGHD digunakan untuk mengaktifkan atau menghentikan proses pengumpulan data otomatis. Pada halaman ini, pasien dapat melihat status pengumpulan dan sumber data yang digunakan oleh aplikasi.
-
-\subsubsection{Halaman Batch PGHD}
-
-Halaman batch PGHD digunakan untuk melihat status batch yang sedang dikumpulkan, menunggu pengiriman, sedang dikirim, gagal, atau telah terkirim. Halaman ini berfungsi sebagai pemantauan operasional proses pengiriman PGHD dari perangkat pasien.
+Halaman \textit{batch} PGHD digunakan untuk melihat status \textit{batch} yang sedang dikumpulkan, menunggu pengiriman, sedang dikirim, gagal, atau telah terkirim. 
+Halaman ini berfungsi sebagai pemantauan operasional proses pengiriman PGHD dari perangkat pasien.
+Tampilan halaman \textit{batch} PGHD dapat dilihat pada Gambar~\ref{halaman-batch-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Halaman Pengaturan Sensor}
 
-Halaman pengaturan sensor digunakan untuk mengatur sumber data perangkat yang akan digunakan. Pengaturan ini menentukan data sensor atau sumber kesehatan mana yang akan dikumpulkan oleh aplikasi.
-
-\subsubsection{Halaman Pengaturan Aplikasi}
-
-Halaman pengaturan aplikasi digunakan untuk konfigurasi akses, izin, dan preferensi lain pada client Android. Dari halaman ini pasien juga dapat mengelola pengaturan yang berkaitan dengan penggunaan aplikasi dan akses data.
+Halaman pengaturan sensor digunakan untuk mengatur sumber data perangkat yang akan digunakan. 
+Pengaturan ini menentukan data sensor atau sumber kesehatan mana yang akan dikumpulkan oleh aplikasi.
+Tampilan halaman pengaturan sensor PGHD dapat dilihat pada Gambar~\ref{halaman-settings-sensor-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Penyimpanan Lokal PGHD}
 
 Data PGHD yang dikumpulkan pada perangkat pasien disimpan pada basis data lokal Room/SQLite dengan nama \texttt{sensor\_pghd.db}. Basis data tersebut berada pada \textit{private storage} aplikasi Android sehingga tidak disimpan sebagai file bebas pada penyimpanan publik perangkat. Penyimpanan lokal ini digunakan agar data PGHD tidak hilang ketika perangkat sedang tidak memiliki koneksi internet. Pada implementasi prototipe, basis data lokal PGHD tidak dienkripsi.
 
-Struktur penyimpanan lokal PGHD pada client Android dapat dilihat pada Tabel~\ref{tab:implementasi-local-pghd-storage}. Struktur ini merupakan implementasi dari rancangan penyimpanan lokal pada Subbab~\ref{rancangan-solusi-format-data-lokal}. Tabel-tabel lokal tersebut berfungsi untuk menyimpan data sementara dan antrean \textit{batch}; format PGHD yang dikirim tetap mengikuti skema JSON pada Subbab~\ref{rancangan-format-data-pghd}.
+Struktur penyimpanan lokal PGHD pada \textit{client} Android dapat dilihat pada Tabel~\ref{tab:implementasi-local-pghd-storage}. Struktur ini merupakan implementasi dari rancangan penyimpanan lokal pada Subbab~\ref{rancangan-solusi-format-data-lokal}. Tabel-tabel lokal tersebut berfungsi untuk menyimpan data sementara dan antrean \textit{batch}; format PGHD yang dikirim tetap mengikuti skema JSON pada Subbab~\ref{rancangan-format-data-pghd}.
 
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.4\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
-    \caption{Penyimpanan lokal PGHD pada client Android}\label{tab:implementasi-local-pghd-storage} \\
+    \caption{Penyimpanan lokal PGHD pada \textit{client} Android}\label{tab:implementasi-local-pghd-storage} \\
     \hline
     \rowcolor{headerBg}
     \textbf{Tabel/Komponen} & \textbf{Fungsi} \\
@@ -86,15 +95,15 @@ Struktur penyimpanan lokal PGHD pada client Android dapat dilihat pada Tabel~\re
 
 \subsubsection{Registrasi dan Login Pasien}
 
-Pada proses registrasi, client Android membangkitkan identitas pasien dan material kriptografi PGHD. Proses ini menggunakan shared library Rust melalui JNI. Library \texttt{decmed\_iota} digunakan untuk membangkitkan mnemonic, menurunkan alamat IOTA pasien, melakukan registrasi akun pasien, dan mempublikasikan public key PGHD. Library \texttt{decmed\_crypto} digunakan untuk membangkitkan key PRE dan material kriptografi yang akan digunakan pada mekanisme re-encryption.
+Pada proses registrasi, \textit{client} Android membangkitkan identitas pasien dan material kriptografi PGHD. Proses ini menggunakan shared library Rust melalui JNI. Library \texttt{decmed\_iota} digunakan untuk membangkitkan mnemonic, menurunkan alamat IOTA pasien, melakukan registrasi akun pasien, dan mempublikasikan public key PGHD. Library \texttt{decmed\_crypto} digunakan untuk membangkitkan key PRE dan material kriptografi yang akan digunakan pada mekanisme re-encryption.
 
-Setelah akun berhasil dibuat, client menyimpan profil pasien dan konfigurasi lokal pada perangkat. Saat pasien membuka aplikasi kembali, aplikasi mengecek status registrasi, status profil, dan status sesi lokal. Jika sesi belum terbuka, pasien diminta melakukan login atau unlock sesuai state akun yang tersimpan.
+Setelah akun berhasil dibuat, \textit{client} menyimpan profil pasien dan konfigurasi lokal pada perangkat. Saat pasien membuka aplikasi kembali, aplikasi mengecek status registrasi, status profil, dan status sesi lokal. Jika sesi belum terbuka, pasien diminta melakukan login atau unlock sesuai state akun yang tersimpan.
 
 \subsubsection{Pengumpulan Data PGHD}
 
-Pengumpulan data PGHD dilakukan dari tiga sumber utama, yaitu Health Connect, input manual, dan sensor perangkat. Health Connect digunakan untuk membaca data kesehatan yang telah tersedia pada ekosistem Android, termasuk data yang disinkronkan oleh aplikasi eksternal seperti Mi Fitness atau Google Fit. Pada pengujian implementasi, Mi Fitness digunakan untuk mengambil data dari Mi Smart Band 9 Active dan menuliskannya ke Health Connect. Client PGHD kemudian membaca data tersebut melalui Health Connect API\@.
+Pengumpulan data PGHD dilakukan dari tiga sumber utama, yaitu Health Connect, input manual, dan sensor perangkat. Health Connect digunakan untuk membaca data kesehatan yang telah tersedia pada ekosistem Android, termasuk data yang disinkronkan oleh aplikasi eksternal seperti Mi Fitness atau Google Fit. Pada pengujian implementasi, Mi Fitness digunakan untuk mengambil data dari Mi Smart Band 9 Active dan menuliskannya ke Health Connect. \textit{Client} PGHD kemudian membaca data tersebut melalui Health Connect API\@.
 
-Health Connect menyediakan tipe data kesehatan terstruktur, seperti langkah, jarak, kalori, detak jantung, dan tipe data lain yang didukung oleh perangkat maupun aplikasi sumber. Untuk data berbentuk time-series, seperti detak jantung, Health Connect menyimpan sampel pengukuran di dalam satu record. Client PGHD membaca data tersebut dan menyimpannya ke \texttt{pghd\_records} dengan metadata sumber seperti \texttt{source}, \texttt{sourcePackageName}, \texttt{deviceSource}, \texttt{deviceType}, dan \texttt{recordingMethod}. Informasi tersebut kemudian ditampilkan sebagai provenance pada client tenaga kesehatan.
+Health Connect menyediakan tipe data kesehatan terstruktur, seperti langkah, jarak, kalori, detak jantung, dan tipe data lain yang didukung oleh perangkat maupun aplikasi sumber. Untuk data berbentuk time-series, seperti detak jantung, Health Connect menyimpan sampel pengukuran di dalam satu record. \textit{Client} PGHD membaca data tersebut dan menyimpannya ke \texttt{pghd\_records} dengan metadata sumber seperti \texttt{source}, \texttt{sourcePackageName}, \texttt{deviceSource}, \texttt{deviceType}, dan \texttt{recordingMethod}. Informasi tersebut kemudian ditampilkan sebagai provenance pada \textit{client} tenaga kesehatan.
 
 Sinkronisasi Health Connect dijalankan segera setelah pasien mengaktifkan pengumpulan data. Setelah itu, sinkronisasi dijalankan secara periodik menggunakan WorkManager dengan interval minimum 15 menit. Untuk sensor perangkat Android, pembacaan sensor menggunakan interval default 60 detik. Data sensor tidak ditampilkan sebagai nama sensor mentah kepada pasien, tetapi dikonversi menjadi tipe data kesehatan yang lebih mudah dipahami. Input manual tetap tersedia untuk data yang dimasukkan langsung oleh pasien.
 
@@ -102,23 +111,23 @@ Sebelum pengumpulan otomatis dimulai, aplikasi melakukan pemeriksaan izin Androi
 
 \subsubsection{Pembentukan dan Pengiriman Batch PGHD}
 
-Data PGHD tidak dikirim satu per satu ke PRE. Client membentuk batch agar data time-series dari sensor dan wearable tidak menghasilkan transaksi berlebihan. Batch dapat terbentuk karena empat trigger implementasi, yaitu trigger periodik, trigger ukuran data, trigger manual, dan trigger ketika koneksi tersedia kembali setelah perangkat offline. Pada implementasi ini, trigger periodik dijalankan minimum setiap 15 menit, sedangkan batas ukuran yang digunakan untuk trigger ukuran adalah 10 MB.
+Data PGHD tidak dikirim satu per satu ke PRE. \textit{Client} membentuk \textit{batch} agar data time-series dari sensor dan wearable tidak menghasilkan transaksi berlebihan. Batch dapat terbentuk karena empat trigger implementasi, yaitu trigger periodik, trigger ukuran data, trigger manual, dan trigger ketika koneksi tersedia kembali setelah perangkat offline. Pada implementasi ini, trigger periodik dijalankan minimum setiap 15 menit, sedangkan batas ukuran yang digunakan untuk trigger ukuran adalah 10 MB.
 
-Ketika batch dibuat, data PGHD dikonversi menjadi payload PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. Client menghitung \texttt{h\_plain} dari plaintext batch, memasukkan nilai tersebut ke pembungkus plaintext, lalu mengenkripsi payload menggunakan AES-GCM. Setelah terbentuk \texttt{enc\_pghd}, client menghitung \texttt{h\_cipher} dan membuat \texttt{signature} atas \texttt{h\_cipher} menggunakan kunci tanda tangan PGHD pasien. Kunci AES yang digunakan untuk payload PGHD dienkripsi dengan mekanisme PRE sehingga dapat dibuka kembali oleh tenaga kesehatan yang telah menerima akses. Setelah envelope PGHD terbentuk, client mengirimkan data ke endpoint PRE \texttt{/api/v1/pghd/submit}. Jika perangkat tidak memiliki koneksi internet, data tetap berada pada basis data lokal dan akan dikirim ketika koneksi tersedia kembali. Jika pengiriman gagal karena alasan selain koneksi, batch ditandai gagal dan pasien dapat mengirim ulang secara manual melalui halaman batch PGHD.
+Ketika \textit{batch} dibuat, data PGHD dikonversi menjadi payload PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. \textit{Client} menghitung \texttt{h\_plain} dari plaintext batch, memasukkan nilai tersebut ke pembungkus plaintext, lalu mengenkripsi payload menggunakan AES-GCM. Setelah terbentuk \texttt{enc\_pghd}, \textit{client} menghitung \texttt{h\_cipher} dan membuat \texttt{signature} atas \texttt{h\_cipher} menggunakan kunci tanda tangan PGHD pasien. Kunci AES yang digunakan untuk payload PGHD dienkripsi dengan mekanisme PRE sehingga dapat dibuka kembali oleh tenaga kesehatan yang telah menerima akses. Setelah envelope PGHD terbentuk, \textit{client} mengirimkan data ke endpoint PRE \texttt{/api/v1/pghd/submit}. Jika perangkat tidak memiliki koneksi internet, data tetap berada pada basis data lokal dan akan dikirim ketika koneksi tersedia kembali. Jika pengiriman gagal karena alasan selain koneksi, \textit{batch} ditandai gagal dan pasien dapat mengirim ulang secara manual melalui halaman \textit{batch} PGHD.
 
 \subsubsection{Pemberian dan Pencabutan Akses}
 
-Pemberian akses dilakukan dengan mekanisme scan QR tenaga kesehatan. QR tenaga kesehatan berisi alamat IOTA tenaga kesehatan dan public key PRE miliknya. Setelah QR berhasil dibaca, client pasien membuat material re-encryption untuk tujuan akses yang dipilih, seperti baca PGHD, baca medical record, atau update medical record. Material tersebut dikirim ke PRE untuk disimpan sementara di Redis, sedangkan izin akses dicatat pada smart contract IOTA melalui transaksi client Android.
+Pemberian akses dilakukan dengan mekanisme scan QR tenaga kesehatan. QR tenaga kesehatan berisi alamat IOTA tenaga kesehatan dan public key PRE miliknya. Setelah QR berhasil dibaca, \textit{client} pasien membuat material re-encryption untuk tujuan akses yang dipilih, seperti baca PGHD, baca medical record, atau update medical record. Material tersebut dikirim ke PRE untuk disimpan sementara di Redis, sedangkan izin akses dicatat pada smart contract IOTA melalui transaksi \textit{client} Android.
 
-Pencabutan akses dilakukan dari daftar akses aktif pada client Android. Pasien tidak perlu memasukkan index log akses secara manual. Aplikasi menyimpan metadata pemberian akses pada \texttt{DataStore}, sehingga ketika pasien menekan tombol revoke, aplikasi dapat mengambil index log akses yang sesuai dan mengirim transaksi pencabutan ke smart contract.
+Pencabutan akses dilakukan dari daftar akses aktif pada \textit{client} Android. Pasien tidak perlu memasukkan index log akses secara manual. Aplikasi menyimpan metadata pemberian akses pada \texttt{DataStore}, sehingga ketika pasien menekan tombol revoke, aplikasi dapat mengambil index log akses yang sesuai dan mengirim transaksi pencabutan ke smart contract.
 
 \subsubsection{Helper JNI Android}
 
-Helper JNI pada client Android terdiri atas dua kelas utama, yaitu \texttt{DecmedCryptoNative} dan \texttt{DecmedIotaNative}. Keduanya berfungsi sebagai jembatan antara kode Kotlin dan shared library Rust. Ringkasan fungsi helper JNI dapat dilihat pada Tabel~\ref{tab:implementasi-jni-android}.
+Helper JNI pada \textit{client} Android terdiri atas dua kelas utama, yaitu \texttt{DecmedCryptoNative} dan \texttt{DecmedIotaNative}. Keduanya berfungsi sebagai jembatan antara kode Kotlin dan shared library Rust. Ringkasan fungsi helper JNI dapat dilihat pada Tabel~\ref{tab:implementasi-jni-android}.
 
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
-    \caption{Helper JNI pada client Android PGHD}\label{tab:implementasi-jni-android} \\
+    \caption{Helper JNI pada \textit{client} Android PGHD}\label{tab:implementasi-jni-android} \\
     \hline
     \rowcolor{headerBg}
     \textbf{Komponen} & \textbf{Fungsi} \\
