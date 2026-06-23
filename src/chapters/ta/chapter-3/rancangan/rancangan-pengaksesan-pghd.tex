@@ -68,7 +68,7 @@ Mekanisme pengaksesan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-ranca
     Jika tidak cocok, data tidak ditampilkan sebagai data valid dan entri PGHD diinvalidasi dengan alasan \texttt{PLAIN\_HASH\_MISMATCH}.
 
     \item \textbf{Invalidasi PGHD.}
-    Invalidasi PGHD dapat terjadi ketika hash \textit{ciphertext} tidak cocok, \textit{signature} gagal diverifikasi, hash \textit{plaintext} tidak cocok, metadata masih menggunakan skema \textit{legacy}, atau tenaga kesehatan melakukan invalidasi manual melalui antarmuka. 
+    Invalidasi PGHD dapat terjadi ketika hash \textit{ciphertext} tidak cocok, \textit{signature} gagal diverifikasi, hash \textit{plaintext} tidak cocok, atau tenaga kesehatan melakukan invalidasi manual melalui antarmuka. 
     Ketika \textit{client} tenaga kesehatan mendeteksi kegagalan integritas, data tidak langsung ditampilkan sebagai data valid. 
     \textit{Client} menampilkan peringatan bahwa data rusak atau tidak sah, kemudian setelah beberapa saat menampilkan dialog konfirmasi kepada tenaga kesehatan untuk menginvalidasi entri tersebut. 
     Dialog tersebut memuat alasan teknis, misalnya \texttt{OUTER\_HASH\_MISMATCH}, \texttt{SIGNATURE\_INVALID}, \texttt{PLAIN\_HASH\_MISMATCH}, atau \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA}.

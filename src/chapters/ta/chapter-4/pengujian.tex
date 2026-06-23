@@ -10,10 +10,8 @@ Batasan yang diterapkan untuk skenario pengujian sistem DecMed-PGHD ini adalah,
 \begin{enumerate}
     \item Pengujian dilakukan pada lingkungan \textit{proxy reencryption}, IPFS, dan \textit{client} lokal, dengan menggunakan IOTA testnet publik.
     \item Pengujian ketersediaan berfokus pada perilaku prototipe ketika volume record meningkat, koneksi luring, atau layanan sementara gagal; hasilnya tidak menyatakan SLA maupun ketahanan produksi.
-    \item Pengujian tidak mencakup audit kriptografi formal, \textit{penetration testing}, DDoS skala produksi, enkripsi basis data lokal, atau endpoint FHIR.
+    \item Pengujian tidak mencakup audit kriptografi formal, \textit{penetration testing}, DDoS skala produksi, enkripsi basis data lokal.
 \end{enumerate}
-
-\subsection{Justifikasi Cakupan Pengujian}\label{justifikasi-cakupan-pengujian}
 
 Pengujian pada penelitian ini dibatasi pada tiga jenis utama, yaitu pengujian fungsional, pengujian smart contract, dan pengujian non-fungsional keamanan. Cakupan ini dipilih karena tujuan penelitian adalah merancang dan mengimplementasikan pipeline integrasi PGHD pada DecMed serta membuktikan bahwa kebutuhan utama yang diturunkan dari analisis permasalahan telah terpenuhi. Dengan demikian, pengujian harus menunjukkan bahwa fungsi utama sistem berjalan, logika smart contract sebagai sumber kebenaran akses dan metadata bekerja benar, serta risiko CIA yang telah diidentifikasi melalui threat modeling dapat dikendalikan.
 
