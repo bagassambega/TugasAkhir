@@ -138,8 +138,10 @@ Sebelum pengumpulan otomatis dimulai, aplikasi melakukan pemeriksaan izin Androi
 Izin yang diperiksa mencakup izin Health Connect, aktivitas fisik, sensor, dan kamera apabila fitur \textit{scan} QR digunakan. 
 Jika izin belum diberikan, aplikasi menampilkan dialog penjelasan dan meminta pasien memberikan izin yang dibutuhkan.
 
-
-Konversi data sensor perangkat Android ke tipe data kesehatan PGHD dilakukan oleh komponen \texttt{AndroidSensorPghdMapper}. Hasil konversi tersebut juga digunakan sebagai daftar pilihan pada halaman pengaturan sensor. Pada implementasi ini, nilai mentah seperti komponen sumbu akselerometer, giroskop, magnetometer, atau vektor rotasi tidak dikirim sebagai PGHD utama karena nilai tersebut sulit dipahami langsung sebagai data kesehatan oleh tenaga kesehatan. Nilai tersebut hanya digunakan sebagai bahan perhitungan indikator turunan atau tetap berada sebagai data sensor mentah lokal apabila dibutuhkan untuk audit teknis. Ringkasan konversi yang tersedia pada implementasi dapat dilihat pada Tabel~\ref{tab:implementasi-konversi-sensor-pghd}.
+Konversi data sensor perangkat Android ke tipe data kesehatan PGHD dilakukan oleh komponen \texttt{AndroidSensorPghdMapper}. Hasil konversi tersebut juga digunakan sebagai daftar pilihan pada halaman pengaturan sensor. 
+Pada implementasi ini, nilai mentah seperti komponen sumbu akselerometer, giroskop, magnetometer, atau vektor rotasi tidak dikirim sebagai PGHD utama karena nilai tersebut sulit dipahami langsung sebagai data kesehatan oleh tenaga kesehatan. 
+Konversi yang tersedia pada implementasi dapat dilihat pada Tabel~\ref{tab:implementasi-konversi-sensor-pghd}.
+Konversi ini hanyalah bersifat \textit{prototipe} dan tidak mencerminkan keseluruhan konversi dan jenis data yang seharusnya diterima oleh tenaga kesehatan.
 
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors

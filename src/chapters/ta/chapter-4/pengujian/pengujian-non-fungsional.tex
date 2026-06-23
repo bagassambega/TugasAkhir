@@ -3,32 +3,48 @@
 
 \subsection{Pengujian Non-Fungsional}\label{pengujian-non-fungsional}
 
-Pengujian non-fungsional memverifikasi properti NF01--NF06 yang diturunkan dari analisis ancaman. Berbeda dengan kebutuhan yang bersifat independen terhadap solusi, pelaksanaan pengujian pada Bab IV menggunakan komponen yang telah dipilih dan diimplementasikan pada Bab III. Dengan demikian, teknologi implementasi diposisikan sebagai objek dan bukti pengujian, bukan sebagai definisi kebutuhan.
+Pengujian non-fungsional memverifikasi properti NF01--NF06 yang diturunkan dari analisis ancaman dan kebutuhan \textit{provenance}.
 
 \subsubsection{Matriks \textit{Traceability}}
 
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.08\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.23\textwidth} >{\raggedright\arraybackslash}p{0.19\textwidth}}
-\caption{\textit{Traceability} Ancaman, Kebutuhan, dan Pengujian}\label{tab:traceability-threat-nfr-test}\\
-\toprule
-\textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
-\midrule
-\endhead
-T-NF01 & T-T02, T-I01 & NF01 & Tindakan hanya dapat dilakukan oleh pihak dengan kewenangan yang sesuai. & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. \\
-T-NF02 & T-I01, T-I02 & NF02 & Pihak atau komponen tanpa kewenangan tidak memperoleh representasi PGHD yang dapat dipahami maupun informasi pembuka akses. & Inspeksi komunikasi, penyimpanan eksternal, respons gagal, dan log tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. \\
-T-NF03 & T-T01, T-T02 & NF03 & Perubahan isi, metadata, persetujuan, atau status dapat dideteksi sebelum digunakan. & Setiap variasi manipulasi ditolak atau ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. \\
-T-NF04 & T-T01, T-T02 & NF04 & Informasi asal-usul dan status validitas dapat ditelusuri. & Field provenance dan status yang diwajibkan tersedia serta konsisten dengan skenario. \\
-T-NF05 & T-D01 & NF05 & Sistem tetap memproses PGHD pada beban uji yang ditetapkan tanpa kehilangan data atau operasi eksternal tidak terkendali. & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak crash, dan operasi eksternal mengikuti strategi rancangan. \\
-T-NF06 & T-D02 & NF06 & Proses dapat pulih dari gangguan sementara tanpa kehilangan atau duplikasi data. & Data yang belum selesai tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. \\
-\bottomrule
-\end{longtable}
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{\textit{Traceability} Ancaman, Kebutuhan, dan Pengujian}\label{tab:traceability-threat-nfr-test} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    T-NF01 & T-T02, T-I01 & NF01 & Tindakan hanya dapat dilakukan oleh pihak dengan kewenangan yang sesuai. & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. \\
+    \hline
+    T-NF02 & T-I01, T-I02 & NF02 & Pihak atau komponen tanpa kewenangan tidak memperoleh representasi PGHD yang dapat dipahami maupun informasi pembuka akses. & Inspeksi komunikasi, penyimpanan eksternal, respons gagal, dan \textit{log} tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. \\
+    \hline
+    T-NF03 & T-T01, T-T02 & NF03 & Perubahan isi, \textit{metadata}, persetujuan, atau status dapat dideteksi sebelum digunakan. & Setiap variasi manipulasi ditolak atau ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. \\
+    \hline
+    T-NF04 & T-T01, T-T02 & NF04 & Informasi asal-usul dan status validitas dapat ditelusuri. & \textit{Field provenance} dan status yang diwajibkan tersedia serta konsisten dengan skenario. \\
+    \hline
+    T-NF05 & T-D01 & NF05 & Sistem tetap memproses PGHD pada beban uji yang ditetapkan tanpa kehilangan data atau operasi eksternal tidak terkendali. & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak \textit{crash}, dan operasi eksternal mengikuti strategi rancangan. \\
+    \hline
+    T-NF06 & T-D02 & NF06 & Proses dapat pulih dari gangguan sementara tanpa kehilangan atau duplikasi data. & Data yang belum selesai tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. \\
+    \hline
+\end{styledxltabular}
 
 \subsubsection{Skenario T-NF01: Otorisasi}
 
-Pengujian menggunakan satu pasien, satu tenaga kesehatan yang memperoleh persetujuan sesuai skenario, dan satu tenaga kesehatan tanpa persetujuan yang sesuai. Variasi negatif mencakup persetujuan tidak tersedia, akses untuk pasien berbeda, cakupan akses tidak sesuai, akses kedaluwarsa, dan akses yang telah dicabut. Sistem harus menolak seluruh variasi negatif sebelum PGHD atau informasi sensitif untuk mengakses PGHD dikembalikan. Kasus deterministik pada logika akses juga diverifikasi melalui pengujian \textit{smart contract}.
+Pengujian menggunakan satu pasien, satu tenaga kesehatan yang memperoleh persetujuan sesuai skenario, dan satu tenaga kesehatan tanpa persetujuan yang sesuai.
+Variasi negatif mencakup persetujuan tidak tersedia, akses untuk pasien berbeda, cakupan akses tidak sesuai, akses kedaluwarsa, dan akses yang telah dicabut.
+Sistem harus menolak seluruh variasi negatif sebelum PGHD atau informasi sensitif untuk mengakses PGHD dikembalikan.
+Kasus deterministik pada logika akses juga diverifikasi melalui pengujian \textit{smart contract}.
 
 \begin{lstlisting}[caption={Pengujian autentikasi dan otorisasi PGHD}, label={lst:nf01-confidentiality}, float=htb]
 PRE_BASE_URL=http://127.0.0.1:4100 \
@@ -40,13 +56,16 @@ UNAUTHORIZED_ACCESS_TOKEN_READ_PGHD=eyJ... \
 
 \subsubsection{Skenario T-NF02: Kerahasiaan Sepanjang Siklus Hidup}
 
-Penguji menggunakan satu PGHD dengan nilai penanda yang unik, kemudian memeriksa representasi data pada titik setelah data meninggalkan konteks penggunaan yang berwenang: payload komunikasi, objek penyimpanan eksternal, metadata publik, respons akses yang ditolak, dan log aplikasi yang relevan. Skenario berhasil apabila nilai penanda dan isi klinis tidak ditemukan dalam bentuk yang dapat dipahami pada titik tersebut serta respons tidak sah tidak memuat informasi yang memungkinkan data dibuka.
-
-Pada implementasi terpilih, pemeriksaan dilakukan terhadap payload menuju PRE, objek pada IPFS, metadata pada IOTA, dan respons endpoint PGHD. Pengujian ini membuktikan perilaku prototipe, bukan keamanan formal algoritma maupun keamanan kanal deployment produksi.
+Penguji menggunakan satu PGHD dengan nilai penanda yang unik, kemudian memeriksa representasi data pada titik setelah data meninggalkan konteks penggunaan yang berwenang: \textit{payload} komunikasi, objek penyimpanan eksternal, \textit{metadata} publik, respons akses yang ditolak, dan \textit{log} aplikasi yang relevan.
+Skenario berhasil apabila nilai penanda dan isi klinis tidak ditemukan dalam bentuk yang dapat dipahami pada titik tersebut serta respons tidak sah tidak memuat informasi yang memungkinkan data dibuka.
+Pada implementasi terpilih, pemeriksaan dilakukan terhadap \textit{payload} menuju PRE, objek pada IPFS, \textit{metadata} pada IOTA, dan respons \textit{endpoint} PGHD\@.
+Pengujian ini membuktikan perilaku prototipe, bukan keamanan formal algoritma maupun keamanan kanal \textit{deployment} produksi.
 
 \subsubsection{Skenario T-NF03: Deteksi Manipulasi Data dan Status}
 
-PGHD valid digunakan sebagai acuan, kemudian dibuat variasi dengan perubahan pada isi data, metadata konteks, bukti integritas, referensi penyimpanan, dan status validitas. Selain itu, dilakukan percobaan perubahan persetujuan atau metadata oleh aktor yang tidak memiliki kewenangan. Sistem harus mendeteksi perbedaan sebelum data digunakan, menolak data atau operasi terkait, dan tidak menampilkan data yang gagal sebagai PGHD valid.
+PGHD valid digunakan sebagai acuan, kemudian dibuat variasi dengan perubahan pada isi data, \textit{metadata} konteks, bukti integritas, referensi penyimpanan, dan status validitas.
+Selain itu, dilakukan percobaan perubahan persetujuan atau \textit{metadata} oleh aktor yang tidak memiliki kewenangan.
+Sistem harus mendeteksi perbedaan sebelum data digunakan, menolak data atau operasi terkait, dan tidak menampilkan data yang gagal sebagai PGHD valid.
 
 \begin{lstlisting}[caption={Pengujian integritas PGHD}, label={lst:nf02-integrity}, float=htb]
 PGHD_VALID_SUBMIT_PAYLOAD=tmp/pghd-valid-submit.json \
@@ -56,7 +75,10 @@ PRE_BASE_URL=http://127.0.0.1:4100 \
 
 \subsubsection{Skenario T-NF04: Kelengkapan \textit{Provenance} dan Status}
 
-PGHD dari setiap kategori sumber yang dipilih pada Subbab~\ref{alternatif-sumber-data} dikumpulkan dan diakses oleh tenaga kesehatan. Penguji memeriksa identitas pasien, waktu pengukuran, kategori sumber, perangkat atau aplikasi asal bila tersedia, metode pencatatan, riwayat pemrosesan yang didefinisikan rancangan, dan status validasi. Tindakan pemberian akses, pencabutan akses, pengiriman, dan invalidasi juga diperiksa agar dapat ditelusuri kepada aktor serta waktunya. Provenance membuktikan keterlacakan informasi yang dicatat, bukan akurasi klinis perangkat.
+PGHD dari setiap kategori sumber yang dipilih pada Subbab~\ref{alternatif-sumber-data} dikumpulkan dan diakses oleh tenaga kesehatan.
+Penguji memeriksa identitas pasien, waktu pengukuran, kategori sumber, perangkat atau aplikasi asal bila tersedia, metode pencatatan, riwayat pemrosesan yang didefinisikan rancangan, dan status validasi.
+Tindakan pemberian akses, pencabutan akses, pengiriman, dan invalidasi juga diperiksa agar dapat ditelusuri kepada aktor serta waktunya.
+\textit{Provenance} membuktikan keterlacakan informasi yang dicatat, bukan akurasi klinis perangkat.
 
 \begin{lstlisting}[caption={Pengujian provenance PGHD}, label={lst:nf05-provenance}, float=htb]
 PGHD_JSON=/path/to/exported-pghd.json \
@@ -65,9 +87,10 @@ PGHD_JSON=/path/to/exported-pghd.json \
 
 \subsubsection{Skenario T-NF05: Kapasitas Pengolahan PGHD}
 
-Pengujian menghasilkan 2.400 record sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengolahan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}. Penguji membandingkan jumlah record yang dihasilkan, tersimpan, dikelompokkan, dan ditandai selesai; memantau kegagalan aplikasi; serta menghitung jumlah operasi eksternal.
-
-Skenario berhasil apabila tidak ada record hilang, aplikasi tidak crash, dan jumlah operasi eksternal sesuai strategi pengelolaan volume yang telah dirancang. Angka 2.400 record merupakan beban uji prototipe dan tidak ditafsirkan sebagai kapasitas produksi.
+Pengujian menghasilkan 2.400 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengolahan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
+Penguji membandingkan jumlah \textit{record} yang dihasilkan, tersimpan, dikelompokkan, dan ditandai selesai; memantau kegagalan aplikasi; serta menghitung jumlah operasi eksternal.
+Skenario berhasil apabila tidak ada \textit{record} hilang, aplikasi tidak \textit{crash}, dan jumlah operasi eksternal sesuai strategi pengelolaan volume yang telah dirancang.
+Angka 2.400 \textit{record} merupakan beban uji prototipe dan tidak ditafsirkan sebagai kapasitas produksi.
 
 \begin{lstlisting}[caption={Pengujian kapasitas PGHD}, label={lst:nf04-availability}, float=htb]
 ./scripts/non-functional/nf04_availability.sh
@@ -75,40 +98,43 @@ Skenario berhasil apabila tidak ada record hilang, aplikasi tidak crash, dan jum
 
 \subsubsection{Skenario T-NF06: Pemulihan dari Gangguan Sementara}
 
-Gangguan disimulasikan pada dua kondisi: konektivitas tidak tersedia sebelum data selesai dikirim dan salah satu layanan pendukung tidak tersedia ketika pengiriman atau pembacaan berlangsung. Sebelum gangguan dibuat, penguji mencatat identitas serta jumlah unit data yang belum selesai. Selama gangguan, sistem harus mempertahankan data dan menunjukkan status kegagalan. Setelah kondisi pulih, proses dijalankan kembali.
+Gangguan disimulasikan pada dua kondisi: konektivitas tidak tersedia sebelum data selesai dikirim dan salah satu layanan pendukung tidak tersedia ketika pengiriman atau pembacaan berlangsung.
+Sebelum gangguan dibuat, penguji mencatat identitas serta jumlah unit data yang belum selesai.
+Selama gangguan, sistem harus mempertahankan data dan menunjukkan status kegagalan.
+Setelah kondisi pulih, proses dijalankan kembali.
+Skenario berhasil apabila seluruh unit data awal akhirnya selesai diproses tepat satu kali, tidak ada data hilang atau duplikat, dan kegagalan dapat ditelusuri melalui status atau pesan yang tersedia.
+Hasil ini tidak digeneralisasi menjadi jaminan SLA atau ketahanan terhadap DDoS produksi.
 
-Skenario berhasil apabila seluruh unit data awal akhirnya selesai diproses tepat satu kali, tidak ada data hilang atau duplikat, dan kegagalan dapat ditelusuri melalui status atau pesan yang tersedia. Hasil ini tidak digeneralisasi menjadi jaminan SLA atau ketahanan terhadap DDoS produksi.
+% \subsubsection{Status Bukti Pengujian}
 
-\subsubsection{Status Bukti Pengujian}
-
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.16\textwidth}|}
-    \hiderowcolors
-    \caption{Status Bukti Pengujian Non-Fungsional}\label{tab:hasil-non-fungsional} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Bukti Utama} & \textbf{Batas Interpretasi} & \textbf{Status} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Bukti Utama} & \textbf{Batas Interpretasi} & \textbf{Status} \\
-    \hline
-    \endhead
-    \hline
-    \endfoot
-    \hline
-    \endlastfoot
-    T-NF01 & Skrip HTTP dan unit test akses negatif/positif. & Kasus dengan token aktor nyata memerlukan konfigurasi lingkungan pengujian. & Terverifikasi sebagian \\
-    \hline
-    T-NF02 & Rencana inspeksi payload, penyimpanan eksternal, metadata, respons gagal, dan log. & Memerlukan satu pengujian end-to-end dengan nilai penanda PGHD. & Perlu diuji \\
-    \hline
-    T-NF03 & Unit test verifikasi dan status invalid. & Variasi submit dan objek penyimpanan termodifikasi memerlukan fixture PGHD valid. & Terverifikasi sebagian \\
-    \hline
-    T-NF04 & Pemeriksaan field provenance pada kode sumber. & Payload ekspor dan status data masih perlu diperiksa end-to-end. & Terverifikasi sebagian \\
-    \hline
-    T-NF05 & Unit stress test 2.400 record dan pemeriksaan jalur operasi eksternal. & Tidak menghasilkan angka throughput atau SLA produksi. & Terverifikasi \\
-    \hline
-    T-NF06 & Rencana rekonsiliasi data sebelum dan setelah gangguan sementara. & Belum tersedia bukti pemulihan end-to-end dan tepat-satu-kali. & Perlu diuji \\
-    \hline
-\end{styledxltabular}
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.16\textwidth}|}
+%     \hiderowcolors
+%     \caption{Status Bukti Pengujian Non-Fungsional}\label{tab:hasil-non-fungsional} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Kode} & \textbf{Bukti Utama} & \textbf{Batas Interpretasi} & \textbf{Status} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Kode} & \textbf{Bukti Utama} & \textbf{Batas Interpretasi} & \textbf{Status} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     T-NF01 & Skrip HTTP dan \textit{unit test} akses negatif/positif. & Kasus dengan token aktor nyata memerlukan konfigurasi lingkungan pengujian. & Terverifikasi sebagian \\
+%     \hline
+%     T-NF02 & Rencana inspeksi \textit{payload}, penyimpanan eksternal, \textit{metadata}, respons gagal, dan \textit{log}. & Memerlukan satu pengujian \textit{end-to-end} dengan nilai penanda PGHD\@. & Perlu diuji \\
+%     \hline
+%     T-NF03 & \textit{Unit test} verifikasi dan status \textit{invalid}. & Variasi \textit{submit} dan objek penyimpanan termodifikasi memerlukan \textit{fixture} PGHD valid. & Terverifikasi sebagian \\
+%     \hline
+%     T-NF04 & Pemeriksaan \textit{field provenance} pada kode sumber. & \textit{Payload} ekspor dan status data masih perlu diperiksa \textit{end-to-end}. & Terverifikasi sebagian \\
+%     \hline
+%     T-NF05 & \textit{Unit stress test} 2.400 \textit{record} dan pemeriksaan jalur operasi eksternal. & Tidak menghasilkan angka \textit{throughput} atau SLA produksi. & Terverifikasi \\
+%     \hline
+%     T-NF06 & Rencana rekonsiliasi data sebelum dan setelah gangguan sementara. & Belum tersedia bukti pemulihan \textit{end-to-end} dan tepat-satu-kali. & Perlu diuji \\
+%     \hline
+% \end{styledxltabular}
