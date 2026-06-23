@@ -1,9 +1,13 @@
 \begin{abstract}
-	This document is a model and instructions for \LaTeX.
-	This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL:\ Do Not Use Symbols, Special Characters, Footnotes,
-	or Math in Paper Title or Abstract.
+	Sistem rekam medis elektronik (RME) konvensional masih terfragmentasi dan bersifat \textit{provider-centric}. 
+	DecMed merupakan kerangka kerja RME terdesentralisasi berbasis Distributed Ledger Technology (DLT) IOTA dan InterPlanetary File System (IPFS). 
+	Saat ini, DecMed belum mengakomodasi \textit{Patient-Generated Health Data} (PGHD), yaitu data kesehatan yang dihasilkan secara mandiri oleh pasien melalui perangkat seluler atau \textit{wearable}. 
+	Integrasi PGHD diperlukan untuk mengisi kesenjangan informasi di antara kunjungan klinis pasien.
+
+	Penelitian ini merancang dan mengimplementasikan arsitektur pipeline PGHD pada DecMed. 
+	Pengumpulan data dilakukan menggunakan pendekatan offline-first dengan basis data lokal untuk memastikan ketersediaan data saat perangkat luring. Data time-series berfrekuensi tinggi dikelola menggunakan mekanisme batching untuk mengurangi beban transaksi pada jaringan IOTA. Kerahasiaan data dijamin menggunakan kombinasi enkripsi AES-GCM dan Proxy Re-Encryption (PRE). PRE adalah skema enkripsi yang mendelegasikan hak dekripsi tanpa membagikan kunci privat. Integritas dijamin menggunakan fungsi hash SHA-256 dan tanda tangan digital ECDSA. Rantai kepemilikan data (data provenance) dipastikan melalui penyertaan metadata kontekstual pada smart contract IOTA dan payload IPFS. Hasil pengujian menyimpulkan bahwa sistem berhasil melakukan transmisi PGHD, memastikan ketersediaan data saat luring, serta mendeteksi dan menolak manipulasi terhadap integritas data.
 \end{abstract}
 
 \begin{IEEEkeywords}
-	component, formatting, style, styling, insert
+	DecMed, Integritas, Kerahasiaan, Ketersediaan, \textit{Patient Generated Health Data}, \textit{Provenance}
 \end{IEEEkeywords}

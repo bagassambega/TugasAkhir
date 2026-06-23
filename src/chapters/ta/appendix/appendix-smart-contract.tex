@@ -1,0 +1,328 @@
+\chapter{Implementasi \textit{Smart Contract}}\label{app:implementasi-smart-contract}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Module smart contract yang relevan terhadap DecMed-PGHD}\label{tab:lampiran-sc-modules-pghd} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Nama Module} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Nama Module} & \textbf{Deskripsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{decmed::patient} & Module yang berisi method yang dapat dipanggil oleh pasien, termasuk registrasi, pemberian akses, pencabutan akses, dan pengaturan public key PGHD. \\
+    \hline
+    \texttt{decmed::hospital\_personnel} & Module yang berisi method untuk admin rumah sakit, tenaga administratif, dan tenaga medis, termasuk aktivasi akun, metadata profil, dan daftar akses dari pasien. \\
+    \hline
+    \texttt{decmed::admin} & Module yang berisi method administratif global untuk pembuatan rumah sakit, activation key admin rumah sakit, dan pembaruan activation key. \\
+    \hline
+    \texttt{decmed::proxy} & Module yang berisi method yang dipanggil oleh PRE untuk membaca data berdasarkan akses, menyimpan metadata PGHD, membaca PGHD, dan menginvalidasi PGHD. \\
+    \hline
+    \texttt{decmed::shared} & Module utility yang menyimpan capability global dan proxy serta fungsi encoding identitas. \\
+    \hline
+    \texttt{decmed::std\_enum\_hospital\_personnel\_access\_data\_type} & Module enum tipe data akses personel fasyankes. Enum ini berisi \texttt{Administrative}, \texttt{Medical}, dan \texttt{Pghd}. \\
+    \hline
+    \texttt{decmed::std\_enum\_hospital\_personnel\_access\_type} & Module enum tipe akses personel fasyankes, yaitu \texttt{Read} dan \texttt{Update}. \\
+    \hline
+    \texttt{decmed::std\_enum\_hospital\_personnel\_role} & Module enum role personel fasyankes, yaitu \texttt{Admin}, \texttt{AdministrativePersonnel}, dan \texttt{MedicalPersonnel}. \\
+    \hline
+    \texttt{decmed::std\_struct\_*} & Kumpulan module struktur data untuk akun, metadata, access log, capability akses, metadata RME, dan metadata PGHD. \\
+    \hline
+\end{styledxltabular}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Method pada module \texttt{decmed::patient}}\label{tab:lampiran-sc-method-patient} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{create\_access} & Membuat akses baca/update untuk personel fasyankes. Untuk PGHD, metadata satu elemen membuat akses baca dengan tipe data \texttt{Pghd}. \\
+    \hline
+    \texttt{is\_account\_registered} & Memeriksa apakah akun pasien sudah terdaftar. \\
+    \hline
+    \texttt{signup} & Mendaftarkan akun pasien baru pada smart contract. \\
+    \hline
+    \texttt{get\_account\_info} & Mengambil informasi akun pasien. \\
+    \hline
+    \texttt{set\_pghd\_public\_key} & Menyimpan public key PGHD pasien. \\
+    \hline
+    \texttt{get\_pghd\_public\_key} & Mengambil public key PGHD milik pasien pengirim transaksi. \\
+    \hline
+    \texttt{get\_patient\_pghd\_public\_key} & Mengambil public key PGHD pasien berdasarkan alamat pasien. \\
+    \hline
+    \texttt{get\_account\_state} & Mengambil status akun pasien, termasuk status kelengkapan profil. \\
+    \hline
+    \texttt{get\_hospital\_personnel\_info} & Mengambil informasi personel fasyankes yang akan diberi akses. \\
+    \hline
+    \texttt{get\_access\_log} & Mengambil riwayat akses yang pernah diberikan pasien. \\
+    \hline
+    \texttt{get\_medical\_record} & Mengambil metadata medical record pasien. \\
+    \hline
+    \texttt{get\_medical\_records} & Mengambil daftar metadata medical record pasien. \\
+    \hline
+    \texttt{revoke\_access} & Mencabut akses yang sebelumnya diberikan pasien. \\
+    \hline
+    \texttt{update\_administrative\_metadata} & Memperbarui metadata administratif pasien. \\
+    \hline
+\end{styledxltabular}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Method pada module \texttt{decmed::hospital\_personnel}}\label{tab:lampiran-sc-method-hospital-personnel} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{cleanup\_read\_access} & Menghapus akses baca yang sudah kedaluwarsa dari akun personel fasyankes. \\
+    \hline
+    \texttt{cleanup\_update\_access} & Menghapus akses update yang sudah kedaluwarsa dari akun personel fasyankes. \\
+    \hline
+    \texttt{create\_activation\_key} & Membuat activation key untuk personel fasyankes baru. \\
+    \hline
+    \texttt{create\_medical\_record} & Membuat medical record baru berdasarkan akses update. \\
+    \hline
+    \texttt{delete\_hospital\_personnel} & Menghapus personel fasyankes dari daftar personel rumah sakit. \\
+    \hline
+    \texttt{get\_account\_info} & Mengambil informasi akun personel fasyankes. \\
+    \hline
+    \texttt{get\_account\_state} & Mengambil status aktivasi dan kelengkapan profil personel fasyankes. \\
+    \hline
+    \texttt{get\_hospital\_personnels} & Mengambil daftar personel fasyankes pada rumah sakit. \\
+    \hline
+    \texttt{get\_read\_access} & Mengambil daftar akses baca yang diterima personel fasyankes. \\
+    \hline
+    \texttt{get\_update\_access} & Mengambil daftar akses update yang diterima personel fasyankes. \\
+    \hline
+    \texttt{is\_account\_registered} & Memeriksa apakah akun personel fasyankes sudah terdaftar. \\
+    \hline
+    \texttt{signup} & Mendaftarkan akun personel fasyankes. \\
+    \hline
+    \texttt{update\_account\_activation\_key} & Memperbarui activation key akun personel fasyankes. \\
+    \hline
+    \texttt{update\_administrative\_metadata} & Memperbarui metadata administratif personel fasyankes. \\
+    \hline
+    \texttt{use\_activation\_key} & Menggunakan activation key untuk mengaktifkan akun. \\
+    \hline
+\end{styledxltabular}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Method pada module \texttt{decmed::admin}}\label{tab:lampiran-sc-method-admin} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{create\_activation\_key} & Membuat rumah sakit dan activation key awal untuk admin rumah sakit. \\
+    \hline
+    \texttt{get\_hospitals} & Mengambil daftar rumah sakit yang terdaftar. \\
+    \hline
+    \texttt{update\_activation\_key} & Memperbarui activation key dan metadata admin rumah sakit. \\
+    \hline
+\end{styledxltabular}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Method pada module \texttt{decmed::proxy}}\label{tab:lampiran-sc-method-proxy} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{create\_capability} & Membuat dan mengirim \texttt{ProxyCap} ke alamat PRE. \\
+    \hline
+    \texttt{create\_medical\_record} & Membuat medical record baru berdasarkan akses update personel medis. \\
+    \hline
+    \texttt{get\_administrative\_data} & Mengambil metadata administratif pasien berdasarkan akses yang valid. \\
+    \hline
+    \texttt{get\_hospital\_personnel\_role} & Mengambil role personel fasyankes untuk kebutuhan pembuatan token PRE. \\
+    \hline
+    \texttt{get\_medical\_record} & Mengambil medical record pasien berdasarkan akses baca. \\
+    \hline
+    \texttt{get\_medical\_record\_update} & Mengambil medical record yang dapat diperbarui berdasarkan akses update. \\
+    \hline
+    \texttt{is\_patient\_registered} & Memastikan alamat pasien sudah terdaftar. \\
+    \hline
+    \texttt{submit\_pghd} & Menyimpan metadata PGHD baru milik pasien. \\
+    \hline
+    \texttt{get\_pghd\_list} & Mengambil daftar metadata PGHD valid untuk personel medis yang memiliki akses \texttt{Pghd}. \\
+    \hline
+    \texttt{get\_pghd} & Mengambil metadata PGHD berdasarkan index dan memvalidasi akses PGHD. \\
+    \hline
+    \texttt{invalidate\_pghd\_entry} & Mengubah status metadata PGHD menjadi invalid dan menyimpan alasan invalidasi. \\
+    \hline
+    \texttt{update\_medical\_record} & Memperbarui medical record berdasarkan akses update. \\
+    \hline
+\end{styledxltabular}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Method pada module \texttt{decmed::shared}}\label{tab:lampiran-sc-method-shared} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{transfer\_proxy\_cap} & Membuat dan mengirim capability proxy ke alamat PRE. \\
+    \hline
+    \texttt{encode\_hospital\_id} & Menghasilkan identitas internal rumah sakit dari identitas ter-hash. \\
+    \hline
+    \texttt{encode\_hospital\_personnel\_id} & Menghasilkan identitas internal personel fasyankes dari identitas personel dan rumah sakit. \\
+    \hline
+    \texttt{encode\_patient\_id} & Menghasilkan identitas internal pasien dari identitas ter-hash. \\
+    \hline
+    \texttt{transfer\_global\_admin\_cap} & Fungsi pengujian untuk memindahkan capability admin global. \\
+    \hline
+\end{styledxltabular}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Method pada module \texttt{decmed::std\_enum\_*}}\label{tab:lampiran-sc-method-std-enum} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{std\_enum\_hospital\_personnel\_access\_data\_type::administrative} & Mengembalikan nilai enum \texttt{Administrative}. \\
+    \hline
+    \texttt{std\_enum\_hospital\_personnel\_access\_data\_type::medical} & Mengembalikan nilai enum \texttt{Medical}. \\
+    \hline
+    \texttt{std\_enum\_hospital\_personnel\_access\_data\_type::pghd} & Mengembalikan nilai enum \texttt{Pghd}. \\
+    \hline
+    \texttt{std\_enum\_hospital\_personnel\_access\_type::read} & Mengembalikan nilai enum \texttt{Read}. \\
+    \hline
+    \texttt{std\_enum\_hospital\_personnel\_access\_type::update} & Mengembalikan nilai enum \texttt{Update}. \\
+    \hline
+    \texttt{std\_enum\_hospital\_personnel\_role::admin} & Mengembalikan nilai enum \texttt{Admin}. \\
+    \hline
+    \texttt{std\_enum\_hospital\_personnel\_role::administrative\_personnel} & Mengembalikan nilai enum \texttt{AdministrativePersonnel}. \\
+    \hline
+    \texttt{std\_enum\_hospital\_personnel\_role::medical\_personnel} & Mengembalikan nilai enum \texttt{MedicalPersonnel}. \\
+    \hline
+\end{styledxltabular}
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Method pada module \texttt{decmed::std\_struct\_*}}\label{tab:lampiran-sc-method-std-struct} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Method} & \textbf{Fungsi} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \texttt{std\_struct\_address\_id} & Menyediakan \texttt{borrow\_id}, \texttt{borrow\_table}, \texttt{borrow\_mut\_table}, dan \texttt{default} untuk penyimpanan relasi alamat IOTA dan identitas internal. \\
+    \hline
+    \texttt{std\_struct\_hospital\_id\_metadata} & Menyediakan akses ke table dan vector metadata rumah sakit melalui \texttt{borrow\_*} dan \texttt{default}. \\
+    \hline
+    \texttt{std\_struct\_hospital} & Menyediakan constructor dan getter/setter metadata rumah sakit serta metadata admin. \\
+    \hline
+    \texttt{std\_struct\_hospital\_metadata} & Menyediakan constructor dan getter/setter nama rumah sakit. \\
+    \hline
+    \texttt{std\_struct\_hospital\_admin\_metadata} & Menyediakan constructor dan getter/setter metadata admin rumah sakit. \\
+    \hline
+    \texttt{std\_struct\_hospital\_personnel\_id\_account} & Menyediakan akses table akun personel fasyankes. \\
+    \hline
+    \texttt{std\_struct\_hospital\_personnel\_account} & Menyediakan constructor, getter, setter, dan default untuk akun personel fasyankes, role, activation key, akses, dan metadata. \\
+    \hline
+    \texttt{std\_struct\_hospital\_personnel\_access} & Menyediakan constructor, getter, setter, dan default untuk map akses read dan update. \\
+    \hline
+    \texttt{std\_struct\_hospital\_personnel\_access\_data} & Menyediakan constructor, getter, setter, dan default untuk capability akses personel fasyankes. \\
+    \hline
+    \texttt{std\_struct\_hospital\_personnel\_administrative\_metadata} & Menyediakan constructor, getter, setter, dan default untuk metadata administratif personel fasyankes. \\
+    \hline
+    \texttt{std\_struct\_hospital\_personnel\_metadata} & Menyediakan constructor dan getter/setter metadata personel fasyankes. \\
+    \hline
+    \texttt{std\_struct\_patient\_id\_account} & Menyediakan akses table akun pasien. \\
+    \hline
+    \texttt{std\_struct\_patient\_account} & Menyediakan constructor, getter, setter, dan default untuk akun pasien, metadata administratif, metadata medis, metadata PGHD, access log, dan public key PGHD. \\
+    \hline
+    \texttt{std\_struct\_patient\_administrative\_metadata} & Menyediakan constructor, getter, setter, dan default untuk metadata administratif pasien. \\
+    \hline
+    \texttt{std\_struct\_patient\_medical\_metadata} & Menyediakan constructor, getter, setter, dan default untuk metadata medical record pasien. \\
+    \hline
+    \texttt{std\_struct\_patient\_pghd\_metadata} & Menyediakan constructor, getter, fungsi \texttt{invalidate}, dan default untuk metadata PGHD pasien. \\
+    \hline
+    \texttt{std\_struct\_patient\_access\_log} & Menyediakan constructor, getter, dan setter untuk log akses pasien. \\
+    \hline
+\end{styledxltabular}
+
