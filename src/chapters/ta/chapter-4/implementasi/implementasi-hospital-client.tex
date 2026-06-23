@@ -13,6 +13,7 @@ QR inilah yang kemudian dipindai oleh \textit{client} Android pasien ketika pasi
 
 Halaman aktivasi digunakan untuk memasukkan \textit{activation key} dan data aktivasi akun rumah sakit atau tenaga kesehatan. 
 Proses ini memastikan bahwa akun yang dibuat pada \textit{client} tenaga kesehatan berasal dari aktivasi yang sah.
+Halaman aktivasi, login, dan register menggunakan tampilan yang sama, yaitu tampilan pada Gambar~\ref{halaman-login-hospital-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
 
 \subsubsection{Halaman Register}
 
@@ -20,7 +21,8 @@ Halaman register digunakan untuk membuat akun lokal pada \textit{client} tenaga 
 
 \subsubsection{Halaman Login}
 
-Halaman login digunakan untuk membuka akun lokal pada \textit{client} tenaga kesehatan. Setelah login berhasil, \textit{client} dapat memuat profil, akses pasien, dan fitur lain sesuai peran pengguna.
+Halaman login digunakan untuk membuka akun lokal pada \textit{client} tenaga kesehatan. 
+Setelah login berhasil, \textit{client} dapat memuat profil, akses pasien, dan fitur lain sesuai peran pengguna.
 
 \subsubsection{Halaman Pelengkapan Profil}
 
@@ -29,22 +31,26 @@ Halaman pelengkapan profil digunakan untuk mengisi nama dan metadata profil tena
 \subsubsection{Halaman Profil}
 
 Halaman profil digunakan untuk menampilkan data administratif tenaga kesehatan dan QR akses. QR tersebut memuat alamat IOTA tenaga kesehatan dan public key PRE yang akan dipindai oleh pasien saat memberikan akses.
+Halaman profil \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{halaman-profil-hospital-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
 
 \subsubsection{Halaman Dashboard}
 
-Halaman dashboard digunakan untuk melihat daftar akses yang diterima dari pasien. Dari halaman ini, tenaga kesehatan dapat memilih pasien dan jenis data yang akan dibuka sesuai capability yang masih aktif.
-
-\subsubsection{Halaman Medical Record}
-
-Halaman medical record digunakan untuk membaca atau memperbarui medical record pasien apabila akses yang sesuai telah diberikan. Halaman ini tetap mengikuti mekanisme DecMed untuk data administratif dan klinis.
+Halaman dashboard digunakan untuk melihat daftar akses yang diterima dari pasien. 
+Dari halaman ini, tenaga kesehatan dapat memilih pasien dan jenis data yang akan dibuka sesuai capability yang masih aktif.
+Halaman \textit{dashboard} \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{halaman-dashboard-hospital-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
 
 \subsubsection{Halaman PGHD}
 
-Halaman PGHD digunakan untuk melihat daftar batch PGHD pasien, membuka detail batch PGHD, melihat provenance data, dan menginvalidasi data PGHD apabila data terbukti tidak valid. Dekripsi dan verifikasi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
+Halaman PGHD digunakan untuk melihat daftar \textit{batch} PGHD pasien, membuka detail \textit{batch} PGHD, melihat \textit{provenance} data, dan menginvalidasi data PGHD apabila data terbukti tidak valid. 
+Dekripsi dan verifikasi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
+Halaman daftar PGHD \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{halaman-list-pghd-hospital} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
 
 \subsubsection{Akses dan Dekripsi PGHD}
 
-Setelah pasien memberikan akses PGHD, tenaga kesehatan memperoleh token akses dari PRE. Token tersebut digunakan untuk memanggil endpoint \texttt{/api/v1/pghd} dan \texttt{/api/v1/pghd/\{index\}}. \textit{Client} tenaga kesehatan tidak langsung memperoleh plaintext PGHD dari PRE. PRE mengirimkan payload terenkripsi, metadata on-chain, \textit{cfrag}, capsule, public key PGHD pasien, dan material lain yang diperlukan untuk dekripsi. Dekripsi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
+Setelah pasien memberikan akses PGHD, tenaga kesehatan memperoleh token akses dari PRE\@. 
+Token tersebut digunakan untuk memanggil \textit{endpoint} \texttt{/api/v1/pghd} dan \texttt{/api/v1/pghd/\{index\}}. 
+\textit{Client} tenaga kesehatan tidak langsung memperoleh plaintext PGHD dari PRE\@. PRE mengirimkan payload terenkripsi, metadata on-chain, \textit{cfrag}, \textit{capsule}, \textit{public key} PGHD pasien, dan material lain yang diperlukan untuk dekripsi. Dekripsi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
+Halaman akses detail PGHD \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{halaman-detail-pghd-hospital} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
 
 Pada saat membuka detail PGHD, \textit{client} melakukan beberapa tahap validasi. Pertama, \textit{client} membandingkan hash dari ciphertext yang diunduh dengan hash yang tercatat pada metadata. Kedua, \textit{client} memverifikasi \texttt{signature} atas \texttt{h\_cipher} menggunakan public key PGHD pasien. Ketiga, \textit{client} melakukan proses re-encryption menggunakan \textit{cfrag} dan private key tenaga kesehatan. Keempat, setelah plaintext berhasil diperoleh, \textit{client} memverifikasi \texttt{h\_plain} yang tersimpan di dalam payload terenkripsi. Jika salah satu verifikasi tidak valid, \textit{client} menampilkan peringatan kepada tenaga kesehatan dan memanggil endpoint invalidasi PGHD pada PRE dengan alasan spesifik seperti \texttt{SIGNATURE\_INVALID}, \texttt{PLAIN\_HASH\_MISMATCH}, atau \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA}.
 
@@ -74,7 +80,7 @@ Backend Tauri menyediakan command yang dipanggil oleh frontend. Ringkasan comman
     \endfoot
     \hline
     \endlastfoot
-    \texttt{get\_profile} & Mengambil profil tenaga kesehatan dan metadata yang diperlukan untuk menampilkan QR. \\
+    \texttt{get\_profile} & Mengambil profil tenaga kesehatan dan metadata yang diperlukan untuk menampilkan QR code. \\
     \hline
     \texttt{get\_medical\_record} & Membaca medical record pasien berdasarkan token akses baca medical record. \\
     \hline
@@ -82,9 +88,9 @@ Backend Tauri menyediakan command yang dipanggil oleh frontend. Ringkasan comman
     \hline
     \texttt{update\_medical\_record} & Memperbarui medical record pasien berdasarkan akses update yang diberikan pasien. \\
     \hline
-    \texttt{get\_pghd\_list} & Mengambil daftar metadata batch PGHD pasien melalui PRE. \\
+    \texttt{get\_pghd\_list} & Mengambil daftar metadata \textit{batch} PGHD pasien melalui PRE\@. \\
     \hline
-    \texttt{get\_pghd} & Mengambil, melakukan re-encryption, mendekripsi, dan memverifikasi detail batch PGHD. \\
+    \texttt{get\_pghd} & Mengambil, melakukan re-encryption, mendekripsi, dan memverifikasi detail \textit{batch} PGHD\@. \\
     \hline
     \texttt{invalidate\_pghd} & Mengirim permintaan invalidasi PGHD ketika data terbukti rusak atau tidak sah. \\
     \hline

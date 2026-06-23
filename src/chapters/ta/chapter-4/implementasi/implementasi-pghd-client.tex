@@ -18,7 +18,7 @@ Halaman ini menjadi titik awal agar pasien memahami bahwa aplikasi akan membaca 
 \subsubsection{Halaman \textit{Register}}
 
 Halaman \textit{register} digunakan untuk membuat akun pasien baru. 
-Pada halaman ini, \textit{client} membangkitkan identitas IOTA pasien, membangkitkan key PGHD, dan mempublikasikan \textit{public key} PGHD yang diperlukan untuk mekanisme verifikasi dan akses data PGHD.
+Pada halaman ini, \textit{client} membangkitkan identitas IOTA pasien, membangkitkan key PGHD, dan mempublikasikan \textit{public key} PGHD yang diperlukan untuk mekanisme verifikasi dan akses data PGHD\@.
 
 \subsubsection{Halaman \textit{Login}}
 
@@ -32,7 +32,7 @@ Data profil ini digunakan agar data pasien dapat dikenali pada proses penggunaan
 
 \subsubsection{Halaman \textit{Home}}
 
-Halaman \textit{home} digunakan untuk menampilkan ringkasan informasi kesehatan yang telah dikumpulkan oleh \textit{client} Android PGHD. Informasi ditampilkan dalam bentuk yang mudah dipahami pasien tanpa menampilkan detail teknis dari struktur \textit{batch} PGHD.
+Halaman \textit{home} digunakan untuk menampilkan ringkasan informasi kesehatan yang telah dikumpulkan oleh \textit{client} Android PGHD\@. Informasi ditampilkan dalam bentuk yang mudah dipahami pasien tanpa menampilkan detail teknis dari struktur \textit{batch} PGHD\@.
 Halaman ini juga berisi pengumpulan PGHD yang digunakan untuk mengaktifkan atau menghentikan proses pengumpulan data otomatis. 
 Pada halaman ini, pasien dapat melihat status pengumpulan dan sumber data yang digunakan oleh aplikasi.\
 Tampilan halaman \textit{home} dapat dilihat pada Gambar~\ref{halaman-home-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
@@ -95,7 +95,7 @@ Struktur penyimpanan lokal PGHD pada \textit{client} Android dapat dilihat pada 
 
 \subsubsection{Registrasi dan Login Pasien}
 
-Pada proses registrasi, \textit{client} Android membangkitkan identitas pasien dan material kriptografi PGHD. Proses ini menggunakan shared library Rust melalui JNI. Library \texttt{decmed\_iota} digunakan untuk membangkitkan mnemonic, menurunkan alamat IOTA pasien, melakukan registrasi akun pasien, dan mempublikasikan public key PGHD. Library \texttt{decmed\_crypto} digunakan untuk membangkitkan key PRE dan material kriptografi yang akan digunakan pada mekanisme re-encryption.
+Pada proses registrasi, \textit{client} Android membangkitkan identitas pasien dan material kriptografi PGHD\@. Proses ini menggunakan shared library Rust melalui JNI\@. Library \texttt{decmed\_iota} digunakan untuk membangkitkan mnemonic, menurunkan alamat IOTA pasien, melakukan registrasi akun pasien, dan mempublikasikan public key PGHD\@. Library \texttt{decmed\_crypto} digunakan untuk membangkitkan key PRE dan material kriptografi yang akan digunakan pada mekanisme re-encryption.
 
 Setelah akun berhasil dibuat, \textit{client} menyimpan profil pasien dan konfigurasi lokal pada perangkat. Saat pasien membuka aplikasi kembali, aplikasi mengecek status registrasi, status profil, dan status sesi lokal. Jika sesi belum terbuka, pasien diminta melakukan login atau unlock sesuai state akun yang tersimpan.
 
@@ -111,9 +111,9 @@ Sebelum pengumpulan otomatis dimulai, aplikasi melakukan pemeriksaan izin Androi
 
 \subsubsection{Pembentukan dan Pengiriman Batch PGHD}
 
-Data PGHD tidak dikirim satu per satu ke PRE. \textit{Client} membentuk \textit{batch} agar data time-series dari sensor dan wearable tidak menghasilkan transaksi berlebihan. Batch dapat terbentuk karena empat trigger implementasi, yaitu trigger periodik, trigger ukuran data, trigger manual, dan trigger ketika koneksi tersedia kembali setelah perangkat offline. Pada implementasi ini, trigger periodik dijalankan minimum setiap 15 menit, sedangkan batas ukuran yang digunakan untuk trigger ukuran adalah 10 MB.
+Data PGHD tidak dikirim satu per satu ke PRE\@. \textit{Client} membentuk \textit{batch} agar data time-series dari sensor dan wearable tidak menghasilkan transaksi berlebihan. Batch dapat terbentuk karena empat trigger implementasi, yaitu trigger periodik, trigger ukuran data, trigger manual, dan trigger ketika koneksi tersedia kembali setelah perangkat offline. Pada implementasi ini, trigger periodik dijalankan minimum setiap 15 menit, sedangkan batas ukuran yang digunakan untuk trigger ukuran adalah 10 MB\@.
 
-Ketika \textit{batch} dibuat, data PGHD dikonversi menjadi payload PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. \textit{Client} menghitung \texttt{h\_plain} dari plaintext batch, memasukkan nilai tersebut ke pembungkus plaintext, lalu mengenkripsi payload menggunakan AES-GCM. Setelah terbentuk \texttt{enc\_pghd}, \textit{client} menghitung \texttt{h\_cipher} dan membuat \texttt{signature} atas \texttt{h\_cipher} menggunakan kunci tanda tangan PGHD pasien. Kunci AES yang digunakan untuk payload PGHD dienkripsi dengan mekanisme PRE sehingga dapat dibuka kembali oleh tenaga kesehatan yang telah menerima akses. Setelah envelope PGHD terbentuk, \textit{client} mengirimkan data ke endpoint PRE \texttt{/api/v1/pghd/submit}. Jika perangkat tidak memiliki koneksi internet, data tetap berada pada basis data lokal dan akan dikirim ketika koneksi tersedia kembali. Jika pengiriman gagal karena alasan selain koneksi, \textit{batch} ditandai gagal dan pasien dapat mengirim ulang secara manual melalui halaman \textit{batch} PGHD.
+Ketika \textit{batch} dibuat, data PGHD dikonversi menjadi payload PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. \textit{Client} menghitung \texttt{h\_plain} dari plaintext batch, memasukkan nilai tersebut ke pembungkus plaintext, lalu mengenkripsi payload menggunakan AES-GCM\@. Setelah terbentuk \texttt{enc\_pghd}, \textit{client} menghitung \texttt{h\_cipher} dan membuat \texttt{signature} atas \texttt{h\_cipher} menggunakan kunci tanda tangan PGHD pasien. Kunci AES yang digunakan untuk payload PGHD dienkripsi dengan mekanisme PRE sehingga dapat dibuka kembali oleh tenaga kesehatan yang telah menerima akses. Setelah envelope PGHD terbentuk, \textit{client} mengirimkan data ke endpoint PRE \texttt{/api/v1/pghd/submit}. Jika perangkat tidak memiliki koneksi internet, data tetap berada pada basis data lokal dan akan dikirim ketika koneksi tersedia kembali. Jika pengiriman gagal karena alasan selain koneksi, \textit{batch} ditandai gagal dan pasien dapat mengirim ulang secara manual melalui halaman \textit{batch} PGHD\@.
 
 \subsubsection{Pemberian dan Pencabutan Akses}
 
@@ -145,8 +145,8 @@ Helper JNI pada \textit{client} Android terdiri atas dua kelas utama, yaitu \tex
     \endlastfoot
     \texttt{DecmedCryptoNative} & Memanggil library \texttt{decmed\_crypto} untuk membangkitkan keypair PRE, menurunkan public key dari seed, mengenkripsi data untuk public key, dan membuat \textit{kfrag}. \\
     \hline
-    \texttt{DecmedIotaNative} & Memanggil library \texttt{decmed\_iota} untuk inisialisasi TLS Android, membangkitkan mnemonic, menurunkan identitas pasien, registrasi pasien, publikasi public key PGHD, pembuatan akses PGHD/medical record, pencabutan akses, dan tanda tangan pesan PGHD. \\
+    \texttt{DecmedIotaNative} & Memanggil library \texttt{decmed\_iota} untuk inisialisasi TLS Android, membangkitkan mnemonic, menurunkan identitas pasien, registrasi pasien, publikasi public key PGHD, pembuatan akses PGHD/medical record, pencabutan akses, dan tanda tangan pesan PGHD\@. \\
     \hline
-    \texttt{jniLibs} & Direktori Android tempat shared library Rust hasil build untuk target Android dipaketkan ke dalam APK. \\
+    \texttt{jniLibs} & Direktori Android tempat shared library Rust hasil build untuk target Android dipaketkan ke dalam APK\@. \\
     \hline
 \end{styledxltabular}
