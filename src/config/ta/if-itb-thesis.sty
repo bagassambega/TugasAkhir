@@ -156,7 +156,30 @@
     morecomment=[l]{\#}, % Mengatur tanda pagar (#) sebagai komentar
     morekeywords={@prefix, a} % Menambahkan keyword khusus Turtle
 }
-\lstset{style=turtleStyle}
+\lstset{style=turtleStyle,numberbychapter=true}
+
+% Daftar kode program dan rumus
+\renewcommand{\lstlistingname}{Kode}
+\renewcommand{\lstlistlistingname}{DAFTAR KODE}
+
+\newcommand{\listofcodes}{%
+	\lstlistoflistings
+	\addcontentsline{toc}{chapter}{\lstlistlistingname}
+}
+
+\newcommand*{\listformulaname}{DAFTAR RUMUS}
+\makeatletter
+\newcommand{\listofformulas}{%
+	\cleardoublepage
+	\chapter*{\listformulaname}
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listformulaname}
+	\@starttoc{loe}
+}
+\newcommand{\formulaentry}[1]{%
+	\addcontentsline{loe}{formula}{\protect\numberline{\theequation}#1}
+}
+\makeatother
 
 \graphicspath{{resources/}}   % letak direktori penyimpanan gambar
 
@@ -222,6 +245,17 @@
 [0pt]
 {}
 {Tabel \thecontentslabel.\quad}
+{}
+{\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
+\DeclareTOCStyleEntry[
+	indent=0pt,
+	numwidth=4.8em
+]{tocline}{lstlisting}
+\contentsuse{formula}{loe}
+\titlecontents{formula}
+[0pt]
+{}
+{Rumus \thecontentslabel.\quad}
 {}
 {\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
 

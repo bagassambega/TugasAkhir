@@ -4,7 +4,8 @@
 \subsection{Analisis Kerahasiaan, Integritas, dan Ketersediaan Sistem Integrasi DecMed-PGHD}\label{analisis-cia-decmed-pghd}
 
 Analisis pada subbab ini bertujuan menentukan persoalan keamanan dan properti yang harus dipenuhi oleh integrasi PGHD, bukan menentukan teknologi atau mekanisme implementasinya. 
-Analisis mengikuti tahapan \textit{threat modelling} pada Subbab~\ref{threat-model-studi}, yaitu mengidentifikasi aset dan ruang lingkup, menentukan aktor dan batas kepercayaan secara konseptual, mengidentifikasi ancaman menggunakan STRIDE, dan memprioritaskan risiko menggunakan DREAD\@. 
+% Analisis mengikuti tahapan \textit{threat modelling} pada Subbab~\ref{threat-model-studi}, yaitu mengidentifikasi aset dan ruang lingkup, menentukan aktor dan batas kepercayaan secara konseptual, mengidentifikasi ancaman menggunakan STRIDE, dan memprioritaskan risiko menggunakan DREAD\@. 
+Analisis mengikuti tahapan \textit{threat modelling} pada Subbab~\ref{threat-model-studi}, yaitu mengidentifikasi aset dan ruang lingkup, menentukan aktor dan batas kepercayaan secara konseptual, dan mengidentifikasi ancaman menggunakan STRIDE\@. 
 Ruang lingkup analisis mencakup PGHD sejak tersedia pada sisi pasien hingga digunakan oleh tenaga kesehatan. 
 Tahapan logis yang dipertimbangkan hanya meliputi perolehan, pengolahan, pengiriman, penyimpanan, dan penggunaan data. 
 
@@ -141,73 +142,73 @@ T-D02 & Gangguan konektivitas atau dependensi layanan & A06; lintas tahap & TB1,
 \end{styledxltabular}
 \endgroup
 
-Setiap parameter DREAD diberi nilai 1~-~10. 
-Total 35~-~50 dikategorikan tinggi, 20~-~34 sedang, dan di bawah 20 rendah. 
-Tabel penilaian DREAD terhadap ancaman yang diidentifikasi pada Tabel~\ref{tab:stride-threat-analysis-decmed-pghd} dapat dilihat pada Tabel~\ref{tab:dread-scoring-decmed-pghd}.
+% Setiap parameter DREAD diberi nilai 1~-~10. 
+% Total 35~-~50 dikategorikan tinggi, 20~-~34 sedang, dan di bawah 20 rendah. 
+% Tabel penilaian DREAD terhadap ancaman yang diidentifikasi pada Tabel~\ref{tab:stride-threat-analysis-decmed-pghd} dapat dilihat pada Tabel~\ref{tab:dread-scoring-decmed-pghd}.
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}X|}
-\hiderowcolors
-\caption{Penilaian DREAD Ancaman DecMed-PGHD}\label{tab:dread-scoring-decmed-pghd}\\
-\hline
-\rowcolor{headerBg}
-\textbf{ID} & \textbf{D} & \textbf{R} & \textbf{E} & \textbf{A} & \textbf{Di} & \textbf{Total} & \textbf{Prioritas} \\
-\hline
-\showrowcolors
-\endfirsthead
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|>{\centering\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}X|}
+% \hiderowcolors
+% \caption{Penilaian DREAD Ancaman DecMed-PGHD}\label{tab:dread-scoring-decmed-pghd}\\
+% \hline
+% \rowcolor{headerBg}
+% \textbf{ID} & \textbf{D} & \textbf{R} & \textbf{E} & \textbf{A} & \textbf{Di} & \textbf{Total} & \textbf{Prioritas} \\
+% \hline
+% \showrowcolors
+% \endfirsthead
 
-\hiderowcolors
-\caption[]{Penilaian DREAD Ancaman DecMed-PGHD (lanjutan)}\\
-\hline
-\rowcolor{headerBg}
-\textbf{ID} & \textbf{D} & \textbf{R} & \textbf{E} & \textbf{A} & \textbf{Di} & \textbf{Total} & \textbf{Prioritas} \\
-\hline
-\showrowcolors
-\endhead
+% \hiderowcolors
+% \caption[]{Penilaian DREAD Ancaman DecMed-PGHD (lanjutan)}\\
+% \hline
+% \rowcolor{headerBg}
+% \textbf{ID} & \textbf{D} & \textbf{R} & \textbf{E} & \textbf{A} & \textbf{Di} & \textbf{Total} & \textbf{Prioritas} \\
+% \hline
+% \showrowcolors
+% \endhead
 
-T-I01 & 10 & 8 & 7 & 8 & 8 & 41 & Tinggi \\
-\hline
-T-I02 & 10 & 8 & 7 & 8 & 8 & 41 & Tinggi \\
-\hline
-T-T02 & 9 & 8 & 7 & 8 & 8 & 40 & Tinggi \\
-\hline
-T-T01 & 9 & 8 & 7 & 8 & 7 & 39 & Tinggi \\
-\hline
-T-D02 & 8 & 8 & 7 & 7 & 7 & 37 & Tinggi \\
-\hline
-T-D01 & 7 & 8 & 7 & 7 & 6 & 35 & Tinggi \\
-\hline
-\end{styledxltabular}
+% T-I01 & 10 & 8 & 7 & 8 & 8 & 41 & Tinggi \\
+% \hline
+% T-I02 & 10 & 8 & 7 & 8 & 8 & 41 & Tinggi \\
+% \hline
+% T-T02 & 9 & 8 & 7 & 8 & 8 & 40 & Tinggi \\
+% \hline
+% T-T01 & 9 & 8 & 7 & 8 & 7 & 39 & Tinggi \\
+% \hline
+% T-D02 & 8 & 8 & 7 & 7 & 7 & 37 & Tinggi \\
+% \hline
+% T-D01 & 7 & 8 & 7 & 7 & 6 & 35 & Tinggi \\
+% \hline
+% \end{styledxltabular}
 
-\textit{Damage potential} (D) menilai kerugian terhadap kerahasiaan, integritas, dan keberlangsungan layanan.
-\textit{Reproducibility} (R) menilai kemudahan serangan diulangi terhadap data atau pengguna lain setelah jalur serangan diketahui.
-\textit{Exploitability} (E) menilai kebutuhan akses, kemampuan teknis, dan material khusus untuk menjalankan serangan.
-\textit{Affected users} (A) menilai luas pasien, tenaga kesehatan, atau komponen yang terdampak.
-\textit{Discoverability} (Di) menilai kemudahan menemukan permukaan serangan dari antarmuka, metadata publik, dan perilaku sistem.
-Dasar penentuan nilai DREAD untuk setiap ancaman adalah sebagai berikut.
+% \textit{Damage potential} (D) menilai kerugian terhadap kerahasiaan, integritas, dan keberlangsungan layanan.
+% \textit{Reproducibility} (R) menilai kemudahan serangan diulangi terhadap data atau pengguna lain setelah jalur serangan diketahui.
+% \textit{Exploitability} (E) menilai kebutuhan akses, kemampuan teknis, dan material khusus untuk menjalankan serangan.
+% \textit{Affected users} (A) menilai luas pasien, tenaga kesehatan, atau komponen yang terdampak.
+% \textit{Discoverability} (Di) menilai kemudahan menemukan permukaan serangan dari antarmuka, metadata publik, dan perilaku sistem.
+% Dasar penentuan nilai DREAD untuk setiap ancaman adalah sebagai berikut.
 
-\begin{itemize}
-    \item \textbf{T-I01 dan T-I02 memperoleh 41 (tinggi).}
-    Kebocoran PGHD menimbulkan dampak privasi terbesar sehingga \textit{damage potential} bernilai 10.
-    Jalur akses dan penyimpanan digunakan berulang oleh banyak data, menyebabkan \textit{reproducibility}, \textit{affected users}, dan \textit{discoverability} bernilai 8.
-    \textit{Exploitability} bernilai 7 karena penyerang masih memerlukan posisi pada komponen, jaringan, penyimpanan, atau kredensial yang relevan.
+% \begin{itemize}
+%     \item \textbf{T-I01 dan T-I02 memperoleh 41 (tinggi).}
+%     Kebocoran PGHD menimbulkan dampak privasi terbesar sehingga \textit{damage potential} bernilai 10.
+%     Jalur akses dan penyimpanan digunakan berulang oleh banyak data, menyebabkan \textit{reproducibility}, \textit{affected users}, dan \textit{discoverability} bernilai 8.
+%     \textit{Exploitability} bernilai 7 karena penyerang masih memerlukan posisi pada komponen, jaringan, penyimpanan, atau kredensial yang relevan.
 
-    \item \textbf{T-T02 memperoleh 40 (tinggi).}
-    Manipulasi persetujuan dapat membuka akses tidak sah atau mempertahankan akses yang seharusnya dicabut, sehingga \textit{damage potential} bernilai 9.
-    Data persetujuan digunakan pada setiap pemeriksaan akses dan antarmuka pengelolaannya dapat diamati, sehingga \textit{reproducibility}, \textit{affected users}, dan \textit{discoverability} bernilai 8.
-    \textit{Exploitability} bernilai 7 karena perubahan tetap membutuhkan akses ke jalur transaksi, state, atau komponen otorisasi.
+%     \item \textbf{T-T02 memperoleh 40 (tinggi).}
+%     Manipulasi persetujuan dapat membuka akses tidak sah atau mempertahankan akses yang seharusnya dicabut, sehingga \textit{damage potential} bernilai 9.
+%     Data persetujuan digunakan pada setiap pemeriksaan akses dan antarmuka pengelolaannya dapat diamati, sehingga \textit{reproducibility}, \textit{affected users}, dan \textit{discoverability} bernilai 8.
+%     \textit{Exploitability} bernilai 7 karena perubahan tetap membutuhkan akses ke jalur transaksi, state, atau komponen otorisasi.
 
-    \item \textbf{T-T01 memperoleh 39 (tinggi).}
-    Perubahan pada \textit{ciphertext}, metadata, CID, atau status dapat menyebabkan data salah digunakan atau tidak dapat dibuka, sehingga \textit{damage potential} bernilai 9.
-    Titik perpindahan dan penyimpanan dilalui semua \textit{batch} dan memungkinkan serangan diulang, sehingga \textit{reproducibility} dan \textit{affected users} bernilai 8.
-    \textit{Exploitability} dan \textit{discoverability} bernilai 7 karena penyerang harus mencapai jaringan, PRE, IPFS, atau metadata terkait.
+%     \item \textbf{T-T01 memperoleh 39 (tinggi).}
+%     Perubahan pada \textit{ciphertext}, metadata, CID, atau status dapat menyebabkan data salah digunakan atau tidak dapat dibuka, sehingga \textit{damage potential} bernilai 9.
+%     Titik perpindahan dan penyimpanan dilalui semua \textit{batch} dan memungkinkan serangan diulang, sehingga \textit{reproducibility} dan \textit{affected users} bernilai 8.
+%     \textit{Exploitability} dan \textit{discoverability} bernilai 7 karena penyerang harus mencapai jaringan, PRE, IPFS, atau metadata terkait.
 
-    \item \textbf{T-D02 memperoleh 37 (tinggi).}
-    Ketergantungan pada konektivitas, PRE, IPFS, IOTA, dan layanan pendukung membuat gangguan sementara berdampak pada alur lintas tahap, sehingga \textit{damage potential} dan \textit{reproducibility} bernilai 8.
-    \textit{Exploitability}, \textit{affected users}, dan \textit{discoverability} bernilai 7 karena gangguan dapat dipicu atau terjadi pada beberapa dependensi, tetapi tidak selalu memengaruhi seluruh pengguna secara permanen.
+%     \item \textbf{T-D02 memperoleh 37 (tinggi).}
+%     Ketergantungan pada konektivitas, PRE, IPFS, IOTA, dan layanan pendukung membuat gangguan sementara berdampak pada alur lintas tahap, sehingga \textit{damage potential} dan \textit{reproducibility} bernilai 8.
+%     \textit{Exploitability}, \textit{affected users}, dan \textit{discoverability} bernilai 7 karena gangguan dapat dipicu atau terjadi pada beberapa dependensi, tetapi tidak selalu memengaruhi seluruh pengguna secara permanen.
 
-    \item \textbf{T-D01 memperoleh 35 (tinggi).}
-    PGHD berbentuk \textit{time-series} dan dapat tumbuh cepat, sehingga serangan atau beban berlebih mudah diulang (\textit{reproducibility} bernilai 8).
-    \textit{Damage potential}, \textit{exploitability}, dan \textit{affected users} bernilai 7 karena kelebihan beban dapat menghentikan pengiriman dan penyimpanan pada banyak batch, sedangkan \textit{discoverability} bernilai 6 karena batas kapasitas aktual baru terlihat setelah pengujian beban.
-\end{itemize}
+%     \item \textbf{T-D01 memperoleh 35 (tinggi).}
+%     PGHD berbentuk \textit{time-series} dan dapat tumbuh cepat, sehingga serangan atau beban berlebih mudah diulang (\textit{reproducibility} bernilai 8).
+%     \textit{Damage potential}, \textit{exploitability}, dan \textit{affected users} bernilai 7 karena kelebihan beban dapat menghentikan pengiriman dan penyimpanan pada banyak batch, sedangkan \textit{discoverability} bernilai 6 karena batas kapasitas aktual baru terlihat setelah pengujian beban.
+% \end{itemize}
 
-Seluruh ancaman berprioritas tinggi dipilih sebagai dasar kebutuhan non-fungsional. 
+% Seluruh ancaman berprioritas tinggi dipilih sebagai dasar kebutuhan non-fungsional. 

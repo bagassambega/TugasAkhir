@@ -59,6 +59,7 @@ Untuk menjamin integritas PGHD, sistem menggunakan \textit{digital signature} te
             \begin{equation}
                   h_{\text{plain}} = \mathrm{SHA256}(\texttt{pghd\_plaintext}). \label{eq:h_plain}
             \end{equation}
+            \formulaentry{Perhitungan hash \textit{plaintext} PGHD}
             Nilai \texttt{h\_plain} disimpan bersama \textit{plaintext} \textit{batch} PGHD sebelum proses enkripsi.
             Dengan demikian, setelah data berhasil didekripsi oleh \textit{client} tenaga kesehatan, \textit{client} dapat menghitung ulang hash \textit{plaintext} dan membandingkannya dengan \texttt{h\_plain}.
             Hash \textit{plaintext} tidak ditandatangani secara terpisah karena nilai tersebut berada di dalam \textit{payload} yang ikut dienkripsi dan integritas \textit{ciphertext}-nya telah dijamin oleh \textit{digital signature}.
@@ -70,6 +71,7 @@ Untuk menjamin integritas PGHD, sistem menggunakan \textit{digital signature} te
             \begin{equation}
                   h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}), \label{eq:h_cipher}
             \end{equation}
+            \formulaentry{Perhitungan hash \textit{ciphertext} PGHD}
             lalu menandatangani nilai \texttt{h\_cipher} menggunakan kunci privat tanda tangan PGHD pasien sehingga menghasilkan \texttt{signature}.
             Mekanisme ini mengikuti pola umum \textit{Digital Signature Standard} (DSS), yaitu pesan terlebih dahulu di-hash, kemudian hash tersebut ditandatangani menggunakan kunci privat, dan diverifikasi menggunakan kunci publik.
             Pada sistem ini pesan yang dilindungi adalah \texttt{enc\_pghd}.

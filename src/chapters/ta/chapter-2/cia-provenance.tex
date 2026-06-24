@@ -103,20 +103,20 @@ Daftar \textit{threat} yang diidentifikasi oleh STRIDE dan \textit{security cont
     \end{styledtable}
 \end{table}
 
-Setelah ancaman diidentifikasi menggunakan STRIDE, diperlukan mekanisme prioritisasi agar mitigasi difokuskan pada ancaman yang paling berdampak. 
-DREAD adalah sistem penilaian risiko yang mengevaluasi ancaman berdasarkan lima parameter, yaitu \textit{Damage}, \textit{Reproducibility}, \textit{Exploitability}, \textit{Affected Users}, dan \textit{Discoverability} \parencite{openStack_StrideDREAD}. 
-Kelima parameter tersebut adalah,
+% Setelah ancaman diidentifikasi menggunakan STRIDE, diperlukan mekanisme prioritisasi agar mitigasi difokuskan pada ancaman yang paling berdampak. 
+% DREAD adalah sistem penilaian risiko yang mengevaluasi ancaman berdasarkan lima parameter, yaitu \textit{Damage}, \textit{Reproducibility}, \textit{Exploitability}, \textit{Affected Users}, dan \textit{Discoverability} \parencite{openStack_StrideDREAD}. 
+% Kelima parameter tersebut adalah,
 
-\begin{enumerate}
-    \item \textbf{\textit{Damage}}: tingkat kerusakan atau dampak jika ancaman berhasil dieksploitasi.
-    \item \textbf{\textit{Reproducibility}}: kemudahan serangan diulang.
-    \item \textbf{\textit{Exploitability}}: tingkat kemudahan serangan dilakukan oleh penyerang.
-    \item \textbf{\textit{Affected Users}}: jumlah atau proporsi pengguna yang terdampak.
-    \item \textbf{\textit{Discoverability}}: kemudahan penyerang menemukan kelemahan yang dapat dieksploitasi.
-\end{enumerate}
+% \begin{enumerate}
+%     \item \textbf{\textit{Damage}}: tingkat kerusakan atau dampak jika ancaman berhasil dieksploitasi.
+%     \item \textbf{\textit{Reproducibility}}: kemudahan serangan diulang.
+%     \item \textbf{\textit{Exploitability}}: tingkat kemudahan serangan dilakukan oleh penyerang.
+%     \item \textbf{\textit{Affected Users}}: jumlah atau proporsi pengguna yang terdampak.
+%     \item \textbf{\textit{Discoverability}}: kemudahan penyerang menemukan kelemahan yang dapat dieksploitasi.
+% \end{enumerate}
 
-DREAD dapat menggunakan skala numerik, misalnya 1--10 untuk setiap parameter, lalu nilai total dihitung sebagai jumlah dari lima parameter tersebut. 
-Semakin tinggi nilai total, semakin tinggi prioritas ancaman untuk dimitigasi. 
+% DREAD dapat menggunakan skala numerik, misalnya 1--10 untuk setiap parameter, lalu nilai total dihitung sebagai jumlah dari lima parameter tersebut. 
+% Semakin tinggi nilai total, semakin tinggi prioritas ancaman untuk dimitigasi. 
 % Pada penelitian ini digunakan ambang prioritas \textit{High} untuk total \(\geq 35\), \textit{Medium} untuk total 20--34, dan \textit{Low} untuk total \(< 20\). 
 % Nilai DREAD bersifat kontekstual dan digunakan sebagai alat prioritisasi pada lingkungan prototipe, bukan sebagai ukuran probabilitas absolut atau jaminan tingkat risiko pada lingkungan produksi.
 
