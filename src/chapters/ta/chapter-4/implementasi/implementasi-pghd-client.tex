@@ -128,10 +128,10 @@ Informasi tersebut kemudian ditampilkan sebagai \textit{provenance} pada \textit
 Sinkronisasi Health Connect dijalankan segera setelah pasien mengaktifkan pengumpulan data. 
 Setelah itu, sinkronisasi dijalankan otomatis setiap 3 menit selama mode pengumpulan PGHD masih aktif. 
 Implementasi menggunakan \textit{one-time} \textit{chained} \texttt{WorkManager} karena pekerjaan periodik \texttt{WorkManager} memiliki batas minimum 15 menit, di mana ketika \texttt{OneTimeWorkRequest} selesai mensinkronisasikan data Health Connect setelah 3 menit, \texttt{OneTimeWorkRequest} akan langsung menjadwalkan sinkronisasi untuk 3 menit berikutnya.
-Setiap sinkronisasi Health Connect, baik yang dipicu manual maupun otomatis, menampilkan \textit{toast} yang menunjukkan apakah proses sinkronisasi berhasil atau gagal. 
 Untuk sensor perangkat Android, pembacaan sensor menggunakan interval \textit{default} 60 detik.
-Penetapan angka ini dipilih sebagai kompromi antara granularitas data sepanjang hari, konsumsi baterai, dan ukuran data lokal. Dokumentasi Health Connect mencontohkan beberapa data aktivitas seperti langkah, cadence, jarak, elevasi, dan lantai dengan granularitas satu menit, sehingga interval 60 detik digunakan sebagai granularitas dasar untuk indikator PGHD yang bersifat longitudinal \parencite{android_hc_write}.
-Data sensor mentah tidak langsung diperlakukan sebagai data kesehatan. Data tersebut terlebih dahulu dikonversi menjadi indikator yang lebih dapat dipahami, seperti langkah, cadence, estimasi elevasi, intensitas gerak, sudut kemiringan, atau status pemakaian perangkat. 
+Penetapan angka ini juga mengacu pada rata-rata durasi pengambilan data Health Connect untuk tipe-tipe data kesehatan, yaitu setiap 1 menit \parencite{android_hc_write}.
+Data sensor mentah tidak langsung diperlakukan sebagai data kesehatan. 
+Data tersebut terlebih dahulu dikonversi menjadi indikator yang lebih dapat dipahami, seperti langkah, \textit{cadence}, estimasi elevasi, intensitas gerak, sudut kemiringan, atau status pemakaian perangkat. 
 Input manual tetap tersedia untuk data yang dimasukkan langsung oleh pasien.
 
 Sebelum pengumpulan otomatis dimulai, aplikasi melakukan pemeriksaan izin Android. 
@@ -162,109 +162,109 @@ Konversi ini hanyalah bersifat \textit{prototipe} dan tidak mencerminkan keselur
     \hline
     \endlastfoot
 
-    \texttt{TYPE\_HEART\_RATE} &
-    \texttt{heart\_rate} &
+    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}RATE} &
+    \texttt{heart\_\allowbreak{}rate} &
     \texttt{bpm} &
     Nilai detak jantung dibaca langsung dari sensor sehingga dapat dipahami sebagai data vital pasien. \\
     \hline
 
-    \texttt{TYPE\_HEART\_BEAT} &
-    \texttt{heart\_beat}, \texttt{heart\_rate\_variability} &
+    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}BEAT} &
+    \texttt{heart\_\allowbreak{}beat}, \texttt{heart\_\allowbreak{}rate\_\allowbreak{}variability} &
     \texttt{event}, \texttt{ms} &
     Event heartbeat dicatat sebagai kejadian, sedangkan interval antar heartbeat dapat digunakan sebagai estimasi HRV apabila tersedia. \\
     \hline
 
-    \texttt{TYPE\_STEP\_DETECTOR} &
+    \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}DETECTOR} &
     \texttt{steps} &
     \texttt{count} &
     Setiap event sensor dihitung sebagai satu langkah. Data ini mudah dipahami sebagai indikator aktivitas fisik. \\
     \hline
 
-    \texttt{TYPE\_STEP\_COUNTER} &
-    \texttt{steps}, \texttt{steps\_cadence} &
+    \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}COUNTER} &
+    \texttt{steps}, \texttt{steps\_\allowbreak{}cadence} &
     \texttt{count}, \texttt{steps/min} &
     Nilai kumulatif step counter diubah menjadi delta langkah. Cadence dihitung dari delta langkah terhadap selisih waktu. \\
     \hline
 
-    \texttt{TYPE\_SIGNIFICANT\_MOTION}, \texttt{TYPE\_STATIONARY\_DETECT}, \texttt{TYPE\_MOTION\_DETECT} &
-    \texttt{activity\_event} &
+    \texttt{TYPE\_\allowbreak{}SIGNIFICANT\_\allowbreak{}MOTION}, \texttt{TYPE\_\allowbreak{}STATIONARY\_\allowbreak{}DETECT}, \texttt{TYPE\_\allowbreak{}MOTION\_\allowbreak{}DETECT} &
+    \texttt{activity\_\allowbreak{}event} &
     \texttt{event} &
     Event gerak digunakan sebagai indikator perubahan status aktivitas, misalnya dari diam ke bergerak atau sebaliknya. \\
     \hline
 
-    \texttt{TYPE\_PRESSURE} &
-    \texttt{barometric\_pressure}, \texttt{elevation\_estimate}, \texttt{elevation\_gained}, \texttt{floors\_climbed} &
+    \texttt{TYPE\_\allowbreak{}PRESSURE} &
+    \texttt{barometric\_\allowbreak{}pressure}, \texttt{elevation\_\allowbreak{}estimate}, \texttt{elevation\_\allowbreak{}gained}, \texttt{floors\_\allowbreak{}climbed} &
     \texttt{hPa}, \texttt{m}, \texttt{floors} &
     Tekanan barometrik dibaca langsung. Elevasi, kenaikan elevasi, dan estimasi lantai diturunkan dari perubahan tekanan untuk konteks aktivitas seperti naik tangga. \\
     \hline
 
-    \texttt{TYPE\_LIGHT} &
-    \texttt{ambient\_light} &
+    \texttt{TYPE\_\allowbreak{}LIGHT} &
+    \texttt{ambient\_\allowbreak{}light} &
     \texttt{lux} &
     Intensitas cahaya sekitar digunakan sebagai konteks lingkungan, misalnya paparan cahaya yang dapat berkaitan dengan pola tidur atau aktivitas. \\
     \hline
 
-    \texttt{TYPE\_AMBIENT\_TEMPERATURE} &
-    \texttt{environmental\_temperature} &
+    \texttt{TYPE\_\allowbreak{}AMBIENT\_\allowbreak{}TEMPERATURE} &
+    \texttt{environmental\_\allowbreak{}temperature} &
     \texttt{C} &
     Suhu yang dicatat adalah suhu lingkungan, bukan suhu tubuh. Data ini digunakan sebagai konteks lingkungan pasien. \\
     \hline
 
-    \texttt{TYPE\_RELATIVE\_HUMIDITY} &
-    \texttt{environmental\_humidity} &
+    \texttt{TYPE\_\allowbreak{}RELATIVE\_\allowbreak{}HUMIDITY} &
+    \texttt{environmental\_\allowbreak{}humidity} &
     \texttt{\%} &
     Kelembapan relatif digunakan sebagai konteks lingkungan, terutama untuk kondisi yang dapat dipengaruhi faktor lingkungan. \\
     \hline
 
-    \texttt{TYPE\_PROXIMITY} &
+    \texttt{TYPE\_\allowbreak{}PROXIMITY} &
     \texttt{proximity} &
     \texttt{cm} &
     Jarak objek ke sensor digunakan sebagai konteks pemakaian perangkat, bukan sebagai data klinis langsung. \\
     \hline
 
-    \texttt{TYPE\_LOW\_LATENCY\_OFFBODY\_DETECT} &
-    \texttt{wear\_status} &
+    \texttt{TYPE\_\allowbreak{}LOW\_\allowbreak{}LATENCY\_\allowbreak{}OFFBODY\_\allowbreak{}DETECT} &
+    \texttt{wear\_\allowbreak{}status} &
     \texttt{state} &
-    Nilai sensor dipetakan menjadi status \texttt{on\_body} atau \texttt{off\_body} untuk menilai kepatuhan pemakaian perangkat. \\
+    Nilai sensor dipetakan menjadi status \texttt{on\_\allowbreak{}body} atau \texttt{off\_\allowbreak{}body} untuk menilai kepatuhan pemakaian perangkat. \\
     \hline
 
-    \texttt{TYPE\_ACCELEROMETER}, \texttt{TYPE\_ACCELEROMETER\_UNCALIBRATED} &
-    \texttt{movement\_intensity} &
+    \texttt{TYPE\_\allowbreak{}ACCELEROMETER}, \texttt{TYPE\_\allowbreak{}ACCELEROMETER\_\allowbreak{}UNCALIBRATED} &
+    \texttt{movement\_\allowbreak{}intensity} &
     \texttt{m/s2} &
     Komponen sumbu mentah tidak dikirim sebagai PGHD utama. Magnitude vektor akselerasi dihitung sebagai indikator intensitas gerak yang lebih mudah dipahami. \\
     \hline
 
-    \texttt{TYPE\_LINEAR\_ACCELERATION} &
-    \texttt{movement\_intensity} &
+    \texttt{TYPE\_\allowbreak{}LINEAR\_\allowbreak{}ACCELERATION} &
+    \texttt{movement\_\allowbreak{}intensity} &
     \texttt{m/s2} &
     Magnitude akselerasi linear digunakan sebagai indikator intensitas gerak tanpa komponen gravitasi. \\
     \hline
 
-    \texttt{TYPE\_GRAVITY} &
-    \texttt{tilt\_angle} &
+    \texttt{TYPE\_\allowbreak{}GRAVITY} &
+    \texttt{tilt\_\allowbreak{}angle} &
     \texttt{degrees} &
     Vektor gravitasi dikonversi menjadi sudut kemiringan perangkat sebagai konteks postur atau orientasi tubuh/perangkat. \\
     \hline
 
-    \texttt{TYPE\_GYROSCOPE}, \texttt{TYPE\_GYROSCOPE\_UNCALIBRATED} &
-    \texttt{rotation\_intensity} &
+    \texttt{TYPE\_\allowbreak{}GYROSCOPE}, \texttt{TYPE\_\allowbreak{}GYROSCOPE\_\allowbreak{}UNCALIBRATED} &
+    \texttt{rotation\_\allowbreak{}intensity} &
     \texttt{rad/s} &
     Komponen sumbu mentah tidak dikirim sebagai PGHD utama. Magnitude kecepatan sudut digunakan sebagai indikator intensitas rotasi. \\
     \hline
 
-    \texttt{TYPE\_ROTATION\_VECTOR}, \texttt{TYPE\_GAME\_ROTATION\_VECTOR}, \texttt{TYPE\_GEOMAGNETIC\_ROTATION\_VECTOR} &
-    \texttt{orientation\_change} &
+    \texttt{TYPE\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR}, \texttt{TYPE\_\allowbreak{}GAME\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR}, \texttt{TYPE\_\allowbreak{}GEOMAGNETIC\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR} &
+    \texttt{orientation\_\allowbreak{}change} &
     \texttt{unitless} &
     Vektor rotasi dikonversi menjadi indikator perubahan orientasi perangkat. Komponen vektor mentah tidak ditampilkan sebagai data kesehatan utama. \\
     \hline
 
-    \texttt{TYPE\_HINGE\_ANGLE} &
-    \texttt{device\_hinge\_angle} &
+    \texttt{TYPE\_\allowbreak{}HINGE\_\allowbreak{}ANGLE} &
+    \texttt{device\_\allowbreak{}hinge\_\allowbreak{}angle} &
     \texttt{degrees} &
     Sudut engsel perangkat lipat dicatat sebagai konteks penggunaan perangkat apabila sensor tersedia. \\
     \hline
 
-    \texttt{TYPE\_MAGNETIC\_FIELD}, \texttt{TYPE\_MAGNETIC\_FIELD\_UNCALIBRATED} &
+    \texttt{TYPE\_\allowbreak{}MAGNETIC\_\allowbreak{}FIELD}, \texttt{TYPE\_\allowbreak{}MAGNETIC\_\allowbreak{}FIELD\_\allowbreak{}UNCALIBRATED} &
     Tidak dikonversi menjadi PGHD &
     \- &
     Nilai medan magnet mentah tidak mudah dipahami sebagai data kesehatan oleh tenaga kesehatan, sehingga sensor ini ditampilkan tetapi dinonaktifkan pada pengaturan pengumpulan PGHD\@. \\
@@ -284,6 +284,8 @@ Data PGHD tidak dikirim satu per satu ke PRE\@.
 \textit{Batch} dapat terbentuk karena empat \textit{trigger} implementasi, yaitu \textit{trigger} periodik, \textit{trigger} ukuran data, \textit{trigger} manual, dan \textit{trigger} ketika koneksi tersedia kembali setelah perangkat offline. 
 Pada implementasi ini, \textit{trigger} periodik dijalankan minimum setiap 15 menit, sedangkan batas ukuran yang digunakan untuk \textit{trigger} ukuran adalah 10 MB\@.
 Pemilihan ini didasarkan pada rekomendasi dari API Health Connect untuk mengirimkan data ke Health Connect setiap 15 menit sekali \parencite{android_hc_write}.
+Pemilihan ukuran 10 MB dipertimbangkan agar frekuensi pengiriman data tidak terlalu sering jika ukuran terlalu kecil, tapi juga untuk mencegah data terlalu besar ketika transmisi atau pengolahan di PRE dan IPFS\@.
+Nilai ini bisa diubah di konfigurasi \texttt{.env} di \textit{client} Android PGHD\@.
 
 Ketika \textit{batch} dibuat, data PGHD dikonversi menjadi payload PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. 
 \textit{Client} menghitung \texttt{h\_plain} dari \textit{plaintext} \textit{batch}, memasukkan nilai tersebut ke \textit{payload envelope} \textit{plaintext}, lalu mengenkripsi \textit{payload} menggunakan AES-GCM\@. 
