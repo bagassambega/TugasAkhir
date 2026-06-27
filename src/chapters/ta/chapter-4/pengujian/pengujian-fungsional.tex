@@ -40,7 +40,7 @@ Satu skenario dapat mencakup beberapa kebutuhan yang terjadi dalam satu alur, te
     \hline
     T-F08 & F08 & Tenaga kesehatan memilih satu entri pada daftar dan membuka detail. & Data berhasil diambil, diverifikasi, didekripsi, dan ditampilkan bersama \textit{metadata provenance}. \\
     \hline
-    T-F09 & F09 & Tenaga kesehatan mencoba membuka \textit{fixture} PGHD dengan \textit{hash}, tanda tangan, atau \textit{plaintext} yang telah diubah. & Sistem menolak data, menampilkan peringatan integritas, dan tidak memperlakukannya sebagai PGHD valid. \\
+    T-F09 & F09 & Tenaga kesehatan mencoba membuka \textit{fixture} PGHD dengan \textit{ciphertext}, hash, atau tanda tangan yang telah diubah. & Sistem menolak data, menampilkan peringatan integritas, dan tidak memperlakukannya sebagai PGHD valid. \\
     \hline
     T-F10 & F10 & Pasien mencabut \textit{grant}, lalu tenaga kesehatan mencoba menyegarkan daftar dan membuka detail kembali. & Permintaan baca berikutnya ditolak dan tidak menghasilkan \textit{plaintext} atau material dekripsi. \\
     \hline

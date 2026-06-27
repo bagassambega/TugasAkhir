@@ -64,8 +64,8 @@ Pada saat membuka detail PGHD, \textit{client} melakukan beberapa tahap validasi
 Pertama, \textit{client} membandingkan hash dari ciphertext yang diunduh dengan hash yang tercatat pada metadata. 
 Kedua, \textit{client} memverifikasi \texttt{signature} atas \texttt{h\_cipher} menggunakan \textit{public key} PGHD pasien. 
 Ketiga, \textit{client} melakukan proses \textit{re-encryption} menggunakan \textit{cfrag} dan \textit{private key} tenaga kesehatan. 
-Keempat, setelah \textit{plaintext} berhasil diperoleh, \textit{client} memverifikasi \texttt{h\_plain} yang tersimpan di dalam \textit{payload} terenkripsi. 
-Jika salah satu verifikasi tidak valid, \textit{client} menampilkan peringatan kepada tenaga kesehatan dan \textit{memanggil endpoint} invalidasi PGHD pada PRE yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-invalidate}, dengan alasan invalid.
+Keempat, \textit{client} melakukan dekripsi AES-GCM; tag autentikasi AES-GCM memastikan \textit{ciphertext}, kunci, \textit{nonce}, dan data tambahan yang dipakai pada enkripsi konsisten. 
+Jika verifikasi hash atau \textit{signature}, maupun dekripsi AES-GCM, tidak valid, \textit{client} menampilkan peringatan kepada tenaga kesehatan dan \textit{memanggil endpoint} invalidasi PGHD pada PRE yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-invalidate}, dengan alasan invalid.
 
 \subsubsection{Pemisahan PGHD dan \textit{Medical Record}}
 

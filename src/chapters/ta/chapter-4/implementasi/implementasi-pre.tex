@@ -522,7 +522,7 @@ PRE kemudian menghitung hash \textit{ciphertext} dan membandingkannya dengan has
 PRE juga memverifikasi \texttt{signature} atas \texttt{h\_cipher}. 
 Jika hash atau \textit{signature} tidak cocok, PRE menginvalidasi entri PGHD tersebut dan mengembalikan error kepada \textit{client} tenaga kesehatan. 
 Jika verifikasi berhasil, PRE membuat \textit{cfrag} dari \textit{kfrag} yang tersimpan pada Redis dan mengembalikannya kepada \textit{client} tenaga kesehatan. 
-\textit{Client} tenaga kesehatan kemudian melakukan dekripsi akhir dan verifikasi \texttt{h\_plain}.
+\textit{Client} tenaga kesehatan kemudian melakukan dekripsi akhir menggunakan AES-GCM\@.
 
 \subsubsection{\textit{Capability} Akses PGHD}
 

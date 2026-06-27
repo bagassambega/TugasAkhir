@@ -288,7 +288,7 @@ Pemilihan ukuran 10 MB dipertimbangkan agar frekuensi pengiriman data tidak terl
 Nilai ini bisa diubah di konfigurasi \texttt{.env} di \textit{client} Android PGHD\@.
 
 Ketika \textit{batch} dibuat, data PGHD dikonversi menjadi payload PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. 
-\textit{Client} menghitung \texttt{h\_plain} dari \textit{plaintext} \textit{batch}, memasukkan nilai tersebut ke \textit{payload envelope} \textit{plaintext}, lalu mengenkripsi \textit{payload} menggunakan AES-GCM\@. 
+\textit{Client} langsung mengenkripsi \textit{plaintext} \textit{batch} menggunakan AES-GCM\@. 
 Setelah terbentuk \texttt{enc\_pghd}, \textit{client} menghitung \texttt{h\_cipher} dan membuat \texttt{signature} atas \texttt{h\_cipher} menggunakan kunci tanda tangan PGHD pasien. 
 Kunci AES yang digunakan untuk payload PGHD dienkripsi dengan mekanisme PRE sehingga dapat dibuka kembali oleh tenaga kesehatan yang telah menerima akses. 
 Setelah \textit{envelope} PGHD terbentuk, \textit{client} mengirimkan data ke endpoint submit PGHD pada PRE yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-submit}. 

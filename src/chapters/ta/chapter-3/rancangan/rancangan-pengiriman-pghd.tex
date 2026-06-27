@@ -24,15 +24,11 @@ Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancan
     Kunci publik ini digunakan oleh PRE dan \textit{client} tenaga kesehatan untuk memverifikasi tanda tangan digital PGHD\@. 
     Sementara itu, kunci PRE digunakan pada proses pembungkusan kunci simetris dan \textit{proxy re-encryption}.
 
-    \item \textbf{Pembentukan \textit{plaintext} PGHD dan hash \textit{plaintext}.}
-    Ketika \textit{batch} akan dikirim, \textit{client} membentuk \textit{plaintext} PGHD dari data lokal. Struktur \textit{plaintext} memuat payload \textit{batch} sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. \textit{Client} menghitung hash plaintext:
-    \[
-        h_{\text{plain}} = \mathrm{SHA256}(\texttt{pghd\_plaintext}),
-    \]
-    lalu menyimpan nilai \texttt{h\_plain} bersama \textit{plaintext} sebelum proses enkripsi. Struktur pembungkus \textit{plaintext} mengikuti Tabel~\ref{tab:field-encrypted-plaintext-pghd}.
+    \item \textbf{Pembentukan \textit{plaintext} PGHD\@.}
+    Ketika \textit{batch} akan dikirim, \textit{client} membentuk \textit{plaintext} PGHD langsung dari data lokal. Struktur \textit{plaintext} memuat payload \textit{batch} sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
 
     \item \textbf{Enkripsi \textit{plaintext} PGHD\@.}
-    \textit{Payload} yang memuat \textit{batch} PGHD dan \texttt{h\_plain} dienkripsi menggunakan enkripsi simetris dengan kunci dan \textit{nonce} acak. 
+    \textit{Payload} \textit{batch} PGHD dienkripsi menggunakan enkripsi simetris dengan kunci dan \textit{nonce} acak. 
     Hasil proses ini adalah \texttt{enc\_pghd}. 
     Dengan demikian, data telah berbentuk \textit{ciphertext} sebelum keluar dari perangkat pasien.
 
@@ -66,7 +62,7 @@ Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancan
     PRE mencatat CID, \texttt{h\_cipher}, status validasi, dan metadata kriptografis ke \textit{smart contract}. Metadata \textit{top-level} mengikuti Tabel~\ref{tab:iota-pghd-metadata}, sedangkan artefak seperti \texttt{batch\_id}, \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, dan \texttt{signature} diserialisasi ke \textit{field} metadata tambahan seperti pada Tabel~\ref{tab:iota-pghd-serialized-metadata}.
 
     \item \textbf{Invalidasi PGHD\@.}
-    Jika pada proses pengiriman atau pengaksesan berikutnya ditemukan ketidaksesuaian hash \textit{ciphertext}, \textit{signature} tidak valid, metadata menggunakan skema lama, hash \textit{plaintext} tidak cocok setelah dekripsi, atau CID pada metadata terserialisasi tidak sama dengan CID yang tercatat pada \textit{ledger}, sistem mengubah status metadata PGHD menjadi \textit{invalid} dan menyimpan alasan kegagalan. 
+    Jika pada proses pengiriman atau pengaksesan berikutnya ditemukan ketidaksesuaian hash \textit{ciphertext}, \textit{signature} tidak valid, metadata menggunakan skema lama, atau CID pada metadata terserialisasi tidak sama dengan CID yang tercatat pada \textit{ledger}, sistem mengubah status metadata PGHD menjadi \textit{invalid} dan menyimpan alasan kegagalan. 
     Invalidasi dilakukan terhadap metadata PGHD pada \textit{smart contract}. 
     PRE memanggil fungsi invalidasi pada \textit{smart contract} dengan membawa CID dan alasan kegagalan. 
     \textit{Smart contract} mencari metadata PGHD berdasarkan CID, mengubah \texttt{status} menjadi invalid, dan menyimpan \texttt{failure\_reason} di transaksi yang baru.

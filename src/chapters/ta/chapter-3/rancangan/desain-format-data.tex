@@ -125,36 +125,3 @@ Tabel~\ref{tab:field-datapoints-json-pghd} berisi skema data untuk level \textit
     \hline
 \end{styledxltabular}
 \endgroup
-
-Sebelum \textit{batch} PGHD dienkripsi, sistem membungkus \textit{plaintext} \textit{batch} dengan hash \textit{plaintext}.
-Struktur ini menjadi payload yang dienkripsi menjadi \texttt{enc\_pghd}.
-Field pembungkus \textit{plaintext} dapat dilihat pada Tabel~\ref{tab:field-encrypted-plaintext-pghd}.
-
-\begingroup
-\footnotesize
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Deskripsi \textit{Field} Pembungkus \textit{Plaintext} PGHD Sebelum Enkripsi}\label{tab:field-encrypted-plaintext-pghd}\\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-
-    \hiderowcolors
-    \caption[]{Deskripsi \textit{Field} Pembungkus \textit{Plaintext} PGHD Sebelum Enkripsi (lanjutan)}\\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-    \hline
-    \showrowcolors
-    \endhead
-
-    \texttt{pghd\_data} & Objek & Payload \textit{batch} PGHD sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. \\
-    \hline
-    % \texttt{pghd\_data\_json} & String & Serialisasi JSON dari \texttt{pghd\_data} yang digunakan sebagai basis perhitungan hash \textit{plaintext}. \\
-    \texttt{h\_plain} & String (Hex) & Hash SHA-256 dari data PGHD\@. Nilai ini diverifikasi kembali setelah \textit{ciphertext} berhasil didekripsi. \\
-    \hline
-\end{styledxltabular}
-\endgroup
