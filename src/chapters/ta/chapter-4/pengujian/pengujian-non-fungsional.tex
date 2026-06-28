@@ -45,6 +45,8 @@ Pengujian menggunakan satu pasien, satu tenaga kesehatan yang memperoleh persetu
 Variasi negatif mencakup persetujuan tidak tersedia, akses untuk pasien berbeda, cakupan akses tidak sesuai, akses kedaluwarsa, dan akses yang telah dicabut.
 Sistem harus menolak seluruh variasi negatif sebelum PGHD atau informasi sensitif untuk mengakses PGHD dikembalikan.
 Kasus deterministik pada logika akses juga diverifikasi melalui pengujian \textit{smart contract}.
+Pada jalur PGHD, titik serang yang diuji adalah permintaan \textit{client} tenaga kesehatan ke PRE untuk daftar dan detail PGHD tanpa token, dengan token tidak valid, serta dengan token milik tenaga kesehatan yang tidak memiliki akses \texttt{READ\_PGHD} aktif.
+Respons gagal tidak boleh memuat \texttt{enc\_pghd}, \texttt{c\_frag}, \texttt{enc\_aes\_key\_nonce}, maupun material kunci PRE yang dapat digunakan untuk membuka objek PGHD dari IPFS\@.
 
 \begin{lstlisting}[caption={Pengujian autentikasi dan otorisasi PGHD}, label={lst:nf01-confidentiality}, float=htb]
 PRE_BASE_URL=http://127.0.0.1:4100 \
@@ -59,11 +61,14 @@ UNAUTHORIZED_ACCESS_TOKEN_READ_PGHD=eyJ... \
 Penguji menggunakan satu PGHD dengan nilai penanda yang unik, kemudian memeriksa representasi data pada titik setelah data meninggalkan konteks penggunaan yang berwenang: \textit{payload} komunikasi, objek penyimpanan eksternal, \textit{metadata} publik, respons akses yang ditolak, dan \textit{log} aplikasi yang relevan.
 Skenario berhasil apabila nilai penanda dan isi klinis tidak ditemukan dalam bentuk yang dapat dipahami pada titik tersebut serta respons tidak sah tidak memuat informasi yang memungkinkan data dibuka.
 Pada implementasi terpilih, pemeriksaan dilakukan terhadap \textit{payload} menuju PRE, objek pada IPFS, \textit{metadata} pada IOTA, dan respons \textit{endpoint} PGHD\@.
+Titik yang diuji mencakup pengiriman dari \textit{client} pasien ke PRE, penyimpanan \textit{ciphertext} oleh PRE ke IPFS, pencatatan metadata oleh PRE ke IOTA, pengambilan \textit{ciphertext} dari IPFS saat tenaga kesehatan membuka PGHD, dan percobaan akses oleh tenaga kesehatan yang tidak berizin.
 Pengujian ini membuktikan perilaku prototipe, bukan keamanan formal algoritma maupun keamanan kanal \textit{deployment} produksi.
 
 \subsubsection{Skenario T-NF03: Deteksi Manipulasi Data dan Status}
 
-PGHD valid digunakan sebagai acuan, kemudian dibuat variasi dengan perubahan pada isi data, \textit{metadata} konteks, bukti integritas, referensi penyimpanan, dan status validitas.
+PGHD valid digunakan sebagai acuan, kemudian dibuat variasi dengan perubahan pada \texttt{enc\_pghd}, \texttt{h\_cipher}, \texttt{signature}, referensi CID IPFS, metadata pada IOTA, dan status validitas.
+Pada titik \textit{client} pasien ke PRE, PRE harus menolak \textit{payload} yang \textit{ciphertext}, hash, atau tanda tangannya berubah sebelum data disimpan ke IPFS maupun dicatat ke IOTA\@.
+Pada titik IPFS ke \textit{client} tenaga kesehatan, objek IPFS rusak disimulasikan dengan membuat objek \textit{ciphertext} baru yang tidak sesuai dengan \texttt{h\_cipher} pada metadata; sistem harus menolak data tersebut ketika dibuka dan menginvalidasi metadata terkait.
 Selain itu, dilakukan percobaan perubahan persetujuan atau \textit{metadata} oleh aktor yang tidak memiliki kewenangan.
 Sistem harus mendeteksi perbedaan sebelum data digunakan, menolak data atau operasi terkait, dan tidak menampilkan data yang gagal sebagai PGHD valid.
 
@@ -87,10 +92,16 @@ PGHD_JSON=/path/to/exported-pghd.json \
 
 \subsubsection{Skenario T-NF05: Kapasitas Pengolahan PGHD}
 
-Pengujian menghasilkan 2.400 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengolahan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
+Pengujian menghasilkan 40.320 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengolahan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
+Beban tersebut dihitung dari konfigurasi interval pengumpulan \textit{default} satu menit pada \textit{client} Android, sehingga satu \textit{stream} sensor menghasilkan \(24 \times 60 = 1.440\) \textit{record} per hari.
+Skenario uji memakai asumsi \textit{backlog} tujuh hari dan empat \textit{stream} PGHD umum, yaitu langkah, detak jantung, saturasi oksigen, dan jarak, sehingga jumlah \textit{record} yang diuji adalah \(1.440 \times 7 \times 4 = 40.320\).
+Asumsi tujuh hari digunakan sebagai skenario keterlambatan sinkronisasi mingguan yang lebih berat dari operasi harian, tetapi masih lebih kecil dari jendela sinkronisasi bawaan aplikasi selama 30 hari.
+Penggunaan empat \textit{stream} dipilih karena perangkat Android memiliki kombinasi sensor yang bervariasi dan tidak semua perangkat menyediakan seluruh tipe sensor; dokumentasi Android juga membagi sensor perangkat menjadi sensor gerak, posisi, dan lingkungan dengan ketersediaan yang bergantung pada perangkat \cite{android_2024_sensors_overview}.
+Dalam pengujian unit, 40.320 \textit{record} tersebut dibagi menjadi tujuh \textit{batch} harian untuk membuat hasil uji deterministik.
+Pembagian harian ini bukan batas produksi, karena pada implementasi runtime pembentukan \textit{batch} tetap dipicu oleh jadwal periodik dan ambang ukuran 10 MB\@.
 Penguji membandingkan jumlah \textit{record} yang dihasilkan, tersimpan, dikelompokkan, dan ditandai selesai; memantau kegagalan aplikasi; serta menghitung jumlah operasi eksternal.
 Skenario berhasil apabila tidak ada \textit{record} hilang, aplikasi tidak \textit{crash}, dan jumlah operasi eksternal sesuai strategi pengelolaan volume yang telah dirancang.
-Angka 2.400 \textit{record} merupakan beban uji prototipe dan tidak ditafsirkan sebagai kapasitas produksi.
+Angka 40.320 \textit{record} merupakan beban uji prototipe dan tidak ditafsirkan sebagai kapasitas produksi.
 
 \begin{lstlisting}[caption={Pengujian kapasitas PGHD}, label={lst:nf04-availability}, float=htb]
 ./scripts/non-functional/nf04_availability.sh
@@ -133,7 +144,7 @@ Hasil ini tidak digeneralisasi menjadi jaminan SLA atau ketahanan terhadap DDoS 
 %     \hline
 %     T-NF04 & Pemeriksaan \textit{field provenance} pada kode sumber. & \textit{Payload} ekspor dan status data masih perlu diperiksa \textit{end-to-end}. & Terverifikasi sebagian \\
 %     \hline
-%     T-NF05 & \textit{Unit stress test} 2.400 \textit{record} dan pemeriksaan jalur operasi eksternal. & Tidak menghasilkan angka \textit{throughput} atau SLA produksi. & Terverifikasi \\
+%     T-NF05 & \textit{Unit stress test} 40.320 \textit{record} dan pemeriksaan jalur operasi eksternal. & Tidak menghasilkan angka \textit{throughput} atau SLA produksi. & Terverifikasi \\
 %     \hline
 %     T-NF06 & Rencana rekonsiliasi data sebelum dan setelah gangguan sementara. & Belum tersedia bukti pemulihan \textit{end-to-end} dan tepat-satu-kali. & Perlu diuji \\
 %     \hline

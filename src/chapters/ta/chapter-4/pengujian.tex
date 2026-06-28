@@ -8,7 +8,7 @@ Pengujian sistem DecMed-PGHD dibagi menjadi pengujian \textit{smart contract}, p
 Batasan yang diterapkan untuk skenario pengujian sistem DecMed-PGHD ini adalah,
 
 \begin{enumerate}
-    \item Pengujian dilakukan pada lingkungan \textit{proxy reencryption}, IPFS dan Gas Station server, dan \textit{client} lokal, dengan menggunakan IOTA testnet publik.
+    \item Pengujian dilakukan pada lingkungan \textit{proxy reencryption}, IPFS dan Gas Station server, jaringan IOTA yang dijalankan pada server kampus, dan \textit{client} lokal.
     \item Pengujian ketersediaan berfokus pada perilaku prototipe ketika volume \textit{record} meningkat, koneksi luring, atau layanan sementara gagal.
     \item Pengujian tidak mencakup audit kriptografi, \textit{penetration testing}, DDoS skala besar, dan enkripsi basis data lokal.
 \end{enumerate}
@@ -24,12 +24,12 @@ Pengujian non-fungsional memverifikasi NF01--NF06 yang diturunkan dari ancaman t
 % Dasar pemilihan cakupan pengujian ini selaras dengan proses \textit{threat modelling}. OWASP menjelaskan bahwa proses tersebut perlu menghasilkan daftar ancaman, kontrol, dan penilaian apakah kontrol telah diterapkan atau masih menyisakan risiko \parencite{owaspThreatModelingProcess}. STRIDE digunakan untuk mengidentifikasi ancaman berbasis DFD, sedangkan DREAD digunakan untuk memprioritaskan ancaman yang perlu diuji \parencite{openStack_StrideDREAD}. Oleh karena itu, skenario non-fungsional diturunkan dari ancaman prioritas yang berdampak pada CIA.
 
 Beberapa jenis pengujian tidak menjadi cakupan utama penelitian ini. 
-\textit{Performance testing} penuh seperti pengukuran \textit{throughput} jaringan IOTA, latensi IPFS, atau uji beban PRE berskala produksi tidak dilakukan karena prototipe memakai IOTA testnet publik dan lingkungan terbatas. 
+\textit{Performance testing} penuh seperti pengukuran \textit{throughput} jaringan IOTA, latensi IPFS, atau uji beban PRE berskala produksi tidak dilakukan karena prototipe memakai jaringan IOTA pada server kampus dan lingkungan pengujian terbatas. 
 \textit{Usability testing}, pengujian keamanan dengan metode \textit{offensive}, \textit{fuzzing}, audit kriptografi, dan validasi medis sensor juga tidak dilakukan.
 
 % Pembatasan tersebut tidak menghilangkan pencatatan risiko residual. 
 % Basis data lokal klien Android belum terenkripsi, metadata transaksi tetap dapat diamati, dan host PRE belum diaudit sebagai lingkungan produksi. 
-% Karena IOTA testnet dan IPFS berada di luar kontrol penuh peneliti, hasil pengujian ketersediaan tidak digeneralisasi sebagai jaminan performa produksi.
+% Karena jaringan IOTA pada server kampus dan IPFS belum merupakan lingkungan produksi yang diaudit, hasil pengujian ketersediaan tidak digeneralisasi sebagai jaminan performa produksi.
 
 \input{chapters/ta/chapter-4/pengujian/pengujian-sc.tex}
 
