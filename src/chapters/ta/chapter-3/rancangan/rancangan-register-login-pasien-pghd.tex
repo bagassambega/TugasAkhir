@@ -23,20 +23,43 @@ Pada proses \textit{register} maupun \textit{login}, \textit{client} pasien memb
 Alur pembentukan variabel-variabel dapat dilihat pada Diagram~\ref{fig:data-login-register}.
 Penjelasan setiap variabel sebagai berikut.
 
-\begin{table}[htb]
-    \centering
-    \caption{Variabel Identitas dan Kriptografi Pasien PGHD}\label{tab:variabel-register-login-pghd}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.36\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Variabel} & \textbf{Fungsi} \\
-        \texttt{mnemonic} atau \textit{seed words} & Frasa pemulihan 12 kata yang menjadi sumber pembangkitan identitas pasien. \\
-        \texttt{patient\_id} dan \texttt{patient\_id\_hash} & Identitas pasien dan bentuk hash dari identitas tersebut yang digunakan untuk pencatatan tanpa membuka NIK mentah. \\
-        \texttt{iota\_address} & Alamat akun IOTA pasien yang digunakan untuk interaksi dengan smart contract. \\
-        \texttt{iota\_key\_pair} & Pasangan kunci IOTA pasien untuk menandatangani transaksi dan pesan autentikasi. \\
-        \texttt{pghd\_public\_key} dan \texttt{pghd\_secret\_key} & Pasangan kunci ECDSA pasien untuk tanda tangan digital data \textit{PGHD}. \texttt{pghd\_public\_key} disimpan pada smart contract dan digunakan untuk verifikasi tanda tangan. \\
-        \texttt{pghd\_pre\_public\_key} dan \texttt{pghd\_pre\_secret\_key} & Pasangan kunci PRE khusus \textit{PGHD}. Kunci ini digunakan dalam enkripsi kunci AES dan mekanisme re-enkripsi akses \textit{PGHD}. \texttt{pghd\_pre\_public\_key} tidak disimpan sebagai field on-chain \textit{PGHD}. \\
-        \texttt{medical\_pre\_public\_key} dan \texttt{medical\_pre\_secret\_key} & Pasangan kunci PRE untuk mekanisme akses rekam medis normal. Kunci ini dipisahkan dari kunci PRE \textit{PGHD}. \\
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.36\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Variabel Identitas dan Kriptografi Pasien PGHD}\label{tab:variabel-register-login-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Variabel} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Variabel Identitas dan Kriptografi Pasien PGHD (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Variabel} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{mnemonic} atau \textit{seed words} & Frasa pemulihan 12 kata yang menjadi sumber pembangkitan identitas pasien. \\
+    \hline
+    \texttt{patient\_id} dan \texttt{patient\_id\_hash} & Identitas pasien dan bentuk hash dari identitas tersebut yang digunakan untuk pencatatan tanpa membuka NIK mentah. \\
+    \hline
+    \texttt{iota\_address} & Alamat akun IOTA pasien yang digunakan untuk interaksi dengan smart contract. \\
+    \hline
+    \texttt{iota\_key\_pair} & Pasangan kunci IOTA pasien untuk menandatangani transaksi dan pesan autentikasi. \\
+    \hline
+    \texttt{pghd\_public\_key} dan \texttt{pghd\_secret\_key} & Pasangan kunci ECDSA pasien untuk tanda tangan digital data \textit{PGHD}. \texttt{pghd\_public\_key} disimpan pada smart contract dan digunakan untuk verifikasi tanda tangan. \\
+    \hline
+    \texttt{pghd\_pre\_public\_key} dan \texttt{pghd\_pre\_secret\_key} & Pasangan kunci PRE khusus \textit{PGHD}. Kunci ini digunakan dalam enkripsi kunci AES dan mekanisme re-enkripsi akses \textit{PGHD}. \texttt{pghd\_pre\_public\_key} tidak disimpan sebagai field on-chain \textit{PGHD}. \\
+    \hline
+    \texttt{medical\_pre\_public\_key} dan \texttt{medical\_pre\_secret\_key} & Pasangan kunci PRE untuk mekanisme akses rekam medis normal. Kunci ini dipisahkan dari kunci PRE \textit{PGHD}. \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 \paragraph{Alur \textit{Register} Pasien PGHD}
 
