@@ -38,6 +38,8 @@ Tanpa \textit{provenance} yang terdokumentasi dengan baik, tenaga kesehatan tida
 Kondisi ini membentuk \textbf{Gap 4}: \emph{tidak adanya \textit{data provenance} untuk menjamin keandalan data yang berasal dari pasien}.
 
 Data kesehatan yang dihasilkan pasien bersifat sensitif dan memerlukan perlindungan agar data hanya dapat diakses pihak berwenang, integritas data agar data tidak mengalami modifikasi tidak sah selama transmisi maupun penyimpanan, dan ketersediaan (sistem tetap dapat melayani permintaan sah meskipun terdapat lonjakan data \textit{time-series} bervolume tinggi) \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Selain kesenjangan di atas yang telah diidentifikasi, integrasi PGHD juga membutuhkan adanya mekanisme yang memastikan pasien telah memberikan persetujuan eksplisit sebelum datanya dikumpulkan dan dikirimkan ke sistem. 
+Tanpa mekanisme ini, pengumpulan PGHD tidak dapat dilakukan secara etis meskipun infrastruktur teknisnya sudah tersedia \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 DecMed telah memiliki infrastruktur identitas kriptografis, akses kontrol, autentikasi, penyimpanan dan sistem terdistribusi, tetapi belum ada modul yang memanfaatkan komponen tersebut untuk menjamin kerahasiaan, integritas dan ketersediaan PGHD\@.
 Hal ini memunculkan \textbf{Gap 5}: \emph{tidak adanya mekanisme penjaminan kerahasiaan, integritas dan ketersediaan untuk data PGHD pada sistem DecMed}.
 
