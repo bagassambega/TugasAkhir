@@ -75,6 +75,12 @@ Data yang dikirimkan mempertahankan status menunggu, tertunda, gagal, atau terki
 Ketika layanan pulih, \textit{batch} data dapat dikirim ulang. 
 Mekanisme ini mengurangi frekuensi transaksi dan mencegah kehilangan data akibat gangguan sementara.
 
+Dari sisi server, mekanisme penjaminan ketersediaan pada arsitektur DecMed-PGHD didukung oleh tiga lapisan yang sudah melekat pada komponen-komponen yang dipilih. 
+Pertama, \textit{batching} di sisi klien mengurangi frekuensi pengiriman ke komponen server menjadi jumlah pengiriman dengan interval yang terkontrol, sehingga beban yang diterima server bukan merupakan aliran data kontinu melainkan \textit{request} dalam jumlah yang dapat diprediksi. 
+Kedua, penyimpanan \textit{ciphertext} PGHD didelegasikan ke IPFS sebagai lapisan penyimpanan \textit{off-chain} yang terdistribusi, sehingga tidak terdapat titik penyimpanan terpusat yang dapat menjadi \textit{bottleneck} saat banyak \textit{batch} masuk secara bersamaan. 
+Selain itu, server \textit{proxy reencryption} juga dapat di-\textit{deploy} dalam \textit{node} jumlah banyak karena PRE bersifat \textit{stateless}.
+Ketiga, penulisan metadata dikontrol oleh IOTA sehingga server sistem tidak terbebani untuk mengolah metadata terlebih dahulu.
+
 % \subsubsection{Keterlacakan Ancaman dan Solusi Terpilih}
 
 % Keterlacakan setiap ancaman terhadap solusi, kebutuhan non-fungsional, dan rancangan dirangkum pada Tabel~\ref{tab:traceability-cia-solution}.

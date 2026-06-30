@@ -42,9 +42,7 @@ Mekanisme pencabutan akses baca PGHD dapat dilihat pada Diagram~\ref{fig:seq-dia
     \item Pasien membuka daftar akses aktif pada \textit{client} pasien.
     Daftar ini berasal dari catatan lokal \textit{grant} akses yang pernah dibuat oleh pasien, sehingga pasien dapat memilih akses yang ingin dicabut tanpa harus memasukkan ulang alamat tenaga kesehatan secara manual.
 
-    \item \textit{Client} membaca informasi \textit{grant}, seperti \texttt{hospital\_personnel\_iota\_address}, jenis akses atau \texttt{purpose}, waktu pemberian akses, dan \texttt{access\_log\_index}.
-    Informasi ini digunakan untuk membantu memilih entri akses yang relevan. 
-    Namun, sebelum pencabutan dilakukan, \textit{client} tetap mencocokkan akses tersebut dengan log akses aktif pada IOTA\@.
+    \item \textit{Client} membaca informasi \textit{grant}, seperti \texttt{hospital\_personnel\_iota\_address}, jenis akses atau \texttt{purpose}, waktu pemberian akses, dan \texttt{access\_log\_index} dari IOTA\@.
 
     \item Pasien memilih akses yang ingin dicabut dan menekan tombol \textit{Revoke Access}.
 

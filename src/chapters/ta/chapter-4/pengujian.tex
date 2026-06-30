@@ -8,7 +8,7 @@ Pengujian sistem DecMed-PGHD dibagi menjadi pengujian \textit{smart contract}, p
 Batasan yang diterapkan untuk skenario pengujian sistem DecMed-PGHD ini adalah,
 
 \begin{enumerate}
-    \item Pengujian dilakukan pada lingkungan \textit{proxy reencryption}, IPFS dan Gas Station server, jaringan IOTA yang dijalankan pada server kampus, dan \textit{client} lokal.
+    \item Pengujian dilakukan pada lingkungan \textit{proxy reencryption}, IPFS dan Gas Station server, jaringan IOTA yang dijalankan pada server, dan \textit{client} lokal.
     \item Pengujian ketersediaan berfokus pada perilaku prototipe ketika volume \textit{record} meningkat, koneksi luring, atau layanan sementara gagal.
     \item Pengujian tidak mencakup audit kriptografi, \textit{penetration testing}, DDoS skala besar, dan enkripsi basis data lokal.
 \end{enumerate}
@@ -18,18 +18,19 @@ Cakupan ini dipilih karena tujuan penelitian adalah merancang dan mengimplementa
 Dengan demikian, pengujian harus menunjukkan bahwa fungsi utama sistem berjalan, logika \textit{smart contract} sebagai sumber kebenaran akses dan metadata bekerja benar, serta risiko kerahasiaan, integritas dan ketersediaan yang telah diidentifikasi melalui \textit{threat modeling} dapat diuji.
 
 Pengujian fungsional dipilih karena kebutuhan F01--F10 berhubungan langsung dengan alur pengguna, mulai dari pengumpulan PGHD di klien pasien, penyimpanan lokal, pembentukan \textit{batch}, pengiriman ke DecMed, pemberian akses, pembacaan oleh tenaga kesehatan, deteksi data rusak, dan pencabutan akses. 
-Pengujian \textit{smart contract} dipisahkan karena kontrak menjadi sumber kebenaran yang deterministik untuk otorisasi, status metadata, dan invalidasi data. 
+Pengujian \textit{smart contract} dipisahkan karena kontrak menjadi \textit{source of truth} yang deterministik untuk otorisasi, status metadata, dan invalidasi data. 
+Selain itu, berbeda dari komponen lain, logika \textit{smart contract} bersifat \textit{immutable} setelah di-\textit{deploy} ke \textit{ledger}, sehingga kesalahan logika tidak dapat diperbaiki tanpa publikasi ulang kontrak.
 Pengujian non-fungsional memverifikasi NF01--NF06 yang diturunkan dari ancaman terpilih.
 
 % Dasar pemilihan cakupan pengujian ini selaras dengan proses \textit{threat modelling}. OWASP menjelaskan bahwa proses tersebut perlu menghasilkan daftar ancaman, kontrol, dan penilaian apakah kontrol telah diterapkan atau masih menyisakan risiko \parencite{owaspThreatModelingProcess}. STRIDE digunakan untuk mengidentifikasi ancaman berbasis DFD, sedangkan DREAD digunakan untuk memprioritaskan ancaman yang perlu diuji \parencite{openStack_StrideDREAD}. Oleh karena itu, skenario non-fungsional diturunkan dari ancaman prioritas yang berdampak pada CIA.
 
 Beberapa jenis pengujian tidak menjadi cakupan utama penelitian ini. 
-\textit{Performance testing} penuh seperti pengukuran \textit{throughput} jaringan IOTA, latensi IPFS, atau uji beban PRE berskala produksi tidak dilakukan karena prototipe memakai jaringan IOTA pada server kampus dan lingkungan pengujian terbatas. 
+\textit{Performance testing} penuh seperti pengukuran \textit{throughput} jaringan IOTA, latensi IPFS, atau uji beban PRE berskala produksi tidak dilakukan karena prototipe memakai jaringan IOTA pada server dan lingkungan pengujian terbatas. 
 \textit{Usability testing}, pengujian keamanan dengan metode \textit{offensive}, \textit{fuzzing}, audit kriptografi, dan validasi medis sensor juga tidak dilakukan.
 
 % Pembatasan tersebut tidak menghilangkan pencatatan risiko residual. 
 % Basis data lokal klien Android belum terenkripsi, metadata transaksi tetap dapat diamati, dan host PRE belum diaudit sebagai lingkungan produksi. 
-% Karena jaringan IOTA pada server kampus dan IPFS belum merupakan lingkungan produksi yang diaudit, hasil pengujian ketersediaan tidak digeneralisasi sebagai jaminan performa produksi.
+% Karena jaringan IOTA pada server dan IPFS belum merupakan lingkungan produksi yang diaudit, hasil pengujian ketersediaan tidak digeneralisasi sebagai jaminan performa produksi.
 
 \input{chapters/ta/chapter-4/pengujian/pengujian-sc.tex}
 

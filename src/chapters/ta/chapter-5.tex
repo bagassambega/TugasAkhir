@@ -16,4 +16,5 @@ Aspek-aspek tersebut antara lain:
     \item Mendukung mekanisme pengumpulan dan pengiriman data yang lebih adaptif. Misalnya, menyesuaikan frekuensi sinkronisasi data secara otomatis berdasarkan kondisi perangkat pasien seperti status baterai dan kualitas koneksi jaringan.
     \item Merancang mekanisme pemulihan kredensial atau identitas pasien yang lebih mudah digunakan pengguna agar data kesehatan tidak hilang secara permanen apabila pasien kehilangan akses ke perangkat utamanya.
     \item Mengintegrasikan sistem dengan fitur pemrosesan analitik. Misalnya, mendeteksi tren dan anomali kesehatan pasien secara otomatis berdasarkan PGHD yang masuk tanpa harus mengekspos isi data mentah.
+    \item Mengembangkan mekanisme penanganan konkurensi tinggi di sisi server untuk skenario produksi dengan banyak pasien, misalnya dengan mekanisme \textit{async submission}, \textit{job queue}, atau mekanisme \textit{retry}.
 \end{enumerate}

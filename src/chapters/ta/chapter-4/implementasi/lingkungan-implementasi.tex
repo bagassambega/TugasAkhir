@@ -10,23 +10,23 @@ Batasan-batasan yang diterapkan pada implementasi prototipe integrasi DecMed-PGH
     \item Data yang berasal dari sensor perangkat Android dikonversi menjadi tipe data kesehatan yang lebih mudah dipahami pengguna, seperti langkah, aktivitas, jarak, dan tipe pengukuran lain yang didukung oleh implementasi.
     \item Data PGHD disimpan secara lokal pada perangkat pasien sebelum dibentuk menjadi \textit{batch} dan dikirim.
     Penyimpanan lokal pada prototipe ini tidak menerapkan enkripsi basis data lokal.
-    \item Jaringan \textit{blockchain} yang digunakan adalah jaringan IOTA yang dijalankan pada server kampus.
+    \item Jaringan \textit{blockchain} yang digunakan adalah jaringan IOTA yang dijalankan pada server.
     Implementasi tidak menggunakan IOTA mainnet dan tidak bergantung pada jaringan IOTA publik.
     \item IPFS dan IOTA Gas Station yang digunakan berada pada server dan diakses dari komputer pengembangan melalui SSH \textit{tunneling}.
     \item \textit{Smart contract} yang digunakan merupakan paket Move DecMed yang telah diperluas dengan mekanisme PGHD\@.
-    \item Pengujian dilakukan untuk skenario satu pasien, satu perangkat Android, satu perangkat \textit{wearable}, dan sejumlah \textit{client} tenaga kesehatan yang dijalankan dari komputer pengembangan.
+    \item Pengujian dilakukan untuk skenario satu pasien, satu perangkat Android, satu perangkat \textit{wearable}, satu buah server PRE, dan sejumlah \textit{client} tenaga kesehatan yang dijalankan dari komputer pengembangan.
 \end{enumerate}
 
 \subsection{Kakas dan Lingkungan yang Digunakan}
 
-Implementasi DecMed-PGHD dilakukan pada lingkungan komputer lokal dengan dukungan layanan eksternal berupa jaringan IOTA yang dijalankan pada server kampus, IPFS, dan IOTA Gas Station yang dijalankan pada server.
+Implementasi DecMed-PGHD dilakukan pada lingkungan komputer lokal dengan dukungan layanan eksternal berupa jaringan IOTA yang dijalankan pada server, IPFS, dan IOTA Gas Station yang dijalankan pada server.
 Kakas yang digunakan terdiri atas perangkat keras, bahasa pemrograman, \textit{framework client}, \textit{framework backend}, kakas Android, kakas \textit{blockchain}, dan kakas \textit{containerization}.
 Ringkasan kakas dan teknologi yang digunakan dapat dilihat pada Tabel~\ref{tab:kakas-implementasi-decmed-pghd} pada Lampiran~\ref{app:kakas-implementasi-decmed-pghd}.
 
 Secara umum, implementasi dibagi ke dalam beberapa komponen.
 \textit{\textit{Client} } Android pasien dibangun menggunakan Kotlin, Jetpack Compose, Health Connect, Room, WorkManager, dan \textit{shared library} Rust melalui JNI\@.
 \textit{\textit{Client} ministry} dan \textit{client} tenaga kesehatan dibangun menggunakan Tauri, SvelteKit, TypeScript, dan Rust dengan mengutilisasi \textit{client} DecMed lama yang diperluas fungsinya untuk PGHD\@.
-Komponen PRE dibangun menggunakan Rust dengan \textit{framework} Axum, Redis sebagai penyimpanan material akses sementara, IPFS sebagai penyimpanan \textit{payload} terenkripsi, dan jaringan IOTA pada server kampus sebagai penyimpanan metadata serta mekanisme akses berbasis \textit{smart contract} Move.
+Komponen PRE dibangun menggunakan Rust dengan \textit{framework} Axum, Redis sebagai penyimpanan material akses sementara, IPFS sebagai penyimpanan \textit{payload} terenkripsi, dan jaringan IOTA pada server sebagai penyimpanan metadata serta mekanisme akses berbasis \textit{smart contract} Move.
 Arsitektur implementasi dapat dilihat pada Gambar~\ref{fig:arsitektur-implementasi}.
 
 \begin{figure}[htbp]
@@ -87,19 +87,19 @@ Kelebihan dan kekurangan arsitektur menggunakan JNI dapat dilihat melalui Tabel~
 \subsection{Konfigurasi Implementasi}
 
 Terdapat beberapa konfigurasi yang harus dilakukan sebelum sistem DecMed-PGHD dapat dijalankan.
-Konfigurasi tersebut meliputi konfigurasi jaringan IOTA pada server kampus, publikasi \textit{smart contract}, konfigurasi IOTA Gas Station, konfigurasi IPFS, konfigurasi PRE, konfigurasi \textit{client} desktop, dan konfigurasi pengembangan aplikasi Android.
+Konfigurasi tersebut meliputi konfigurasi jaringan IOTA pada server, publikasi \textit{smart contract}, konfigurasi IOTA Gas Station, konfigurasi IPFS, konfigurasi PRE, konfigurasi \textit{client} desktop, dan konfigurasi pengembangan aplikasi Android.
 
-\subsubsection{Konfigurasi Jaringan IOTA pada Server Kampus}
+\subsubsection{Konfigurasi Jaringan IOTA pada server}
 
-Implementasi DecMed-PGHD menggunakan jaringan IOTA yang dijalankan pada server kampus sebagai jaringan \textit{blockchain}.
+Implementasi DecMed-PGHD menggunakan jaringan IOTA yang dijalankan pada server sebagai jaringan \textit{blockchain}.
 Jaringan ini digunakan untuk mempublikasikan \textit{smart contract} DecMed-PGHD, menyimpan metadata akun, menyimpan metadata PGHD, menyimpan \textit{capability} akses, dan mencatat status validasi data.
-Node IOTA berjalan pada server kampus dan diakses dari komputer pengembangan melalui SSH \textit{tunneling}.
+Node IOTA berjalan pada server dan diakses dari komputer pengembangan melalui SSH \textit{tunneling}.
 
-Konfigurasi \textit{client} IOTA dilakukan dengan memastikan IOTA CLI terhubung ke \textit{endpoint} RPC jaringan IOTA pada server kampus.
+Konfigurasi \textit{client} IOTA dilakukan dengan memastikan IOTA CLI terhubung ke \textit{endpoint} RPC jaringan IOTA pada server.
 \textit{Endpoint} tersebut juga digunakan oleh PRE dan \textit{client} Android melalui variabel lingkungan \texttt{IOTA\_RPC\_URL}.
 Untuk melakukan konfigurasi \textit{environment smart contract}, konfigurasi yang dijalankan adalah sebagai berikut,
 
-\begin{lstlisting}[caption={Konfigurasi endpoint IOTA pada server kampus}, label={lst:konfigurasi-iota-server}, float=htb]
+\begin{lstlisting}[caption={Konfigurasi endpoint IOTA pada server}, label={lst:konfigurasi-iota-server}, float=htb]
 ssh -N -L 127.0.0.1:9000:127.0.0.1:9000 user@103.107.4.64
 IOTA_RPC_URL=http://127.0.0.1:9000
 iota \textit{client} envs
@@ -133,7 +133,7 @@ Pada implementasi ini, transaksi publikasi dapat disponsori oleh IOTA Gas Statio
 Langkah publikasi \textit{smart contract} dengan transaksi yang disponsori IOTA Gas Station adalah sebagai berikut,
 
 \begin{enumerate}
-    \item IOTA CLI diarahkan ke jaringan yang akan digunakan, yaitu jaringan IOTA pada server kampus.
+    \item IOTA CLI diarahkan ke jaringan yang akan digunakan, yaitu jaringan IOTA pada server.
     \item Paket Move dibangun dengan \texttt{iota move build}.
     \item \textit{Client} meminta reservasi gas ke IOTA Gas Station untuk memperoleh \texttt{reservation\_id}, \texttt{sponsor\_address}, dan \textit{gas coin} yang akan digunakan.
     \item \textit{Client} membentuk transaksi publikasi tanpa langsung mengeksekusinya dengan opsi \texttt{--serialize-unsigned-transaction}.
