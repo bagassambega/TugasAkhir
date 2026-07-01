@@ -88,7 +88,7 @@ Tindakan pemberian akses, pencabutan akses, pengiriman, dan invalidasi juga dipe
 % ./scripts/non-functional/nf05_provenance.sh
 % \end{lstlisting}
 
-\subsubsection{Skenario T-NF05: Kapasitas Pengolahan PGHD}
+\subsubsection{Skenario T-NF05: Kapasitas Pengolahan dan Pengiriman PGHD}
 
 Pengujian menghasilkan 151.200 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengolahan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
 Beban tersebut dihitung dari konfigurasi interval pengumpulan \textit{default} satu menit pada \textit{client} Android, sehingga satu \textit{stream} sensor menghasilkan \(24 \times 60 = 1.440\) \textit{record} per hari.
@@ -99,6 +99,16 @@ Dalam pengujian unit, 151.200 \textit{record} tersebut di-\textit{generate} dala
 Pemilihan 600 \textit{records} per detik ini didasarkan pada jumlah sumber data 15 buah sensor dikalikan dengan menghasilkan 40 data per detiknya.
 Jumlah 40 data per detik didasarkan pada \textit{worst case condition}, di mana normalnya sebuah sensor hanya akan menghasilkan satu buah \textit{record} per \textit{generation}.
 Skenario berhasil apabila tidak ada \textit{record} hilang, aplikasi tidak \textit{crash}, jumlah operasi eksternal sesuai strategi pengelolaan volume yang telah dirancang, dan server dapat menerima seluruh \textit{requests} pengiriman PGHD dari pasien.
+
+Skenario kedua adalah pengujian kapabilitas sistem DecMed dalam menerima data PGHD\@.
+Pengujian dilakukan dengan mengirimkan 20 \textit{batch} PGHD secara konkuren dari 20 pasien berbeda.
+Pemilihan 20 pasien secara konkuren ini didasarkan pada rata-rata jumlah pasien di rumah sakit di Amerika Serikat setiap harinya (33.553.725 data masuk dari 5.121 rumah sakit setiap tahun, berarti 18 pasien per rumah sakit per hari dibulatkan ke atas).
+Skenario berhasil apabila tidak ada data \textit{batch} yang hilang, dan semua diterima di sistem DecMed dan tersimpan.
+
+Pada implementasi \textit{smart contract} yang digunakan untuk pengujian ini, metadata PGHD dipartisi ke dalam objek \texttt{PatientPghdStore} per pasien.
+Objek \texttt{PatientIdAccount} tetap dipakai sebagai registry akun dan referensi \texttt{pghd\_store\_id}, tetapi bukan lagi objek utama yang dimutasi setiap kali PRE mencatat metadata PGHD\@.
+Pemisahan ini penting untuk skenario konkuren karena setiap pasien uji menulis ke objek metadata PGHD miliknya sendiri.
+Dengan demikian, kegagalan akibat konflik versi objek global dapat dikurangi tanpa mengubah kontrak keamanan akses PGHD\@.
 
 
 % \begin{lstlisting}[caption={Pengujian kapasitas PGHD}, label={lst:nf04-availability}, float=htb]
@@ -112,8 +122,6 @@ Sebelum gangguan dibuat, penguji mencatat identitas serta jumlah unit data yang 
 Selama gangguan, sistem harus mempertahankan data dan menunjukkan status kegagalan.
 Setelah kondisi pulih, proses dijalankan kembali.
 Skenario berhasil apabila seluruh unit data awal akhirnya selesai diproses tepat satu kali, tidak ada data hilang atau duplikat, dan kegagalan dapat ditelusuri melalui status atau pesan yang tersedia.
-
-% TODO: pengujian server stress test
 
 % \subsubsection{Status Bukti Pengujian}
 
@@ -143,7 +151,7 @@ Skenario berhasil apabila seluruh unit data awal akhirnya selesai diproses tepat
 %     \hline
 %     T-NF04 & Pemeriksaan \textit{field provenance} pada kode sumber. & \textit{Payload} ekspor dan status data masih perlu diperiksa \textit{end-to-end}. & Terverifikasi sebagian \\
 %     \hline
-%     T-NF05 & \textit{Unit stress test} 40.320 \textit{record} dan pemeriksaan jalur operasi eksternal. & Tidak menghasilkan angka \textit{throughput} atau SLA produksi. & Terverifikasi \\
+%     T-NF05 & \textit{Stress test} 151.200 \textit{record} pada client dan 20 submit konkuren ke PRE. & Tidak menghasilkan klaim SLA produksi. & Terverifikasi \\
 %     \hline
 %     T-NF06 & Rencana rekonsiliasi data sebelum dan setelah gangguan sementara. & Belum tersedia bukti pemulihan \textit{end-to-end} dan tepat-satu-kali. & Perlu diuji \\
 %     \hline

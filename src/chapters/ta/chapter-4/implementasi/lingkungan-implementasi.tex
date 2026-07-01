@@ -31,7 +31,38 @@ Arsitektur implementasi dapat dilihat pada Gambar~\ref{fig:arsitektur-implementa
 \begin{figure}[htbp]
     \centering
 	\includegraphics[width=\textwidth]{resources/chapter-4/Arsitektur Implementasi.png}
-	\caption{\textit{Sequence Diagram} Mekanisme Pencabutan Akses Baca PGHD}\label{fig:arsitektur-implementasi}
+	\caption{Arsitektur Implementasi Sistem DecMed-PGHD}\label{fig:arsitektur-implementasi}
+\end{figure}
+
+Diagram implementasi modul DecMed-PGHD dibagi berdasarkan komponen utama agar tanggung jawab internal setiap komponen dan data yang dipertukarkan antarmodul dapat terlihat dengan lebih jelas.
+Diagram modul \textit{client} Android pasien ditunjukkan pada Gambar~\ref{fig:diagram-modul-client-android-pghd}.
+Diagram modul PRE ditunjukkan pada Gambar~\ref{fig:diagram-modul-pre-pghd}.
+Diagram modul \textit{smart contract} IOTA ditunjukkan pada Gambar~\ref{fig:diagram-modul-iota-pghd}.
+Diagram modul \textit{client} tenaga kesehatan ditunjukkan pada Gambar~\ref{fig:diagram-modul-client-tenaga-kesehatan-pghd}.
+Setiap kotak pada diagram merepresentasikan modul atau kelompok modul implementasi, sedangkan panah menunjukkan data utama yang dipertukarkan antarmodul.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-client-android-pghd.png}
+    \caption{Diagram Modul \textit{Client} Android PGHD}\label{fig:diagram-modul-client-android-pghd}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-pre-pghd.png}
+    \caption{Diagram Modul PRE PGHD}\label{fig:diagram-modul-pre-pghd}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-iota-pghd.png}
+    \caption{Diagram Modul \textit{Smart Contract} IOTA PGHD}\label{fig:diagram-modul-iota-pghd}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-client-tenaga-kesehatan-pghd.png}
+    \caption{Diagram Modul \textit{Client} Tenaga Kesehatan PGHD}\label{fig:diagram-modul-client-tenaga-kesehatan-pghd}
 \end{figure}
 
 JNI (\textit{Java Native Interface}) adalah mekanisme interoperabilitas yang memungkinkan kode pada lingkungan Java/Kotlin memanggil fungsi \textit{native} yang dikompilasi ke \textit{shared library}.

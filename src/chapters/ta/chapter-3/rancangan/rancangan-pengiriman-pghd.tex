@@ -48,6 +48,7 @@ Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancan
     \item \textbf{Pengiriman \textit{envelope} PGHD ke PRE.}
     \textit{Client} pasien mengirim \textit{envelope} PGHD ke PRE\@. 
     \textit{Envelope} tersebut memuat identitas batch, identitas pasien, \texttt{enc\_pghd}, \texttt{h\_cipher}, \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, dan \texttt{signature}. 
+    \textit{Client} tidak mengirim langsung PGHD ke IPFS dan metadatanya ke IOTA karena akan membuat implementasi \textit{client} terlalu kompleks untuk menangani pengiriman ke IPFS dan \textit{reserve gas} untuk transaksi IOTA pada pengiriman PGHD yang memiliki frekuensi tinggi.
     
     \item \textbf{Verifikasi oleh PRE sebelum penyimpanan dan pencatatan.}
     PRE mengambil kunci publik PGHD pasien dari \textit{smart contract} dan memverifikasi \texttt{signature}. 

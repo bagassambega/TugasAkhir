@@ -120,6 +120,10 @@ Untuk menjamin ketersediaan data PGHD, sistem menggunakan tiga mekanisme berikut
 Setiap entri PGHD yang berhasil diverifikasi akan dicatat pada \textit{ledger} IOTA dalam struktur metadata PGHD\@.
 Struktur yang disimpan oleh \textit{smart contract} dapat dilihat pada Tabel~\ref{tab:iota-pghd-metadata}.
 
+Metadata PGHD tersebut ditempatkan pada objek \texttt{PatientPghdStore} yang dibuat untuk masing-masing pasien.
+Objek \texttt{PatientIdAccount} berperan sebagai \textit{registry} akun pasien dan menyimpan \texttt{pghd\_store\_id}.
+Rancangan ini dipilih agar penulisan metadata PGHD dari pasien dapat menangani \textit{request} konkuren dalam jumlah banyak tanpa memerlukan \textit{shared object reference}.
+
 \begingroup
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
 	\hiderowcolors

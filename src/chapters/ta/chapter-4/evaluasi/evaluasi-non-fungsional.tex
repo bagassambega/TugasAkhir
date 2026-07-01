@@ -1,0 +1,10 @@
+\subsection{Evaluasi Pengujian Non-Fungsional}
+
+Pengujian non-fungsional menunjukkan bahwa mekanisme keamanan dan ketersediaan yang dirancang dapat dijalankan pada lingkungan implementasi.
+Pada pengujian kapasitas sisi \textit{client}, aplikasi Android membentuk \textit{batch} PGHD dari data sintetis bervolume tinggi dan tetap menggunakan jalur penyimpanan lokal, pemicu ukuran, dan pengiriman yang sama dengan alur normal.
+Pada pengujian kapasitas sisi server, PRE diuji dengan 20 pasien dummy valid yang melakukan \textit{submit} PGHD secara konkuren.
+Setelah metadata PGHD dipisahkan ke objek \texttt{PatientPghdStore} per pasien dan \texttt{ProxyCap} digunakan sebagai \textit{shared capability} yang memvalidasi alamat PRE, skenario 20 \textit{request} konkuren menghasilkan 20 respons sukses dan tidak menghasilkan kegagalan submit.
+Hasil tersebut menunjukkan bahwa desain akhir mengurangi perebutan objek global pada pencatatan metadata PGHD.
+
+Evaluasi T-NF05 tersebut tidak dimaksudkan sebagai klaim kapasitas produksi maksimal.
+Angka tersebut digunakan untuk membuktikan bahwa pipeline DecMed-PGHD dapat menangani burst konkuren yang ditetapkan pada skenario uji, sementara pengujian produksi yang lebih besar masih memerlukan pengaturan infrastruktur, observabilitas, dan strategi antrean sisi server yang lebih lengkap.

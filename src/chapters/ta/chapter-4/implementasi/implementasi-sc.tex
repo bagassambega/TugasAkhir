@@ -55,6 +55,17 @@ public struct PatientPghdMetadata has copy, drop, store {
 }
 \end{lstlisting}
 
+Setiap pasien memiliki objek \texttt{PatientPghdStore} yang berisi daftar \texttt{PatientPghdMetadata}.
+Daftar objek IOTA yang berkaitan dengan PGHD, akses, dan pasien dapat dilihat pada Tabel~\ref{tab:lampiran-object-iota-pghd}.
+
+\begin{lstlisting}[caption={Struktur penyimpanan metadata PGHD per pasien pada smart contract}, label={lst:patient-pghd-store-struct}, float=htb]
+public struct PatientPghdStore has key {
+    id: UID,
+    patient_id: String,
+    metadata: TableVec<PatientPghdMetadata>,
+}
+\end{lstlisting}
+
 Nilai \texttt{status} digunakan untuk membedakan data valid dan invalid. 
 Pada saat metadata PGHD baru dibuat, status bernilai \texttt{0}. 
 Jika data terbukti rusak atau tidak sah, PRE atau tenaga kesehatan dapat menginvalidasi data tersebut sehingga status berubah menjadi \texttt{1} dan \texttt{failure\_reason} diisi dengan alasan invalidasi.
