@@ -96,6 +96,8 @@ Rata-rata jumlah sensor pada perangkat \textit{mobile} adalah 15 sensor \parenci
 Skenario uji memakai asumsi \textit{backlog} tujuh hari dan 15 data \textit{stream} PGHD yang dihasilkan oleh 15 buah sensor, sehingga jumlah \textit{record} yang diuji adalah \(1.440 \times 7 \times 15 = 151.200\).
 Asumsi tujuh hari digunakan sebagai skenario keterlambatan sinkronisasi mingguan yang lebih berat dari operasi harian.
 Dalam pengujian unit, 151.200 \textit{record} tersebut di-\textit{generate} dalam jumlah 600 \textit{records} per detik.
+Pemilihan 600 \textit{records} per detik ini didasarkan pada jumlah sumber data 15 buah sensor dikalikan dengan menghasilkan 40 data per detiknya.
+Jumlah 40 data per detik didasarkan pada \textit{worst case condition}, di mana normalnya sebuah sensor hanya akan menghasilkan satu buah \textit{record} per \textit{generation}.
 Skenario berhasil apabila tidak ada \textit{record} hilang, aplikasi tidak \textit{crash}, jumlah operasi eksternal sesuai strategi pengelolaan volume yang telah dirancang, dan server dapat menerima seluruh \textit{requests} pengiriman PGHD dari pasien.
 
 
