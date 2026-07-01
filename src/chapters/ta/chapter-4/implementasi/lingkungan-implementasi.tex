@@ -10,8 +10,7 @@ Batasan-batasan yang diterapkan pada implementasi prototipe integrasi DecMed-PGH
     \item Data yang berasal dari sensor perangkat Android dikonversi menjadi tipe data kesehatan yang lebih mudah dipahami pengguna, seperti langkah, aktivitas, jarak, dan tipe pengukuran lain yang didukung oleh implementasi.
     \item Data PGHD disimpan secara lokal pada perangkat pasien sebelum dibentuk menjadi \textit{batch} dan dikirim.
     Penyimpanan lokal pada prototipe ini tidak menerapkan enkripsi basis data lokal.
-    \item Jaringan \textit{blockchain} yang digunakan adalah jaringan IOTA yang dijalankan pada server.
-    Implementasi tidak menggunakan IOTA mainnet dan tidak bergantung pada jaringan IOTA publik.
+    \item Jaringan \textit{blockchain} yang digunakan adalah jaringan IOTA yang dijalankan pada server lokal.
     \item IPFS dan IOTA Gas Station yang digunakan berada pada server dan diakses dari komputer pengembangan melalui SSH \textit{tunneling}.
     \item \textit{Smart contract} yang digunakan merupakan paket Move DecMed yang telah diperluas dengan mekanisme PGHD\@.
     \item Pengujian dilakukan untuk skenario satu pasien, satu perangkat Android, satu perangkat \textit{wearable}, satu buah server PRE, dan sejumlah \textit{client} tenaga kesehatan yang dijalankan dari komputer pengembangan.
@@ -19,7 +18,7 @@ Batasan-batasan yang diterapkan pada implementasi prototipe integrasi DecMed-PGH
 
 \subsection{Kakas dan Lingkungan yang Digunakan}
 
-Implementasi DecMed-PGHD dilakukan pada lingkungan komputer lokal dengan dukungan layanan eksternal berupa jaringan IOTA yang dijalankan pada server, IPFS, dan IOTA Gas Station yang dijalankan pada server.
+Implementasi DecMed-PGHD dilakukan pada lingkungan komputer lokal dengan dukungan layanan eksternal berupa jaringan IOTA, IPFS, dan IOTA Gas Station yang dijalankan pada server lokal.
 Kakas yang digunakan terdiri atas perangkat keras, bahasa pemrograman, \textit{framework client}, \textit{framework backend}, kakas Android, kakas \textit{blockchain}, dan kakas \textit{containerization}.
 Ringkasan kakas dan teknologi yang digunakan dapat dilihat pada Tabel~\ref{tab:kakas-implementasi-decmed-pghd} pada Lampiran~\ref{app:kakas-implementasi-decmed-pghd}.
 
@@ -37,52 +36,52 @@ Arsitektur implementasi dapat dilihat pada Gambar~\ref{fig:arsitektur-implementa
 
 JNI (\textit{Java Native Interface}) adalah mekanisme interoperabilitas yang memungkinkan kode pada lingkungan Java/Kotlin memanggil fungsi \textit{native} yang dikompilasi ke \textit{shared library}.
 Pada \textit{client} Android PGHD, JNI digunakan untuk menghubungkan kode Kotlin dengan dua \textit{shared library} Rust, yaitu \texttt{decmed\_crypto} dan \texttt{decmed\_iota}.
-Penggunaan JNI pertama-tama dilakukan untuk mengurangi kebutuhan penulisan ulang kode DecMed ke Kotlin.
+Penggunaan JNI dilakukan untuk mengurangi kebutuhan penulisan ulang kode DecMed ke Kotlin.
 Pada sisi kriptografi (\texttt{decmed\_crypto}), modul ini dibuat karena mekanisme \textit{proxy re-encryption} yang digunakan oleh PGHD membutuhkan objek Umbral PRE seperti \textit{capsule}, \textit{key fragment}, dan \textit{capsule fragment}.
 Jika seluruh fitur kriptografi ditulis secara \textit{native} pada Kotlin Android, maka implementasi tersebut tidak hanya memanggil \textit{primitive} kriptografi Android seperti AES-GCM, ECDH, atau ECDSA, tetapi harus membangun library Umbral PRE lengkap pada Android.
 Hal ini terjadi karena Android/Kotlin tidak menyediakan implementasi bawaan untuk objek dan alur Umbral PRE yang digunakan oleh PRE dan \textit{client} tenaga kesehatan.
 Oleh karena itu, \texttt{decmed\_crypto} tetap digunakan sebagai \textit{shared library} Rust agar \textit{client} Android memakai implementasi Umbral PRE yang sama dengan komponen DecMed lainnya.
 
 Pada sisi IOTA, penggunaan \texttt{decmed\_iota} melalui JNI juga dipilih untuk menghindari penulisan ulang logika transaksi IOTA ke Kotlin.
-Operasi yang dibutuhkan \textit{client} Android bukan hanya pemanggilan HTTP RPC, melainkan pembentukan dan penandatanganan transaksi IOTA Move, termasuk serialisasi BCS, pembentukan \textit{programmable transaction block}, pengkodean argumen Move, penggunaan \textit{shared object}, skema tanda tangan IOTA, serta integrasi dengan \textit{sponsored transaction}.
-Kotlin memiliki SDK IOTA, namun implementasinya juga berupa \textit{binding} yang menggunakan JNI terhadap core SDK Rust.
+Operasi yang dibutuhkan \textit{client} Android berisi pembentukan dan penandatanganan transaksi IOTA Move, termasuk serialisasi BCS, pembentukan \textit{programmable transaction block}, pengkodean argumen Move, penggunaan \textit{shared object}, skema tanda tangan IOTA, serta integrasi dengan \textit{sponsored transaction}.
+Kotlin memiliki SDK IOTA, namun implementasinya juga berupa \textit{binding} yang menggunakan JNI terhadap \textit{core} SDK Rust.
 Dengan demikian, penggunaan \textit{shared library} Rust pada \texttt{decmed\_iota} mengikuti mekanisme yang sama, tetapi dibuat khusus untuk kebutuhan DecMed-PGHD sehingga fungsi yang diekspos ke Kotlin hanya fungsi yang diperlukan oleh aplikasi Android.
 
 Dengan menggunakan JNI, \textit{client} Android tetap dapat menggunakan API Android secara \textit{native} untuk UI, sensor, Health Connect, \textit{permission}, penyimpanan lokal, dan \textit{background worker}, sementara operasi kriptografi PRE dan transaksi IOTA tetap menggunakan implementasi Rust yang telah digunakan pada komponen DecMed lainnya.
 Pada implementasi ini, pemanggilan JNI dilakukan melalui kelas Kotlin \texttt{DecmedCryptoNative} dan \texttt{DecmedIotaNative}, sedangkan \textit{shared library} Rust dibangun untuk target Android dan dipaketkan ke dalam aplikasi melalui direktori \texttt{jniLibs}.
-Kelebihan dan kekurangan arsitektur menggunakan JNI dapat dilihat melalui Tabel~\ref{tab:plus-minus-jni-pghd}.
+% Kelebihan dan kekurangan arsitektur menggunakan JNI dapat dilihat melalui Tabel~\ref{tab:plus-minus-jni-pghd}.
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Kelebihan dan Kekurangan Penggunaan JNI pada \textit{\textit{Client} } Android PGHD}\label{tab:plus-minus-jni-pghd} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Aspek} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Aspek} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
-    \hline
-    \endhead
-    \hline
-    \endfoot
-    \hline
-    \endlastfoot
-    Pengolahan dan Pengumpulan PGHD\@ & Akses sensor, Health Connect, \textit{permission}, dan UI tetap diimplementasikan secara \textit{native} Android sehingga sesuai dengan kebutuhan pengumpulan PGHD\@. & Logika yang membutuhkan akses langsung ke \textit{lifecycle} dan \textit{permission} Android tetap harus berada pada Kotlin, sehingga tidak seluruh komponen dapat dipindahkan ke Rust. \\
-    \hline
-    Kriptografi PGHD & Android dapat memakai implementasi Umbral PRE yang sama dengan PRE dan \textit{client} tenaga kesehatan tanpa membangun library Umbral PRE penuh pada Kotlin. & Diperlukan \textit{wrapper} JNI dan format data yang jelas antara Kotlin dan Rust untuk setiap operasi kriptografi. \\
-    \hline
-    Transaksi IOTA & Pembentukan dan penandatanganan transaksi IOTA Move dapat memakai implementasi Rust yang sesuai dengan ekosistem IOTA dan sudah digunakan oleh DecMed. & \textit{Shared library} Rust harus dibangun untuk target Android dan dipaketkan ke dalam aplikasi. \\
-    \hline
-    \textit{Development} & Mengurangi duplikasi implementasi protokol DecMed karena logika kriptografi dan IOTA tidak perlu ditulis ulang penuh pada Kotlin. & Perubahan antarmuka fungsi Rust perlu disinkronkan dengan \textit{wrapper} Kotlin agar pemanggilan JNI tetap sesuai. \\
-    \hline
-    \textit{Debugging} & \textit{Error} dari operasi kriptografi dan IOTA cukup dilihat pada modul Rust. & \textit{Debugging} lebih kompleks karena melibatkan Kotlin, batas pemanggilan JNI, dan kode Rust \textit{native}. \\
-    \hline
-    Performa & Cocok untuk operasi yang relatif berat seperti enkripsi, tanda tangan digital, derivasi kunci, dan transaksi IOTA\@. & Pemanggilan JNI memiliki \textit{overhead} sehingga tidak digunakan untuk pemrosesan setiap sampel sensor secara langsung. \\
-    \hline
-\end{styledxltabular}
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{Kelebihan dan Kekurangan Penggunaan JNI pada \textit{\textit{Client} } Android PGHD}\label{tab:plus-minus-jni-pghd} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Aspek} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Aspek} & \textbf{Kelebihan} & \textbf{Kekurangan} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     Pengolahan dan Pengumpulan PGHD\@ & Akses sensor, Health Connect, \textit{permission}, dan UI tetap diimplementasikan secara \textit{native} Android sehingga sesuai dengan kebutuhan pengumpulan PGHD\@. & Logika yang membutuhkan akses langsung ke \textit{lifecycle} dan \textit{permission} Android tetap harus berada pada Kotlin, sehingga tidak seluruh komponen dapat dipindahkan ke Rust. \\
+%     \hline
+%     Kriptografi PGHD & Android dapat memakai implementasi Umbral PRE yang sama dengan PRE dan \textit{client} tenaga kesehatan tanpa membangun library Umbral PRE penuh pada Kotlin. & Diperlukan \textit{wrapper} JNI dan format data yang jelas antara Kotlin dan Rust untuk setiap operasi kriptografi. \\
+%     \hline
+%     Transaksi IOTA & Pembentukan dan penandatanganan transaksi IOTA Move dapat memakai implementasi Rust yang sesuai dengan ekosistem IOTA dan sudah digunakan oleh DecMed. & \textit{Shared library} Rust harus dibangun untuk target Android dan dipaketkan ke dalam aplikasi. \\
+%     \hline
+%     \textit{Development} & Mengurangi duplikasi implementasi protokol DecMed karena logika kriptografi dan IOTA tidak perlu ditulis ulang penuh pada Kotlin. & Perubahan antarmuka fungsi Rust perlu disinkronkan dengan \textit{wrapper} Kotlin agar pemanggilan JNI tetap sesuai. \\
+%     \hline
+%     \textit{Debugging} & \textit{Error} dari operasi kriptografi dan IOTA cukup dilihat pada modul Rust. & \textit{Debugging} lebih kompleks karena melibatkan Kotlin, batas pemanggilan JNI, dan kode Rust \textit{native}. \\
+%     \hline
+%     Performa & Cocok untuk operasi yang relatif berat seperti enkripsi, tanda tangan digital, derivasi kunci, dan transaksi IOTA\@. & Pemanggilan JNI memiliki \textit{overhead} sehingga tidak digunakan untuk pemrosesan setiap sampel sensor secara langsung. \\
+%     \hline
+% \end{styledxltabular}
 
 \subsection{Konfigurasi Implementasi}
 
@@ -91,9 +90,9 @@ Konfigurasi tersebut meliputi konfigurasi jaringan IOTA pada server, publikasi \
 
 \subsubsection{Konfigurasi Jaringan IOTA pada server}
 
-Implementasi DecMed-PGHD menggunakan jaringan IOTA yang dijalankan pada server sebagai jaringan \textit{blockchain}.
+Implementasi DecMed-PGHD menggunakan jaringan IOTA yang dijalankan pada server.
 Jaringan ini digunakan untuk mempublikasikan \textit{smart contract} DecMed-PGHD, menyimpan metadata akun, menyimpan metadata PGHD, menyimpan \textit{capability} akses, dan mencatat status validasi data.
-Node IOTA berjalan pada server dan diakses dari komputer pengembangan melalui SSH \textit{tunneling}.
+\textit{Node} IOTA berjalan pada server dan diakses dari komputer pengembangan melalui SSH \textit{tunneling}.
 
 Konfigurasi \textit{client} IOTA dilakukan dengan memastikan IOTA CLI terhubung ke \textit{endpoint} RPC jaringan IOTA pada server.
 \textit{Endpoint} tersebut juga digunakan oleh PRE dan \textit{client} Android melalui variabel lingkungan \texttt{IOTA\_RPC\_URL}.
@@ -142,53 +141,54 @@ Langkah publikasi \textit{smart contract} dengan transaksi yang disponsori IOTA 
     \item Transaksi yang telah ditandatangani dikirim ke Gas Station bersama \texttt{reservation\_id}, \texttt{tx\_bytes}, dan \texttt{user\_sig} untuk dieksekusi pada jaringan IOTA\@.
     \item Setelah transaksi berhasil, hasil publikasi dibaca untuk memperoleh \textit{transaction digest}, \textit{package ID}, serta daftar objek yang dibuat oleh transaksi publikasi.
     \item Daftar objek yang dibuat dipetakan berdasarkan tipe objeknya untuk memperoleh \textit{object ID} dan versi objek yang harus dimasukkan ke konfigurasi PRE dan seluruh \textit{client}.
+    \item Alamat \textit{client node} harus didaftarkan ulang agar dapat memiliki kapabilitas untuk menjalankan fungsi \textit{proxy-reencryption} melalui nilai \texttt{PROXY\_CAP}.
 \end{enumerate}
 
-Nilai hasil publikasi yang perlu dicatat dapat dilihat pada Tabel~\ref{tab:konfigurasi-hasil-publish-sc}.
-Nilai tersebut diperoleh dari hasil transaksi publikasi dan hasil pemanggilan \texttt{iota\_multiGetObjects} terhadap objek-objek yang dibuat pada transaksi publikasi.
+% Nilai hasil publikasi yang perlu dicatat dapat dilihat pada Tabel~\ref{tab:konfigurasi-hasil-publish-sc}.
+% Nilai tersebut diperoleh dari hasil transaksi publikasi dan hasil pemanggilan \texttt{iota\_multiGetObjects} terhadap objek-objek yang dibuat pada transaksi publikasi.
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.32\textwidth}|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Nilai Konfigurasi Hasil Publikasi \textit{Smart Contract} DecMed-PGHD}\label{tab:konfigurasi-hasil-publish-sc} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Nilai Konfigurasi} & \textbf{Sumber Nilai} & \textbf{Keterangan} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hiderowcolors
-    \caption[]{Nilai Konfigurasi Hasil Publikasi \textit{Smart Contract} DecMed-PGHD (lanjutan)}\\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Nilai Konfigurasi} & \textbf{Sumber Nilai} & \textbf{Keterangan} \\
-    \hline
-    \showrowcolors
-    \endhead
-    \texttt{PUBLISHER\_}\allowbreak\texttt{ADDRESS} & \texttt{iota client active-address} & Alamat IOTA lokal yang digunakan sebagai \textit{sender} transaksi publikasi. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{PACKAGE\_}\allowbreak\texttt{ID} & Hasil publikasi paket Move & Identitas paket Move DecMed-PGHD pada jaringan IOTA\@. Nilai ini diperoleh dari \textit{published package} pada hasil transaksi publikasi. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{MODULE\_}\allowbreak\texttt{ADMIN} & Nama modul pada kode Move & Nama modul \texttt{admin} pada paket DecMed. Nilai ini bukan hasil publikasi, tetapi nama modul yang tetap sama selama nama modul Move tidak diubah. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{MODULE\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{PERSONNEL} & Nama modul pada kode Move & Nama modul \texttt{hospital\_}\allowbreak\texttt{personnel} pada paket DecMed. Nilai ini bukan hasil publikasi, melainkan nama modul yang digunakan untuk membentuk \textit{move call}. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{ADDRESS\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{ADDRESS\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{AddressId} & Objek \textit{shared} yang dibuat oleh fungsi \texttt{init} pada modul \texttt{std\_}\allowbreak\texttt{struct\_}\allowbreak\texttt{address\_}\allowbreak\texttt{id}. Objek ini menyimpan pemetaan alamat IOTA ke identitas terenkode pada sistem DecMed. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{METADATA\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{METADATA\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{HospitalIdMetadata} & Objek \textit{shared} yang menyimpan metadata rumah sakit dan indeks rumah sakit yang terdaftar. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{PERSONNEL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{PERSONNEL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{HospitalPersonnelIdAccount} & Objek \textit{shared} yang menyimpan akun personel rumah sakit, termasuk data akses yang diberikan oleh pasien. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{PATIENT\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{PATIENT\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{PatientIdAccount} & Objek \textit{shared} yang menyimpan akun pasien, metadata RME, metadata PGHD, public key PGHD, dan status validasi PGHD\@. \\
-    \hline
-    \texttt{DECMED\_}\allowbreak\texttt{GLOBAL\_}\allowbreak\texttt{ADMIN\_}\allowbreak\texttt{CAP\_}\allowbreak\texttt{ID} & Objek bertipe \texttt{GlobalAdminCap} & Objek \textit{owned capability} yang dibuat oleh fungsi \texttt{init} pada modul \texttt{shared} dan dikirim ke \textit{publisher}. Capability ini digunakan untuk operasi administratif yang memerlukan otorisasi admin global. \\
-    \hline
-    \texttt{GLOBAL\_}\allowbreak\texttt{ADMIN\_}\allowbreak\texttt{IOTA\_}\allowbreak\texttt{ADDRESS} dan \texttt{GLOBAL\_}\allowbreak\texttt{ADMIN\_}\allowbreak\texttt{IOTA\_}\allowbreak\texttt{KEY\_}\allowbreak\texttt{PAIR} & Akun pemilik \texttt{GlobalAdminCap} & Alamat dan keypair akun yang memiliki \texttt{GlobalAdminCap}. Pada publikasi awal, nilainya sama dengan akun \textit{publisher}. Jika \textit{capability} ditransfer, nilai ini mengikuti akun penerima \textit{capability}. \\
-    \hline
-\end{styledxltabular}
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.32\textwidth}|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{Nilai Konfigurasi Hasil Publikasi \textit{Smart Contract} DecMed-PGHD}\label{tab:konfigurasi-hasil-publish-sc} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Nilai Konfigurasi} & \textbf{Sumber Nilai} & \textbf{Keterangan} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hiderowcolors
+%     \caption[]{Nilai Konfigurasi Hasil Publikasi \textit{Smart Contract} DecMed-PGHD (lanjutan)}\\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Nilai Konfigurasi} & \textbf{Sumber Nilai} & \textbf{Keterangan} \\
+%     \hline
+%     \showrowcolors
+%     \endhead
+%     \texttt{PUBLISHER\_}\allowbreak\texttt{ADDRESS} & \texttt{iota client active-address} & Alamat IOTA lokal yang digunakan sebagai \textit{sender} transaksi publikasi. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{PACKAGE\_}\allowbreak\texttt{ID} & Hasil publikasi paket Move & Identitas paket Move DecMed-PGHD pada jaringan IOTA\@. Nilai ini diperoleh dari \textit{published package} pada hasil transaksi publikasi. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{MODULE\_}\allowbreak\texttt{ADMIN} & Nama modul pada kode Move & Nama modul \texttt{admin} pada paket DecMed. Nilai ini bukan hasil publikasi, tetapi nama modul yang tetap sama selama nama modul Move tidak diubah. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{MODULE\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{PERSONNEL} & Nama modul pada kode Move & Nama modul \texttt{hospital\_}\allowbreak\texttt{personnel} pada paket DecMed. Nilai ini bukan hasil publikasi, melainkan nama modul yang digunakan untuk membentuk \textit{move call}. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{ADDRESS\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{ADDRESS\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{AddressId} & Objek \textit{shared} yang dibuat oleh fungsi \texttt{init} pada modul \texttt{std\_}\allowbreak\texttt{struct\_}\allowbreak\texttt{address\_}\allowbreak\texttt{id}. Objek ini menyimpan pemetaan alamat IOTA ke identitas terenkode pada sistem DecMed. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{METADATA\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{METADATA\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{HospitalIdMetadata} & Objek \textit{shared} yang menyimpan metadata rumah sakit dan indeks rumah sakit yang terdaftar. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{PERSONNEL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{HOSPITAL\_}\allowbreak\texttt{PERSONNEL\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{HospitalPersonnelIdAccount} & Objek \textit{shared} yang menyimpan akun personel rumah sakit, termasuk data akses yang diberikan oleh pasien. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{PATIENT\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{ID} dan \texttt{DECMED\_}\allowbreak\texttt{PATIENT\_}\allowbreak\texttt{ID\_}\allowbreak\texttt{ACCOUNT\_}\allowbreak\texttt{OBJECT\_}\allowbreak\texttt{VERSION} & Objek bertipe \texttt{PatientIdAccount} & Objek \textit{shared} yang menyimpan akun pasien, metadata RME, metadata PGHD, public key PGHD, dan status validasi PGHD\@. \\
+%     \hline
+%     \texttt{DECMED\_}\allowbreak\texttt{GLOBAL\_}\allowbreak\texttt{ADMIN\_}\allowbreak\texttt{CAP\_}\allowbreak\texttt{ID} & Objek bertipe \texttt{GlobalAdminCap} & Objek \textit{owned capability} yang dibuat oleh fungsi \texttt{init} pada modul \texttt{shared} dan dikirim ke \textit{publisher}. \textit{Capability} ini digunakan untuk operasi administratif yang memerlukan otorisasi admin global. \\
+%     \hline
+%     \texttt{GLOBAL\_}\allowbreak\texttt{ADMIN\_}\allowbreak\texttt{IOTA\_}\allowbreak\texttt{ADDRESS} dan \texttt{GLOBAL\_}\allowbreak\texttt{ADMIN\_}\allowbreak\texttt{IOTA\_}\allowbreak\texttt{KEY\_}\allowbreak\texttt{PAIR} & Akun pemilik \texttt{GlobalAdminCap} & Alamat dan keypair akun yang memiliki \texttt{GlobalAdminCap}. Pada publikasi awal, nilainya sama dengan akun \textit{publisher}. Jika \textit{capability} ditransfer, nilai ini mengikuti akun penerima \textit{capability}. \\
+%     \hline
+% \end{styledxltabular}
 
-Setelah nilai-nilai tersebut diperoleh, seluruh konfigurasi komponen harus diperbarui agar menunjuk ke hasil publikasi yang sama.
-Konfigurasi yang perlu diperbarui meliputi konstanta pada PRE, \textit{client ministry}, \textit{client} tenaga kesehatan, \textit{client} pasien Tauri, serta file \texttt{.env} dan \texttt{.env.example} pada \textit{client} Android PGHD\@.
-Jika salah satu komponen masih memakai \textit{package ID}, \textit{object ID}, atau \texttt{GlobalAdminCap} lama, transaksi dapat gagal karena membaca \textit{state} lama, menggunakan objek dari jaringan berbeda, atau ditandatangani oleh akun yang tidak memiliki \textit{capability} yang dibutuhkan.
+% Setelah nilai-nilai tersebut diperoleh, seluruh konfigurasi komponen harus diperbarui agar menunjuk ke hasil publikasi yang sama.
+% Konfigurasi yang perlu diperbarui meliputi konstanta pada PRE, \textit{client ministry}, \textit{client} tenaga kesehatan, \textit{client} pasien Tauri, serta file \texttt{.env} dan \texttt{.env.example} pada \textit{client} Android PGHD\@.
+% Jika salah satu komponen masih memakai \textit{package ID}, \textit{object ID}, atau \texttt{GlobalAdminCap} lama, transaksi dapat gagal karena membaca \textit{state} lama, menggunakan objek dari jaringan berbeda, atau ditandatangani oleh akun yang tidak memiliki \textit{capability} yang dibutuhkan.
 
 \subsubsection{Konfigurasi IOTA Gas Station}
 
@@ -211,7 +211,7 @@ IOTA_GAS_RESERVE_SECONDS=10
 \subsubsection{Konfigurasi IPFS}
 
 \textit{Payload} PGHD terenkripsi disimpan pada IPFS\@. 
-\textit{Client} lokal dan PRE mengakses IPFS melalui SSH tunneling ke API Kubo di server. 
+\textit{Client} lokal dan PRE mengakses IPFS melalui SSH \textit{tunneling} ke API Kubo di server. 
 Konfigurasi dari kluster IPFS didefinisikan dalam suatu \textit{docker-compose file}. 
 Untuk menjalankan kluster IPFS dengan konfigurasi yang telah dijelaskan, digunakan perintah \texttt{docker compose up} pada \textit{directory} tempat \textit{docker-compose file} berada.
 
@@ -219,12 +219,12 @@ Untuk menjalankan kluster IPFS dengan konfigurasi yang telah dijelaskan, digunak
 IPFS_API_URL=http://127.0.0.1:5001
 \end{lstlisting}
 
-Pada implementasi ini, IPFS digunakan sebagai penyimpanan payload terenkripsi dan metadata hasil submit PGHD\@. 
+Pada implementasi ini, IPFS digunakan sebagai penyimpanan \textit{payload} terenkripsi dan metadata hasil submit PGHD\@. 
 Hash atau CID hasil penyimpanan kemudian disimpan pada metadata \textit{on-chain}.
 
 \subsubsection{Konfigurasi Proxy Re-encryption}
 
-PRE berfungsi sebagai komponen \textit{backend} yang melakukan verifikasi signature PGHD, penyimpanan payload terenkripsi ke IPFS, pembuatan cfrag untuk proses \textit{re-encryption}, serta komunikasi dengan \textit{smart contract} IOTA\@. 
+PRE berfungsi sebagai komponen \textit{backend} yang melakukan verifikasi signature PGHD, penyimpanan \textit{payload} terenkripsi ke IPFS, pembuatan \texttt{cfrag} untuk proses \textit{re-encryption}, serta komunikasi dengan \textit{smart contract} IOTA\@. 
 PRE dijalankan sebagai \textit{service} Rust berbasis Axum. 
 PRE membutuhkan konfigurasi alamat IOTA, \textit{object} ID \textit{smart contract}, \textit{endpoint} IPFS, \textit{endpoint} Gas Station, serta Redis.
 

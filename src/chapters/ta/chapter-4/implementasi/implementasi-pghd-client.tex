@@ -1,6 +1,6 @@
 \subsection{Implementasi \textit{Client} Android PGHD Pasien}
 
-\textit{Client} Android PGHD pasien diimplementasikan sebagai aplikasi Android native menggunakan Kotlin. 
+\textit{Client} Android PGHD pasien diimplementasikan sebagai aplikasi Android \textit{native} menggunakan Kotlin. 
 \textit{Client} ini berfungsi sebagai antarmuka pasien untuk melakukan registrasi akun PGHD, masuk ke akun pasien, mengumpulkan data kesehatan, membentuk \textit{batch} PGHD, mengirim \textit{batch} PGHD ke PRE melalui endpoint submit PGHD pada Subbab~\ref{subsubsec:pre-endpoint-pghd-submit}, serta memberikan atau mencabut akses kepada tenaga kesehatan melalui endpoint penyimpanan dan pencabutan key pada Subbab~\ref{subsubsec:pre-endpoint-keys} dan Subbab~\ref{subsubsec:pre-endpoint-keys-revoke}. Berbeda dari \textit{client} pasien DecMed lama yang menggunakan Tauri, \textit{client} PGHD pasien diimplementasikan secara native agar dapat mengakses API Android seperti Health Connect, sensor perangkat, kamera, WorkManager, dan penyimpanan lokal Android secara langsung.
 
 Pada implementasi ini, Health Connect digunakan sebagai API sistem operasi Android untuk mengakses data yang berasal dari aplikasi kesehatan lain dan juga \textit{wearable device}. 
@@ -10,10 +10,11 @@ Data tersebut disinkronkan oleh aplikasi Mi Fitness ke Health Connect, kemudian 
 
 Secara garis besar, \textit{client} Android PGHD terdiri atas beberapa halaman utama yang dijelaskan sebagai berikut.
 
-% \subsubsection{Halaman Persetujuan Penggunaan Aplikasi}
+\subsubsection{Halaman Persetujuan Penggunaan Aplikasi}
 
-% Halaman persetujuan penggunaan aplikasi digunakan untuk menampilkan informasi awal dan persetujuan sebelum pasien menggunakan aplikasi. 
-% Halaman ini menjadi titik awal agar pasien memahami bahwa aplikasi akan membaca dan mengelola data kesehatan yang berasal dari perangkat Android maupun sumber eksternal seperti Health Connect.
+Halaman persetujuan penggunaan aplikasi digunakan untuk menampilkan informasi awal dan persetujuan sebelum pasien menggunakan aplikasi. 
+Halaman ini menjadi titik awal agar pasien memahami bahwa aplikasi akan membaca dan mengelola data kesehatan yang berasal dari perangkat Android maupun sumber eksternal seperti Health Connect, mengumpulkan data dan informasi mengenai pasien.
+Tampilan halaman permintaan persetujuan dapat dilihat pada Gambar~\ref{halaman-persetujuan-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Halaman \textit{Register}}
 
@@ -140,159 +141,26 @@ Jika izin belum diberikan, aplikasi menampilkan dialog penjelasan dan meminta pa
 
 Konversi data sensor perangkat Android ke tipe data kesehatan PGHD dilakukan oleh komponen \texttt{AndroidSensorPghdMapper}. Hasil konversi tersebut juga digunakan sebagai daftar pilihan pada halaman pengaturan sensor. 
 Pada implementasi ini, nilai mentah seperti komponen sumbu akselerometer, giroskop, magnetometer, atau vektor rotasi tidak dikirim sebagai PGHD utama karena nilai tersebut sulit dipahami langsung sebagai data kesehatan oleh tenaga kesehatan. 
-Konversi yang tersedia pada implementasi dapat dilihat pada Tabel~\ref{tab:implementasi-konversi-sensor-pghd}.
+Konversi yang tersedia pada implementasi dapat dilihat pada Tabel~\ref{tab:implementasi-konversi-sensor-pghd} di Lampiran~\ref{app:implementasi-tipe-data-contoh-pghd}.
 Konversi ini hanyalah bersifat \textit{prototipe} dan tidak mencerminkan keseluruhan konversi dan jenis data yang seharusnya diterima oleh tenaga kesehatan.
-
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Konversi sensor Android ke tipe data kesehatan PGHD}\label{tab:implementasi-konversi-sensor-pghd} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Sensor Android} & \textbf{Tipe data PGHD} & \textbf{Satuan} & \textbf{Metode dan pertimbangan} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Sensor Android} & \textbf{Tipe data PGHD} & \textbf{Satuan} & \textbf{Metode dan pertimbangan} \\
-    \hline
-    \endhead
-    \hline
-    \endfoot
-    \hline
-    \endlastfoot
-
-    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}RATE} &
-    \texttt{heart\_\allowbreak{}rate} &
-    \texttt{bpm} &
-    Nilai detak jantung dibaca langsung dari sensor sehingga dapat dipahami sebagai data vital pasien. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}BEAT} &
-    \texttt{heart\_\allowbreak{}beat}, \texttt{heart\_\allowbreak{}rate\_\allowbreak{}variability} &
-    \texttt{event}, \texttt{ms} &
-    Event heartbeat dicatat sebagai kejadian, sedangkan interval antar heartbeat dapat digunakan sebagai estimasi HRV apabila tersedia. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}DETECTOR} &
-    \texttt{steps} &
-    \texttt{count} &
-    Setiap event sensor dihitung sebagai satu langkah. Data ini mudah dipahami sebagai indikator aktivitas fisik. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}COUNTER} &
-    \texttt{steps}, \texttt{steps\_\allowbreak{}cadence} &
-    \texttt{count}, \texttt{steps/min} &
-    Nilai kumulatif step counter diubah menjadi delta langkah. Cadence dihitung dari delta langkah terhadap selisih waktu. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}SIGNIFICANT\_\allowbreak{}MOTION}, \texttt{TYPE\_\allowbreak{}STATIONARY\_\allowbreak{}DETECT}, \texttt{TYPE\_\allowbreak{}MOTION\_\allowbreak{}DETECT} &
-    \texttt{activity\_\allowbreak{}event} &
-    \texttt{event} &
-    Event gerak digunakan sebagai indikator perubahan status aktivitas, misalnya dari diam ke bergerak atau sebaliknya. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}PRESSURE} &
-    \texttt{barometric\_\allowbreak{}pressure}, \texttt{elevation\_\allowbreak{}estimate}, \texttt{elevation\_\allowbreak{}gained}, \texttt{floors\_\allowbreak{}climbed} &
-    \texttt{hPa}, \texttt{m}, \texttt{floors} &
-    Tekanan barometrik dibaca langsung. Elevasi, kenaikan elevasi, dan estimasi lantai diturunkan dari perubahan tekanan untuk konteks aktivitas seperti naik tangga. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}LIGHT} &
-    \texttt{ambient\_\allowbreak{}light} &
-    \texttt{lux} &
-    Intensitas cahaya sekitar digunakan sebagai konteks lingkungan, misalnya paparan cahaya yang dapat berkaitan dengan pola tidur atau aktivitas. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}AMBIENT\_\allowbreak{}TEMPERATURE} &
-    \texttt{environmental\_\allowbreak{}temperature} &
-    \texttt{C} &
-    Suhu yang dicatat adalah suhu lingkungan, bukan suhu tubuh. Data ini digunakan sebagai konteks lingkungan pasien. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}RELATIVE\_\allowbreak{}HUMIDITY} &
-    \texttt{environmental\_\allowbreak{}humidity} &
-    \texttt{\%} &
-    Kelembapan relatif digunakan sebagai konteks lingkungan, terutama untuk kondisi yang dapat dipengaruhi faktor lingkungan. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}PROXIMITY} &
-    \texttt{proximity} &
-    \texttt{cm} &
-    Jarak objek ke sensor digunakan sebagai konteks pemakaian perangkat, bukan sebagai data klinis langsung. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}LOW\_\allowbreak{}LATENCY\_\allowbreak{}OFFBODY\_\allowbreak{}DETECT} &
-    \texttt{wear\_\allowbreak{}status} &
-    \texttt{state} &
-    Nilai sensor dipetakan menjadi status \texttt{on\_\allowbreak{}body} atau \texttt{off\_\allowbreak{}body} untuk menilai kepatuhan pemakaian perangkat. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}ACCELEROMETER}, \texttt{TYPE\_\allowbreak{}ACCELEROMETER\_\allowbreak{}UNCALIBRATED} &
-    \texttt{movement\_\allowbreak{}intensity} &
-    \texttt{m/s2} &
-    Komponen sumbu mentah tidak dikirim sebagai PGHD utama. Magnitude vektor akselerasi dihitung sebagai indikator intensitas gerak yang lebih mudah dipahami. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}LINEAR\_\allowbreak{}ACCELERATION} &
-    \texttt{movement\_\allowbreak{}intensity} &
-    \texttt{m/s2} &
-    Magnitude akselerasi linear digunakan sebagai indikator intensitas gerak tanpa komponen gravitasi. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}GRAVITY} &
-    \texttt{tilt\_\allowbreak{}angle} &
-    \texttt{degrees} &
-    Vektor gravitasi dikonversi menjadi sudut kemiringan perangkat sebagai konteks postur atau orientasi tubuh/perangkat. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}GYROSCOPE}, \texttt{TYPE\_\allowbreak{}GYROSCOPE\_\allowbreak{}UNCALIBRATED} &
-    \texttt{rotation\_\allowbreak{}intensity} &
-    \texttt{rad/s} &
-    Komponen sumbu mentah tidak dikirim sebagai PGHD utama. Magnitude kecepatan sudut digunakan sebagai indikator intensitas rotasi. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR}, \texttt{TYPE\_\allowbreak{}GAME\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR}, \texttt{TYPE\_\allowbreak{}GEOMAGNETIC\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR} &
-    \texttt{orientation\_\allowbreak{}change} &
-    \texttt{unitless} &
-    Vektor rotasi dikonversi menjadi indikator perubahan orientasi perangkat. Komponen vektor mentah tidak ditampilkan sebagai data kesehatan utama. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}HINGE\_\allowbreak{}ANGLE} &
-    \texttt{device\_\allowbreak{}hinge\_\allowbreak{}angle} &
-    \texttt{degrees} &
-    Sudut engsel perangkat lipat dicatat sebagai konteks penggunaan perangkat apabila sensor tersedia. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}MAGNETIC\_\allowbreak{}FIELD}, \texttt{TYPE\_\allowbreak{}MAGNETIC\_\allowbreak{}FIELD\_\allowbreak{}UNCALIBRATED} &
-    Tidak dikonversi menjadi PGHD &
-    \- &
-    Nilai medan magnet mentah tidak mudah dipahami sebagai data kesehatan oleh tenaga kesehatan, sehingga sensor ini ditampilkan tetapi dinonaktifkan pada pengaturan pengumpulan PGHD\@. \\
-    \hline
-
-    Sensor lain tanpa pemetaan PGHD &
-    Tidak dikonversi menjadi PGHD &
-    \- &
-    Sensor tetap dapat ditampilkan sebagai informasi perangkat, tetapi tidak dapat dipilih untuk pengumpulan PGHD apabila belum memiliki konversi yang bermakna sebagai data kesehatan. \\
-    \hline
-\end{styledxltabular}
 
 \subsubsection{Pembentukan dan Pengiriman Batch PGHD}
 
 Data PGHD tidak dikirim satu per satu ke PRE\@. 
 \textit{Client} membentuk \textit{batch} agar data \textit{time-series} dari sensor dan \textit{wearable} tidak menghasilkan transaksi berlebihan. 
-\textit{Batch} dapat terbentuk karena empat \textit{trigger} implementasi, yaitu \textit{trigger} periodik, \textit{trigger} ukuran data, \textit{trigger} manual, dan \textit{trigger} ketika koneksi tersedia kembali setelah perangkat offline. 
-Pada implementasi ini, \textit{trigger} periodik dijalankan minimum setiap 15 menit, sedangkan batas ukuran yang digunakan untuk \textit{trigger} ukuran adalah 10 MB\@.
+\textit{Batch} dapat terbentuk karena empat \textit{trigger} implementasi, yaitu \textit{trigger} periodik, \textit{trigger} ukuran data, \textit{trigger} manual, dan \textit{trigger} ketika koneksi tersedia kembali setelah perangkat \textit{offline}. 
+Pada implementasi ini, \textit{trigger} periodik dijalankan minimum setiap 15 menit, sedangkan batas ukuran yang digunakan untuk \textit{trigger} ukuran adalah 1 MB\@.
 Pemilihan ini didasarkan pada rekomendasi dari API Health Connect untuk mengirimkan data ke Health Connect setiap 15 menit sekali \parencite{android_hc_write}.
-Pemilihan ukuran 10 MB dipertimbangkan agar frekuensi pengiriman data tidak terlalu sering jika ukuran terlalu kecil, tapi juga untuk mencegah data terlalu besar ketika transmisi atau pengolahan di PRE dan IPFS\@.
+Pemilihan ukuran 1 MB dipertimbangkan saat proses implementasi agar ukuran \textit{request} tidak terlalu besar dan data yang dikirim terlalu panjang (\textit{response error} 413).
 Nilai ini bisa diubah di konfigurasi \texttt{.env} di \textit{client} Android PGHD\@.
 
-Ketika \textit{batch} dibuat, data PGHD dikonversi menjadi payload PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. 
+Ketika \textit{batch} dibuat, data PGHD dikonversi menjadi \textit{payload} PGHD sesuai rancangan Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. 
 \textit{Client} langsung mengenkripsi \textit{plaintext} \textit{batch} menggunakan AES-GCM\@. 
 Setelah terbentuk \texttt{enc\_pghd}, \textit{client} menghitung \texttt{h\_cipher} dan membuat \texttt{signature} atas \texttt{h\_cipher} menggunakan kunci tanda tangan PGHD pasien. 
-Kunci AES yang digunakan untuk payload PGHD dienkripsi dengan mekanisme PRE sehingga dapat dibuka kembali oleh tenaga kesehatan yang telah menerima akses. 
-Setelah \textit{envelope} PGHD terbentuk, \textit{client} mengirimkan data ke endpoint submit PGHD pada PRE yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-submit}. 
+Kunci AES yang digunakan untuk \textit{payload} PGHD dienkripsi dengan mekanisme PRE sehingga dapat dibuka kembali oleh tenaga kesehatan yang telah menerima akses. 
+Setelah \textit{envelope} PGHD terbentuk, \textit{client} mengirimkan data ke \textit{endpoint} submit PGHD pada PRE yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-submit}. 
 Jika perangkat tidak memiliki koneksi internet, data tetap berada pada basis data lokal dan akan dikirim ketika koneksi tersedia kembali. 
+Pemantauan kondisi internet menggunakan \textit{built-in library} \texttt{NetworkManager} dan \texttt{NetworkCapabilities}.
 Jika pengiriman gagal karena alasan selain koneksi, \textit{batch} ditandai gagal dan pasien dapat mengirim ulang secara manual melalui halaman \textit{batch} PGHD\@.
 
 \subsubsection{Pemberian dan Pencabutan Akses}

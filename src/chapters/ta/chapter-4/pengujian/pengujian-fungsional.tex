@@ -32,9 +32,9 @@ Satu skenario dapat mencakup beberapa kebutuhan yang terjadi dalam satu alur, te
     \hline
     T-F04 & F04 & Pasien membuka halaman \textit{record} dan \textit{batch} setelah proses koleksi serta pengiriman. & Aplikasi menampilkan sumber, waktu, jumlah \textit{record}, identitas \textit{batch}, dan status pengiriman. \\
     \hline
-    T-F05 & F05 & PGHD dikumpulkan dari minimal dua sumber, misalnya Health Connect dan input manual, lalu isi \textit{payload} diperiksa. & \textit{Payload} mempertahankan identitas pasien, waktu, sumber, perangkat/aplikasi, metode pencatatan, dan status validasi yang tersedia. \\
+    T-F05 & F05 & PGHD dikumpulkan dari data sensor perangkat, \textit{wearable} melalui Health Connect dan input manual, lalu isi \textit{payload} diperiksa. & \textit{Payload} mempertahankan identitas pasien, waktu, sumber, perangkat/aplikasi, metode pencatatan, dan status validasi yang tersedia. \\
     \hline
-    T-F06 & F06 & Pasien memindai identitas/PRE \textit{public key} tenaga kesehatan dan memberikan akses \texttt{READ\_\allowbreak{}PGHD}. & \textit{Grant} untuk pasangan pasien-tenaga kesehatan tercatat dan material akses sementara dibentuk. \\
+    T-F06 & F06 & Pasien memindai identitas/PRE \textit{public key} tenaga kesehatan dan memberikan akses \texttt{READ\_\allowbreak{}PGHD}. & \textit{Grant} untuk pasangan pasien-tenaga kesehatan tercatat dan tenaga kesehatan dapat membuka PGHD\@. \\
     \hline
     T-F07 & F07 & Tenaga kesehatan dengan \textit{grant} aktif membuka daftar PGHD pasien. & Daftar \textit{metadata} PGHD valid milik pasien yang sesuai ditampilkan. \\
     \hline
@@ -46,5 +46,3 @@ Satu skenario dapat mencakup beberapa kebutuhan yang terjadi dalam satu alur, te
     \hline
 \end{styledxltabular}
 
-Skenario T-F01--T-F10 berfungsi sebagai pengujian sistem dari perspektif pengguna.
-Logika negatif yang deterministik, seperti tipe akses salah, pasien berbeda, akses kedaluwarsa, dan status data \textit{invalid}, diuji lebih rinci pada pengujian \textit{smart contract}.
