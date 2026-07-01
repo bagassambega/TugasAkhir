@@ -79,6 +79,7 @@ Dari sisi server, mekanisme penjaminan ketersediaan pada arsitektur DecMed-PGHD 
 Pertama, \textit{batching} di sisi klien mengurangi frekuensi pengiriman ke komponen server menjadi jumlah pengiriman dengan interval yang terkontrol, sehingga beban yang diterima server bukan merupakan aliran data kontinu melainkan \textit{request} dalam jumlah yang dapat diprediksi. 
 Kedua, penyimpanan \textit{ciphertext} PGHD didelegasikan ke IPFS sebagai lapisan penyimpanan \textit{off-chain} yang terdistribusi, sehingga tidak terdapat titik penyimpanan terpusat yang dapat menjadi \textit{bottleneck} saat banyak \textit{batch} masuk secara bersamaan. 
 Selain itu, server \textit{proxy reencryption} juga dapat di-\textit{deploy} dalam \textit{node} jumlah banyak karena PRE bersifat \textit{stateless}.
+% Kalau mau bikin node baru untuk PRE, harus daftarkan iota address client node itu supaya punya ProxyCap
 Ketiga, penulisan metadata dikontrol oleh IOTA sehingga server sistem tidak terbebani untuk mengolah metadata terlebih dahulu.
 
 % \subsubsection{Keterlacakan Ancaman dan Solusi Terpilih}

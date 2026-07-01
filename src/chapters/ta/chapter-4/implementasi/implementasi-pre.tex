@@ -291,6 +291,7 @@ Jika hash berbeda, \textit{request} ditolak karena \textit{ciphertext} tidak sam
 Setelah hash valid, PRE mengambil \textit{public key} PGHD pasien dari \textit{smart contract} atau cache Redis dan memverifikasi \texttt{signature} atas \texttt{h\_cipher}.
 Jika \textit{signature} valid, PRE menyimpan \textit{ciphertext} ke IPFS, memperoleh CID, membentuk metadata PGHD yang berisi \textit{batch} ID, capsule, CID, hash, \textit{signature}, dan metadata waktu, lalu mencatat metadata tersebut ke \textit{smart contract} melalui fungsi \texttt{submit\_pghd}. \textit{Response} mengembalikan \texttt{batch\_id} dan CID IPFS\@.
 
+
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
     \caption{Spesifikasi \textit{Endpoint} POST /pghd/submit pada PRE}\label{tab:pre-endpoint-pghd-submit} \\
