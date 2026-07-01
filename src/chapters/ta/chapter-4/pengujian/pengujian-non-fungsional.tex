@@ -93,7 +93,7 @@ Tindakan pemberian akses, pencabutan akses, pengiriman, dan invalidasi juga dipe
 Pengujian menghasilkan 151.200 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengolahan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
 Beban tersebut dihitung dari konfigurasi interval pengumpulan \textit{default} satu menit pada \textit{client} Android, sehingga satu \textit{stream} sensor menghasilkan \(24 \times 60 = 1.440\) \textit{record} per hari.
 Rata-rata jumlah sensor pada perangkat \textit{mobile} adalah 15 sensor \parencite{fortunebusinessinsightsSensorsSmartphones}.
-Skenario uji memakai asumsi \textit{backlog} tujuh hari dan 15 data \textit{stream} PGHD yang dihasilkan oleh 15 buah sensor, sehingga jumlah \textit{record} yang diuji adalah \(1.440 \times 7 \times 15 = 40.320\).
+Skenario uji memakai asumsi \textit{backlog} tujuh hari dan 15 data \textit{stream} PGHD yang dihasilkan oleh 15 buah sensor, sehingga jumlah \textit{record} yang diuji adalah \(1.440 \times 7 \times 15 = 151.200\).
 Asumsi tujuh hari digunakan sebagai skenario keterlambatan sinkronisasi mingguan yang lebih berat dari operasi harian.
 Dalam pengujian unit, 151.200 \textit{record} tersebut di-\textit{generate} dalam jumlah 600 \textit{records} per detik.
 Skenario berhasil apabila tidak ada \textit{record} hilang, aplikasi tidak \textit{crash}, jumlah operasi eksternal sesuai strategi pengelolaan volume yang telah dirancang, dan server dapat menerima seluruh \textit{requests} pengiriman PGHD dari pasien.
