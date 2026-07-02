@@ -9,6 +9,16 @@ Daftar \textit{module} yang relevan dengan sistem DecMed-PGHD secara keseluruhan
 Secara garis besar, \textit{package} \texttt{decmed} terdiri atas lima \textit{module} utama dan \textit{module} struktur data serta enum. 
 \textit{Module} utama tersebut adalah \texttt{decmed::patient}, \texttt{decmed::hospital\_personnel}, \texttt{decmed::admin}, \texttt{decmed::proxy}, dan \texttt{decmed::shared}.
 
+Diagram kelas utama pada \textit{smart contract} IOTA dapat dilihat pada Gambar~\ref{fig:diagram-modul-iota-pghd}.
+Diagram tersebut menunjukkan relasi antara \textit{module} Move utama dan struktur on-chain penting seperti \texttt{PatientAccount}, \texttt{PatientPghdStore}, \texttt{PatientPghdMetadata}, \texttt{HospitalPersonnelAccount}, \texttt{HospitalPersonnelAccessData}, dan \texttt{PatientAccessLog}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-iota-pghd.png}
+    \caption{Diagram Kelas \textit{Smart Contract} IOTA PGHD}\label{fig:diagram-modul-iota-pghd}
+\end{figure}
+
+
 \subsubsection{\textit{Module} \texttt{decmed::patient}}\label{subsubsec:sc-module-patient}
 
 \textit{Module} \texttt{decmed::patient} berisi \textit{method} yang dapat dieksekusi oleh pasien. 

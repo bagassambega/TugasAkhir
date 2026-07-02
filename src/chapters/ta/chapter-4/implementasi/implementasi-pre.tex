@@ -13,6 +13,16 @@ PRE menggunakan Redis untuk menyimpan material akses sementara, seperti token ak
 Material tersebut memiliki waktu kedaluwarsa sehingga akses yang diberikan pasien tidak dapat digunakan di luar periode yang ditentukan. 
 PRE juga menggunakan IOTA Gas Station ketika perlu membuat transaksi IOTA bersponsor.
 
+Diagram kelas utama pada PRE dapat dilihat pada Gambar~\ref{fig:diagram-modul-pre-pghd}.
+Diagram tersebut menunjukkan kelas dan struktur utama yang menangani HTTP handler, state aplikasi, cache Redis, DTO PGHD, pemanggilan IOTA, utilitas IPFS/gas station, material akses, dan pemetaan error.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-pre-pghd.png}
+    \caption{Diagram Kelas PRE PGHD}\label{fig:diagram-modul-pre-pghd}
+\end{figure}
+
+
 \subsubsection{\textit{Endpoint} \texttt{GET /health}}\label{subsubsec:pre-endpoint-health}
 
 \textit{Endpoint} ini berfungsi untuk memeriksa apakah \textit{service} PRE dapat menerima \textit{request}. 

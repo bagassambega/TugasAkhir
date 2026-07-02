@@ -70,7 +70,7 @@ Pengiriman murni periodik cocok ketika yang dibutuhkan adalah aliran data yang s
 Sebaliknya, pengiriman murni \textit{event-driven} dapat mengurangi jumlah pengiriman pada kondisi normal, tetapi bisa menghasilkan lonjakan pengiriman data ketika \textit{event} sering terjadi dan sulit dikendalikan beban jaringan maupun konsumsi daya. 
 
 Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah kombinasi antara pengiriman periodik dan \textit{event-driven}. 
-Pengiriman utama dilakukan secara periodik, sehingga pola pengiriman tetap stabil dan deret waktu PGHD dapat dibentuk dengan baik.
+Pengiriman dilakukan secara periodik, sehingga pola pengiriman tetap stabil dan deret waktu PGHD dapat dibentuk dengan baik.
 Selain itu, klien pasien memantau ukuran data yang terkumpul, dan jika ukuran \textit{batch} melebihi batas tertentu sebelum interval waktu berikutnya, klien dapat memicu pengiriman lebih awal (\textit{early trigger}) berbasis ukuran data.
 
 Dengan metode ini, \textit{event} yang digunakan bukanlah \textit{event} klinis (misalnya nilai sensor melewati ambang kesehatan tertentu), tetapi \textit{event} sistem berupa ukuran data yang terlalu besar. 

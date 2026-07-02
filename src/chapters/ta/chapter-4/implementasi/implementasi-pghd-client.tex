@@ -3,6 +3,21 @@
 \textit{Client} Android PGHD pasien diimplementasikan sebagai aplikasi Android \textit{native} menggunakan Kotlin. 
 \textit{Client} ini berfungsi sebagai antarmuka pasien untuk melakukan registrasi akun PGHD, masuk ke akun pasien, mengumpulkan data kesehatan, membentuk \textit{batch} PGHD, mengirim \textit{batch} PGHD ke PRE melalui endpoint submit PGHD pada Subbab~\ref{subsubsec:pre-endpoint-pghd-submit}, serta memberikan atau mencabut akses kepada tenaga kesehatan melalui endpoint penyimpanan dan pencabutan key pada Subbab~\ref{subsubsec:pre-endpoint-keys} dan Subbab~\ref{subsubsec:pre-endpoint-keys-revoke}. Berbeda dari \textit{client} pasien DecMed lama yang menggunakan Tauri, \textit{client} PGHD pasien diimplementasikan secara native agar dapat mengakses API Android seperti Health Connect, sensor perangkat, kamera, WorkManager, dan penyimpanan lokal Android secara langsung.
 
+Gambar~\ref{fig:diagram-kelas-client-android-pghd-pengumpulan} menunjukkan kelas-kelas untuk mekanisme pengumpulan, normalisasi, dan penyimpanan data PGHD dari Health Connect maupun sensor perangkat.
+Gambar~\ref{fig:diagram-kelas-client-android-pghd-pengiriman} menunjukkan kelas-kelas mekanisme pembentukan \textit{batch}, enkripsi, pengiriman ke PRE, dan pemberian atau pencabutan akses melalui IOTA\@.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-kelas-client-android-pghd-pengumpulan.png}
+    \caption{Diagram Kelas Pengumpulan Data pada \textit{Client} Android PGHD}\label{fig:diagram-kelas-client-android-pghd-pengumpulan}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-kelas-client-android-pghd-pengiriman.png}
+    \caption{Diagram Kelas Pembentukan dan Pengiriman \textit{Batch} pada \textit{Client} Android PGHD}\label{fig:diagram-kelas-client-android-pghd-pengiriman}
+\end{figure}
+
 Pada implementasi ini, Health Connect digunakan sebagai API sistem operasi Android untuk mengakses data yang berasal dari aplikasi kesehatan lain dan juga \textit{wearable device}. 
 Health Connect menyediakan tipe data kesehatan terstruktur beserta metadata sumber data, perangkat, dan metode pencatatan. 
 Data \textit{wearable} yang digunakan pada pengujian berasal dari \textit{smart band} yang kemudian dihubungkan dengan aplikasi \textit{properiatery} milik Xiaomi Fitness untuk mengambil datanya. 

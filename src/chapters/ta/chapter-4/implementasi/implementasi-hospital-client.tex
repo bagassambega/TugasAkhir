@@ -9,6 +9,16 @@ Tenaga kesehatan menggunakan \textit{activation key} tersebut untuk mengaktifkan
 QR akses berisi alamat IOTA tenaga kesehatan dan \textit{public key} PRE tenaga kesehatan. 
 QR inilah yang kemudian dipindai oleh \textit{client} Android pasien ketika pasien memberikan akses.
 
+Diagram kelas utama pada \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{fig:diagram-modul-client-tenaga-kesehatan-pghd}.
+Diagram tersebut menunjukkan relasi antara \textit{state} Svelte, \textit{command} Tauri, gateway IOTA, utilitas pemanggilan PRE, DTO, dan alur verifikasi serta dekripsi PGHD.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-client-tenaga-kesehatan-pghd.png}
+    \caption{Diagram Kelas \textit{Client} Tenaga Kesehatan PGHD}\label{fig:diagram-modul-client-tenaga-kesehatan-pghd}
+\end{figure}
+
+
 \subsubsection{Halaman Aktivasi}
 
 Halaman aktivasi digunakan untuk memasukkan \textit{activation key} dan data aktivasi akun rumah sakit atau tenaga kesehatan. 
