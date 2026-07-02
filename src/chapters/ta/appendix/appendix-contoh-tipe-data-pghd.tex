@@ -28,55 +28,49 @@
     \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}BEAT} &
     \texttt{heart\_\allowbreak{}beat}, \texttt{heart\_\allowbreak{}rate\_\allowbreak{}variability} &
     \texttt{event}, \texttt{ms} &
-    Event heartbeat dicatat sebagai kejadian, sedangkan interval antar heartbeat dapat digunakan sebagai estimasi HRV apabila tersedia. \\
+    Interval antar \textit{heartbeat} dapat digunakan sebagai estimasi HRV apabila tersedia. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}DETECTOR} &
     \texttt{steps} &
     \texttt{count} &
-    Setiap event sensor dihitung sebagai satu langkah. Data ini mudah dipahami sebagai indikator aktivitas fisik. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}COUNTER} &
-    \texttt{steps}, \texttt{steps\_\allowbreak{}cadence} &
-    \texttt{count}, \texttt{steps/min} &
-    Nilai kumulatif step counter diubah menjadi delta langkah. Cadence dihitung dari delta langkah terhadap selisih waktu. \\
+    Penghitungan jumlah langkah. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}SIGNIFICANT\_\allowbreak{}MOTION}, \texttt{TYPE\_\allowbreak{}STATIONARY\_\allowbreak{}DETECT}, \texttt{TYPE\_\allowbreak{}MOTION\_\allowbreak{}DETECT} &
     \texttt{activity\_\allowbreak{}event} &
     \texttt{event} &
-    Event gerak digunakan sebagai indikator perubahan status aktivitas, misalnya dari diam ke bergerak atau sebaliknya. \\
+    \textit{Event} gerak digunakan sebagai indikator perubahan status aktivitas, misalnya dari diam ke bergerak atau sebaliknya. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}PRESSURE} &
     \texttt{barometric\_\allowbreak{}pressure}, \texttt{elevation\_\allowbreak{}estimate}, \texttt{elevation\_\allowbreak{}gained}, \texttt{floors\_\allowbreak{}climbed} &
     \texttt{hPa}, \texttt{m}, \texttt{floors} &
-    Tekanan barometrik dibaca langsung. Elevasi, kenaikan elevasi, dan estimasi lantai diturunkan dari perubahan tekanan untuk konteks aktivitas seperti naik tangga. \\
+    Tekanan barometrik. Elevasi, kenaikan elevasi, dan estimasi lantai diturunkan dari perubahan tekanan untuk aktivitas seperti naik tangga. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}LIGHT} &
     \texttt{ambient\_\allowbreak{}light} &
     \texttt{lux} &
-    Intensitas cahaya sekitar digunakan sebagai konteks lingkungan, misalnya paparan cahaya yang dapat berkaitan dengan pola tidur atau aktivitas. \\
+    Intensitas cahaya lingkungan yang dapat berkaitan dengan pola tidur atau aktivitas. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}AMBIENT\_\allowbreak{}TEMPERATURE} &
     \texttt{environmental\_\allowbreak{}temperature} &
     \texttt{C} &
-    Suhu yang dicatat adalah suhu lingkungan, bukan suhu tubuh. Data ini digunakan sebagai konteks lingkungan pasien. \\
+    Suhu lingkungan. Data ini digunakan sebagai konteks lingkungan pasien. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}RELATIVE\_\allowbreak{}HUMIDITY} &
     \texttt{environmental\_\allowbreak{}humidity} &
     \texttt{\%} &
-    Kelembapan relatif digunakan sebagai konteks lingkungan, terutama untuk kondisi yang dapat dipengaruhi faktor lingkungan. \\
+    Kelembapan relatif lingkungan, terutama untuk kondisi yang dapat dipengaruhi faktor lingkungan. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}PROXIMITY} &
     \texttt{proximity} &
     \texttt{cm} &
-    Jarak objek ke sensor digunakan sebagai konteks pemakaian perangkat, bukan sebagai data klinis langsung. \\
+    Jarak objek ke sensor digunakan sebagai konteks pemakaian perangkat. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}LOW\_\allowbreak{}LATENCY\_\allowbreak{}OFFBODY\_\allowbreak{}DETECT} &
@@ -85,51 +79,9 @@
     Nilai sensor dipetakan menjadi status \texttt{on\_\allowbreak{}body} atau \texttt{off\_\allowbreak{}body} untuk menilai kepatuhan pemakaian perangkat. \\
     \hline
 
-    \texttt{TYPE\_\allowbreak{}ACCELEROMETER}, \texttt{TYPE\_\allowbreak{}ACCELEROMETER\_\allowbreak{}UNCALIBRATED} &
-    \texttt{movement\_\allowbreak{}intensity} &
-    \texttt{m/s2} &
-    Komponen sumbu mentah tidak dikirim sebagai PGHD utama. Magnitude vektor akselerasi dihitung sebagai indikator intensitas gerak yang lebih mudah dipahami. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}LINEAR\_\allowbreak{}ACCELERATION} &
-    \texttt{movement\_\allowbreak{}intensity} &
-    \texttt{m/s2} &
-    Magnitude akselerasi linear digunakan sebagai indikator intensitas gerak tanpa komponen gravitasi. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}GRAVITY} &
-    \texttt{tilt\_\allowbreak{}angle} &
-    \texttt{degrees} &
-    Vektor gravitasi dikonversi menjadi sudut kemiringan perangkat sebagai konteks postur atau orientasi tubuh/perangkat. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}GYROSCOPE}, \texttt{TYPE\_\allowbreak{}GYROSCOPE\_\allowbreak{}UNCALIBRATED} &
-    \texttt{rotation\_\allowbreak{}intensity} &
-    \texttt{rad/s} &
-    Komponen sumbu mentah tidak dikirim sebagai PGHD utama. Magnitude kecepatan sudut digunakan sebagai indikator intensitas rotasi. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR}, \texttt{TYPE\_\allowbreak{}GAME\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR}, \texttt{TYPE\_\allowbreak{}GEOMAGNETIC\_\allowbreak{}ROTATION\_\allowbreak{}VECTOR} &
-    \texttt{orientation\_\allowbreak{}change} &
-    \texttt{unitless} &
-    Vektor rotasi dikonversi menjadi indikator perubahan orientasi perangkat. Komponen vektor mentah tidak ditampilkan sebagai data kesehatan utama. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}HINGE\_\allowbreak{}ANGLE} &
-    \texttt{device\_\allowbreak{}hinge\_\allowbreak{}angle} &
-    \texttt{degrees} &
-    Sudut engsel perangkat lipat dicatat sebagai konteks penggunaan perangkat apabila sensor tersedia. \\
-    \hline
-
-    \texttt{TYPE\_\allowbreak{}MAGNETIC\_\allowbreak{}FIELD}, \texttt{TYPE\_\allowbreak{}MAGNETIC\_\allowbreak{}FIELD\_\allowbreak{}UNCALIBRATED} &
-    Tidak dikonversi menjadi PGHD &
-    \- &
-    Nilai medan magnet mentah tidak mudah dipahami sebagai data kesehatan oleh tenaga kesehatan, sehingga sensor ini ditampilkan tetapi dinonaktifkan pada pengaturan pengumpulan PGHD\@. \\
-    \hline
-
     Sensor lain tanpa pemetaan PGHD &
     Tidak dikonversi menjadi PGHD &
     \- &
-    Sensor tetap dapat ditampilkan sebagai informasi perangkat, tetapi tidak dapat dipilih untuk pengumpulan PGHD apabila belum memiliki konversi yang bermakna sebagai data kesehatan. \\
+    Sensor tetap dapat ditampilkan sebagai informasi perangkat, tetapi tidak dapat dipilih untuk pengumpulan PGHD\@. \\
     \hline
 \end{styledxltabular}

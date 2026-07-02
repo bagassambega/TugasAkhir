@@ -3,10 +3,10 @@
 \section{Kesimpulan}
 
 Pada Tugas Akhir ini, dirancang \textit{pipeline} integrasi \textit{Patient-Generated Health Data} (PGHD) ke dalam kerangka kerja sistem manajemen RME terdesentralisasi (DecMed).
-Pada Tugas Akhir ini, berhasil dirancang mekanisme pengumpulan, penyimpanan, dan distribusi PGHD yang dapat memastikan ketersediaan data meskipun perangkat pasien berada dalam kondisi luring.
+Pada Tugas Akhir ini, berhasil dirancang mekanisme pengumpulan, penyimpanan, dan pengaksesan PGHD yang dapat memastikan ketersediaan data meskipun perangkat pasien berada dalam kondisi luring dan frekuensi volume data yang tinggi.
 Sistem berhasil menjamin kerahasiaan dan integritas data, serta memastikan asal-usul data (\textit{data provenance}) dapat diverifikasi untuk setiap entri yang masuk.
 Mekanisme berbagi data pada sistem juga berhasil memastikan bahwa seluruh akses terhadap PGHD pasien hanya dapat dilakukan setelah pasien memberikan persetujuan aktif dengan batasan waktu tertentu.
-Pengujian \textit{smart contract}, pengujian fungsional, dan pengujian non-fungsional mengonfirmasi bahwa sistem berjalan dengan baik serta memenuhi semua kebutuhan fungsional dan keamanan yang telah didefinisikan.
+Pengujian \textit{smart contract}, pengujian fungsional, dan pengujian non-fungsional berhasil dan sistem berjalan dengan baik serta memenuhi semua kebutuhan fungsional dan non-fungsional yang telah didefinisikan.
 
 \section{Saran}
 
@@ -15,6 +15,5 @@ Aspek-aspek tersebut antara lain:
 \begin{enumerate}
     \item Mendukung mekanisme pengumpulan dan pengiriman data yang lebih adaptif. Misalnya, menyesuaikan frekuensi sinkronisasi data secara otomatis berdasarkan kondisi perangkat pasien seperti status baterai dan kualitas koneksi jaringan.
     \item Merancang mekanisme pemulihan kredensial atau identitas pasien yang lebih mudah digunakan pengguna agar data kesehatan tidak hilang secara permanen apabila pasien kehilangan akses ke perangkat utamanya.
-    \item Mengintegrasikan sistem dengan fitur pemrosesan analitik. Misalnya, mendeteksi tren dan anomali kesehatan pasien secara otomatis berdasarkan PGHD yang masuk tanpa harus mengekspos isi data mentah.
     \item Mengembangkan mekanisme penanganan konkurensi tinggi di sisi server untuk skenario produksi dengan banyak pasien, misalnya dengan mekanisme \textit{async submission}, \textit{job queue}, atau mekanisme \textit{retry}.
 \end{enumerate}

@@ -69,7 +69,7 @@ Untuk itu data akan dikumpulkan (\textit{grouping}) dalam waktu tertentu di sisi
 
 Mekanisme \textit{batching} dapat mengurangi frekuensi pengiriman data yang terlalu sering sehingga \textit{client} pasien tidak \textit{overwhelmed} dan penggunaan IPFS memungkinkan data disimpan di beberapa node sehingga akses tidak hanya terbatas pada satu node saja (T-D01).
 
-Selain itu, ancaman lainnya dalah gangguan konektivitas/layanan (T-D02).
+Selain itu, ancaman lainnya adalah gangguan konektivitas/layanan (T-D02).
 Solusi yang dipilih sama dengan alternatif \textit{pipeline}, yaitu mekanisme \textit{offline first}, di mana data tetap disimpan secara lokal sampai jaringan atau layanan tersedia.
 Data yang dikirimkan mempertahankan status menunggu, tertunda, gagal, atau terkirim sehingga kegagalan tidak langsung menghapus data lokal. 
 Ketika layanan pulih, \textit{batch} data dapat dikirim ulang. 

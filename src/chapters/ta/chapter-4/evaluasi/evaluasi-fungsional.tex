@@ -1,2 +1,45 @@
 \subsection{Evaluasi Pengujian Fungsional}
 
+Hasil pengujian fungsional menunjukkan seluruh skenario berhasil dijalankan.
+Total terdapat sepuluh skenario yang dijalankan, dengan hasil sepuluh skenario berhasil.
+Hasil pengujian dapat dilihat pada Tabel~\ref{tab:hasil-fungsional}.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.10\textwidth}|}
+    \hiderowcolors
+    \caption{Hasil Pengujian Fungsional Sistem DecMed-PGHD}\label{tab:hasil-fungsional} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Hasil yang Diharapkan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Hasil yang Diharapkan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    T-F01 & \textit{Record} otomatis dan manual tersimpan dengan nilai, waktu pengukuran, dan sumber yang sesuai. & \textit{Record} dari Health Connect, sensor perangkat, dan input manual berhasil tersimpan di Room~DB dengan atribut yang lengkap dan benar. & Sukses \\
+    \hline
+    T-F02 & \textit{Record} tetap tersedia pada basis data lokal dan belum ditandai sebagai terkirim. & Setelah perangkat dibuat luring, ditutup, dan dibuka kembali, seluruh \textit{record} masih tersedia di Room~DB dengan status belum terkirim. & Sukses \\
+    \hline
+    T-F03 & \textit{Batch} tetap tersimpan saat luring dan pengiriman dapat dijalankan ketika koneksi tersedia. & \textit{Batch} berhasil terbentuk dari \textit{record} yang ada saat luring dan pengiriman berhasil dijalankan setelah koneksi aktif kembali. & Sukses \\
+    \hline
+    T-F04 & Aplikasi menampilkan sumber, waktu, jumlah \textit{record}, identitas \textit{batch}, dan status pengiriman. & Seluruh informasi ditampilkan pada halaman \textit{record} dan \textit{batch} setelah proses koleksi serta pengiriman selesai. & Sukses \\
+    \hline
+    T-F05 & \textit{Payload} mempertahankan identitas pasien, waktu, sumber, perangkat/aplikasi, metode pencatatan, dan status validasi yang tersedia. & \textit{Payload} PGHD dari ketiga jenis sumber memuat seluruh \textit{field provenance} yang diwajibkan sesuai rancangan. & Sukses \\
+    \hline
+    T-F06 & \textit{Grant} untuk pasangan pasien-tenaga kesehatan tercatat dan tenaga kesehatan dapat membuka PGHD\@. & Setelah pasien memindai kode QR, \textit{grant} \texttt{READ\_PGHD} berhasil tercatat di \textit{smart contract} IOTA dan tenaga kesehatan berhasil mengakses daftar PGHD\@. & Sukses \\
+    \hline
+    T-F07 & Daftar \textit{metadata} PGHD valid milik pasien yang sesuai ditampilkan. & PRE mengembalikan daftar \textit{metadata} PGHD yang tepat hanya kepada tenaga kesehatan yang memiliki \textit{grant} aktif. & Sukses \\
+    \hline
+    T-F08 & Data berhasil diambil, diverifikasi, didekripsi, dan ditampilkan bersama \textit{metadata provenance}. & \textit{Hospital client} berhasil mengambil data dari IPFS melalui PRE, memverifikasi hash dan tanda tangan, mendekripsi dengan AES-GCM, dan menampilkan data beserta \textit{metadata provenance}. & Sukses \\
+    \hline
+    T-F09 & Sistem menolak data, menampilkan peringatan integritas, dan tidak memperlakukannya sebagai PGHD valid. & Seluruh manipulasi pada \textit{ciphertext}, hash, dan tanda tangan berhasil dideteksi. Sistem menolak data dan menampilkan peringatan integritas tanpa memproses data lebih lanjut. & Sukses \\
+    \hline
+    T-F10 & Setelah akses dicabut, permintaan baca ditolak dan tidak menghasilkan \textit{plaintext} atau material dekripsi. & Setelah \textit{grant} dicabut, seluruh permintaan baca PGHD oleh tenaga kesehatan yang sama ditolak oleh PRE tanpa mengembalikan data maupun material kunci. & Sukses \\
+    \hline
+\end{styledxltabular}

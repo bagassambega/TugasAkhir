@@ -350,20 +350,16 @@
     \hline
     \texttt{Patient\allowbreak{}Id\allowbreak{}Account} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}patient\_\allowbreak{}id\_\allowbreak{}account} & \textit{Shared object} berisi tabel registry akun pasien. & Menemukan akun pasien, \textit{public key} PGHD, dan referensi \texttt{pghd\_store\_id}. \\
     \hline
-    \texttt{Patient\allowbreak{}Account} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}patient\_\allowbreak{}account} & Struktur akun pasien yang menyimpan alamat, metadata administratif, metadata RME, \textit{access log}, \textit{public key} PGHD, dan \texttt{pghd\_store\_id}. & Sumber identitas pasien dan referensi ke objek penyimpanan metadata PGHD. \\
+    \texttt{Patient\allowbreak{}Account} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}patient\_\allowbreak{}account} & Struktur akun pasien yang menyimpan alamat, metadata administratif, metadata RME, \textit{access log}, \textit{public key} PGHD, dan \texttt{pghd\_store\_id}. & Sumber identitas pasien dan referensi ke objek penyimpanan metadata PGHD\@. \\
     \hline
-    \texttt{Patient\allowbreak{}Pghd\allowbreak{}Store} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}patient\_\allowbreak{}pghd\_\allowbreak{}store} & \textit{Shared object} per pasien berisi identitas objek, identitas pasien, dan daftar metadata PGHD. & Menyimpan daftar metadata PGHD pasien dan dipakai pada submit, daftar, detail, serta invalidasi PGHD. \\
+    \texttt{Patient\allowbreak{}Pghd\allowbreak{}Store} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}patient\_\allowbreak{}pghd\_\allowbreak{}store} & \textit{Shared object} per pasien berisi identitas objek, identitas pasien, dan daftar metadata PGHD\@. & Menyimpan daftar metadata PGHD pasien dan dipakai pada submit, daftar, detail, serta invalidasi PGHD\@. \\
     \hline
-    \texttt{Patient\allowbreak{}Pghd\allowbreak{}Metadata} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}patient\_\allowbreak{}pghd\_\allowbreak{}metadata} & Struktur metadata berisi \texttt{index}, \texttt{cid}, \texttt{h\_cipher}, \texttt{metadata}, \texttt{status}, \texttt{failure\_reason}, dan \texttt{timestamp}. & Menjadi catatan \textit{on-chain} untuk setiap \textit{batch} PGHD terenkripsi yang disimpan di IPFS. \\
+    \texttt{Patient\allowbreak{}Pghd\allowbreak{}Metadata} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}patient\_\allowbreak{}pghd\_\allowbreak{}metadata} & Struktur metadata berisi \texttt{index}, \texttt{cid}, \texttt{h\_cipher}, \texttt{metadata}, \texttt{status}, \texttt{failure\_reason}, dan \texttt{timestamp}. & Menjadi catatan \textit{on-chain} untuk setiap \textit{batch} PGHD terenkripsi yang disimpan di IPFS\@. \\
     \hline
     \texttt{Hospital\allowbreak{}Personnel\allowbreak{}Id\allowbreak{}Account} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}hospital\_\allowbreak{}personnel\_\allowbreak{}id\_\allowbreak{}account} & \textit{Shared object} berisi tabel registry akun personel fasyankes. & Menyimpan akun tenaga kesehatan dan daftar akses yang diterima dari pasien. \\
     \hline
     \texttt{Hospital\allowbreak{}Personnel\allowbreak{}Access\allowbreak{}Data} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}hospital\_\allowbreak{}personnel\_\allowbreak{}access\_\allowbreak{}data} & Struktur capability akses berisi tipe data akses, masa berlaku, metadata terenkripsi, dan indeks RME opsional. & Menentukan apakah tenaga kesehatan memiliki akses \texttt{Pghd} yang masih aktif terhadap pasien. \\
     \hline
-    \texttt{ProxyCap} & \texttt{shared} & \textit{Shared object} berisi \texttt{id} dan \texttt{proxy\_address}. & Membatasi fungsi pada \texttt{decmed::proxy} agar hanya dapat dipanggil oleh alamat PRE yang terdaftar. \\
-    \hline
-    \texttt{GlobalAdminCap} & \texttt{shared} & Objek capability milik admin global. & Digunakan untuk operasi administratif global dan pembuatan capability proxy setelah publikasi paket. \\
-    \hline
-    \texttt{Hospital\allowbreak{}Id\allowbreak{}Metadata} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}hospital\_\allowbreak{}id\_\allowbreak{}metadata} & \textit{Shared object} berisi metadata rumah sakit dan indeks rumah sakit yang terdaftar. & Menjadi sumber data rumah sakit dan aktivasi personel yang akan menerima akses PGHD. \\
+    \texttt{Hospital\allowbreak{}Id\allowbreak{}Metadata} & \texttt{std\_\allowbreak{}struct\_\allowbreak{}hospital\_\allowbreak{}id\_\allowbreak{}metadata} & \textit{Shared object} berisi metadata rumah sakit dan indeks rumah sakit yang terdaftar. & Menjadi sumber data rumah sakit dan aktivasi personel yang akan menerima akses PGHD\@. \\
     \hline
 \end{styledxltabular}

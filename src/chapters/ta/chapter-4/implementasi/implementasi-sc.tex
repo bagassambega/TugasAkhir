@@ -4,13 +4,12 @@
  Implementasi \textit{smart contract} tetap menggunakan \textit{package} \texttt{decmed}, tetapi \textit{package} tersebut diperluas dengan mekanisme PGHD\@. 
  Perluasan tersebut meliputi penyimpanan \textit{public key} dan pengiriman data PGHD pasien ke IPFS, metadata PGHD, status validasi PGHD, akses \texttt{READ\_PGHD}, dan fungsi invalidasi PGHD\@.
 
-Package \texttt{decmed} dibagi menjadi beberapa \textit{module}. 
-Daftar \textit{module} yang relevan dengan sistem DecMed-PGHD secara keseluruhan dapat dilihat pada Tabel~\ref{tab:lampiran-sc-modules-pghd} di Lampiran~\ref{app:implementasi-smart-contract}. 
+\textit{Package} \texttt{decmed} dibagi menjadi beberapa \textit{module}. 
+Daftar \textit{module} sistem DecMed-PGHD secara keseluruhan dapat dilihat pada Tabel~\ref{tab:lampiran-sc-modules-pghd} di Lampiran~\ref{app:implementasi-smart-contract}. 
 Secara garis besar, \textit{package} \texttt{decmed} terdiri atas lima \textit{module} utama dan \textit{module} struktur data serta enum. 
-\textit{Module} utama tersebut adalah \texttt{decmed::patient}, \texttt{decmed::hospital\_personnel}, \texttt{decmed::admin}, \texttt{decmed::proxy}, dan \texttt{decmed::shared}.
+\textit{Module} tersebut adalah \texttt{decmed::patient}, \texttt{decmed::hospital\_personnel}, \texttt{decmed::admin}, \texttt{decmed::proxy}, dan \texttt{decmed::shared}.
 
-Diagram kelas utama pada \textit{smart contract} IOTA dapat dilihat pada Gambar~\ref{fig:diagram-modul-iota-pghd}.
-Diagram tersebut menunjukkan relasi antara \textit{module} Move utama dan struktur on-chain penting seperti \texttt{PatientAccount}, \texttt{PatientPghdStore}, \texttt{PatientPghdMetadata}, \texttt{HospitalPersonnelAccount}, \texttt{HospitalPersonnelAccessData}, dan \texttt{PatientAccessLog}.
+Diagram kelas pada \textit{smart contract} IOTA dapat dilihat pada Gambar~\ref{fig:diagram-modul-iota-pghd}.
 
 \begin{figure}[htbp]
     \centering
@@ -41,8 +40,6 @@ Daftar \textit{method} pada \textit{module} ini dapat dilihat pada Tabel~\ref{ta
 \textit{Module} ini digunakan untuk membuat rumah sakit, membuat \textit{activation key} admin rumah sakit, melihat daftar rumah sakit, dan memperbarui \textit{activation key}. 
 Daftar \textit{method} \textit{module} ini dapat dilihat pada Tabel~\ref{tab:lampiran-sc-method-admin}.
 
-% Pada sistem DecMed-PGHD, \textit{module} ini tetap digunakan sebagai fondasi administratif agar rumah sakit dan personel fasyankes yang berinteraksi dengan data PGHD berasal dari entitas yang terdaftar.
-
 \subsubsection{\textit{Module} \texttt{decmed::proxy}}\label{subsubsec:sc-module-proxy}
 
 \textit{Module} \texttt{decmed::proxy} berisi \textit{method} yang dipanggil oleh PRE\@. 
@@ -50,10 +47,10 @@ Daftar \textit{method} pada \textit{module} ini dapat dilihat pada Tabel~\ref{ta
 \textit{Module} ini menjadi menghubungkan antara PRE dan \textit{smart contract} karena PRE menggunakan \textit{module} ini untuk membuat capability \textit{proxy}, membaca data administratif dan \textit{medical record} sesuai akses, menyimpan metadata PGHD, membaca daftar metadata PGHD, membaca detail metadata PGHD, dan menginvalidasi metadata PGHD\@.
 
 Metadata PGHD disimpan dalam struktur \texttt{PatientPghdMetadata}. 
-Struktur tersebut menyimpan referensi dan metadata yang diperlukan untuk verifikasi. 
+Struktur tersebut menyimpan referensi dan metadata yang diperlukan untuk verifikasi \textit{provenance} dan integritas. 
 \textit{Payload} PGHD terenkripsi disimpan pada IPFS, sedangkan \textit{smart contract} menyimpan CID dan hash \textit{ciphertext} untuk keperluan integritas.
 
-\begin{lstlisting}[caption={Struktur metadata PGHD pada \textit{smart contract}}, label={lst:patient-pghd-metadata-struct}, float=htb]
+\begin{lstlisting}[caption={Struktur Metadata PGHD pada \textit{smart contract}}, label={lst:patient-pghd-metadata-struct}, float=htb]
 public struct PatientPghdMetadata has copy, drop, store {
     index: u64,
     cid: String,
@@ -90,14 +87,11 @@ Jika akses kedaluwarsa, \textit{smart contract} menghapus akses tersebut dari \t
 Daftar \textit{method} \textit{module} ini dapat dilihat pada Tabel~\ref{tab:lampiran-sc-method-shared}. 
 % Dua struktur penting pada \textit{module} ini adalah \texttt{GlobalAdminCap} dan \texttt{ProxyCap}. \texttt{GlobalAdminCap} digunakan untuk operasi administratif global, sedangkan \texttt{ProxyCap} diberikan kepada alamat PRE agar PRE dapat memanggil fungsi tertentu pada \textit{module} \texttt{decmed::proxy}.
 
-Selain capability, \textit{module} ini juga menyediakan fungsi \textit{encoding} untuk identitas seperti \texttt{encode\_hospital\_id}, \texttt{encode\_hospital\_personnel\_id}, dan \texttt{encode\_patient\_id}. 
-Fungsi \textit{encoding} tersebut digunakan agar \textit{key} penyimpanan akun pada table IOTA tidak memakai identitas mentah.
-
 \subsubsection{\textit{Module} \texttt{decmed::std\_enum\_*}}\label{subsubsec:sc-module-std-enum}
 
 Tanda \texttt{*} menandakan terdapat beberapa \textit{module} yang diawali dengan nama \texttt{decmed::std\_enum\_}. 
-\textit{Module} ini mendefinisikan enum pendukung seperti \textit{role} personel fasyankes, tipe akses, dan tipe data akses. 
-Daftar enum \textit{module} dan \textit{method} pendukungnya dapat dilihat pada Tabel~\ref{tab:lampiran-sc-method-std-enum}.
+\textit{Module} ini mendefinisikan enum seperti \textit{role} personel fasyankes, tipe akses, dan tipe data akses. 
+Daftar enum \textit{module} dan \textit{method}-nya dapat dilihat pada Tabel~\ref{tab:lampiran-sc-method-std-enum}.
 
 Enum yang terkait dengan PGHD adalah \texttt{decmed::std\_enum\_hospital\_personnel\_access\_data\_type}. 
 Enum ini diperluas dengan nilai \texttt{Pghd} sehingga \textit{capability} akses dapat membedakan akses administratif, \textit{medical record}, dan PGHD\@.
@@ -106,7 +100,7 @@ Enum ini diperluas dengan nilai \texttt{Pghd} sehingga \textit{capability} akses
 
 Tanda \texttt{*} menandakan terdapat beberapa \textit{module} yang diawali dengan nama \texttt{decmed::std\_struct\_}. 
 \textit{Module}-\textit{module} tersebut merepresentasikan struktur data dari objek atau nilai yang disimpan pada IOTA, seperti akun pasien, akun personel fasyankes, metadata rumah sakit, metadata \textit{medical record}, metadata PGHD, \textit{access log} pasien, dan \textit{capability} akses personel fasyankes. 
-Daftar struktur dan \textit{method} pendukungnya dapat dilihat pada Tabel~\ref{tab:lampiran-sc-method-std-struct}.
+Daftar struktur dan \textit{method}-nya dapat dilihat pada Tabel~\ref{tab:lampiran-sc-method-std-struct}.
 
 Struktur untuk mekanisme kontrol akses adalah \texttt{HospitalPersonnelAccessData} pada \textit{module} \texttt{decmed::std\_struct\_hospital\_personnel\_access\_data}. 
 Struktur ini merupakan bentuk \textit{capability} pada mekanisme CapBAC\@. 

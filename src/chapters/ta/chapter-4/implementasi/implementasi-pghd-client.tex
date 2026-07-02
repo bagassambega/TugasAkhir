@@ -8,39 +8,39 @@ Gambar~\ref{fig:diagram-kelas-client-android-pghd-pengiriman} menunjukkan kelas-
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-kelas-client-android-pghd-pengumpulan.png}
+    \includegraphics[width=1.1\textwidth]{resources/chapter-4/diagram-kelas-client-android-pghd-pengumpulan.png}
     \caption{Diagram Kelas Pengumpulan Data pada \textit{Client} Android PGHD}\label{fig:diagram-kelas-client-android-pghd-pengumpulan}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-kelas-client-android-pghd-pengiriman.png}
+    \includegraphics[width=1.1\textwidth]{resources/chapter-4/diagram-kelas-client-android-pghd-pengiriman.png}
     \caption{Diagram Kelas Pembentukan dan Pengiriman \textit{Batch} pada \textit{Client} Android PGHD}\label{fig:diagram-kelas-client-android-pghd-pengiriman}
 \end{figure}
 
 Pada implementasi ini, Health Connect digunakan sebagai API sistem operasi Android untuk mengakses data yang berasal dari aplikasi kesehatan lain dan juga \textit{wearable device}. 
-Health Connect menyediakan tipe data kesehatan terstruktur beserta metadata sumber data, perangkat, dan metode pencatatan. 
+Health Connect menyediakan tipe data kesehatan beserta metadata sumber data, perangkat, dan metode pencatatan. 
 Data \textit{wearable} yang digunakan pada pengujian berasal dari \textit{smart band} yang kemudian dihubungkan dengan aplikasi \textit{properiatery} milik Xiaomi Fitness untuk mengambil datanya. 
 Data tersebut disinkronkan oleh aplikasi Mi Fitness ke Health Connect, kemudian dibaca oleh \textit{client} Android PGHD melalui Health Connect API\@.
 
-Secara garis besar, \textit{client} Android PGHD terdiri atas beberapa halaman utama yang dijelaskan sebagai berikut.
+Secara garis besar, \textit{client} Android PGHD terdiri atas beberapa halaman dan fungsionalitas yang dijelaskan sebagai berikut.
 
 \subsubsection{Halaman Persetujuan Penggunaan Aplikasi}
 
 Halaman persetujuan penggunaan aplikasi digunakan untuk menampilkan informasi awal dan persetujuan sebelum pasien menggunakan aplikasi. 
-Halaman ini menjadi titik awal agar pasien memahami bahwa aplikasi akan membaca dan mengelola data kesehatan yang berasal dari perangkat Android maupun sumber eksternal seperti Health Connect, mengumpulkan data dan informasi mengenai pasien.
+Halaman ini ditujukan agar pasien memahami bahwa aplikasi akan membaca dan mengelola data kesehatan yang berasal dari perangkat Android maupun sumber eksternal seperti Health Connect, mengumpulkan data dan informasi mengenai pasien.
 Tampilan halaman permintaan persetujuan dapat dilihat pada Gambar~\ref{halaman-persetujuan-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Halaman \textit{Register}}
 
 Halaman \textit{register} digunakan untuk membuat akun pasien baru. 
-Pada halaman ini, \textit{client} membangkitkan identitas IOTA pasien, membangkitkan key PGHD, dan mempublikasikan \textit{public key} PGHD yang diperlukan untuk mekanisme verifikasi dan akses data PGHD\@.
+Pada halaman ini, \textit{client} membangkitkan identitas IOTA pasien, membangkitkan \textit{key} PGHD, dan mempublikasikan \textit{public key} PGHD yang diperlukan untuk mekanisme verifikasi dan akses data PGHD\@.
 Tampilan halaman \textit{register} dapat dilihat pada Gambar~\ref{halaman-register-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Halaman \textit{Login}}
 
 Halaman \textit{login} digunakan untuk membuka kembali akun pasien berdasarkan kredensial pasien. 
-Pada proses ini, \textit{client} menurunkan kembali identitas dan key yang diperlukan, kemudian memeriksa apakah akun pasien yang sesuai telah terdaftar.
+Pada proses ini, \textit{client} menurunkan kembali identitas dan \textit{key} yang diperlukan, kemudian memeriksa apakah akun pasien yang sesuai telah terdaftar.
 Tampilan halaman \textit{login} dapat dilihat pada Gambar~\ref{halaman-login-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Halaman Pelengkapan Profil}
@@ -51,14 +51,14 @@ Tampilan halaman melengkapi profil dapat dilihat pada Gambar~\ref{halaman-comple
 
 \subsubsection{Halaman \textit{Home}}
 
-Halaman \textit{home} digunakan untuk menampilkan ringkasan informasi kesehatan yang telah dikumpulkan oleh \textit{client} Android PGHD\@. Informasi ditampilkan dalam bentuk yang mudah dipahami pasien tanpa menampilkan detail teknis dari struktur \textit{batch} PGHD\@.
-Halaman ini juga berisi pengumpulan PGHD yang digunakan untuk mengaktifkan atau menghentikan proses pengumpulan data otomatis. 
-Pada halaman ini, pasien dapat melihat status pengumpulan dan sumber data yang digunakan oleh aplikasi.\
+Halaman \textit{home} digunakan untuk menampilkan ringkasan informasi kesehatan yang telah dikumpulkan oleh \textit{client} Android PGHD, tombol untuk mulai mengoperasikan atau memberhentikan pengumpulan dan pengiriman PGHD\@. 
+Pada halaman ini, pasien dapat melihat status pengumpulan dan sumber data yang digunakan oleh aplikasi.
 Tampilan halaman \textit{home} dapat dilihat pada Gambar~\ref{halaman-home-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Halaman Data PGHD}
 
-Halaman data PGHD digunakan untuk melihat data PGHD lokal yang telah dikumpulkan dari Health Connect, input manual, maupun sensor perangkat. Halaman ini membantu pasien memeriksa data kesehatan yang tersedia sebelum data tersebut dibentuk menjadi batch.
+Halaman data PGHD digunakan untuk melihat data PGHD lokal yang telah dikumpulkan dari Health Connect, input manual, maupun sensor perangkat. 
+Halaman ini membantu pasien memeriksa data kesehatan yang sudah dikumpulkan sebelum data tersebut dibentuk menjadi \textit{batch}.
 Halaman ini juga berisi mekanisme untuk mengirim data PGHD yang sudah dikumpulkan saat ini, sinkronisasi manual data dari Health Connecct, dan pemberian/pencabutan akses data terhadap tenaga kesehatan.
 Tampilan halaman data PGHD dapat dilihat pada Gambar~\ref{halaman-data-pghd-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
@@ -71,12 +71,15 @@ Tampilan halaman \textit{batch} PGHD dapat dilihat pada Gambar~\ref{halaman-batc
 \subsubsection{Halaman Pengaturan Sensor}
 
 Halaman pengaturan sensor digunakan untuk mengatur sumber data perangkat yang akan digunakan. 
-Pada halaman ini, aplikasi menampilkan daftar sensor perangkat beserta tipe data kesehatan yang dapat dihasilkan dari sensor tersebut dan satuannya. Pasien memilih tipe data kesehatan yang ingin dikumpulkan, bukan hanya memilih sensor mentah. Ketika minimal satu tipe data kesehatan dari sebuah sensor dipilih, sensor tersebut dianggap disetujui dan dapat diakses oleh layanan pengumpulan data. Sensor yang tersedia pada perangkat tetapi belum memiliki konversi ke tipe data kesehatan PGHD tetap ditampilkan, tetapi berada dalam kondisi nonaktif sehingga tidak dapat dipilih untuk pengumpulan data.
+Pada halaman ini, aplikasi menampilkan daftar sensor perangkat beserta tipe data kesehatan yang dapat dihasilkan dari sensor tersebut dan satuannya. 
+Pasien dapat memilih tipe data kesehatan yang ingin dikumpulkan. 
+Ketika minimal satu tipe data kesehatan dari sebuah sensor dipilih, sensor tersebut dianggap disetujui dan dapat diakses oleh layanan pengumpulan data. 
+Sensor yang tersedia pada perangkat tetapi belum memiliki konversi ke tipe data kesehatan PGHD tetap ditampilkan, tetapi berada dalam kondisi nonaktif sehingga tidak dapat dipilih untuk pengumpulan data.
 Tampilan halaman pengaturan sensor PGHD dapat dilihat pada Gambar~\ref{halaman-settings-sensor-pasien-pghd} pada Lampiran~\ref{app:tampilan-implementasi-client-pasien-pghd}.
 
 \subsubsection{Penyimpanan Lokal PGHD}
 
-Data PGHD yang dikumpulkan pada perangkat pasien disimpan pada basis data lokal Room/SQLite dengan nama \texttt{sensor\_pghd.db}. 
+Data PGHD yang dikumpulkan pada perangkat pasien disimpan pada basis data lokal Room (SQLite) dengan nama \texttt{sensor\_pghd.db}. 
 Basis data tersebut berada pada \textit{private storage} aplikasi Android sehingga tidak disimpan sebagai file bebas pada penyimpanan publik perangkat. 
 Penyimpanan lokal ini digunakan agar data PGHD tidak hilang ketika perangkat sedang tidak memiliki koneksi internet. 
 Pada implementasi prototipe, basis data lokal PGHD tidak dienkripsi.
@@ -112,9 +115,9 @@ Data-daat ini kemudian dikonversi menjadi format PGHD yang dikirim mengikuti ske
     \hline
     \texttt{pghd\_batches} & Menyimpan \textit{envelope} PGHD terenkripsi, status pengiriman, alasan \textit{trigger} batch, jumlah percobaan pengiriman, dan metadata retry. \\
     \hline
-    \texttt{pghd\_batch\_data\_points} & Menyimpan hasil pemetaan \textit{data point} dari \textit{payload} \textit{batch} untuk kebutuhan internal basis data lokal. \\
+    \texttt{pghd\_batch\_data\_points} & Menyimpan hasil pemetaan \textit{data point} dari \textit{payload} \textit{batch} untuk kebutuhan \textit{mapping} \textit{batch} ke \textit{data points}. \\
     \hline
-    \texttt{DataStore} & Menyimpan preferensi dan daftar akses PGHD yang pernah diberikan oleh pasien, termasuk status pencabutan akses. \\
+    \texttt{DataStore} & Menyimpan preferensi aplikasi. \\
     \hline
 \end{styledxltabular}
 
@@ -131,19 +134,20 @@ Jika sesi belum terbuka, pasien diminta melakukan \textit{login} ulang.
 
 \subsubsection{Pengumpulan Data PGHD}
 
-Pengumpulan data PGHD dilakukan dari tiga sumber utama, yaitu Health Connect, input manual, dan sensor perangkat. 
+Pengumpulan data PGHD dilakukan dari tiga sumber, yaitu Health Connect, input manual, dan sensor perangkat. 
 Health Connect digunakan untuk membaca data kesehatan yang telah tersedia pada ekosistem Android, termasuk data yang disinkronkan oleh aplikasi eksternal seperti Mi Fitness atau Google Fit. 
 Pada pengujian implementasi, Mi Fitness digunakan untuk mengambil data dari \textit{wearable} (\textit{smart band}) dan menuliskannya ke Health Connect. 
 \textit{Client} PGHD kemudian membaca data tersebut melalui Health Connect API\@.
 
 Health Connect menyediakan tipe data kesehatan bawaan, seperti langkah, jarak, kalori, detak jantung, dan tipe data lain yang didukung oleh perangkat maupun aplikasi sumber. 
-Untuk data berbentuk \textit{time-series}, seperti detak jantung, Health Connect menyimpan sampel pengukuran di dalam satu \textit{record}. 
+% Untuk data berbentuk \textit{time-series}, seperti detak jantung, Health Connect menyimpan sampel pengukuran di dalam satu \textit{record}. 
 \textit{Client} PGHD membaca data tersebut dan menyimpannya ke \texttt{pghd\_records} dengan metadata sumber seperti \texttt{source}, \texttt{sourcePackageName}, \texttt{deviceSource}, \texttt{deviceType}, dan \texttt{recordingMethod}. 
 Informasi tersebut kemudian ditampilkan sebagai \textit{provenance} pada \textit{client} tenaga kesehatan.
 
 Sinkronisasi Health Connect dijalankan segera setelah pasien mengaktifkan pengumpulan data. 
 Setelah itu, sinkronisasi dijalankan otomatis setiap 3 menit selama mode pengumpulan PGHD masih aktif. 
-Implementasi menggunakan \textit{one-time} \textit{chained} \texttt{WorkManager} karena pekerjaan periodik \texttt{WorkManager} memiliki batas minimum 15 menit, di mana ketika \texttt{OneTimeWorkRequest} selesai mensinkronisasikan data Health Connect setelah 3 menit, \texttt{OneTimeWorkRequest} akan langsung menjadwalkan sinkronisasi untuk 3 menit berikutnya.
+Penentuan angka 3 menit didasarkan pada rekomendasi pengumpulan data dari \textit{guidance} penggunaan Health Connect API agar data disinkronisasi di antara 1\-15 menit sekali.
+% Implementasi menggunakan \textit{one-time} \textit{chained} \texttt{WorkManager} karena pekerjaan periodik \texttt{WorkManager} memiliki batas minimum 15 menit, di mana ketika \texttt{OneTimeWorkRequest} selesai mensinkronisasikan data Health Connect setelah 3 menit, \texttt{OneTimeWorkRequest} akan langsung menjadwalkan sinkronisasi untuk 3 menit berikutnya.
 Untuk sensor perangkat Android, pembacaan sensor menggunakan interval \textit{default} 60 detik.
 Penetapan angka ini juga mengacu pada rata-rata durasi pengambilan data Health Connect untuk tipe-tipe data kesehatan, yaitu setiap 1 menit \parencite{android_hc_write}.
 Data sensor mentah tidak langsung diperlakukan sebagai data kesehatan. 
@@ -155,7 +159,6 @@ Izin yang diperiksa mencakup izin Health Connect, aktivitas fisik, sensor, dan k
 Jika izin belum diberikan, aplikasi menampilkan dialog penjelasan dan meminta pasien memberikan izin yang dibutuhkan.
 
 Konversi data sensor perangkat Android ke tipe data kesehatan PGHD dilakukan oleh komponen \texttt{AndroidSensorPghdMapper}. Hasil konversi tersebut juga digunakan sebagai daftar pilihan pada halaman pengaturan sensor. 
-Pada implementasi ini, nilai mentah seperti komponen sumbu akselerometer, giroskop, magnetometer, atau vektor rotasi tidak dikirim sebagai PGHD utama karena nilai tersebut sulit dipahami langsung sebagai data kesehatan oleh tenaga kesehatan. 
 Konversi yang tersedia pada implementasi dapat dilihat pada Tabel~\ref{tab:implementasi-konversi-sensor-pghd} di Lampiran~\ref{app:implementasi-tipe-data-contoh-pghd}.
 Konversi ini hanyalah bersifat \textit{prototipe} dan tidak mencerminkan keseluruhan konversi dan jenis data yang seharusnya diterima oleh tenaga kesehatan.
 
