@@ -22,8 +22,8 @@ Pada integrasi DecMed dan PGHD, sumber data yang dipilih dibatasi pada:
   \item Laporan mandiri pasien.
 \end{enumerate}
 
-Perangkat medis, perangkat pemantauan dan sensor rumahan maupun lingkungan tidak dipertimbangkan karena memerlukan mekanisme validasi medis resmi sehingga berada di luar lingkup tugas akhir ini.
-Data eksternal seperti data yang berasal dari media sosial tidak dipertimbangkan karena memerlukan mekanisme tambahan untuk memfilter data yang merupakan data PGHD ataupun bukan dan berada di luar \textit{scope} tugas akhir ini.
+Perangkat medis, perangkat pemantauan dan sensor rumahan maupun lingkungan tidak dipertimbangkan karena memerlukan mekanisme validasi medis.
+Data eksternal seperti data yang berasal dari media sosial tidak dipertimbangkan karena memerlukan mekanisme tambahan untuk memfilter data yang merupakan data PGHD ataupun bukan.
 
 Selain itu, perkembangan, jumlah dan ketersediaan perangkat \textit{mobile}, aplikasi \textit{mobile} dan \textit{wearable} yang masif dan menjadi penghasil data PGHD terbanyak saat ini juga menjadi pertimbangan pemilihan.
 Laporan mandiri pasien tetap dipertimbangkan karena menjadi salah satu tipe data PGHD yang memerlukan intervensi dan masukan dari pasien dan tidak dapat dipenuhi oleh perangkat mobile maupun sensor dari \textit{wearable} saja.
@@ -68,6 +68,7 @@ Secara garis besar, alternatif mekanisme pengiriman yang dipertimbangkan adalah:
 
 Pengiriman murni periodik cocok ketika yang dibutuhkan adalah aliran data yang stabil dan dapat diprediksi, tetapi kurang fleksibel ketika volume data yang dikumpulkan sangat bervariasi. 
 Sebaliknya, pengiriman murni \textit{event-driven} dapat mengurangi jumlah pengiriman pada kondisi normal, tetapi bisa menghasilkan lonjakan pengiriman data ketika \textit{event} sering terjadi dan sulit dikendalikan beban jaringan maupun konsumsi daya. 
+\textit{Query-driven} tidak dipertimbangkan karena justru menjadi beban bagi pasien karena permintaan data tidak terjadwal atau tidak dapat diprediksi oleh pasien dan dapat menyebabkan volume/frekuensi pengiriman data tidak terprediksi.
 
 Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah kombinasi antara pengiriman periodik dan \textit{event-driven}. 
 Pengiriman dilakukan secara periodik, sehingga pola pengiriman tetap stabil dan deret waktu PGHD dapat dibentuk dengan baik.
@@ -91,7 +92,7 @@ Berdasarkan studi tersebut, mekanisme pengaksesan PGHD yang dipertimbangkan adal
 Akses \textit{real-time} di luar kunjungan memberikan visibilitas penuh terhadap kondisi pasien, tetapi menuntut adanya protokol yang jelas untuk menangani data yang terus menerus dikirim dan dapat mengganggu alur kerja jika tidak dikelola dengan baik.
 Akses \textit{on-demand} memberi fleksibilitas bagi tenaga kesehatan, tetapi tetap menyisakan pertanyaan kapan dan dalam konteks apa data tersebut seharusnya diakses dan justru menjadi beban bagi pasien karena permintaan data tidak terjadwal atau tidak dapat diprediksi oleh pasien.
 
-Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah akses berbasis kunjungan.
+Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah akses berbasis kunjungan yang juga menerapkan akses \textit{on-demand} ketika tenaga kesehatan meminta izin untuk mengakses data pasien.
 PGHD dikumpulkan oleh pasien di antara kunjungan, tetapi hanya dapat diakses oleh tenaga kesehatan ketika pasien melakukan kunjungan dan memberikan izin akses untuk kunjungan tersebut. 
-Pendekatan ini sejalan dengan pola pemanfaatan PGHD sebagai data pelengkap yang digunakan untuk mendukung keputusan klinis dalam konteks konsultasi, bukan sebagai aliran data yang harus dimonitor terus-menerus.
+Pendekatan ini sesuai dengan pola pemanfaatan PGHD sebagai data pelengkap yang digunakan untuk mendukung keputusan klinis dalam konteks konsultasi, bukan sebagai aliran data yang harus dimonitor terus-menerus, karena akses data PGHD secara terus menerus juga dapat memecah fokus tenaga kesehatan.
 Selain itu, mekanisme ini juga sesuai dengan desain DecMed yang mengatur akses data berdasarkan kunjungan dan memanfaatkan CapBAC sebagai mekanisme kontrol akses, sehingga integrasi PGHD tidak akan merusak mekanisme sistem DecMed yang sudah ada.

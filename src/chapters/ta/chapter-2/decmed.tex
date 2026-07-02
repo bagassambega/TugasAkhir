@@ -1,11 +1,11 @@
 \section{DecMed}\label{studi-decmed}
 
-DecMed merupakan sebuah kerangka kerja manajemen rekam medis elektronik terdesentralisasi yang dibangun di atas platform \emph{Distributed Ledger Technology} (DLT) IOTA, dengan fokus utama pada perancangan mekanisme kontrol akses yang granular, dapat dicabut, dan menyediakan \textit{audit trail} \parencite{Purnama_2026,Hari_2025}. 
-Berbeda dengan pendekatan sistem RME tradisional yang menempatkan kontrol akses sebagai komponen tambahan pada masing-masing institusi, DecMed memanfaatkan \textit{ledger} IOTA sebagai \emph{governance layer} yang menyimpan objek akses (\emph{\textit{capability}}), metadata, dan log akses secara terdistribusi sekaligus memisahkan penyimpanan data klinis besar ke penyimpanan \textit{off-chain} \parencite{Purnama_2026,Hari_2025}. 
+DecMed merupakan sebuah kerangka kerja manajemen rekam medis elektronik terdesentralisasi yang dibangun di atas platform \emph{Distributed Ledger Technology} (DLT) IOTA, dengan fokus utama pada perancangan mekanisme kontrol akses yang granular, dapat dicabut, dan menyediakan \textit{audit trail} \parencite{Purnama_2026,Hari_2025}.
+Berbeda dengan pendekatan sistem RME tradisional yang menempatkan kontrol akses sebagai komponen tambahan pada masing-masing institusi, DecMed memanfaatkan \textit{ledger} IOTA sebagai \emph{governance layer} yang menyimpan objek akses (\emph{\textit{capability}}), metadata, dan log akses secara terdistribusi sekaligus memisahkan penyimpanan data klinis besar ke penyimpanan \textit{off-chain} \parencite{Purnama_2026,Hari_2025}.
 
 \subsection{Arsitektur DecMed}
 
-Secara teknis, arsitektur DecMed dibagi menjadi tiga lapis utama, yaitu \emph{\textit{Client} Layer}, \emph{Proxy Layer}, dan \emph{Storage Layer} \parencite{Purnama_2026,Hari_2025} seperti diilustrasikan dalam Gambar~\ref{fig:decmed-architecture}. 
+Secara teknis, arsitektur DecMed dibagi menjadi tiga lapis utama, yaitu \emph{\textit{Client} Layer}, \emph{Proxy Layer}, dan \emph{Storage Layer} \parencite{Purnama_2026,Hari_2025} seperti diilustrasikan dalam Gambar~\ref{fig:decmed-architecture}.
 Decmed sendiri mendefinisikan dua tipe data, data administratif (identitas pasien seperti NIK, nama, dan pekerjaan) dan data klinis.
 
 \begin{figure}[htbp]
@@ -14,65 +14,77 @@ Decmed sendiri mendefinisikan dua tipe data, data administratif (identitas pasie
 	\caption{Arsitektur DecMed \parencite{Hari_2025}}\label{fig:decmed-architecture}
 \end{figure}
 
-\textit{\textit{Client} Layer} terdiri dari tiga jenis aplikasi: \textit{client} pasien berbasis \textit{mobile}, \textit{client} personel fasilitas pelayanan kesehatan (fasyankes) berbasis \textit{desktop}, dan \textit{client} untuk otoritas pengelola yang digunakan untuk registrasi fasilitas serta personel \parencite{Purnama_2026,Hari_2025}. 
-\textit{Proxy Layer} berperan sebagai lapisan \textit{middleware} keamanan yang mengimplementasikan mekanisme PRE, validasi token akses, orkestrasi permintaan ke \textit{smart contract} di IOTA, dan interaksi dengan IPFS \parencite{Purnama_2026,Hari_2025}. 
+\textit{\textit{Client} Layer} terdiri dari tiga jenis aplikasi: \textit{client} pasien berbasis \textit{mobile}, \textit{client} personel fasilitas pelayanan kesehatan (fasyankes) berbasis \textit{desktop}, dan \textit{client} untuk otoritas pengelola yang digunakan untuk registrasi fasilitas serta personel \parencite{Purnama_2026,Hari_2025}.
+\textit{Proxy Layer} berperan sebagai lapisan \textit{middleware} keamanan yang mengimplementasikan mekanisme PRE, validasi token akses, orkestrasi permintaan ke \textit{smart contract} di IOTA, dan interaksi dengan IPFS \parencite{Purnama_2026,Hari_2025}.
 Mekanisme akses kontrol dan proxy reencryption menjamin pertukaran data tanpa perlu mempertukarkan kredensial, sehingga informasi kredensial dapat tetap tersimpan aman di perangkat masing-masing dan tidak dikirimkan ke manapun \parencite{Purnama_2026,Hari_2025}.
 
 \textit{Storage Layer} dibagi menjadi penyimpanan \textit{on-chain} dan \textit{off-chain} \parencite{Purnama_2026,Hari_2025}. 
-Penyimpanan \textit{on-chain} merujuk pada \textit{ledger} IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026,Hari_2025}. 
-Penyimpanan \textit{off-chain} terdiri atas kluster IPFS untuk menyimpan bagian klinis RME yang telah dienkripsi dan Redis untuk menyimpan data sementara terkait PRE seperti \textit{nonce}, kfrag, dan metadata kriptografis lainnya \parencite{Purnama_2026,Hari_2025}. 
+Penyimpanan \textit{on-chain} merujuk pada \textit{ledger} IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026,Hari_2025}.
+Penyimpanan \textit{off-chain} terdiri atas kluster IPFS untuk menyimpan bagian klinis RME yang telah dienkripsi dan Redis untuk menyimpan data sementara terkait PRE seperti \textit{nonce}, kfrag, dan metadata kriptografis lainnya \parencite{Purnama_2026,Hari_2025}.
 
-Aktor dalam sistem DecMed secara garis besar dibagi menjadi pasien, tenaga rekam medis, tenaga kesehatan, dan kementerian kesehatan. 
-Pembagian aktivitas dan aksi yang dapat dilakukan oleh masing-masing aktor tercantum dalam Tabel~\ref{decmed-actor-privileges}. 
+Aktor dalam sistem DecMed secara garis besar dibagi menjadi pasien, tenaga rekam medis, tenaga kesehatan, dan kementerian kesehatan.
+Pembagian aktivitas dan aksi yang dapat dilakukan oleh masing-masing aktor tercantum dalam Tabel~\ref{decmed-actor-privileges}.
 
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025}}\label{decmed-actor-privileges}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Aktor} & \textbf{\textit{Privileges}} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
 
-\begin{table}[htbp]
-    \centering
-    \caption{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025}}\label{decmed-actor-privileges}
-    \begin{styledtable}{|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}X|}
-        \toprule
-        \rowcolor{headerBg}
-        \textbf{Aktor} & \textbf{\textit{Privileges}} \\
-        \midrule
-        Pasien & \begin{minipage}[t]{\linewidth}
-            \begin{itemize}
-                \item Membaca data RME yang ia miliki,
-                \item Memberikan akses baca dan tulis terhadap data RME yang ia miliki,
-                \item Mencabut akses baca dan tulis terhadap data RME yang ia miliki, dan
-                \item Membaca log akses terhadap data RME yang ia miliki.
-            \end{itemize}
-        \end{minipage} \\
-        \midrule
-        Tenaga kesehatan & \begin{minipage}[t]{\linewidth}
-            \begin{itemize}
-                \item Membaca data RME (bagian administratif dan klinis) milik pasien setelah diberikan akses oleh pasien,
-                \item Menambahkan data RME baru (hanya bagian klinis) milik pasien setelah diberikan akses oleh pasien, dan
-                \item Mengedit data RME baru (hanya bagian klinis) yang sebelumnya telah dibuat pada kunjungan yang sama setelah diberikan akses oleh pasien.
-            \end{itemize}
-        \end{minipage} \\
-        \midrule
-        Petugas rekam medis & \begin{minipage}[t]{\linewidth}
-            \begin{itemize}
-                \item Membaca data RME (hanya bagian administratif) milik pasien setelah diberikan akses oleh pasien
-            \end{itemize}
-        \end{minipage} \\
-        \midrule
-        Admin fasyankes & \begin{minipage}[t]{\linewidth}
-            \begin{itemize}
-                \item Menambahkan personel fasyankes, dan
-                \item Membuat kunci aktivasi untuk personel fasyankes.
-            \end{itemize}
-        \end{minipage} \\
-        \midrule
-        Kementerian kesehatan & \begin{minipage}[t]{\linewidth}
-            \begin{itemize}
-                \item Menambahkan fasyankes sekaligus admin dari fasyankes tersebut, dan
-                \item Membuat kunci aktivasi untuk admin fasyankes.
-            \end{itemize}
-        \end{minipage} \\
-        \bottomrule
-    \end{styledtable}
-\end{table}
+    \hiderowcolors
+    \caption[]{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025} (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Aktor} & \textbf{\textit{Privileges}} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    Pasien & \begin{minipage}[t]{\linewidth}
+        \begin{itemize}
+            \item Membaca data RME yang ia miliki,
+            \item Memberikan akses baca dan tulis terhadap data RME yang ia miliki,
+            \item Mencabut akses baca dan tulis terhadap data RME yang ia miliki, dan
+            \item Membaca log akses terhadap data RME yang ia miliki.
+        \end{itemize}
+    \end{minipage} \\
+    \hline
+    Tenaga kesehatan & \begin{minipage}[t]{\linewidth}
+        \begin{itemize}
+            \item Membaca data RME (bagian administratif dan klinis) milik pasien setelah diberikan akses oleh pasien,
+            \item Menambahkan data RME baru (hanya bagian klinis) milik pasien setelah diberikan akses oleh pasien, dan
+            \item Mengedit data RME baru (hanya bagian klinis) yang sebelumnya telah dibuat pada kunjungan yang sama setelah diberikan akses oleh pasien.
+        \end{itemize}
+    \end{minipage} \\
+    \hline
+    Petugas rekam medis & \begin{minipage}[t]{\linewidth}
+        \begin{itemize}
+            \item Membaca data RME (hanya bagian administratif) milik pasien setelah diberikan akses oleh pasien
+        \end{itemize}
+    \end{minipage} \\
+    \hline
+    Admin fasyankes & \begin{minipage}[t]{\linewidth}
+        \begin{itemize}
+            \item Menambahkan personel fasyankes, dan
+            \item Membuat kunci aktivasi untuk personel fasyankes.
+        \end{itemize}
+    \end{minipage} \\
+    \hline
+    Kementerian kesehatan & \begin{minipage}[t]{\linewidth}
+        \begin{itemize}
+            \item Menambahkan fasyankes sekaligus admin dari fasyankes tersebut, dan
+            \item Membuat kunci aktivasi untuk admin fasyankes.
+        \end{itemize}
+    \end{minipage} \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 DecMed sudah mendefinisikan mekanisme-mekanisme penting dalam sistem rekam medis seperti registrasi dan login akun, pemberian akses rekam medis kepada personel fasyankes, dan penambahan rekam medis elektronik oleh tenaga medis.
 
@@ -80,49 +92,108 @@ DecMed sudah mendefinisikan mekanisme-mekanisme penting dalam sistem rekam medis
 
 DecMed memisahkan penyimpanan data administratif dan data klinis.
 Data administratif pasien disimpan sebagai metadata pada IOTA dalam bentuk terenkripsi, sedangkan data klinis yang berukuran lebih besar disimpan pada IPFS dalam bentuk terenkripsi dan hanya rujukan beserta metadata kriptografisnya yang disimpan di IOTA\@.
-
 Pada data klinis, \textit{plaintext} data klinis dienkripsi pada sisi \textit{client} tenaga kesehatan sebelum dikirim ke PRE\@.
 \textit{Ciphertext} data klinis disimpan pada IPFS, sedangkan metadata rujukan klinisnya disimpan di IOTA sebagai \texttt{PatientMedicalMetadata}.
+
 Struktur metadata klinis pada IOTA dijelaskan pada Tabel~\ref{tab:decmed-medical-metadata-iota}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Struktur metadata klinis pasien pada IOTA}\label{tab:decmed-medical-metadata-iota}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \texttt{index} & Integer & Indeks entri klinis pasien. \\
-        \texttt{metadata} & String & Metadata klinis yang telah diserialisasi, berisi rujukan IPFS dan artefak kriptografis untuk membuka data klinis. \\
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur Metadata Klinis Pasien pada IOTA}\label{tab:decmed-medical-metadata-iota}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Struktur Metadata Klinis Pasien pada IOTA (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{index} & Integer & Indeks entri klinis pasien. \\
+    \hline
+    \texttt{metadata} & String & Metadata klinis yang telah diserialisasi, berisi rujukan IPFS dan artefak kriptografis untuk membuka data klinis. \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 Isi \texttt{metadata} pada entri klinis memuat struktur seperti pada Tabel~\ref{tab:decmed-medical-metadata-serialized}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Isi metadata klinis DecMed yang diserialisasi}\label{tab:decmed-medical-metadata-serialized}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \texttt{cid} & String & \textit{Content Identifier} IPFS yang menunjuk ke data klinis terenkripsi. \\
-        \texttt{capsule} & String & Artefak PRE untuk membuka kunci AES dan \textit{nonce} data klinis. \\
-        \texttt{enc\_key\_and\_nonce} & String & Gabungan kunci AES dan \textit{nonce} yang telah dienkripsi menggunakan kunci publik PRE pasien. \\
-        \texttt{created\_at} & String & Waktu pembuatan entri klinis. \\
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Isi Metadata Klinis DecMed yang Diserialisasi}\label{tab:decmed-medical-metadata-serialized}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Isi Metadata Klinis DecMed yang Diserialisasi (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{cid} & String & \textit{Content Identifier} IPFS yang menunjuk ke data klinis terenkripsi. \\
+    \hline
+    \texttt{capsule} & String & Artefak PRE untuk membuka kunci AES dan \textit{nonce} data klinis. \\
+    \hline
+    \texttt{enc\_key\_and\_nonce} & String & Gabungan kunci AES dan \textit{nonce} yang telah dienkripsi menggunakan kunci publik PRE pasien. \\
+    \hline
+    \texttt{created\_at} & String & Waktu pembuatan entri klinis. \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 Data klinis terenkripsi yang dirujuk oleh \texttt{cid} berisi \textit{plaintext} klinis dengan struktur seperti pada Tabel~\ref{tab:decmed-medical-data}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Struktur data klinis DecMed sebelum enkripsi}\label{tab:decmed-medical-data}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.32\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \texttt{anamnesis} & String & Hasil anamnesis pasien. \\
-        \texttt{physical\_check} & String & Hasil pemeriksaan fisik. \\
-        \texttt{psychological\_check} & String & Hasil pemeriksaan psikologis. \\
-        \texttt{diagnose} & String & Diagnosis dari tenaga kesehatan. \\
-        \texttt{therapy} & String & Terapi atau tindak lanjut yang diberikan. \\
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.32\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur Data Klinis DecMed Sebelum Enkripsi}\label{tab:decmed-medical-data}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Struktur Data Klinis DecMed Sebelum Enkripsi (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{anamnesis} & String & Hasil anamnesis pasien. \\
+    \hline
+    \texttt{physical\_check} & String & Hasil pemeriksaan fisik. \\
+    \hline
+    \texttt{psychological\_check} & String & Hasil pemeriksaan psikologis. \\
+    \hline
+    \texttt{diagnose} & String & Diagnosis dari tenaga kesehatan. \\
+    \hline
+    \texttt{therapy} & String & Terapi atau tindak lanjut yang diberikan. \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 Dengan struktur tersebut, isi data administratif dan klinis sama-sama dienkripsi menggunakan AES-GCM, sedangkan kunci AES dan \textit{nonce} dibungkus menggunakan PRE\@.
 Perbedaannya terletak pada lokasi penyimpanan isi data.
@@ -135,17 +206,37 @@ Hak akses ini tidak hanya berupa pernyataan izin, tetapi juga memuat batasan jen
 Pada \textit{ledger} IOTA, \textit{capability} disimpan sebagai bagian dari \textit{state} akun personel fasyankes.
 Struktur utamanya dirangkum pada Tabel~\ref{tab:decmed-capability-structure}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Struktur \textit{capability} DecMed pada IOTA}\label{tab:decmed-capability-structure}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \texttt{access\_data\_types} & \textit{Array} enum & Jenis data yang boleh diakses oleh personel, yaitu \texttt{Administrative} dan \texttt{Medical}. \\
-        \texttt{exp} & Unix timestamp & Waktu kedaluwarsa akses yang dihitung dari \textit{Clock} IOTA\@. \\
-        \texttt{metadata} & String & Metadata akses yang telah dienkripsi menggunakan kunci publik PRE milik personel fasyankes. Metadata ini berisi \texttt{access\_token}, alamat IOTA pasien, \textit{public key} pasien (untuk dekripsi data pasien melalui mekanisme PRE), dan didekripsi nantinya oleh tenaga kesehatan menggunakan \textit{private key}-nya. \\
-        \texttt{medical\_metadata}\allowbreak\texttt{\_index} & Integer / \texttt{None} & Indeks entri data klinis yang terikat dengan akses tulis atau edit apabila relevan. \\
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur \textit{Capability} DecMed pada IOTA}\label{tab:decmed-capability-structure}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Struktur \textit{Capability} DecMed pada IOTA (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{access\_data\_types} & \textit{Array} enum & Jenis data yang boleh diakses oleh personel, yaitu \texttt{Administrative} dan \texttt{Medical}. \\
+    \hline
+    \texttt{exp} & Unix timestamp & Waktu kedaluwarsa akses yang dihitung dari \textit{Clock} IOTA\@. \\
+    \hline
+    \texttt{metadata} & String & Metadata akses yang telah dienkripsi menggunakan kunci publik PRE milik personel fasyankes. Metadata ini berisi \texttt{access\_token}, alamat IOTA pasien, \textit{public key} pasien (untuk dekripsi data pasien melalui mekanisme PRE), dan didekripsi nantinya oleh tenaga kesehatan menggunakan \textit{private key}-nya. \\
+    \hline
+    \texttt{medical\_metadata}\allowbreak\texttt{\_index} & Integer / \texttt{None} & Indeks entri data klinis yang terikat dengan akses tulis atau edit apabila relevan. \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 \textit{Capability} tersebut berada pada tabel akses milik personel fasyankes dan diindeks berdasarkan identitas pasien.
 DecMed memisahkan akses baca dan akses tulis ke dalam \textit{map} yang berbeda.
@@ -153,22 +244,47 @@ Dengan demikian, satu personel dapat memiliki akses baca terhadap seorang pasien
 Untuk menjaga keterlacakan dari sisi pasien, DecMed juga menyimpan log akses pada akun pasien.
 Struktur log tersebut diringkas pada Tabel~\ref{tab:decmed-access-log-structure}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Struktur Log Akses Pasien pada DecMed}\label{tab:decmed-access-log-structure}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X}
-        \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-        \texttt{access\_data\_type} & Array enum & Jenis data yang diberikan pada akses tersebut. \\
-        \texttt{access\_type} & Enum & Tipe akses, yaitu \texttt{Read} atau \texttt{Update}. \\
-        \texttt{date} & String & Waktu atau tanggal pemberian akses yang dicatat oleh \textit{client}. \\
-        \texttt{exp\_dur} & Integer & Durasi akses dalam menit. \\
-        \texttt{hospital\_metadata} & Objek & Metadata fasyankes asal personel. \\
-        \texttt{hospital\_personnel}\allowbreak\texttt{\_address} & Address & Alamat IOTA personel penerima akses. \\
-        \texttt{hospital\_personnel}\allowbreak\texttt{\_metadata} & String & Metadata publik personel yang digunakan untuk ditampilkan pada log akses. \\
-        \texttt{index} & Integer & Indeks log akses pada akun pasien. \\
-        \texttt{is\_revoked} & Boolean & Status pencabutan akses dari sudut pandang log pasien. \\
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur Log Akses Pasien pada DecMed}\label{tab:decmed-access-log-structure}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Struktur Log Akses Pasien pada DecMed (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{access\_data\_type} & Array enum & Jenis data yang diberikan pada akses tersebut. \\
+    \hline
+    \texttt{access\_type} & Enum & Tipe akses, yaitu \texttt{Read} atau \texttt{Update}. \\
+    \hline
+    \texttt{date} & String & Waktu atau tanggal pemberian akses yang dicatat oleh \textit{client}. \\
+    \hline
+    \texttt{exp\_dur} & Integer & Durasi akses dalam menit. \\
+    \hline
+    \texttt{hospital\_metadata} & Objek & Metadata fasyankes asal personel. \\
+    \hline
+    \texttt{hospital\_personnel}\allowbreak\texttt{\_address} & Address & Alamat IOTA personel penerima akses. \\
+    \hline
+    \texttt{hospital\_personnel}\allowbreak\texttt{\_metadata} & String & Metadata publik personel yang digunakan untuk ditampilkan pada log akses. \\
+    \hline
+    \texttt{index} & Integer & Indeks log akses pada akun pasien. \\
+    \hline
+    \texttt{is\_revoked} & Boolean & Status pencabutan akses dari sudut pandang log pasien. \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 Ketika pasien memberikan \textit{capability}, \textit{client} pasien terlebih dahulu memverifikasi identitas personel dari kode QR dan metadata publik personel di IOTA\@.
 Setelah pasien menyetujui pemberian akses, \textit{client} dan PRE menyiapkan material akses, seperti token baca atau tulis, kunci turunan untuk PRE, \textit{kfrag}, dan metadata akses.
@@ -179,12 +295,10 @@ Apabila sebelumnya sudah ada akses dengan pasangan pasien dan personel yang sama
 Ketika personel menggunakan akses tersebut, \textit{smart contract} memeriksa bahwa \textit{capability} masih ada pada \textit{state} terbaru, jenis datanya sesuai dengan operasi yang diminta, dan waktu kedaluwarsanya belum terlewati.
 Untuk operasi tulis atau edit data klinis, DecMed juga menggunakan \texttt{medical\_metadata\_index} untuk membatasi entri klinis yang dapat dibuat atau diperbarui dari akses tersebut.
 Proxy memvalidasi token dan menggunakan material PRE yang tersedia, namun keputusan apakah akses masih berlaku tetap mengacu pada \textit{state capability} di IOTA\@.
-
 Pencabutan \textit{capability} dilakukan melalui transaksi \texttt{revoke\_access}.
 Transaksi ini mengubah log pasien dengan menandai \texttt{is\_revoked} menjadi \texttt{true} dan menghapus akses yang sesuai dari tabel akses baca atau tulis milik personel.
 Riwayat transaksi pemberian maupun pencabutan tetap tercatat pada \textit{ledger}, tetapi operasi berikutnya hanya membaca \textit{state} terbaru.
 Karena itu, setelah akses dicabut, personel tidak lagi memiliki \textit{capability} aktif untuk memperoleh data pasien melalui alur DecMed.
-
 
 \subsection{Mekanisme Pemberian Akses Baca dan Tulis Rekam Medis ke Tenaga Kesehatan}\label{mekanisme-pemberian-akses}
 

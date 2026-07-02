@@ -82,27 +82,41 @@ Untuk mengidentifikasi ancaman yang mungkin muncul terhadap suatu sistem atau in
 STRIDE merupakan \textit{threat model} yang mengidentifikasi ancaman-ancaman yang sering dilakukan oleh \textit{attacker}.
 Daftar \textit{threat} yang diidentifikasi oleh STRIDE dan \textit{security control} yang berkaitan dapat dilihat melalui Tabel~\ref{tab:stride-threats} \parencite{owaspThreatModelingProcess}.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Daftar Ancaman STRIDE dan Parameter Keamanannya}\label{tab:stride-threats}
-    \begin{styledtable}{>{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{0.25\textwidth}}
-        
-        \textbf{Ancaman} & \textbf{Penjelasan} & \textbf{Parameter Keamanan} \\
-        
-        \textit{Spoofing} & Peniruan identitas entitas sah. & Autentikasi \\
-        
-        \textit{Tampering} & Modifikasi data tanpa otorisasi. & Integritas \\
-        
-        \textit{Repudiation} & Penyangkalan tindakan yang sebenarnya dilakukan. & Nir-sangkalan \\
-        
-        \textit{Information Disclosure} & Pengungkapan data kepada pihak tanpa hak akses. & Kerahasiaan \\
-        
-        \textit{Denial of Service} & Eksploitasi sumber daya hingga layanan lumpuh. & Ketersediaan \\
-        
-        \textit{Elevation of Privilege} & Upaya untuk mendapatkan hak akses lebih tinggi. & Otorisasi \\
-        
-    \end{styledtable}
-\end{table}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{0.25\textwidth}|}
+    \hiderowcolors
+    \caption{Daftar Ancaman STRIDE dan Parameter Keamanannya}\label{tab:stride-threats}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Ancaman} & \textbf{Penjelasan} & \textbf{Parameter Keamanan} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Daftar Ancaman STRIDE dan Parameter Keamanannya (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Ancaman} & \textbf{Penjelasan} & \textbf{Parameter Keamanan} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \textit{Spoofing} & Peniruan identitas entitas sah. & Autentikasi \\
+    \hline
+    \textit{Tampering} & Modifikasi data tanpa otorisasi. & Integritas \\
+    \hline
+    \textit{Repudiation} & Penyangkalan tindakan yang sebenarnya dilakukan. & Nir-sangkalan \\
+    \hline
+    \textit{Information Disclosure} & Pengungkapan data kepada pihak tanpa hak akses. & Kerahasiaan \\
+    \hline
+    \textit{Denial of Service} & Eksploitasi sumber daya hingga layanan lumpuh. & Ketersediaan \\
+    \hline
+    \textit{Elevation of Privilege} & Upaya untuk mendapatkan hak akses lebih tinggi. & Otorisasi \\
+    \hline
+\end{styledxltabular}
+\endgroup
 
 % Setelah ancaman diidentifikasi menggunakan STRIDE, diperlukan mekanisme prioritisasi agar mitigasi difokuskan pada ancaman yang paling berdampak. 
 % DREAD adalah sistem penilaian risiko yang mengevaluasi ancaman berdasarkan lima parameter, yaitu \textit{Damage}, \textit{Reproducibility}, \textit{Exploitability}, \textit{Affected Users}, dan \textit{Discoverability} \parencite{openStack_StrideDREAD}. 

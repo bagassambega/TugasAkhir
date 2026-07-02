@@ -28,16 +28,17 @@ Mekanisme pengaksesan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-ranca
 	      \textit{Smart contract} memeriksa apakah tenaga kesehatan memiliki akses baca PGHD terhadap pasien, apakah akses belum kedaluwarsa, dan apakah akses belum dicabut.
 	      Metadata dengan status invalid tidak dapat dibuka sebagai data valid.
 
-	\item \textbf{Deteksi metadata \textit{legacy}.}
-	      Pada saat daftar atau detail PGHD dibaca, PRE memeriksa metadata tambahan.
-	      Jika metadata masih menggunakan skema lama yang memuat \texttt{pghd\_outer\_signature} atau tidak memiliki \texttt{signature}, PRE menginvalidasi entri dengan alasan \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA} dan tidak menampilkan entri tersebut sebagai PGHD valid.
+	% \item \textbf{Deteksi metadata \textit{legacy}.}
+	%       Pada saat daftar atau detail PGHD dibaca, PRE memeriksa metadata tambahan.
+	%       Jika metadata masih menggunakan skema lama yang memuat \texttt{pghd\_outer\_signature} atau tidak memiliki \texttt{signature}, PRE menginvalidasi entri dengan alasan \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA} dan tidak menampilkan entri tersebut sebagai PGHD valid.
 
 	\item \textbf{Pemilihan satu entri PGHD.}
 	      Ketika tenaga kesehatan memilih satu entri PGHD, \textit{client} mengirim permintaan detail ke PRE\@.
 	      PRE kembali memvalidasi token, material PRE, dan hak akses \textit{on-chain} sebelum mengambil data.
 
 	\item \textbf{Pengambilan metadata dan \textit{ciphertext}.}
-	      PRE mengambil metadata PGHD dari \textit{smart contract}. Metadata tersebut memuat CID, \texttt{h\_cipher}, status, alasan kegagalan jika ada, dan metadata kriptografis yang diserialisasi.
+	      PRE mengambil metadata PGHD dari \textit{smart contract}. 
+		  Metadata tersebut memuat CID, \texttt{h\_cipher}, status, alasan kegagalan jika ada, dan metadata kriptografis yang diserialisasi.
 	      PRE kemudian mengambil \texttt{enc\_pghd} dari penyimpanan \textit{off-chain} menggunakan CID tersebut.
 
 	\item \textbf{Verifikasi hash \textit{ciphertext} dan \textit{signature} oleh PRE.}
@@ -74,7 +75,7 @@ Mekanisme pengaksesan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-ranca
 	      Setelah valid, PRE memanggil \textit{smart contract} untuk mencari metadata PGHD berdasarkan CID, mengubah status metadata menjadi invalid, dan menyimpan alasan kegagalan.
 	      PRE kemudian membaca kembali daftar PGHD valid untuk memastikan CID tersebut tidak lagi dikembalikan sebagai entri valid.
 
-	      PRE juga mencoba melakukan \textit{unpin} objek IPFS terkait CID tersebut dari node IPFS yang dikelola sistem.
+	    %   PRE juga mencoba melakukan \textit{unpin} objek IPFS terkait CID tersebut dari node IPFS yang dikelola sistem.
 	      Setelah status invalid tercatat di IOTA, entri PGHD tidak lagi dikembalikan sebagai data valid pada daftar PGHD dan tidak dapat dibuka sebagai data valid.
 
 	\item \textbf{Efek pencabutan akses.}

@@ -7,8 +7,8 @@ Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{f
 
 \begin{figure}[htbp]
     \centering
-	\caption{\textit{Sequence Diagram} Mekanisme Pengumpulan dan Pengolahan PGHD}\label{fig:seq-diagram-rancangan-pengumpulan}
 	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-mekanisme-pengumpulan-pghd.png}
+	\caption{\textit{Sequence Diagram} Mekanisme Pengumpulan dan Pengolahan PGHD}\label{fig:seq-diagram-rancangan-pengumpulan}
 \end{figure}
 
 \begin{enumerate}
@@ -20,7 +20,7 @@ Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{f
 
     \item \textbf{Aktivasi periode pengumpulan data.}
     Ketika pasien mengaktifkan pengumpulan PGHD, \textit{client} menyimpan status pengumpulan sebagai aktif dan mencatat waktu mulai periode pengumpulan. 
-    Periode ini digunakan untuk menampilkan data yang sedang dikumpulkan, jumlah data yang belum masuk \textit{batch}, dan estimasi ukuran data yang masih menunggu pemrosesan.
+    Periode ini digunakan untuk menampilkan dan menghitung data yang sedang dikumpulkan, jumlah data yang masuk \textit{batch}, dan estimasi ukuran data.
 
     \item \textbf{Pengambilan data dari API sistem operasi (OS).}
     \textit{Client} mengambil data kesehatan dari API OS secara periodik. 
@@ -31,7 +31,7 @@ Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{f
 
     \item \textbf{Pengambilan data dari sensor perangkat.}
     Selain melalui API OS, \textit{client} dapat mengambil data dari sensor perangkat secara periodik. 
-    Data sensor diproses menjadi tipe data PGHD, misalnya data aktivitas, estimasi gerakan, atau data kesehatan lain yang dapat diturunkan dari sensor yang tersedia. 
+    Data sensor diproses menjadi tipe data PGHD, misalnya data aktivitas atau data kesehatan lain yang dapat diturunkan dari sensor yang tersedia. 
     Hasil pemrosesan tetap disimpan sebagai data sementara pada penyimpanan lokal sebelum masuk proses pembentukan \textit{batch}.
     % Implementasi Android saat ini menggunakan interval sensor default 60 detik dan menyimpan hasil transformasi dengan label sumber Phone Sensor.
 
@@ -69,5 +69,5 @@ Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{f
 
     \item \textbf{Penyimpaanan permanen data lokal.}
     Data PGHD yang telah dikumpulkan tidak dihapus otomatis setelah berhasil dikirim. 
-    Data yang belum terkirim, gagal terkirim, maupun sudah terkirim tetap dipertahankan untuk mendukung riwayat pasien, evaluasi pengiriman, dan kebutuhan audit pada \textit{client} dan bisa dikirim ulang oleh pasien.
+    Data yang belum terkirim, gagal terkirim, maupun sudah terkirim tetap dipertahankan untuk mendukung riwayat pasien, evaluasi pengiriman, dan kebutuhan audit pada \textit{client} dan bisa dikirim ulang ketika internet tersedia atau dikirim manual oleh pasien jika disebabkan oleh \textit{error} lain.
 \end{enumerate}

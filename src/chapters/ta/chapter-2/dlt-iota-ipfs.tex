@@ -1,12 +1,12 @@
 \section{IOTA dan IPFS}\label{subsec:studi-literatur-dlt-iota-ipfs}
 
-\subsection{\textit{Distributed \textit{ledger} Technology} (DLT)}
+\subsection{\textit{Distributed \textit{Ledger} Technology} (DLT)}
 
-\textit{Distributed \textit{ledger} Technology} (DLT) merupakan paradigma komputasi terdistribusi yang menyimpan catatan transaksi pada sebuah \textit{ledger} (\textit{ledger}) yang direplikasi di banyak \textit{node} dan diperbarui melalui mekanisme konsensus terdistribusi, sehingga tidak terdapat satu otoritas pusat yang mengendalikan keseluruhan sistem \parencite{Savadatti_2025_dlt_overview}.
+\textit{Distributed \textit{ledger} Technology} (DLT) merupakan paradigma komputasi terdistribusi yang menyimpan catatan transaksi pada sebuah \textit{ledger} yang direplikasi di banyak \textit{node} dan diperbarui melalui mekanisme konsensus, sehingga tidak terdapat satu otoritas pusat yang mengendalikan keseluruhan sistem \parencite{Savadatti_2025_dlt_overview}.
 DLT memanfaatkan kriptografi seperti fungsi \textit{hash} dan \textit{digital signature} untuk menjamin integritas data, sehingga setiap upaya modifikasi terhadap catatan transaksi dapat dideteksi oleh jaringan \parencite{Savadatti_2025_dlt_overview}.
-Arsitektur yang terdistribusi menghilangkan \textit{single point of failure} yang umum pada sistem terpusat dan meningkatkan toleransi gangguan, karena setiap \textit{node} menyimpan salinan \textit{ledger} dan berpartisipasi dalam proses validasi \parencite{Savadatti_2025_dlt_overview}.
+Arsitektur yang terdistribusi menghilangkan \textit{single point of failure} yang muncul pada sistem terpusat dan meningkatkan toleransi gangguan, karena setiap \textit{node} menyimpan salinan \textit{ledger} dan berpartisipasi dalam proses validasi \parencite{Savadatti_2025_dlt_overview}.
 
-DLT menggunakan berbagai mekanisme konsensus yang telah dikembangkan dengan karakteristik dan \textit{trade-off} berbeda, mulai dari Proof-of-Work (PoW) yang memberikan tingkat keamanan tinggi namun boros energi, hingga alternatif seperti Proof-of-Stake (PoS), Practical Byzantine Fault Tolerance (PBFT), Delegated Proof-of-Stake (DPoS), dan Proof-of-Authority (PoA) yang berupaya meningkatkan efisiensi dan \textit{throughput} dengan asumsi kepercayaan tertentu \parencite{Savadatti_2025_dlt_overview}.
+DLT menggunakan berbagai mekanisme konsensus yang telah dikembangkan dengan karakteristik dan \textit{trade-off} berbeda, mulai dari Proof-of-Work (PoW) yang memberikan tingkat keamanan tinggi namun boros energi, hingga alternatif seperti Proof-of-Stake (PoS), Practical Byzantine Fault Tolerance (PBFT), Delegated Proof-of-Stake (DPoS), dan Proof-of-Authority (PoA) yang berupaya lebih efisien dan \textit{throughput} tinggi tapi dengan asumsi kepercayaan tertentu \parencite{Savadatti_2025_dlt_overview}.
 Selain pendekatan berbasis rantai blok linear seperti pada blockchain, terdapat pula struktur DLT lain seperti \textit{Directed Acyclic Graph} (DAG) yang digunakan oleh IOTA, yang dirancang untuk meningkatkan paralelisme dan kapasitas pemrosesan transaksi, khususnya pada skenario IoT berskala besar \parencite{Savadatti_2025_dlt_overview}.
 Di berbagai domain seperti keuangan, rantai pasok, energi, administrasi publik, dan kesehatan, DLT dimanfaatkan untuk meningkatkan keamanan data, transparansi, serta ketertelusuran, dengan tingkat kesesuaian yang bergantung pada karakteristik konsensus, skalabilitas, serta kebutuhan privasi di setiap domain \parencite{Savadatti_2025_dlt_overview}.
 
@@ -22,7 +22,7 @@ point of failure} dan mengurangi tingkat desentralisasi yang menjadi tujuan utam
 
 Sebagai respons terhadap keterbatasan tersebut dan ketidakberhasilan IOTA 2.0 direalisasikan di lingkungan produksi, fondasi protokol beralih ke arsitektur baru bernama IOTA Rebased \parencite{FromTangleToRebased_2025}.
 IOTA Rebased mengganti Tangle dengan DAG Mysticeti dan memperkenalkan model \textit{ledger} berorientasi objek yang dioperasikan melalui \textit{smart contract} berbasis Move Virtual Machine (MoveVM) \parencite{FromTangleToRebased_2025}. 
-Objek dalam \textit{ledger} IOTA Rebased merepresentasikan aset atau \textit{state} yang dikelola melalui smart contract \parencite{IOTA_Docs_2025}.
+Objek dalam \textit{ledger} IOTA Rebased merepresentasikan aset atau \textit{state} yang dikelola melalui \textit{smart contract} \parencite{IOTA_Docs_2025}.
 IOTA Rebased menggunakan mekanisme konsensus \textit{Delegated Proof-of-Stake} (DPoS) melalui protokol Mysticeti untuk mencapai \textit{throughput} tinggi dan finalitas dalam hitungan subdetik \parencite{FromTangleToRebased_2025}.
 
 \subsubsection{Arsitektur IOTA}
@@ -31,11 +31,11 @@ IOTA Rebased menggunakan mekanisme konsensus \textit{Delegated Proof-of-Stake} (
 % L2: IOTA memakai ethereum, di EVM Virtual Machine
 Arsitektur IOTA Rebased dapat dilihat melalui ilustrasi di Gambar~\ref{fig:iota-rebased-architecture}.
 IOTA Rebased menggunakan arsitektur dua tingkat pemrograman/level.
-\textit{Layer 1} (L1) merupakan lapisan inti jaringan IOTA itu sendiri, yaitu DAG Mysticeti yang terdesentralisasi dengan 150 slot validator permissionless berbasis DPoS \parencite{IOTA_Docs_2025}.
-Pada L1, smart contract dieksekusi langsung di atas \textit{ledger} menggunakan MoveVM, sehingga performa \textit{native} karena tidak membutuhkan \textit{bridge} atau lapisan tambahan untuk eksekusinya \parencite{IOTA_Docs_2025}.
+\textit{Layer 1} (L1) merupakan lapisan inti jaringan IOTA itu sendiri, yaitu DAG Mysticeti yang terdesentralisasi dengan slot validator \textit{permissionless} berbasis DPoS \parencite{IOTA_Docs_2025}.
+Pada L1, \textit{smart contract} dieksekusi langsung di atas \textit{ledger} menggunakan MoveVM, sehingga performa \textit{native} karena tidak membutuhkan \textit{bridge} atau lapisan tambahan untuk eksekusinya \parencite{IOTA_Docs_2025}.
 
 \textit{Layer 2} (L2) adalah lapisan yang berjalan di atas L1 dan menyediakan kompatibilitas dengan Ethereum Virtual Machine (EVM) serta bahasa Solidity sehingga memungkinkan migrasi proyek berbasis Ethereum ke ekosistem IOTA \parencite{IOTA_Docs_2025}.
-L2 menawarkan fleksibilitas yang lebih tinggi untuk pengembangan aplikasi terdesentralisasi (dApp) yang memerlukan ekosistem \textit{tooling} Ethereum yang sudah matang, namun beroperasi dengan asumsi kepercayaan yang berbeda dari L1 karena bergantung pada operator L2 tambahan \parencite{IOTA_Docs_2025}.
+L2 menawarkan fleksibilitas yang lebih tinggi untuk pengembangan aplikasi terdesentralisasi (dApp) yang memerlukan ekosistem \textit{tooling} Ethereum yang sudah matang, namun memiliki level kepercayaan yang lebih rendah dari L1 karena bergantung pada operator L2 tambahan \parencite{IOTA_Docs_2025}.
 
 \begin{figure}[htbp]
   \centering
@@ -47,12 +47,13 @@ L2 menawarkan fleksibilitas yang lebih tinggi untuk pengembangan aplikasi terdes
 
 Proses transaksi pada IOTA Rebased berawal dari sisi klien (\textit{client-side}). 
 Klien membuat sebuah transaksi yang berisi \textit{payload} (contohnya instruksi  untuk menjalankan \textit{smart contract}) dan metadata yang dibutuhkan. 
-Transaksi ini  kemudian ditandatangani secara kriptografis menggunakan kunci privat klien sebelum  dikirim ke \textit{node} di dalam jaringan \parencite{IOTA_Docs_TransactionLifecycle}.
+Transaksi ini  kemudian ditandatangani secara kriptografis menggunakan kunci privat klien sebelum dikirim ke \textit{node} di dalam jaringan \parencite{IOTA_Docs_TransactionLifecycle}.
 
-Setelah transaksi diterima, \textit{node} akan melakukan pengecekan awal  (\textit{stateless validation}). Tujuan dari proses ini adalah untuk memastikan bahwa \textit{signature} valid, saldo akun cukup untuk membayar biaya transaksi, izin aksesnya sesuai, dan struktur transaksi tidak melanggar aturan dasar protokol \parencite{IOTA_Docs_TransactionLifecycle}. 
+Setelah transaksi diterima, \textit{node} akan melakukan pengecekan awal (\textit{stateless validation}). 
+Tujuan dari proses ini adalah untuk memastikan bahwa \textit{signature} valid, saldo akun cukup untuk membayar biaya transaksi, izin aksesnya sesuai, dan struktur transaksi tidak melanggar aturan dasar protokol \parencite{IOTA_Docs_TransactionLifecycle}. 
 Jika lolos pengecekan ini, transaksi akan dimasukkan ke dalam \textit{mempool} lokal untuk mengantre sebelum diproses pada tahap konsensus global.
 
-Semua transaksi yang ada di \textit{mempool} harus diurutkan secara global (\textit{total ordering}) sebelum dieksekusi pada \textit{ledger} agar tidak terjadi  konflik data \parencite{IOTA_Docs_Architecture}. 
+Semua transaksi yang ada di \textit{mempool} harus diurutkan secara global (\textit{total ordering}) sebelum dieksekusi pada \textit{ledger} agar tidak terjadi konflik data \parencite{IOTA_Docs_Architecture}. 
 Untuk melakukan ini, IOTA Rebased menggunakan mekanisme konsensus \textit{Delegated Proof-of-Stake} (DPoS) \parencite{IOTA_Docs_Consensus, IOTA_Docs_PoS}. 
 
 Dalam sistem DPoS, pemegang token mendelegasikan hak suara (\textit{voting power}) mereka kepada validator. 
@@ -70,7 +71,7 @@ Ketika protokol Mysticeti sudah menetapkan urutan eksekusi dan bloknya memenuhi 
 Pada tahap ini, urutan transaksi sudah permanen dan tidak bisa dibatalkan lagi, asalkan jumlah persentase validator yang tidak sesuai tidak melebihi sepertiga dari total \textit{stake} jaringan \parencite{IOTA_Docs_Architecture}.
 Setelah urutannya pasti, MoveVM (\textit{Move Virtual Machine}) akan mengeksekusi transaksi secara berurutan untuk memperbarui data di \textit{ledger} \parencite{IOTA_Docs_Architecture}. 
 
-Agar validator tetap jujur dan berpartisipasi aktif, IOTA Rebased memberikan insentif berupa \textit{staking rewards} yang dibagikan pada akhir setiap \textit{epoch} \parencite{IOTA_Docs_ValidatorsStaking}. 
+Agar validator tetap jujur dan berpartisipasi aktif, IOTA Rebased memberikan insentif berupa \textit{staking rewards} yang dibagikan pada akhir setiap \textit{epoch} \parencite{IOTA_Docs_ValidatorsStaking}.
 Setiap validator memiliki \textit{staking pool} untuk mencatat kontribusi dari para delegator. 
 Protokol akan menghitung total \textit{reward} yang didapat, lalu membagikannya ke setiap \textit{pool} sesuai dengan proporsi \textit{stake} yang dikelola, setelah dikurangi potongan biaya operasional validator \parencite{IOTA_Docs_PoS}.
 
@@ -78,7 +79,7 @@ Protokol akan menghitung total \textit{reward} yang didapat, lalu membagikannya 
 
 \textit{InterPlanetary File System} (IPFS) adalah protokol dan jaringan \textit{peer-to-peer} untuk penyimpanan dan distribusi konten secara terdistribusi dengan mekanisme \textit{content-addressed} alih-alih berbasis lokasi seperti HTTP \parencite{Benet_2014_ipfs}.
 Pada IPFS, setiap objek atau berkas diidentifikasi dengan \textit{content identifier} (CID) yang diperoleh dengan menerapkan fungsi \textit{hash} terhadap isi berkas, sehingga setiap perubahan terhadap isi berkas akan menghasilkan CID yang berbeda dan memberikan jaminan integritas konten \parencite{Benet_2014_ipfs}.
-Setiap berkas diidentifikasi berdasarkan hash isinya (CID), bukan lokasi penyimpanannya, sehingga berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari node mana pun yang tersedia \parencite{Benet_2014_ipfs}.
+Karena berkas diidentifikasi berdasarkan hash isinya (CID), bukan lokasi penyimpanannya, berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari \textit{node} mana pun yang tersedia \parencite{Benet_2014_ipfs}.
 Objek-objek di IPFS disusun dalam bentuk DAG yang menghubungkan blok-blok data dan referensinya, sedangkan distribusi konten antar \textit{node} dilakukan dengan kombinasi protokol \textit{gossip} dan \textit{distributed hash table} (DHT) \parencite{Benet_2014_ipfs}.
 
 Sebagai sistem penyimpanan terdistribusi, jaringan IPFS tidak memiliki \textit{single point of failure}, dan \textit{node} di dalamnya tidak perlu saling percaya. 
@@ -89,6 +90,6 @@ Mekanisme \textit{marketplace} ini secara tidak langsung melakukan replikasi dat
 Walaupun begitu, IPFS tidak menyalin data ke seluruh jaringan secara otomatis. 
 Agar sebuah data dipastikan tetap ada dan bertahan di jaringan, sebuah \textit{node} harus melakukan \textit{pinning} pada objek tersebut, yang memaksa objek itu untuk terus tersimpan secara permanen di penyimpanan lokal \textit{node} yang bersangkutan \parencite{Benet_2014_ipfs}.
 
-IPFS sendiri tidak menyediakan konsensus global seperti pada DLT, melainkan berfungsi sebagai lapisan penyimpanan terdistribusi yang dapat dikombinasikan dengan DLT atau blockchain untuk menyimpan \textit{hash} atau CID sebagai \textit{anchor} yang tidak dapat diubah pada \textit{ledger} \parencite{Benet_2014_ipfs}.
-Pola integrasi yang umum adalah menyimpan data berukuran besar atau bersifat sensitif di IPFS (dengan atau tanpa enkripsi), sementara \textit{ledger} hanya menyimpan pointer berupa CID dan metadata penting lain, sehingga biaya dan ukuran \textit{ledger} dapat ditekan sekaligus mempertahankan integritas dan jejak audit end-to-end \parencite{Benet_2014_ipfs}.
+IPFS sendiri tidak menyediakan konsensus global seperti pada DLT, melainkan berfungsi sebagai lapisan penyimpanan terdistribusi yang dapat dikombinasikan dengan DLT atau \textit{blockchain} untuk menyimpan \textit{hash} atau CID sebagai \textit{anchor} yang tidak dapat diubah pada \textit{ledger} \parencite{Benet_2014_ipfs}.
+Pola integrasi yang umum adalah menyimpan data berukuran besar atau bersifat sensitif di IPFS (dengan atau tanpa enkripsi), sementara \textit{ledger} hanya menyimpan \textit{pointer} berupa CID dan metadata penting lain, sehingga biaya dan ukuran \textit{ledger} dapat ditekan dan mempertahankan integritas dan jejak audit \parencite{Benet_2014_ipfs}.
 Dalam berbagai arsitektur yang menggabungkan DLT dengan IPFS, DLT biasanya dimanfaatkan sebagai \textit{control plane} untuk manajemen identitas, kontrol akses, dan pencatatan transaksi, sedangkan IPFS berperan sebagai \textit{data plane} untuk penyimpanan dan distribusi konten berukuran besar \parencite{Benet_2014_ipfs}.

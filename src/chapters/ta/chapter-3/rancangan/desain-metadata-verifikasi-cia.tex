@@ -18,8 +18,8 @@ Untuk menjamin kerahasiaan PGHD, sistem menggunakan enkripsi ketika data dikirim
 Mekanisme yang digunakan sebagai berikut,
 
 \begin{itemize}
-	\item \textbf{Payload data dienkripsi di \textit{client} sebelum dikirim}.
-	      Setelah batch PGHD terbentuk dalam bentuk plaintext sesuai Tabel~\ref{tab:field-batch-json-pghd}, \textit{client} mengenkripsi data menggunakan AES-GCM dengan kunci simetris acak \texttt{aes\_key} dan \texttt{aes\_nonce}.
+	\item \textbf{\textit{Payload} data dienkripsi di \textit{client} sebelum dikirim}.
+	      Setelah \textit{batch} PGHD terbentuk dalam bentuk \textit{plaintext} sesuai Tabel~\ref{tab:field-batch-json-pghd}, \textit{client} mengenkripsi data menggunakan AES-GCM dengan kunci simetris acak \texttt{aes\_key} dan \texttt{aes\_nonce}.
 	      AES-GCM dipilih karena menyediakan kerahasiaan dan autentikasi \textit{ciphertext} dalam satu operasi, sehingga perubahan terhadap \textit{ciphertext} atau \textit{authentication tag} menyebabkan dekripsi gagal.
 	      Dengan demikian, data telah berbentuk \textit{ciphertext} sebelum keluar dari perangkat pasien.
 
@@ -36,13 +36,13 @@ Mekanisme yang digunakan sebagai berikut,
 	      \textit{Client} tenaga kesehatan menggunakan artefak tersebut untuk memperoleh \texttt{aes\_key} dan \texttt{aes\_nonce}, lalu mendekripsi \texttt{enc\_pghd} di sisi \textit{client}.
 
 	\item \textbf{Perlindungan material lokal pada \textit{client}}.
-	      PGHD \textit{plaintext}, kunci hasil dekripsi, token akses, CID personel, \textit{activation key}, serta material sesi lain hanya dipertahankan selama diperlukan oleh sesi aktif.
+	      PGHD \textit{plaintext}, kunci hasil dekripsi, token akses, CID personel, \textit{activation key}, serta material sesi lain hanya dipertahankan selama diperlukan oleh sesi aktif (saat akses PGHD tenaga kesehatan aktif).
 	      Material kunci yang harus berada pada penyimpanan lokal selama sesi disimpan dalam bentuk terenkripsi.
 	      Ketika pengguna keluar, \textit{client} menghapus material sesi dan kredensial yang dimasukkan agar tidak dapat digunakan oleh pengguna berikutnya pada perangkat yang sama.
 
-	\item \textbf{Minimisasi metadata plaintext}.
+	\item \textbf{Kerahasiaan metadata}.
 	      Nilai pengukuran, rincian sumber atau perangkat, dan konteks ditempatkan di dalam \texttt{enc\_pghd}.
-	      Metadata \textit{plaintext} pada IOTA dibatasi pada rujukan data, hash, status, waktu pencatatan, alamat yang diperlukan untuk relasi akun, dan artefak kriptografis yang dibutuhkan oleh PRE atau verifikasi.
+	      Metadata \textit{plaintext} pada IOTA dibatasi pada rujukan data, hash, status, waktu pencatatan, alamat yang diperlukan untuk relasi akun, dan artefak kriptografis yang dibutuhkan oleh PRE atau verifikasi agar tidak dapat diakses oleh pihak yang tidak diizinkan.
 \end{itemize}
 
 Mekanisme ini menjamin bahwa data tidak dapat dibaca oleh pihak yang tidak memiliki otorisasi aktif, termasuk PRE, penyimpanan \textit{off-chain}, maupun validator IOTA\@.
@@ -52,8 +52,8 @@ Pasien juga tidak perlu membagikan \textit{private key} kepada tenaga kesehatan.
 
 Untuk menjamin integritas PGHD, sistem menggunakan hash dan \textit{digital signature} terhadap \textit{ciphertext} PGHD\@.
 
-\textbf{\textit{Signature ciphertext}}.
-\textit{Payload} batch PGHD dienkripsi menjadi \texttt{enc\_pghd}. \textit{Client} kemudian menghitung hash \textit{ciphertext} seperti yang didefinisikan pada Persamaan~\ref{eq:h_cipher}.
+\textit{Payload} batch PGHD dienkripsi menjadi \texttt{enc\_pghd}. 
+\textit{Client} kemudian menghitung hash \textit{ciphertext} seperti yang didefinisikan pada Persamaan~\ref{eq:h_cipher}.
 \begin{equation}
 	h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}), \label{eq:h_cipher}
 \end{equation}
@@ -64,7 +64,7 @@ Pada sistem ini pesan yang dilindungi adalah \texttt{enc\_pghd}.
 Oleh karena itu verifikasi dilakukan dengan menghitung ulang \texttt{h\_cipher} dari \textit{ciphertext}, kemudian memverifikasi \texttt{signature} terhadap \texttt{h\_cipher} menggunakan kunci publik PGHD pasien.
 
 Algoritma tanda tangan yang digunakan adalah ECDSA dengan kurva P-256.
-ECDSA dipilih karena ukuran kunci dan tanda tangan lebih kecil dibandingkan RSA untuk tingkat keamanan yang sebanding, sehingga lebih sesuai untuk payload \textit{mobile} dan metadata PGHD yang sering dikirim.
+ECDSA dipilih karena ukuran kunci dan tanda tangan lebih kecil dibandingkan RSA untuk tingkat keamanan yang sebanding, sehingga lebih sesuai untuk \textit{payload} \textit{mobile} dan metadata PGHD yang sering dikirim.
 Selain itu, ECDSA P-256 juga sesuai dengan ekosistem kriptografi yang digunakan pada \textit{client} dan PRE saat ini\@.
 
 Verifikasi integritas dilakukan pada dua titik.
@@ -91,7 +91,7 @@ Mekanisme pemeriksaannya sebagai berikut.
 	      Transaksi pencatatan sebelumnya tidak dihapus, tetapi aplikasi hanya memperlakukan entri dengan state terkini yang valid sebagai data yang dapat digunakan.
 \end{enumerate}
 
-Rancangan ini membuat perubahan persetujuan, hak akses, dan status PGHD harus melalui fungsi \textit{smart contract} yang sesuai, sekaligus mempertahankan histori transaksi pada ledger.
+Rancangan ini membuat perubahan persetujuan, hak akses, dan status PGHD harus melalui fungsi \textit{smart contract} yang sesuai, sekaligus mempertahankan histori transaksi pada \textit{ledger} sehingga tidak dapat dimanipulasi.
 
 \subsubsection{Ketersediaan (Availability)}
 
@@ -109,7 +109,7 @@ Untuk menjamin ketersediaan data PGHD, sistem menggunakan tiga mekanisme berikut
 	\item \textbf{Penyimpanan lokal dan pengiriman saat koneksi tersedia}.
 	      \textit{Batch} PGHD disimpan pada basis data lokal sebelum dikirim.
 	      Jika perangkat tidak memiliki koneksi internet atau pengiriman gagal karena layanan pada sistem DecMed \textit{down}, data tetap berada pada perangkat pasien.
-	      Ketika koneksi tersedia kembali, \textit{client} menjadwalkan pengiriman ulang.
+	      Ketika koneksi tersedia kembali, \textit{client} menjadwalkan pengiriman ulang sehingga tercapai data terkirim \textit{at least once}.
 	      Jika kegagalan terjadi bukan karena koneksi, pasien harus memicu pengiriman \textit{manual} untuk menghindari pengulangan pengiriman terus menerus.
 \end{enumerate}
 

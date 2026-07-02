@@ -2,7 +2,7 @@
 
 Setelah PGHD dikumpulkan dan dibentuk menjadi \textit{batch} lokal, \textit{client} pasien menjalankan mekanisme pengamanan dan pengiriman data. 
 \textit{Plaintext} \textit{batch} PGHD mengikuti struktur pada Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. 
-Setelah data dienkripsi, penyimpanan lokal hanya menyimpan \textit{batch} terenkripsi beserta artefak dan metadata operasional pengiriman seperti dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
+Setelah data dienkripsi, penyimpanan lokal menyimpan \textit{batch} terenkripsi beserta artefak dan metadata operasional pengiriman seperti dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
 Metadata hasil pengiriman dicatat pada ledger menggunakan struktur Tabel~\ref{tab:iota-pghd-metadata} dan Tabel~\ref{tab:iota-pghd-serialized-metadata}.
 Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengiriman}.
 
@@ -42,7 +42,7 @@ Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancan
     \[
         h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}).
     \]
-    Nilai tersebut ditandatangani menggunakan kunci tanda tangan PGHD pasien sehingga menghasilkan \texttt{signature}. 
+    Nilai tersebut ditandatangani menggunakan kunci privat PGHD pasien sehingga menghasilkan \texttt{signature}. 
     \textit{Signature} ini digunakan PRE dan \textit{client} tenaga kesehatan untuk memverifikasi integritas \textit{ciphertext}.
 
     \item \textbf{Pengiriman \textit{envelope} PGHD ke PRE.}

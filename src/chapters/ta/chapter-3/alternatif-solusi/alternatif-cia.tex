@@ -42,7 +42,7 @@ Mekanisme ini menjamin integritas data terjamin sepanjang pertukaran, pengiriman
 
 T-T02 ditangani dengan menjadikan \textit{state capability} pada IOTA sebagai sumber kebenaran persetujuan. 
 Pembuatan, pemeriksaan, pencabutan, masa berlaku, tipe akses, dan perubahan status hanya dilakukan melalui fungsi \textit{smart contract} yang memeriksa alamat pengirim serta relasi pasien--tenaga kesehatan. 
-Status PGHD yang tidak valid tidak menghapus riwayat transaksi lama, tetapi diperbarui melalui transaksi baru sehingga aplikasi selalu menggunakan state terkini.
+Status PGHD yang tidak valid tidak menghapus riwayat transaksi lama, tetapi diperbarui melalui transaksi baru sehingga aplikasi selalu menggunakan \textit{state} terkini.
 
 \subsubsection{Analisis Solusi Ketersediaan (\textit{Availability})}
 
@@ -75,7 +75,7 @@ Data yang dikirimkan mempertahankan status menunggu, tertunda, gagal, atau terki
 Ketika layanan pulih, \textit{batch} data dapat dikirim ulang. 
 Mekanisme ini mengurangi frekuensi transaksi dan mencegah kehilangan data akibat gangguan sementara.
 
-Dari sisi server, mekanisme penjaminan ketersediaan pada arsitektur DecMed-PGHD didukung oleh tiga lapisan yang sudah melekat pada komponen-komponen yang dipilih. 
+Dari sisi server, mekanisme penjaminan ketersediaan pada arsitektur DecMed-PGHD diselesaikan dengan solusi berikut. 
 Pertama, \textit{batching} di sisi klien mengurangi frekuensi pengiriman ke komponen server menjadi jumlah pengiriman dengan interval yang terkontrol, sehingga beban yang diterima server bukan merupakan aliran data kontinu melainkan \textit{request} dalam jumlah yang dapat diprediksi. 
 Kedua, penyimpanan \textit{ciphertext} PGHD didelegasikan ke IPFS sebagai lapisan penyimpanan \textit{off-chain} yang terdistribusi, sehingga tidak terdapat titik penyimpanan terpusat yang dapat menjadi \textit{bottleneck} saat banyak \textit{batch} masuk secara bersamaan. 
 Selain itu, server \textit{proxy reencryption} juga dapat di-\textit{deploy} dalam \textit{node} jumlah banyak karena PRE bersifat \textit{stateless}.

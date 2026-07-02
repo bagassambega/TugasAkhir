@@ -26,28 +26,19 @@ Ketika data akan dikirim, \textit{record} lokal dibentuk menjadi \textit{batch} 
 
 % Implementasi Android saat ini menggunakan Health Connect sebagai API OS untuk wellness/fitness/activity. Data wearable Mi Smart Band 9 Active dikumpulkan melalui Mi Fitness yang menulis data ke Health Connect.
 
-\subsubsection{Frekuensi Pengambilan dan Pengiriman Data}
-
-Frekuensi pengambilan data dari setiap sumber dirancang mengikuti karakteristik sumber data dan kebutuhan ketersediaan sistem seperti yang sudah dijelaskan dan dipilih pada Subbab~\ref{alternatif-pengolahan-pghd}. 
-Data dapat diambil per satuan waktu atau secara periodik atau sampai ukuran data mencapai batasan ukuran tertentu. 
-Data yang telah terkumpul tidak langsung dikirim per \textit{record}, tetapi disimpan secara lokal dan dibentuk menjadi batch sebelum dikirim. 
-Pemicu pembentukan atau pengiriman batch dijelaskan pada Subbab~\ref{mekanisme-pengumpulan-pghd} dan Subbab~\ref{subsubsec:pengiriman-pghd}.
-
-% Implementasi Android saat ini menggunakan interval sensor default 60 detik, sinkronisasi Health Connect minimum 15 menit, pengiriman periodik minimum 15 menit, dan trigger ukuran 10 MB. Nilai tersebut dijelaskan pada Bab IV.
-
 \subsubsection{Penyimpanan Lokal}
 
 \textit{Client} pasien menyimpan PGHD pada penyimpanan lokal sebelum data dikirim ke sistem. 
 Penyimpanan lokal terdiri atas \textit{record} PGHD yang belum masuk \textit{batch}, \textit{envelope batch} PGHD terenkripsi, dan \textit{data point batch}. 
 \textit{Envelope batch} menyimpan artefak pengiriman seperti data PGHD yang terenkripsi, hash dari PGHD yang terenkripsi, \textit{digital signature}, \texttt{capsule}, dan kunci simetris terenkripsi. 
 Struktur data lokal dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
-Mekanisme ini memastikan data tidak hilang ketika perangkat pasien berada dalam kondisi offline.
+Mekanisme ini memastikan data tidak hilang ketika perangkat pasien berada dalam kondisi \textit{offline}.
 
 \subsubsection{\textit{Proxy Layer} dan \textit{Smart Contract}}
 
 \textit{Proxy Layer} berperan sebagai \textit{middleware} yang memproses permintaan dari \textit{client} pasien dan \textit{client} tenaga kesehatan. 
 Untuk PGHD, \textit{proxy} menerima \textit{batch} terenkripsi, memverifikasi \texttt{h\_cipher} (hash PGHD yang terenkripsi) dan \texttt{signature} (\textit{digital signature}), menyimpan \textit{ciphertext} \texttt{enc\_pghd} ke penyimpanan \textit{off-chain}, mencatat metadata ke \textit{smart contract}, serta menyediakan artefak \textit{proxy re-encryption} untuk tenaga kesehatan yang memiliki akses aktif untuk mendekripsi PGHD nantinya.
 
-\textit{Smart contract} di IOTA menyimpan metadata PGHD untuk setiap entri mengikuti format pada Tabel~\ref{tab:iota-pghd-metadata}. 
+\textit{Smart contract} di IOTA menyimpan metadata PGHD untuk setiap entri. 
 Metadata tambahan seperti \textit{identifier batch}, \textit{key} dan \textit{nonce} terenkripsi, \texttt{capsule}, dan \texttt{signature} (\textit{digital signature}) diserialisasi mengikuti Tabel~\ref{tab:iota-pghd-serialized-metadata}. 
 \textit{Smart contract} juga menyimpan informasi akses PGHD dan status validasi data.

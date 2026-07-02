@@ -1,7 +1,7 @@
 \subsection{Rancangan Format dan Skema PGHD}\label{rancangan-format-data-pghd}
 
 Berdasarkan pemilihan solusi pada Subbab~\ref{alternatif-provenance} dan landasan teori pada Subbab~\ref{studi-cia-provenance}, bagian ini merancang format data yang digunakan PGHD untuk mendukung \textit{data provenance}.
-Payload PGHD yang disimpan di penyimpanan \textit{off-chain} terdiri atas tingkat \textit{batch}, tingkat \textit{data group}, dan tingkat \textit{data point}.
+\textit{Payload} PGHD yang disimpan di penyimpanan \textit{off-chain} terdiri atas tingkat \textit{batch}, tingkat \textit{data group}, dan tingkat \textit{data point}.
 Tingkat \textit{batch} merepresentasikan satu paket pengiriman PGHD\@.
 Tingkat \textit{data group} mengelompokkan data berdasarkan jenis pengukuran dan sumber data.
 Tingkat \textit{data point} merepresentasikan nilai pengukuran individual.
@@ -74,17 +74,17 @@ Tabel~\ref{tab:field-datagroup-json-pghd} menjelaskan \textit{fields} pada tingk
 
     \texttt{measurement\_type} & String & Ya & Jenis pengukuran dalam format \textit{snake\_case}, misalnya \texttt{heart\_rate}, \texttt{steps}, atau tipe pengukuran kesehatan lain yang didukung sistem. \\
     \hline
-    \texttt{device\_type} & String & Ya & Tipe perangkat atau sumber penghasil pengukuran, misalnya telepon pintar, perangkat wearable, atau input manual. \\
+    \texttt{device\_type} & String & Ya & Tipe perangkat atau sumber penghasil pengukuran, misalnya \textit{mobile}, perangkat \textit{wearable}, atau input manual. \\
     \hline
     \texttt{recording\_method} & String & Tidak & Cara data direkam, misalnya otomatis oleh perangkat, sesi aktif, input manual, atau hasil transformasi dari data sensor. \\
     \hline
-    \texttt{source} & String & Ya & Kategori sumber data secara konseptual, misalnya API OS untuk wellness/fitness/activity, sensor perangkat, atau input manual. \\
+    \texttt{source} & String & Ya & Kategori sumber data, misalnya API OS untuk wellness/fitness/activity, sensor perangkat, atau input manual. \\
     \hline
     \texttt{source\_label} & String & Tidak & Label sumber yang lebih mudah dibaca pengguna atau tenaga kesehatan. \\
     \hline
     \texttt{source\_package\_name} & String & Tidak & Identitas aplikasi atau paket sumber data apabila tersedia dari API OS\@. \\
     \hline
-    \texttt{device\_source} & String & Tidak & Informasi sumber perangkat atau metode derivasi, misalnya perangkat wearable, sensor telepon, atau algoritma transformasi. \\
+    \texttt{device\_source} & String & Tidak & Informasi sumber perangkat atau metode derivasi, misalnya perangkat wearable, sensor telepon, atau data dari sensor yang sudah diolah. \\
     \hline
     \texttt{data\_points} & Array & Ya & Daftar nilai pengukuran aktual yang dijelaskan pada Tabel~\ref{tab:field-datapoints-json-pghd}. \\
     \hline

@@ -1,6 +1,7 @@
 \section{\textit{Proxy Re-Encryption} (PRE)}
 
-\textit{Proxy Re-Encryption} (PRE) adalah varian dari skema enkripsi kunci publik (\textit{public-key encryption}) yang dirancang untuk mendelegasikan hak akses dekripsi. \
+\textit{Proxy Re-Encryption} (PRE) adalah varian dari skema enkripsi kunci publik (\textit{public-key encryption}) yang dirancang untuk mendelegasikan hak akses dekripsi.
+PRE memungkinkan penerima untuk mendekripsi data tanpa perlu identitas kriptografi privat milik penerima.
 Dalam skema ini, sebuah entitas \textit{semi-trusted proxy} diberikan kemampuan untuk mengubah sebuah \textit{ciphertext} yang awalnya dienkripsi menggunakan kunci publik pengguna pertama (\textit{Delegator}), menjadi \textit{ciphertext} baru yang dapat didekripsi menggunakan kunci privat pengguna kedua (\textit{Delegatee}) \parencite{nunez2017proxy}. 
 Ilustrasi cara kerja PRE dapat dilihat pada Gambar~\ref{fig:mekanisme-pre}.
 
