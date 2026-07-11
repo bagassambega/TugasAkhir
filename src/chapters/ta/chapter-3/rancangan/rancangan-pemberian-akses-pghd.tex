@@ -58,19 +58,19 @@ Alur pemberian akses baca PGHD adalah sebagai berikut.
     Kunci ini dibuat khusus untuk \textit{grant access} yang sedang diberikan. 
     Tujuannya adalah menyediakan kunci penerima sementara pada mekanisme PRE, sehingga akses PGHD dapat dipisahkan dari kunci permanen tenaga kesehatan.
 
-    \item \textit{Client} pasien mengenkripsi \texttt{data\_pre\_secret\_key\_seed} menggunakan \texttt{hospital\_personnel\_pre\_public\_key}, menghasilkan \texttt{enc\_data\_pre\_secret\_key\_seed} dan \texttt{data\_pre\_secret\_key\_seed\_capsule}.
+    \item \textit{Client} pasien mengenkripsi \texttt{data\_pre\_secret\_key\_seed} menggunakan \texttt{hospital\_personnel\_pre\_public\_key}, menghasilkan \texttt{enc\_\allowbreak{}data\_\allowbreak{}pre\_\allowbreak{}secret\_\allowbreak{}key\_\allowbreak{}seed} dan \texttt{data\_\allowbreak{}pre\_\allowbreak{}secret\_\allowbreak{}key\_\allowbreak{}seed\_\allowbreak{}capsule}.
     Hasil enkripsi ini nantinya hanya dapat dibuka oleh tenaga kesehatan yang memiliki \texttt{hospital\_personnel\_pre\_secret\_key}. 
     Dengan demikian, seed PRE sementara tidak pernah disimpan atau dikirim dalam bentuk \textit{plaintext}.
 
     \item \textit{Client} pasien membangkitkan \texttt{k\_frag} menggunakan \texttt{patient\_pghd\_pre\_secret\_key} sebagai kunci delegasi dan \texttt{data\_pre\_public\_key} sebagai kunci penerima.
     \texttt{k\_frag} inilah yang memungkinkan PRE melakukan \textit{re-encryption} terhadap \textit{capsule} PGHD yang semula berada pada domain kunci pasien agar dapat dibuka menggunakan kunci PRE sementara milik \textit{grant access} tersebut.
 
-    \item \textit{Client} pasien mengirimkan \texttt{k\_frag}, \texttt{data\_pre\_public\_key}, \texttt{enc\_data\_pre\_secret\_key\_seed}, \texttt{data\_pre\_secret\_key\_seed\_capsule}, \texttt{signature}, dan \texttt{purpose=ReadPghd} ke PRE\@.
+    \item \textit{Client} pasien mengirimkan \texttt{k\_frag}, \texttt{data\_pre\_public\_key}, \texttt{enc\_\allowbreak{}data\_\allowbreak{}pre\_\allowbreak{}secret\_\allowbreak{}key\_\allowbreak{}seed}, \texttt{data\_\allowbreak{}pre\_\allowbreak{}secret\_\allowbreak{}key\_\allowbreak{}seed\_\allowbreak{}capsule}, \texttt{signature}, dan \texttt{purpose=ReadPghd} ke PRE\@.
     Data ini tidak berisi data PGHD maupun kunci privat pasien. 
     PRE hanya menerima material yang diperlukan untuk memvalidasi permintaan dan melakukan \textit{re-encryption} ketika tenaga kesehatan mengakses PGHD\@.
 
     \item PRE memvalidasi tanda tangan, \textit{nonce}, dan tujuan akses, lalu menyimpan material akses sementara.
-    Jika valid, PRE menyimpan material seperti \texttt{k\_frag}, \texttt{data\_pre\_public\_key}, \texttt{enc\_data\_pre\_secret\_key\_seed}, dan \texttt{data\_pre\_secret\_key\_seed\_capsule} dengan masa berlaku tertentu\@.
+    Jika valid, PRE menyimpan material seperti \texttt{k\_frag}, \texttt{data\_pre\_public\_key}, \texttt{enc\_\allowbreak{}data\_\allowbreak{}pre\_\allowbreak{}secret\_\allowbreak{}key\_\allowbreak{}seed}, dan \texttt{data\_\allowbreak{}pre\_\allowbreak{}secret\_\allowbreak{}key\_\allowbreak{}seed\_\allowbreak{}capsule} dengan masa berlaku tertentu\@.
 
     \item PRE mengembalikan \texttt{access\_token\_read\_pghd}.
     Token ini menjadi bukti otorisasi pada sisi PRE bahwa pasien telah menyiapkan material akses untuk tujuan \texttt{ReadPghd}.

@@ -164,7 +164,7 @@ Metadata tambahan diserialisasi dan dipisahkan dari \textit{field} utama metadat
 Pada rancangan ini, \textit{field} utama pada struktur \texttt{PatientPghdMetadata} merupakan metadata yang perlu diakses langsung oleh \textit{smart contract}.
 \textit{Fields} seperti \texttt{index}, \texttt{cid}, \texttt{h\_cipher}, \texttt{status}, \texttt{failure\_reason}, dan \texttt{timestamp} disimpan sebagai \textit{field} langsung karena digunakan untuk pencarian entri PGHD, penentuan status validasi, dan proses invalidasi.
 Sebaliknya, \textit{field} \texttt{metadata} merupakan metadata yang disimpan sebagai string terserialisasi (dianggap sebagai \textit{object} saja), sehingga tidak di-\textit{parsing} dan dijadikan \textit{field} dengan struktur \textit{rigid} yang harus sesuai dengan skema \textit{smart contract}.
-Isi \textit{serialized} metadata digunakan oleh PRE dan \textit{client}, misalnya untuk menyimpan \texttt{batch\_id}, \texttt{patient\_iota\_address}, \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, \texttt{signature}, dan informasi pembuatan metadata.
+Isi \textit{serialized} metadata digunakan oleh PRE dan \textit{client}, misalnya untuk menyimpan \texttt{batch\_id}, \texttt{patient\_\allowbreak{}iota\_\allowbreak{}address}, \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, \texttt{signature}, dan informasi pembuatan metadata.
 Informasi tersebut dibatasi pada kebutuhan operasional pengambilan, PRE, verifikasi, dan relasi akun.
 \textit{Provenance} yang lebih detail seperti nilai pengukuran, jenis sumber, dan metode perolehan disimpan di dalam \textit{payload} PGHD terenkripsi di IPFS\@.
 
@@ -189,7 +189,7 @@ Informasi tersebut dibatasi pada kebutuhan operasional pengambilan, PRE, verifik
 
 	\texttt{batch\_id} & UUID & Identitas batch PGHD\@. \\
 	\hline
-	\texttt{patient\_iota\_address} & String & Alamat IOTA pasien pemilik data. \\
+	\texttt{patient\_\allowbreak{}iota\_\allowbreak{}address} & String & Alamat IOTA pasien pemilik data. \\
 	\hline
 	\texttt{enc\_aes\_key\_nonce} & String & Kunci AES dan \textit{nonce} yang telah dienkripsi menggunakan kunci PRE PGHD pasien. \\
 	\hline
