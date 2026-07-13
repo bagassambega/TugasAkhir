@@ -1,23 +1,13 @@
 \section{Tujuan dan Ukuran Keberhasilan}
 
-Tujuan dari tugas akhir ini adalah merancang dan mengimplementasikan \textit{integration pipeline} Patient-Generated Health Data (PGHD) ke dalam ekosistem DecMed yang mampu menangani aliran data secara asinkron, aman, dan terverifikasi.
-
-Secara khusus, penelitian ini bertujuan untuk:
-
-\begin{enumerate}
-    \item Mengimplementasikan arsitektur \textit{pipeline} mekanisme pengumpulan, pengolahan, pengiriman dan pengaksesan PGHD yang terintegrasi dengan sistem DecMed yang mampu mengelola data bersifat \textit{time-series} dan menangani kondisi \textit{offline}\@.
-
-    \item Merancang mekanisme untuk memenuhi kebutuhan \textit{data provenance} PGHD\@.
-
-    \item Mengembangkan mekanisme verifikasi untuk menjamin kerahasiaan, integritas dan ketersediaan data PGHD\@.
-\end{enumerate}
+Tujuan dari tugas akhir ini adalah merancang dan mengimplementasikan \textit{integration pipeline} Patient-Generated Health Data (PGHD) ke dalam ekosistem DecMed yang menjamin \textit{data provenance}, kerahasiaan, integritas, dan ketersediaan data.
 
 Keterukuran keberhasilan Tugas Akhir ini bisa dilihat dari ketercapaian parameter berikut:
 
 \begin{enumerate}
-    \item Data PGHD yang diambil perangkat pasien dapat dikirim dan diakses oleh tenaga kesehatan meskipun dalam kendala internet atau \textit{offline} dan volume data yang besar\@.
+    \item Tersedia jalur data PGHD ke dalam sistem DecMed yang mampu menangani volume data yang besar dan \textit{offline state}\@.
 
-    \item Data PGHD memiliki mekanisme untuk menjamin kelengkapan dan pemenuhan kebutuhan \textit{data provenance}\@. % Data provenance -> quality of PGHD
+    \item Sistem DecMed memiliki mekanisme untuk menjamin kelengkapan dan pemenuhan kebutuhan \textit{data provenance}\@. % Data provenance -> quality of PGHD
 
     \item Sistem DecMed mampu menerima dan menjamin kerahasiaan, integritas dan ketersediaan data PGHD yang diterima dan menolak data yang sudah dimanipulasi atau tidak valid. % CIA -> keamanan PGHD
 \end{enumerate}

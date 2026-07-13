@@ -18,13 +18,13 @@
 	Sistem Rekam Medis Elektronik (RME) terdesentralisasi DecMed berbasis IOTA telah dikembangkan untuk mengatasi keterbatasan interoperabilitas dan keamanan data pada RME konvensional. 
 	Namun, DecMed masih bersifat \textit{provider-centric} karena seluruh entri data hanya berasal dari tenaga kesehatan melalui kunjungan klinis, sehingga tidak mencakup data kondisi pasien yang terjadi di antara waktu kunjungan. 
 	Kesenjangan informasi ini menjadi hambatan bagi tenaga kesehatan dalam memperoleh gambaran kondisi pasien secara menyeluruh. 
-	Penelitian ini bertujuan merancang dan mengimplementasikan integrasi Patient-Generated Health Data (PGHD) ke dalam ekosistem DecMed untuk menjembatani kesenjangan tersebut.
+	Tugas akhir ini bertujuan merancang dan mengimplementasikan integrasi Patient-Generated Health Data (PGHD) ke dalam ekosistem DecMed untuk menjembatani kesenjangan tersebut.
 	Metode yang digunakan meliputi pendekatan \textit{offline-first} dengan penyimpanan lokal dan mekanisme \textit{batching} untuk mengelola volume data \textit{time-series} dari perangkat \textit{wearable} dan sensor. 
 	Data yang dihasilkan pasien memerlukan penjaminan kerahasiaan, integritas, ketersediaan, dan informasi sumber asal-usul data.
 	Kerahasiaan data dijamin melalui kombinasi enkripsi dan \textit{Proxy Re-Encryption} (PRE), sedangkan integritas data diamankan menggunakan fungsi hash dan tanda tangan digital ECDSA\@. 
 	\textit{Data provenance} dijamin melalui pencatatan metadata pada \textit{smart contract} IOTA dan \textit{payload} IPFS\@. 
 	Tenaga kesehatan yang telah memperoleh akses dari pasien dapat membaca, memverifikasi, dan mendekripsi PGHD pada sisi \textit{client}, serta menginvalidasi data yang terbukti rusak atau tidak sah.
-	Hasil penelitian ini adalah keberhasilan integrasi sistem DecMed dengan PGHD yang ditunjukkan dengan transmisi PGHD secara asinkron, mempertahankan data saat perangkat luring, serta mendeteksi dan menolak manipulasi integritas data. 
+	Hasil tugas akhir ini adalah keberhasilan integrasi sistem DecMed dengan PGHD yang ditunjukkan dengan transmisi PGHD secara asinkron, mempertahankan data saat perangkat luring, serta mendeteksi dan menolak manipulasi integritas data. 
 	
 
 	\textbf{\textit{Kata kunci: \textit{Data Provenance}, DecMed, Keamanan Data, \textit{Patient-Generated Health Data}, \textit{Proxy Re-Encryption}, Rekam Medis Elektronik }}

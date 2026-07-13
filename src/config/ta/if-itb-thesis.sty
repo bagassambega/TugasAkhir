@@ -21,10 +21,12 @@
 
 % 4th Sectioning
 \usepackage{titlesec}
+\newcommand{\ThesisChapterTitleFont}{\fontsize{14pt}{16.8pt}\selectfont}
+\newcommand{\ThesisSectionTitleFont}{\fontsize{12pt}{14.4pt}\selectfont}
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
 
 \titleformat{\subsubsubsection}
-{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+{\normalfont\ThesisSectionTitleFont\bfseries}{\theparagraph}{1em}{}
 \titlespacing*{\subsubsubsection}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
@@ -214,9 +216,9 @@
 	{\hfill\contentspage}
 
 	\titleformat{\chapter}[block]
-	{\bfseries}
+	{\ThesisChapterTitleFont\bfseries}
 	{\chaptertitlename\ \thechapter.\quad}{0pt}
-	{\bfseries}
+	{\ThesisChapterTitleFont\bfseries}
 }
 
 % Hilangkan titik pada toc
@@ -272,11 +274,15 @@
 \renewcommand{\baselinestretch}{1.5}
 
 % Setting judul
-\chapterfont{\centering \large}
+% Judul utama menggunakan 14 pt, sedangkan subbab mengikuti ukuran teks 12 pt.
+\chapterfont{\centering\ThesisChapterTitleFont}
 \titleformat{\chapter}[display]
-{\Large\centering\bfseries}
+{\ThesisChapterTitleFont\centering\bfseries}
 {\chaptertitlename\ \thechapter}{0pt}
-{\Large\bfseries\uppercase}
+{\ThesisChapterTitleFont\bfseries\MakeUppercase}
+\titleformat*{\section}{\normalfont\ThesisSectionTitleFont\bfseries}
+\titleformat*{\subsection}{\normalfont\ThesisSectionTitleFont\bfseries}
+\titleformat*{\subsubsection}{\normalfont\ThesisSectionTitleFont\bfseries}
 
 % Setting nomor pada subbsubsubbab
 \setcounter{secnumdepth}{4}

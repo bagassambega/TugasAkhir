@@ -47,7 +47,7 @@
 
 \input{chapters/ta/forewords}
 
-\titleformat*{\section}{\centering\bfseries\Large\MakeUpperCase}
+\titleformat*{\section}{\centering\bfseries\ThesisChapterTitleFont\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{0pt}{4pt}
 
 % Setting judul toc, lot, lof, bib
@@ -66,7 +66,7 @@
 
 \newpage
 
-\titleformat*{\section}{\bfseries\large}
+\titleformat*{\section}{\normalfont\ThesisSectionTitleFont\bfseries}
 \pagenumbering{arabic}
 
 %----------------------------------------------------------------%
@@ -99,7 +99,7 @@
 \titlespacing*{\section}{0pt}{0pt}{*1}
 
 % Setting judul anak lampiran
-\titleformat*{\section}{\bfseries}
+\titleformat*{\section}{\normalfont\ThesisSectionTitleFont\bfseries}
 
 \input{chapters/ta/appendix/appendix.tex}
 
