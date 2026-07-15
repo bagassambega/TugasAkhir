@@ -3,19 +3,19 @@
 \textit{Client} tenaga kesehatan diimplementasikan menggunakan Tauri, SvelteKit, TypeScript, dan Rust. 
 \textit{Frontend} SvelteKit digunakan untuk menampilkan halaman aplikasi, sedangkan \textit{backend} Rust pada Tauri digunakan untuk menyimpan kredensial lokal, melakukan operasi kriptografi, memanggil PRE, memanggil \textit{smart contract}, dan mendekripsi data yang diterima.
 
-\textit{Client} ini digunakan oleh admin rumah sakit dan tenaga kesehatan. 
-Admin rumah sakit dapat membuat \textit{activation key} untuk akun tenaga kesehatan. 
-Tenaga kesehatan menggunakan \textit{activation key} tersebut untuk mengaktifkan akun, melengkapi profil, dan menghasilkan QR akses. 
-QR akses berisi alamat IOTA tenaga kesehatan dan \textit{public key} PRE tenaga kesehatan. 
-QR inilah yang kemudian dipindai oleh \textit{client} Android pasien ketika pasien memberikan akses.
+% \textit{Client} ini digunakan oleh admin rumah sakit dan tenaga kesehatan. 
+% Admin rumah sakit dapat membuat \textit{activation key} untuk akun tenaga kesehatan. 
+% Tenaga kesehatan menggunakan \textit{activation key} tersebut untuk mengaktifkan akun, melengkapi profil, dan menghasilkan QR akses. 
+% QR akses berisi alamat IOTA tenaga kesehatan dan \textit{public key} PRE tenaga kesehatan. 
+% QR inilah yang kemudian dipindai oleh \textit{client} Android pasien ketika pasien memberikan akses.
 
-Diagram kelas pada \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{fig:diagram-modul-client-tenaga-kesehatan-pghd}.
+% Diagram kelas pada \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{fig:diagram-modul-client-tenaga-kesehatan-pghd}.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-client-tenaga-kesehatan-pghd.png}
-    \caption{Diagram Kelas \textit{Client} Tenaga Kesehatan PGHD}\label{fig:diagram-modul-client-tenaga-kesehatan-pghd}
-\end{figure}
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-client-tenaga-kesehatan-pghd.png}
+%     \caption{Diagram Kelas \textit{Client} Tenaga Kesehatan PGHD}\label{fig:diagram-modul-client-tenaga-kesehatan-pghd}
+% \end{figure}
 
 
 \subsubsection{Halaman Aktivasi}
@@ -56,33 +56,65 @@ Halaman \textit{dashboard} \textit{client} tenaga kesehatan dapat dilihat pada G
 
 \subsubsection{Halaman PGHD}
 
-Halaman PGHD digunakan untuk melihat daftar \textit{batch} PGHD pasien, membuka detail \textit{batch} PGHD, melihat \textit{provenance} data, dan menginvalidasi data PGHD apabila data terbukti tidak valid. 
+Halaman PGHD digunakan untuk melihat daftar \textit{batch} PGHD pasien, membuka detail \textit{batch} PGHD, melihat \textit{provenance} data, ringkasan statistik, visualisasi, penanda anomali, dan menginvalidasi data PGHD apabila data terbukti tidak valid.
 Dekripsi dan verifikasi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
 Halaman daftar PGHD \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{halaman-list-pghd-hospital} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
 
-\subsubsection{Akses dan Dekripsi PGHD}
+% \subsubsection{Akses dan Dekripsi PGHD}
 
-Setelah pasien memberikan akses PGHD, tenaga kesehatan memperoleh token akses dari PRE\@. 
-\textit{Access token} tersebut digunakan untuk memanggil \textit{endpoint} daftar PGHD dan endpoint detail PGHD pada PRE, yang masing-masing dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-list} dan Subbab~\ref{subsubsec:pre-endpoint-pghd-detail}. 
-\textit{Client} tenaga kesehatan tidak langsung memperoleh \textit{plaintext} PGHD dari PRE\@. 
-PRE mengirimkan \textit{payload} terenkripsi, metadata \textit{on-chain}, \textit{cfrag}, \textit{capsule}, \textit{public key} PGHD pasien, dan material lain yang diperlukan untuk dekripsi. 
-Dekripsi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
-Halaman akses detail PGHD \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{halaman-detail-pghd-hospital} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
+% Setelah pasien memberikan akses PGHD, tenaga kesehatan memperoleh token akses dari PRE\@. 
+% \textit{Access token} tersebut digunakan untuk memanggil \textit{endpoint} daftar PGHD dan endpoint detail PGHD pada PRE, yang masing-masing dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-list} dan Subbab~\ref{subsubsec:pre-endpoint-pghd-detail}. 
+% \textit{Client} tenaga kesehatan tidak langsung memperoleh \textit{plaintext} PGHD dari PRE\@. 
+% PRE mengirimkan \textit{payload} terenkripsi, metadata \textit{on-chain}, \textit{cfrag}, \textit{capsule}, \textit{public key} PGHD pasien, dan material lain yang diperlukan untuk dekripsi. 
+% Dekripsi akhir tetap dilakukan pada \textit{client} tenaga kesehatan.
+% Halaman akses detail PGHD \textit{client} tenaga kesehatan dapat dilihat pada Gambar~\ref{halaman-detail-pghd-hospital} pada Lampiran~\ref{app:tampilan-implementasi-client-hospital-pghd}.
 
-Pada saat membuka detail PGHD, \textit{client} melakukan beberapa tahap validasi. 
-Pertama, \textit{client} membandingkan hash dari \textit{ciphertext} yang diunduh dengan hash yang tercatat pada metadata. 
-Kedua, \textit{client} memverifikasi \texttt{signature} atas \texttt{h\_cipher} menggunakan \textit{public key} PGHD pasien. 
-Ketiga, \textit{client} melakukan proses \textit{re-encryption} menggunakan \textit{cfrag} dan \textit{private key} tenaga kesehatan. 
-Keempat, \textit{client} melakukan dekripsi AES-GCM\@. 
-Jika verifikasi hash atau \textit{signature}, maupun dekripsi AES-GCM, tidak valid, \textit{client} menampilkan peringatan kepada tenaga kesehatan dan \textit{memanggil endpoint} invalidasi PGHD pada PRE yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-invalidate} dengan alasan invalid.
+% Pada saat membuka detail PGHD, \textit{client} melakukan beberapa tahap validasi. 
+% Pertama, \textit{client} membandingkan hash dari \textit{ciphertext} yang diunduh dengan hash yang tercatat pada metadata. 
+% Kedua, \textit{client} memverifikasi \texttt{signature} atas \texttt{h\_cipher} menggunakan \textit{public key} PGHD pasien. 
+% Ketiga, \textit{client} melakukan proses \textit{re-encryption} menggunakan \textit{cfrag} dan \textit{private key} tenaga kesehatan. 
+% Keempat, \textit{client} melakukan dekripsi AES-GCM\@. 
+% Jika verifikasi hash atau \textit{signature}, maupun dekripsi AES-GCM, tidak valid, \textit{client} menampilkan peringatan kepada tenaga kesehatan dan \textit{memanggil endpoint} invalidasi PGHD pada PRE yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-invalidate} dengan alasan invalid.
 
-\subsubsection{Pemisahan PGHD dan \textit{Medical Record}}
+% Setelah dekripsi berhasil, \textit{frontend} membaca struktur skema 1.1 dan membentuk tab berdasarkan \texttt{measurement\_type}. Setiap tab menampilkan jumlah anomali, kartu statistik untuk setiap \textit{field}, rentang klinis yang dibawa oleh \textit{payload} beserta konteks populasi dan tautan referensi, visualisasi, serta tabel data asli. Komponen \texttt{PghdMeasurementVisualization} memilih bentuk grafik berdasarkan karakteristik data. Deret waktu fisiologis seperti detak jantung, saturasi oksigen, laju napas, suhu, dan tekanan darah menggunakan grafik garis. Nilai periodik kumulatif seperti langkah, jarak, dan kalori menggunakan grafik batang. Tipe numerik lain dengan jumlah sampel yang memadai menggunakan \textit{box plot} untuk menunjukkan distribusi.
 
-PGHD dan \textit{medical record} ditampilkan sebagai dua jenis data yang berbeda. 
-\textit{Medical record} tetap mengikuti mekanisme DecMed lama yang dibagi menjadi data administratif dan klinis. 
-PGHD menggunakan \textit{endpoint} dan token akses terpisah dengan tujuan akses \texttt{READ\_PGHD}. 
-Token tersebut dibuat melalui \textit{endpoint key} PRE pada Subbab~\ref{subsubsec:pre-endpoint-keys}. 
-Pemisahan ini membuat tenaga kesehatan dapat memiliki akses ke PGHD tanpa harus memiliki akses update \textit{medical record}, atau sebaliknya sesuai akses yang diberikan pasien.
+% Pada grafik garis, batas klinis digambar sebagai garis putus-putus dan data di luar rentang digambar sebagai titik merah. Pada grafik batang atau \textit{box plot}, elemen anomali juga diberi warna merah. Tabel detail di bawah grafik tetap memuat waktu, nilai asli, sumber, dan metode pencatatan; baris anomali diberi latar merah serta keterangan di bawah atau di atas rentang. Pesan pada antarmuka menegaskan bahwa penanda ini merupakan bantuan penyaringan, bukan diagnosis. Untuk kompatibilitas mundur, \textit{batch} skema lama yang tidak mempunyai \texttt{statistics} atau \texttt{clinical\_thresholds} tetap ditampilkan menggunakan data mentah yang berhasil didekripsi.
+
+% Pemetaan struktur \textit{payload} ke antarmuka dapat dilihat pada Tabel~\ref{tab:implementasi-visualisasi-pghd-hospital}.
+
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.29\textwidth}|>{\raggedright\arraybackslash}p{0.27\textwidth}|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{Implementasi Penyajian PGHD pada \textit{Client} Tenaga Kesehatan}\label{tab:implementasi-visualisasi-pghd-hospital} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Data} & \textbf{Komponen UI} & \textbf{Penyajian} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Data} & \textbf{Komponen UI} & \textbf{Penyajian} \\
+%     \hline
+%     \endhead
+%     \texttt{measurement\_type} & Tab tipe data & Memisahkan tiap tipe agar ringkasan dan detail tidak tercampur. \\
+%     \hline
+%     \texttt{statistics} & Kartu statistik & Menampilkan jumlah, minimum, maksimum, rata-rata, median, modus, dan P5--P95. \\
+%     \hline
+%     \texttt{clinical\_\allowbreak{}thresholds} & Kartu rentang klinis & Menampilkan interval, satuan, konteks populasi, dan referensi yang ikut dikirim pasien. \\
+%     \hline
+%     \texttt{data\_points} dan \texttt{anomalies} & Grafik adaptif & Grafik garis, batang, atau \textit{box plot}; anomali ditandai merah. \\
+%     \hline
+%     \texttt{data\_points} & Tabel detail & Menampilkan seluruh nilai asli dan \textit{provenance}; baris anomali diberi penanda. \\
+%     \hline
+% \end{styledxltabular}
+
+% \subsubsection{Pemisahan PGHD dan \textit{Medical Record}}
+
+% PGHD dan \textit{medical record} ditampilkan sebagai dua jenis data yang berbeda. 
+% \textit{Medical record} tetap mengikuti mekanisme DecMed lama yang dibagi menjadi data administratif dan klinis. 
+% PGHD menggunakan \textit{endpoint} dan token akses terpisah dengan tujuan akses \texttt{READ\_PGHD}. 
+% Token tersebut dibuat melalui \textit{endpoint key} PRE pada Subbab~\ref{subsubsec:pre-endpoint-keys}. 
+% Pemisahan ini membuat tenaga kesehatan dapat memiliki akses ke PGHD tanpa harus memiliki akses update \textit{medical record}, atau sebaliknya sesuai akses yang diberikan pasien.
 
 % \subsubsection{\textit{Command} Tauri yang Digunakan}
 

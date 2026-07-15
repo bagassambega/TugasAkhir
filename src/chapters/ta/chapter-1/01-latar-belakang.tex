@@ -36,23 +36,7 @@ Selain itu, diperlukan juga mekanisme aliran data dari sisi pasien hingga ke kon
 Selain karakteristik dan volume datanya, integrasi PGHD juga memunculkan tantangan dari sisi keamanan dan kepercayaan data.
 Data kesehatan yang dihasilkan pasien bersifat sensitif dan memerlukan perlindungan dari segi kerahasiaan (\textit{confidentiality}), integritas (\textit{integrity}), dan ketersediaan (\textit{availability}) \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 % Additionally, the development of lightweight secure algorithms is crucial for resource-constrained implantable and wearable devices to prevent attacks that compromise confidentiality, integrity, and availability
-Kerahasiaan data PGHD harus dijaga agar informasi kesehatan pasien tidak dapat diakses oleh pihak yang tidak berwenang \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.   
-%  Confidentiality is a key concern, and patients often expect reciprocal access to information.
-Integritas data memastikan bahwa PGHD tidak mengalami modifikasi yang tidak sah selama transmisi maupun penyimpanan sehingga keputusan klinis yang diambil berdasarkan data PGHD dapat dipercaya \parencite{gowthamani_edgecrypto_2025}.
-% Maintaining data integrity is particularly critical in medical contexts, as accurate and tamper-proof information is essential for reliable diagnosis, treatment, and care coordination
-
-Aspek ketersediaan (\textit{availability}) data PGHD juga penting untuk diperhatikan karena PGHD yang bersumber dari perangkat sensor \textit{wearable} bersifat \textit{time-series} dan dikirimkan secara kontinu dalam volume tinggi \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding,Haque_2024_Performance_Blockchain}. 
-% IoT systems typically require significant computational ability in order to handle data from sensor devices with low latency, which is necessary to maintain time-critical services in transit and intelligent health care. (Haque)
-% Additionally, the development of lightweight secure algorithms is crucial for resource-constrained implantable and wearable devices to prevent attacks that compromise confidentiality, integrity, and availability. (Khatiwada)
-Lonjakan transaksi yang melebihi kapasitas jaringan dapat menyebabkan penurunan performa bahkan kondisi sistem tidak lagi dapat melayani permintaan yang sah (\textit{denial of service}/DoS) \parencite{Haque_2024_Performance_Blockchain}. 
-% IoT systems typically require significant computational ability in order to handle data from sensor devices with low latency, which is necessary to maintain time-critical services in transit and intelligent health care. (Haque)
-% A DoS attack aims to overwhelm the network with excessive traffic, preventing legitimate users from accessing the system. (Haque)
 
 Di samping aspek kerahasiaan, integritas, dan ketersediaan, kebutuhan akan \textit{data provenance} menjadi hal yang penting dalam konteks PGHD\@. 
-\textit{Data provenance} adalah pencatatan asal-usul, riwayat pemrosesan, dan rantai kepemilikan data sejak data tersebut pertama kali dikumpulkan hingga digunakan \parencite{Ahmed_2023_Data_Provenance}. 
-% Data provenance means recording data origins and the history of data generation and processing. (Ahmed)
 Tanpa \textit{provenance}, tenaga kesehatan tidak dapat memverifikasi apakah suatu data PGHD benar-benar berasal dari pasien yang bersangkutan, kapan diukur, menggunakan perangkat apa, dan apakah telah mengalami transformasi selama pengiriman \parencite{Ahmed_2023_Data_Provenance}. 
 % In healthcare, data provenance is one of the essential processes that make it possible to track the sources and reasons behind any problem with a user’s data. (Ahmed)
-
-Berdasarkan permasalahan tersebut, tugas akhir ini bertujuan untuk merancang dan mengimplementasikan \textit{pipeline} integrasi PGHD pada ekosistem DecMed yang memperhatikan kondisi perangkat ketika tidak terhubung ke internet (\textit{offline-first}), menjamin kerahasiaan, integritas, dan ketersediaan data PGHD, serta menyediakan mekanisme \textit{data provenance} yang dapat diverifikasi\@. 
-Dengan demikian, tugas akhir ini diharapkan dapat memperluas kapabilitas DecMed dari sistem yang bersifat \textit{provider-centric} menjadi platform kesehatan yang mampu mengakomodasi data kontinu yang dihasilkan langsung oleh pasien secara aman dan terpercaya.

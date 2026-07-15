@@ -1,9 +1,5 @@
 \subsubsection{Mekanisme Pengiriman PGHD oleh Pasien}\label{subsubsec:pengiriman-pghd}
 
-Setelah PGHD dikumpulkan dan dibentuk menjadi \textit{batch} lokal, \textit{client} pasien menjalankan mekanisme pengamanan dan pengiriman data. 
-\textit{Plaintext} \textit{batch} PGHD mengikuti struktur pada Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}. 
-Setelah data dienkripsi, penyimpanan lokal menyimpan \textit{batch} terenkripsi beserta artefak dan metadata operasional pengiriman seperti dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
-Metadata hasil pengiriman dicatat pada ledger menggunakan struktur Tabel~\ref{tab:iota-pghd-metadata} dan Tabel~\ref{tab:iota-pghd-serialized-metadata}.
 Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengiriman}.
 
 \begin{figure}[htbp]
@@ -14,21 +10,11 @@ Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancan
 
 
 \begin{enumerate}
-    \item \textbf{Pembangkitan identitas dan kunci PGHD\@.}
-    Pada proses \textit{register} atau \textit{login}, \textit{client} pasien menyiapkan identitas IOTA dan pasangan kunci yang diperlukan untuk PGHD\@. 
-    Kunci tersebut terdiri atas kunci transaksi (AES dan \textit{nonce}), kunci tanda tangan PGHD, dan kunci PRE PGHD\@. 
-    Kunci PGHD dipisahkan dari kunci yang digunakan untuk \textit{medical record} agar hak akses dan proses kriptografi PGHD tidak bercampur dengan data rekam medis.
-
-    \item \textbf{Publikasi kunci publik PGHD\@.}
-    Ketika pasien selesai mendaftarkan akun, \textit{client} pasien mempublikasikan kunci publik tanda tangan PGHD ke \textit{smart contract}. 
-    Kunci publik ini digunakan oleh PRE dan \textit{client} tenaga kesehatan untuk memverifikasi tanda tangan digital PGHD\@. 
-    Sementara itu, kunci PRE digunakan pada proses pembungkusan kunci simetris dan \textit{proxy re-encryption}.
-
-    \item \textbf{Pembentukan \textit{plaintext} PGHD\@.}
-    Ketika \textit{batch} akan dikirim, \textit{client} membentuk \textit{plaintext} PGHD langsung dari data lokal. Struktur \textit{plaintext} memuat payload \textit{batch} sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+    \item \textbf{Pembentukan dan pengolahan \textit{plaintext} PGHD\@.}
+    Ketika \textit{batch} akan dikirim, \textit{client} membentuk \textit{plaintext} PGHD dari seluruh data lokal yang belum menjadi bagian \textit{batch}. \textit{Client} mengelompokkan data per tipe pengukuran dan sumber, menghitung ringkasan statistik per \textit{field}, membandingkan nilai asli dengan rentang klinis dari konfigurasi \texttt{.env}, lalu menambahkan penanda anomali. Struktur \textit{plaintext} versi 1.1 memuat data mentah, \texttt{statistics}, \texttt{clinical\_thresholds}, dan \texttt{anomalies} sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, Tabel~\ref{tab:field-statistics-json-pghd}, Tabel~\ref{tab:field-threshold-anomaly-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
 
     \item \textbf{Enkripsi \textit{plaintext} PGHD\@.}
-    \textit{Payload} \textit{batch} PGHD dienkripsi menggunakan enkripsi simetris dengan kunci dan \textit{nonce} acak. 
+    Setelah statistik dan penanda anomali selesai dibentuk, seluruh \textit{payload} \textit{batch} PGHD dienkripsi menggunakan enkripsi simetris dengan kunci dan \textit{nonce} acak.
     Hasil proses ini adalah \texttt{enc\_pghd}. 
     Dengan demikian, data telah berbentuk \textit{ciphertext} sebelum keluar dari perangkat pasien.
 

@@ -4,35 +4,35 @@ Hasil pengujian non-fungsional menunjukkan seluruh skenario berhasil memenuhi kr
 Total terdapat enam skenario yang dijalankan, dengan hasil enam skenario berhasil dan tidak ada yang gagal.
 Hasil pengujian dapat dilihat pada Tabel~\ref{tab:hasil-non-fungsional}.
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.10\textwidth}|}
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.10\textwidth}|}
     \hiderowcolors
     \caption{Hasil Pengujian Non-Fungsional Sistem DecMed-PGHD}\label{tab:hasil-non-fungsional} \\
     \hline
     \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Kriteria Keberhasilan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
+    \textbf{Kode} & \textbf{Kriteria Keberhasilan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
     \hline
     \showrowcolors
     \endfirsthead
     \hline
     \rowcolor{headerBg}
-    \textbf{Kode} & \textbf{Kebutuhan} & \textbf{Kriteria Keberhasilan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
+    \textbf{Kode} & \textbf{Kriteria Keberhasilan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
     \hline
     \endhead
     \hline
     \endfoot
     \hline
     \endlastfoot
-    T-NF01 & NF01 & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. & Seluruh permintaan dari tenaga kesehatan tanpa token, dengan token tidak valid, dan tanpa akses \texttt{READ\_PGHD} aktif ditolak oleh PRE sebelum \texttt{enc\_pghd}, \texttt{c\_frag}, maupun \texttt{enc\_aes\_key\_nonce} dikembalikan. & Sukses \\
+    T-NF01 & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. & Seluruh permintaan dari tenaga kesehatan tanpa token, dengan token tidak valid, dan tanpa akses \texttt{READ\_PGHD} aktif ditolak oleh PRE sebelum \texttt{enc\_pghd}, \texttt{c\_frag}, maupun \texttt{enc\_aes\_key\_nonce} dikembalikan. & Sukses \\
     \hline
-    T-NF02 & NF02 & \textit{Inspect}, penyimpanan eksternal, respons gagal, dan \textit{log} tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. & \textit{Inspect} terhadap \textit{payload} menuju PRE, objek IPFS, \textit{metadata} IOTA, dan respons \textit{endpoint} yang ditolak tidak menemukan nilai PGHD dalam bentuk yang dapat dipahami. & Sukses \\
+    T-NF02 & \textit{Inspect}, penyimpanan eksternal, respons gagal, dan \textit{log} tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. & \textit{Inspect} terhadap \textit{payload} menuju PRE, objek IPFS, \textit{metadata} IOTA, dan respons \textit{endpoint} yang ditolak tidak menemukan nilai PGHD dalam bentuk yang dapat dipahami. & Sukses \\
     \hline
-    T-NF03 & NF03 & Setiap variasi manipulasi ditolak dan ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. & Seluruh variasi perubahan pada \texttt{enc\_pghd}, \texttt{h\_cipher}, \texttt{signature}, referensi CID, \textit{metadata} IOTA, dan status validitas berhasil dideteksi dan ditolak sebelum data digunakan. & Sukses \\
+    T-NF03 & Setiap variasi manipulasi ditolak dan ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. & Seluruh variasi perubahan pada \texttt{enc\_pghd}, \texttt{h\_cipher}, \texttt{signature}, referensi CID, \textit{metadata} IOTA, dan status validitas berhasil dideteksi dan ditolak sebelum data digunakan. & Sukses \\
     \hline
-    T-NF04 & NF04 & \textit{Field provenance} dan status yang diwajibkan tersedia dan sesuai dengan skenario. & Seluruh \textit{field provenance} (identitas pasien, waktu pengukuran, kategori sumber, perangkat/aplikasi asal, metode pencatatan, riwayat pemrosesan, dan status validasi) tersedia dan konsisten pada PGHD dari setiap kategori sumber yang diuji. & Sukses \\
+    T-NF04 & \textit{Field provenance} dan status yang diwajibkan tersedia dan sesuai dengan skenario. & Seluruh \textit{field provenance} (identitas pasien, waktu pengukuran, kategori sumber, perangkat/aplikasi asal, metode pencatatan, riwayat pemrosesan, dan status validasi) tersedia dan konsisten pada PGHD dari setiap kategori sumber yang diuji. & Sukses \\
     \hline
-    T-NF05 & NF05 & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak \textit{crash} saat menerima pengiriman PGHD dalam jumlah banyak/frekuen. & 151.200 \textit{record} berhasil diproses tanpa kehilangan data dan aplikasi tidak \textit{crash}. 20 \textit{batch} dari 20 pasien berbeda berhasil diterima secara konkuren tanpa ada yang hilang. & Sukses \\
+    T-NF05 & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak \textit{crash} saat menerima pengiriman PGHD dalam jumlah banyak/frekuen. & 151.200 \textit{record} berhasil diproses tanpa kehilangan data dan aplikasi tidak \textit{crash}. 20 \textit{batch} dari 20 pasien berbeda berhasil diterima secara konkuren tanpa ada yang hilang. & Sukses \\
     \hline
-    T-NF06 & NF06 & Data yang belum selesai dikirim/diolah tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. & Data yang belum terkirim tetap tersimpan dengan status kegagalan yang dapat ditelusuri. Setelah layanan pulih, seluruh unit data diselesaikan tepat satu kali tanpa duplikasi. & Sukses \\
+    T-NF06 & Data yang belum selesai dikirim/diolah tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. & Data yang belum terkirim tetap tersimpan dengan status kegagalan yang dapat ditelusuri. Setelah layanan pulih, seluruh unit data diselesaikan tepat satu kali tanpa duplikasi. & Sukses \\
     \hline
 \end{styledxltabular}
 

@@ -1,7 +1,5 @@
 \subsubsection{Rancangan Pemberian Akses Baca PGHD}
 
-Pemberian akses PGHD dilakukan oleh pasien melalui \textit{client} pasien dengan memindai QR Code milik tenaga kesehatan. 
-QR Code tersebut memuat identitas IOTA tenaga kesehatan dan kunci publik PRE tenaga kesehatan yang dibutuhkan untuk membuat delegasi akses terenkripsi.
 Mekanisme pemberian akses baca PGHD kepada tenaga kesehatan dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pemberian-akses}.
 
 \begin{figure}[htbp]
@@ -85,13 +83,5 @@ Alur pemberian akses baca PGHD adalah sebagai berikut.
 \end{enumerate}
 
 Setelah proses ini berhasil, tenaga kesehatan dapat meminta daftar PGHD dan membuka detail PGHD selama akses \textit{on-chain} masih aktif dan material akses di PRE masih tersedia.
-
-Apabila pasien memberikan akses PGHD kembali kepada tenaga kesehatan yang masih memiliki akses aktif, proses tersebut diperlakukan sebagai pembaruan akses. 
-\textit{Client} pasien tetap menjalankan alur pemberian akses dari awal, yaitu meminta \textit{nonce} baru, menandatangani \textit{nonce}, membangkitkan pasangan kunci PRE sementara baru, membentuk \texttt{k\_frag} baru, dan mengirimkan material akses baru ke PRE\@.
-
-Pada PRE, material akses PGHD disimpan menggunakan kunci \textit{cache} di Redis yang dibentuk dari tujuan akses, alamat IOTA tenaga kesehatan, dan alamat IOTA pasien 
-Oleh karena itu, jika pasangan pasien dan tenaga kesehatan yang sama diberikan akses PGHD kembali, material akses pada \textit{cache} akan diganti dengan material terbaru dan durasi kedaluwarsanya diperbarui. 
-Token akses yang dikembalikan kepada tenaga kesehatan juga merupakan token baru yang mengikuti durasi akses terbaru.
-Pada sisi IOTA, pemberian akses ulang tetap dicatat sebagai riwayat akses baru sehingga jejak persetujuan pasien tidak hilang. 
 
 % Implementasi Android saat ini menggunakan kamera/gallery untuk memindai QR dan Redis pada PRE untuk material akses sementara.

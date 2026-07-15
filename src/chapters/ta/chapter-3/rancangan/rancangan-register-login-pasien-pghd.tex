@@ -4,15 +4,7 @@ Mekanisme \textit{register} dan \textit{login} pasien PGHD menggunakan pembangki
 Mekanisme ini sama dengan implementasi pada sistem DecMed asli.
 Mekanisme ini membuat pasien dapat memulihkan identitas yang sama pada proses \textit{login} ulang selama \textit{seed words}, NIK, dan PIN yang dimasukkan sesuai.
 
-Terdapat tiga komponen kredensial yang memiliki peran berbeda. 
-\textit{Seed words} digunakan sebagai material pemulihan untuk membangkitkan ulang identitas dan pasangan kunci pasien. 
-PIN digunakan sebagai faktor lokal untuk membuka atau melindungi material rahasia yang tersimpan pada perangkat. 
-CID digunakan setelah PGHD dikirim sebagai alamat untuk mengakses PGHD pada penyimpanan off-chain. 
-
 Pada setiap \textit{login}, pasien harus menggunakan \textit{seed words}, NIK, dan PIN yang sama agar \textit{client} dapat membangkitkan alamat IOTA dan kunci kriptografi yang sama. 
-Jika \textit{seed words} atau NIK berbeda, alamat IOTA dan pasangan kunci yang dihasilkan juga berbeda sehingga sistem menganggapnya sebagai identitas lain. 
-Akibatnya, pasien tidak dapat menandatangani transaksi sebagai akun lama, tidak dapat menghasilkan kunci PGHD/PRE yang cocok dengan data lama, dan tenaga kesehatan tidak dapat membuka PGHD lama yang bergantung pada kunci tersebut. 
-Jika PIN berbeda tetapi \textit{seed words} dan NIK benar, kegagalan terutama terjadi pada pembukaan material lokal yang terenkripsi.
 
 \begin{figure}[htb]
     \centering
@@ -22,7 +14,7 @@ Jika PIN berbeda tetapi \textit{seed words} dan NIK benar, kegagalan terutama te
 
 Pada proses \textit{register} maupun \textit{login}, \textit{client} pasien membangkitkan beberapa variabel.
 Alur pembentukan variabel-variabel dapat dilihat pada Diagram~\ref{fig:data-login-register}.
-Penjelasan setiap variabel sebagai berikut.
+Penjelasan setiap variabel dapat dilihat pada Tabel~\ref{tab:variabel-register-login-pghd}.
 
 \begingroup
 \footnotesize

@@ -1,7 +1,5 @@
 \subsubsection{Rancangan Pencabutan Akses Baca PGHD}
 
-Pencabutan akses PGHD dilakukan oleh pasien dari \textit{client} pasien. 
-Tujuan pencabutan adalah menghentikan kemampuan tenaga kesehatan untuk membaca PGHD pasien melalui penghapusan material akses pada PRE dan penandaan akses sebagai dicabut pada \textit{smart contract} IOTA\@.
 Mekanisme pencabutan akses baca PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pencabutan-akses}.
 
 \begin{figure}[htbp]
@@ -57,7 +55,7 @@ Mekanisme pencabutan akses baca PGHD dapat dilihat pada Diagram~\ref{fig:seq-dia
 
     \item PRE menghapus material akses sementara yang sesuai dari Redis.
     Material yang dihapus mencakup material PRE untuk tujuan akses tersebut, seperti \texttt{k\_frag}, \texttt{data\_pre\_public\_key}, \texttt{enc\_data\_pre\_secret\_key\_seed}, dan artefak terkait. 
-    Setelah material ini dihapus, PRE tidak lagi dapat menghasilkan \texttt{cfrag} untuk akses tersebut, sehingga alhasil proses dekripsi akan menghasilkan \textit{error} ataupun pengambilan data PGHD tidak akan diizinkan.
+    Setelah material ini dihapus, PRE tidak lagi dapat menghasilkan \texttt{cfrag} untuk akses tersebut, sehingga proses dekripsi akan menghasilkan \textit{error} dan pengambilan data PGHD tidak akan diizinkan.
 
     \item \textit{Client} memanggil \textit{smart contract} \texttt{revokePghdAccess} menggunakan \texttt{access\_log\_index}.
 
@@ -67,4 +65,3 @@ Mekanisme pencabutan akses baca PGHD dapat dilihat pada Diagram~\ref{fig:seq-dia
 \end{enumerate}
 
 Setelah pencabutan berhasil, tenaga kesehatan tidak lagi dapat membuka PGHD pasien. 
-Jika tenaga kesehatan mencoba mengakses data setelah pencabutan, PRE tidak dapat menemukan material akses yang valid dan \textit{smart contract} menolak akses karena log akses telah dicabut.

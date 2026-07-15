@@ -1,17 +1,19 @@
 \chapter{Implementasi Tipe Data Percontohan PGHD}\label{app:implementasi-tipe-data-contoh-pghd}
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}X|}
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}p{0.19\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}p{0.13\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
-    \caption{Konversi sensor Android ke tipe data kesehatan PGHD}\label{tab:implementasi-konversi-sensor-pghd} \\
+    \caption{Sensor Android, Tipe Data, dan Rentang Klinis Percontohan PGHD}\label{tab:implementasi-konversi-sensor-pghd}\label{tab:implementasi-rentang-klinis-pghd} \\
     \hline
     \rowcolor{headerBg}
-    \textbf{Sensor Android} & \textbf{Tipe data PGHD} & \textbf{Satuan} & \textbf{Metode dan pertimbangan} \\
+    \textbf{Sensor/Sumber Android} & \textbf{Tipe Data PGHD} & \textbf{Satuan} & \textbf{Rentang} & \textbf{Konteks dan Referensi} \\
     \hline
     \showrowcolors
     \endfirsthead
     \hline
     \rowcolor{headerBg}
-    \textbf{Sensor Android} & \textbf{Tipe data PGHD} & \textbf{Satuan} & \textbf{Metode dan pertimbangan} \\
+    \textbf{Sensor/Sumber Android} & \textbf{Tipe Data PGHD} & \textbf{Satuan} & \textbf{Rentang} & \textbf{Konteks dan Referensi} \\
     \hline
     \endhead
     \hline
@@ -19,63 +21,109 @@
     \hline
     \endlastfoot
 
-    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}RATE} &
-    \texttt{heart\_\allowbreak{}rate} &
-    \texttt{bpm} &
-    Nilai detak jantung dibaca langsung dari sensor sehingga dapat dipahami sebagai data vital pasien. \\
+    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}RATE}; Health Connect &
+    \texttt{heart\_\allowbreak{}rate}, \texttt{resting\_\allowbreak{}heart\_\allowbreak{}rate} &
+    \texttt{beats/\allowbreak{}min} &
+    $[60,100]$ &
+    Mayoritas orang dewasa saat istirahat. AHA menyatakan detak jantung istirahat normal berada pada 60--100 detak per menit \parencite{AHA_Resting_Heart_Rate}. Data saat aktivitas harus ditafsirkan menggunakan konteks aktivitas. \\
     \hline
 
-    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}BEAT} &
+    \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}BEAT}; Health Connect &
     \texttt{heart\_\allowbreak{}beat}, \texttt{heart\_\allowbreak{}rate\_\allowbreak{}variability} &
     \texttt{event}, \texttt{ms} &
-    Interval antar \textit{heartbeat} dapat digunakan sebagai estimasi HRV apabila tersedia. \\
+    Tidak dikonfigurasi &
+    Interval antar \textit{heartbeat} dapat digunakan sebagai estimasi HRV. Interpretasi HRV memerlukan \textit{baseline} individu, kondisi, dan metode pengukuran. \\
     \hline
 
-    \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}DETECTOR} &
+    Health Connect; \textit{wearable}; input manual &
+    \texttt{oxygen\_\allowbreak{}saturation} &
+    \% &
+    $[95,100]$ &
+    Mayoritas individu sehat. FDA menyebut saturasi oksigen tipikal berada pada 95--100\%, tetapi hasil perlu dibaca bersama gejala, kondisi, ketinggian, dan keterbatasan perangkat \parencite{FDA_Pulse_Oximeter_Basics}. \\
+    \hline
+
+    Health Connect; input manual &
+    \texttt{respiratory\_\allowbreak{}rate} &
+    napas/\allowbreak{}menit &
+    $[12,20]$ &
+    Rata-rata orang dewasa saat istirahat. Rentang percontohan mengacu pada laju napas dewasa 12--20 napas per menit \parencite{Sapra_Vital_Sign_Assessment}. \\
+    \hline
+
+    Health Connect; input manual &
+    \texttt{body\_\allowbreak{}temperature} &
+    $^{\circ}$C &
+    $[36.5,37.3]$ &
+    Rata-rata orang dewasa sehat. Lokasi, waktu, dan metode pengukuran dapat memengaruhi nilai \parencite{MedlinePlus_Vital_Signs}. \\
+    \hline
+
+    Health Connect; input manual &
+    \texttt{blood\_\allowbreak{}pressure} &
+    \texttt{mmHg} &
+    Sistolik $[90,120)$; diastolik $[60,80)$ &
+    Rata-rata orang dewasa saat istirahat. Batas bawah mengacu pada rentang tanda vital MedlinePlus dan batas atas kategori normal mengacu pada AHA \parencite{MedlinePlus_Vital_Signs,AHA_Blood_Pressure_Readings}. \\
+    \hline
+
+    \texttt{TYPE\_\allowbreak{}STEP\_\allowbreak{}DETECTOR}; Health Connect &
     \texttt{steps} &
     \texttt{count} &
-    Penghitungan jumlah langkah. \\
+    Tidak dikonfigurasi &
+    Jumlah langkah merupakan data aktivitas yang bergantung pada target dan kemampuan individual. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}SIGNIFICANT\_\allowbreak{}MOTION}, \texttt{TYPE\_\allowbreak{}STATIONARY\_\allowbreak{}DETECT}, \texttt{TYPE\_\allowbreak{}MOTION\_\allowbreak{}DETECT} &
     \texttt{activity\_\allowbreak{}event} &
     \texttt{event} &
-    \textit{Event} gerak digunakan sebagai indikator perubahan status aktivitas, misalnya dari diam ke bergerak atau sebaliknya. \\
+    Tidak dikonfigurasi &
+    Menunjukkan perubahan status aktivitas, bukan parameter klinis dengan rentang numerik umum. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}PRESSURE} &
     \texttt{barometric\_\allowbreak{}pressure}, \texttt{elevation\_\allowbreak{}estimate}, \texttt{elevation\_\allowbreak{}gained}, \texttt{floors\_\allowbreak{}climbed} &
     \texttt{hPa}, \texttt{m}, \texttt{floors} &
-    Tekanan barometrik. Elevasi, kenaikan elevasi, dan estimasi lantai diturunkan dari perubahan tekanan untuk aktivitas seperti naik tangga. \\
+    Tidak dikonfigurasi &
+    Tekanan barometrik dan turunannya digunakan sebagai konteks lingkungan atau aktivitas, bukan sebagai tekanan darah pasien. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}LIGHT} &
     \texttt{ambient\_\allowbreak{}light} &
     \texttt{lux} &
-    Intensitas cahaya lingkungan yang dapat berkaitan dengan pola tidur atau aktivitas. \\
+    Tidak dikonfigurasi &
+    Intensitas cahaya merupakan konteks lingkungan yang dapat berkaitan dengan pola tidur atau aktivitas. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}AMBIENT\_\allowbreak{}TEMPERATURE} &
     \texttt{environmental\_\allowbreak{}temperature} &
-    \texttt{C} &
-    Suhu lingkungan. Data ini digunakan sebagai konteks lingkungan pasien. \\
+    $^{\circ}$C &
+    Tidak dikonfigurasi &
+    Mengukur suhu lingkungan dan tidak boleh dibandingkan dengan rentang suhu tubuh. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}RELATIVE\_\allowbreak{}HUMIDITY} &
     \texttt{environmental\_\allowbreak{}humidity} &
-    \texttt{\%} &
-    Kelembapan relatif lingkungan, terutama untuk kondisi yang dapat dipengaruhi faktor lingkungan. \\
+    \% &
+    Tidak dikonfigurasi &
+    Kelembapan relatif digunakan sebagai konteks lingkungan pasien. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}LOW\_\allowbreak{}LATENCY\_\allowbreak{}OFFBODY\_\allowbreak{}DETECT} &
     \texttt{wear\_\allowbreak{}status} &
     \texttt{state} &
-    Nilai sensor dipetakan menjadi status \texttt{on\_\allowbreak{}body} atau \texttt{off\_\allowbreak{}body} untuk menilai kepatuhan pemakaian perangkat. \\
+    Tidak dikonfigurasi &
+    Nilai dipetakan menjadi \texttt{on\_\allowbreak{}body} atau \texttt{off\_\allowbreak{}body} untuk menilai konteks pemakaian perangkat. \\
+    \hline
+
+    Health Connect; input manual &
+    \texttt{blood\_\allowbreak{}glucose}, kalori, jarak, dan tipe kontekstual lain &
+    Sesuai tipe &
+    Tidak dikonfigurasi &
+    Glukosa memerlukan konteks puasa atau waktu makan, sedangkan kalori dan jarak memerlukan target personal. Data tetap dikirim dan divisualisasikan tanpa klasifikasi bawaan. \\
     \hline
 
     Sensor lain tanpa pemetaan PGHD &
     Tidak dikonversi menjadi PGHD &
     \- &
-    Sensor tetap dapat ditampilkan sebagai informasi perangkat, tetapi tidak dapat dipilih untuk pengumpulan PGHD\@. \\
+    \- &
+    Sensor tetap dapat ditampilkan sebagai informasi perangkat, tetapi tidak dapat dipilih untuk pengumpulan PGHD. \\
     \hline
 \end{styledxltabular}
+\endgroup

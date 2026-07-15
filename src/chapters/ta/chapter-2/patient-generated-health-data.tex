@@ -65,22 +65,6 @@ Data fisiologis misalnya detak jantung, saturasi oksigen, tekanan darah, dan suh
 Data aktivitas dan perilaku misalnya adalah jumlah langkah, kalori terbakar, jarak tempuh, durasi dan kualitas tidur, serta pola aktivitas fisik lainnya.
 Data yang dilaporkan pasien contohnya seperti gejala subjektif, nyeri, dan mood yang dimasukkan secara manual \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 
-\subsection{Manfaat dan Tantangan PGHD}
-
-PGHD memberikan pemahaman yang lebih dalam mengenai kondisi pasien, informasi yang lebih akurat terkait gejala dan pola dalam jangka waktu yang lebih panjang, serta visibilitas terhadap kondisi pasien di antara kunjungan yang memungkinkan penyesuaian rencana perawatan tanpa selalu memerlukan kunjungan tatap muka \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
-PGHD juga berpotensi menutup \textit{information gap} antara kunjungan, mendukung pencegahan, dan membantu personalisasi perawatan jika dapat diintegrasikan secara efektif ke dalam RME dan alur kerja klinis \parencite{Tiase2020-PGHD_EHR_Integration,Mars_Scott_2022_PGHD_Healthcare}.
-
-PGHD memberikan manfaat baik bagi pasien maupun tenaga kesehatan. 
-Bagi pasien, PGHD mendorong keterlibatan aktif dalam pengelolaan kesehatan, meningkatkan pemahaman terhadap kondisi pribadi, dan memfasilitasi penyesuaian perilaku kesehatan secara real-time \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
-Bagi tenaga kesehatan, data yang dihasilkan pasien melengkapi data klinis dengan gambaran kondisi harian pasien yang tidak dapat diperoleh dari kunjungan periodik saja, sehingga mendukung pengambilan keputusan klinis yang lebih komprehensif \parencite{Nazi2024_Unleashing_PGHD,Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}. 
-Namun, agar data tersebut dapat dikumpulkan dan digunakan secara etis, pasien harus memberikan persetujuan eksplisit (\textit{informed consent}) atas pengumpulan dan pendistribusian datanya kepada tenaga kesehatan \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
-Mekanisme persetujuan ini menjadi bagian integral dari desain sistem agar pasien tetap memegang kendali atas datanya.
-
-Di sisi lain, pemanfaatan PGHD menghadapi sejumlah tantangan.
-Dalam konteks \textit{remote patient monitoring}, adopsi PGHD masih rendah karena belum adanya pendekatan baku untuk manajemen dan penjaminan mutu data \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
-Selain itu, isu kualitas data yang diidentifikasi mencakup literasi digital pasien, akurasi dan reliabilitas perangkat \textit{wearable}, kesulitan interpretasi laporan, volume data yang besar, dan ketiadaan integrasi dengan sistem rekam medis elektronik \parencite{Abdolkhani_2019_PGHD_Quality_Challenges}.
-Masalah lainnya adalah keamanan dan privasi, karena data ini sering dikumpulkan dan disimpan di luar infrastruktur klinis tradisional \parencite{Mars_Scott_2022_PGHD_Healthcare,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
-
 \subsection{Pengolahan dan Pengelolaan PGHD}\label{studi-pengolahan-pengelolaan-pghd}
 
 Terdapat beberapa mekanisme yang dapat digunakan untuk mengelola data PGHD, di antaranya \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding},
@@ -97,6 +81,18 @@ Terdapat beberapa mekanisme yang dapat digunakan untuk mengelola data PGHD, di a
     Data PGHD dapat dikirim terlebih dahulu ke komponen tambahan (misalnya platform analitik atau AI) untuk mengolah data PGHD terlebih dahulu.
     % Predictive Analysis: With a large amount of PGHD being generated, advanced analytics and AI can identify patterns, predict potential health problems, and offer personalized health recommendations.
 \end{enumerate}
+
+Karena PGHD berasal dari pemantauan dan pengumpulan data dari sensor \textit{wearabke}, sebagian besar data yang dihasilkan akan merekam data sehari-hari yang bersifat normal. 
+Sebagian besar titik data dalam deret waktu tersebut merepresentasikan pola fisiologis yang dianggap normal dan membentuk \textit{baseline} individu, sedangkan anomali didefinisikan sebagai pola atau nilai yang secara signifikan berbeda dari data lainnya \parencite{sunny2022anomaly}. 
+Informasi penting dari PGHD biasanya terletak pada anomali yang terdeteksi dari data yang dikumpulkan, karena hal itu bisa menjadi indikator berbagai kondisi penyakit \parencite{sunny2022anomaly,shenvi2023visualization}.
+
+Salah satu pendekatan yang dapat digunakan untuk mengidentifikasi anomali adalah deteksi berbasis \textit{threshold} klinis, yaitu membandingkan nilai pengukuran dengan rentang nilai normal yang telah ditetapkan secara klinis untuk setiap tipe parameter. 
+Pendekatan ini termasuk dalam kategori metode statistik \textit{unsupervised anomaly detection} yang menggunakan \textit{user-defined threshold values} \parencite{sunny2022anomaly}.
+
+Selain mekanisme deteksi anomali, agregasi statistik dapat digunakan untuk mengurangi beban kognitif tenaga kesehatan tanpa menghilangkan data asli. 
+Shenvi et al.\ menemukan bahwa preferensi tenaga kesehatan adalah data disajikan dengan \textit{statistical summaries and clinical interpretations} \parencite{shenvi2023visualization}. 
+Pendekatan agregasi statistik meliputi nilai minimum, maksimum, rata-rata, dan persentil dari setiap tipe pengukuran dalam suatu periode waktu.
+Selain itu, untuk memudahkan pengaksesan dan pengolahan PGHD, visualisasi PGHD juga penting untuk digunakan dengan konsep \textit{overview first, zoom and filter, then details-on-demand} \parencite{shenvi2023visualization}. 
 
 Selain mekanisme pengolahan dan pengambilan data di atas, mekanisme pengiriman data juga berbeda-beda.
 Pada sistem yang menggunakan sensor dan perangkat IoT seperti PGHD, pola pengiriman data umumnya diklasifikasikan menjadi tiga kategori, yaitu mekanisme \textit{periodic} (\textit{time-driven}), \textit{event-driven}, dan \textit{query-driven} (\textit{on-demand}) \parencite{Akyildiz_Vuran_2010_WSN_Algorithms}.

@@ -28,7 +28,7 @@ Data eksternal seperti data yang berasal dari media sosial tidak dipertimbangkan
 Selain itu, perkembangan, jumlah dan ketersediaan perangkat \textit{mobile}, aplikasi \textit{mobile} dan \textit{wearable} yang masif dan menjadi penghasil data PGHD terbanyak saat ini juga menjadi pertimbangan pemilihan.
 Laporan mandiri pasien tetap dipertimbangkan karena menjadi salah satu tipe data PGHD yang memerlukan intervensi dan masukan dari pasien dan tidak dapat dipenuhi oleh perangkat mobile maupun sensor dari \textit{wearable} saja.
 
-\subsubsection{Pengumpulan dan Pengolahan Data PGHD}\label{alternatif-pengolahan-pghd}
+\subsubsection{Pengumpulan Data PGHD}\label{alternatif-pengumpulan-pghd}
 
 Mengacu pada Subbab~\ref{studi-pengolahan-pengelolaan-pghd}, terdapat beberapa mekanisme yang dapat digunakan untuk mengelola PGHD, yaitu dengan mengumpulkan data melalui agregasi pada \textit{smartphone}, mengirim data langsung ke sistem rekam medis, atau mengirimnya ke komponen eksternal seperti platform analitik dan AI\@. 
 Jika dikaitkan dengan kebutuhan integrasi DecMed dan PGHD, mekanisme pengumpulan dan pengolahan data pada sisi pasien dapat disederhanakan menjadi tiga alternatif berikut.
@@ -36,15 +36,40 @@ Jika dikaitkan dengan kebutuhan integrasi DecMed dan PGHD, mekanisme pengumpulan
 \begin{enumerate}
   \item Data \textit{raw} dikirim langsung dari perangkat \textit{wearable} dan aplikasi ke DecMed tanpa disimpan atau diolah terlebih dahulu.
   \item Data dikumpulkan di \textit{smartphone} dan diolah terlebih dahulu sebelum dikirim ke DecMed.
-  \item Data \textit{raw} dari perangkat dikumpulkan dan disimpan di \textit{smartphone} terlebih dahulu, kemudian dikirim ke DecMed tanpa diubah atau diagregasi.
 \end{enumerate}
 
 Pada alternatif pertama, data selalu bergantung pada koneksi jaringan yang tersedia dan frekuensi pengiriman data akan sangat bergantung pada deteksi/pengambilan data oleh sensor, karena ketika data langsung dikirim tanpa disimpan dan kondisi internet tidak \textit{reliable}, \textit{request} bisa di-\textit{drop} atau tidak sampai ke server DecMed. 
 Alternatif kedua memanfaatkan fungsi agregasi di \textit{smartphone} untuk mengurangi ukuran data yang dikirim, tetapi berisiko menghilangkan detail dari data asli yang mungkin dibutuhkan untuk analisis atau penilaian klinis di kemudian hari. 
-Alternatif ketiga menjaga data tetap dalam bentuk \textit{raw} di sisi pasien dan hanya mengelompokkannya dalam bentuk \textit{batch} sebelum dikirim ke DecMed untuk mengurangi frekuensi pengiriman data dan menjaga agar data tetap tersimpan meskipun dalam kondisi tanpa internet.
 
-Pada integrasi DecMed dan PGHD ini, mekanisme yang dipilih adalah alternatif ketiga, yaitu mengumpulkan dan menyimpan data \textit{raw} terlebih dahulu di penyimpanan lokal \textit{smartphone}, kemudian mengirimkannya ke DecMed dalam bentuk \textit{batch}. 
-Dengan cara ini, data asli dari perangkat tetap terjaga dan tidak akan hilang meskipun ketika \textit{offline} dan tidak terus menerus dikirim dalam frekuensi tinggi, sekaligus tetap mendukung skenario ketika perangkat pasien sementara tidak memiliki koneksi internet karena data masih tersimpan aman di sisi klien.
+Pada integrasi DecMed dan PGHD ini, mekanisme yang dipilih adalah kombinasi alternatif pertama dan kedua, yaitu mengumpulkan dan menyimpan data \textit{raw} terlebih dahulu di penyimpanan lokal \textit{smartphone}, kemudian dibuatkan agregasi data sebagai visualisasi data yang akan ditampilkan kepada tenaga kesehatan.
+Jadi data asli akan dipertahankan dan agregasi data akan tetap dibuat, sehingga tidak ada detail informasi yang hilang dari data PGHD yang dikumpulkan, namun tenaga kesehatan dapat mendapatkan informasi kritis dan penting dari PGHD yang dikirim juga.
+
+\subsubsection{Pengolahan Data PGHD}\label{alternatif-pengolahan-pghd}
+
+Pengolahan data dilakukan agar tenaga kesehatan dapat mendapatkan informasi penting dari PGHD\@.
+Terdapat tiga alternatif mekanisme yang dipertimbangkan.
+
+\begin{enumerate}
+    \item \textbf{Tampilan daftar entri PGHD tanpa reduksi.} 
+    Seluruh entri \textit{batch} ditampilkan kepada tenaga kesehatan dalam bentuk daftar kronologis tanpa mekanisme prioritisasi atau pengolahan tambahan. 
+    Tenaga kesehatan harus membuka setiap entri secara manual untuk mengetahui isinya. 
+    Alternatif ini tidak menyediakan mekanisme apapun untuk membantu tenaga kesehatan mengidentifikasi entri yang bermakna klinis, sehingga beban penelusuran data sepenuhnya dibebankan kepada tenaga kesehatan.
+
+    \item \textbf{Filter anomali sebelum pengiriman batch.} 
+    Klien pasien melakukan deteksi anomali berbasis \textit{threshold} klinis sebelum pembentukan \textit{batch} dan hanya \textit{record} yang terdeteksi anomali yang dikemas ke dalam \textit{batch}. 
+    Data normal disimpan secara lokal tetapi tidak dikirimkan ke DecMed. 
+    Kelemahan alternatif ini adalah tenaga kesehatan tidak dapat membedakan antara \textit{batch} yang tidak terkirim karena tidak ada anomali dengan \textit{batch} yang tidak terkirim karena kegagalan teknis, sehingga menyulitkan interpretasi klinis. 
+    Selain itu, deteksi anomali memiliki risiko \textit{false positive}.
+
+    \item \textbf{Agregasi statistik dengan penanda anomali berbasis \textit{threshold}.} 
+    Seluruh data PGHD tetap dikirim dan disimpan di sistem DecMed. 
+    Pada saat pembentukan \textit{batch}, sebelum enkripsi dilakukan, klien pasien menghitung ringkasan statistik agregat, yaitu nilai minimum, maksimum, persentil, modus, median dan rata-rata untuk setiap tipe data dalam \textit{batch}, serta membandingkan nilai-nilai tersebut dengan \textit{threshold} klinis yang telah dikonfigurasi. 
+    Tipe data yang memiliki nilai di luar rentang \textit{threshold} dicatat sebagai penanda anomali. 
+    Di klien tenaga kesehatan, klien akan membangun grafik untuk menunjukkan tren data pasien.
+\end{enumerate}
+
+Pada integrasi DecMed dan PGHD ini, mekanisme yang dipilih adalah alternatif ketiga. 
+Ringkasan statistik dan penanda anomali ditampilkan langsung kepada tenaga kesehatan, tapi data asli tetap tersimpan utuh dan dapat dilihat secara detail oleh tenaga kesehatan. 
 
 \subsubsection{Pengiriman Data}\label{alternatif-trigger-pengiriman-pghd}
 
@@ -64,19 +89,17 @@ Secara garis besar, alternatif mekanisme pengiriman yang dipertimbangkan adalah:
 
   \item \textbf{Pengiriman \textit{hybrid} periodik dan \textit{event-driven}.}
   Data tetap dikirim secara periodik, tetapi ada tambahan pengiriman ketika kondisi tertentu tercapai, sehingga sistem tidak hanya bergantung pada satu jenis mekanisme saja.
-\end{enumerate}
+\end{enumerate}  
 
 Pengiriman murni periodik cocok ketika yang dibutuhkan adalah aliran data yang stabil dan dapat diprediksi, tetapi kurang fleksibel ketika volume data yang dikumpulkan sangat bervariasi. 
 Sebaliknya, pengiriman murni \textit{event-driven} dapat mengurangi jumlah pengiriman pada kondisi normal, tetapi bisa menghasilkan lonjakan pengiriman data ketika \textit{event} sering terjadi dan sulit dikendalikan beban jaringan maupun konsumsi daya. 
 \textit{Query-driven} tidak dipertimbangkan karena justru menjadi beban bagi pasien karena permintaan data tidak terjadwal atau tidak dapat diprediksi oleh pasien dan dapat menyebabkan volume/frekuensi pengiriman data tidak terprediksi.
 
 Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah kombinasi antara pengiriman periodik dan \textit{event-driven}. 
-Pengiriman dilakukan secara periodik, sehingga pola pengiriman tetap stabil dan deret waktu PGHD dapat dibentuk dengan baik.
+Pengiriman dilakukan secara periodik sehingga akan terbentuk \textit{batch}, sehingga pola pengiriman tetap stabil dan deret waktu PGHD dapat dibentuk dengan baik.
 Selain itu, klien pasien memantau ukuran data yang terkumpul, dan jika ukuran \textit{batch} melebihi batas tertentu sebelum interval waktu berikutnya, klien dapat memicu pengiriman lebih awal (\textit{early trigger}) berbasis ukuran data.
 
-Dengan metode ini, \textit{event} yang digunakan bukanlah \textit{event} klinis (misalnya nilai sensor melewati ambang kesehatan tertentu), tetapi \textit{event} sistem berupa ukuran data yang terlalu besar. 
-Hal ini dilakukan untuk menghindari ketergantungan pada data kesehatan yang berasal dari sensor atau perangkat yang rentan terhadap \textit{noise} dan \textit{outlier}, sekaligus mencegah data yang dikumpulkan secara periodik menjadi terlalu besar ataupun sering dan membebani perangkat maupun jaringan. 
-
+Dengan cara ini, data asli dari perangkat tetap terjaga dan tidak akan hilang meskipun ketika \textit{offline} dan tidak terus menerus dikirim dalam frekuensi tinggi, sekaligus tetap mendukung skenario ketika perangkat pasien sementara tidak memiliki koneksi internet karena data masih tersimpan aman di sisi klien.
 \subsubsection{Pengaksesan Data PGHD}\label{alternatif-pengaksesan-pghd}
 
 Pada Subbab~\ref{studi-pghd} dijelaskan bahwa PGHD dapat dimanfaatkan baik secara \textit{remote} maupun ketika kunjungan. 

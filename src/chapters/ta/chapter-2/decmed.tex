@@ -199,129 +199,24 @@ Dengan struktur tersebut, isi data administratif dan klinis sama-sama dienkripsi
 Perbedaannya terletak pada lokasi penyimpanan isi data.
 Data administratif terenkripsi berada di metadata akun pasien pada IOTA, sedangkan data klinis terenkripsi berada di IPFS dan IOTA hanya menyimpan metadata rujukannya.
 
-\subsection{\textit{Capability} pada DecMed}
+\subsection{Mekanisme Utama DecMed}\label{mekanisme-pemberian-akses}
 
-\textit{Capability} pada DecMed merupakan representasi hak akses yang diberikan pasien kepada personel fasyankes.
-Hak akses ini tidak hanya berupa pernyataan izin, tetapi juga memuat batasan jenis data, masa berlaku, dan metadata terenkripsi yang diperlukan agar penerima akses dapat membuka data melalui mekanisme PRE\@.
-Pada \textit{ledger} IOTA, \textit{capability} disimpan sebagai bagian dari \textit{state} akun personel fasyankes.
-Struktur utamanya dirangkum pada Tabel~\ref{tab:decmed-capability-structure}.
-
-\begingroup
-\footnotesize
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Struktur \textit{Capability} DecMed pada IOTA}\label{tab:decmed-capability-structure}\\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-
-    \hiderowcolors
-    \caption[]{Struktur \textit{Capability} DecMed pada IOTA (lanjutan)}\\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-    \hline
-    \showrowcolors
-    \endhead
-
-    \texttt{access\_data\_types} & \textit{Array} enum & Jenis data yang boleh diakses oleh personel, yaitu \texttt{Administrative} dan \texttt{Medical}. \\
-    \hline
-    \texttt{exp} & Unix timestamp & Waktu kedaluwarsa akses yang dihitung dari \textit{Clock} IOTA\@. \\
-    \hline
-    \texttt{metadata} & String & Metadata akses yang telah dienkripsi menggunakan kunci publik PRE milik personel fasyankes. Metadata ini berisi \texttt{access\_token}, alamat IOTA pasien, \textit{public key} pasien (untuk dekripsi data pasien melalui mekanisme PRE), dan didekripsi nantinya oleh tenaga kesehatan menggunakan \textit{private key}-nya. \\
-    \hline
-    \texttt{medical\_metadata}\allowbreak\texttt{\_index} & Integer / \texttt{None} & Indeks entri data klinis yang terikat dengan akses tulis atau edit apabila relevan. \\
-    \hline
-\end{styledxltabular}
-\endgroup
-
-\textit{Capability} tersebut berada pada tabel akses milik personel fasyankes dan diindeks berdasarkan identitas pasien.
-DecMed memisahkan akses baca dan akses tulis ke dalam \textit{map} yang berbeda.
-Dengan demikian, satu personel dapat memiliki akses baca terhadap seorang pasien tanpa otomatis memiliki akses tulis.
-Untuk menjaga keterlacakan dari sisi pasien, DecMed juga menyimpan log akses pada akun pasien.
-Struktur log tersebut diringkas pada Tabel~\ref{tab:decmed-access-log-structure}.
-
-\begingroup
-\footnotesize
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.28\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Struktur Log Akses Pasien pada DecMed}\label{tab:decmed-access-log-structure}\\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-
-    \hiderowcolors
-    \caption[]{Struktur Log Akses Pasien pada DecMed (lanjutan)}\\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
-    \hline
-    \showrowcolors
-    \endhead
-
-    \texttt{access\_data\_type} & Array enum & Jenis data yang diberikan pada akses tersebut. \\
-    \hline
-    \texttt{access\_type} & Enum & Tipe akses, yaitu \texttt{Read} atau \texttt{Update}. \\
-    \hline
-    \texttt{date} & String & Waktu atau tanggal pemberian akses yang dicatat oleh \textit{client}. \\
-    \hline
-    \texttt{exp\_dur} & Integer & Durasi akses dalam menit. \\
-    \hline
-    \texttt{hospital\_metadata} & Objek & Metadata fasyankes asal personel. \\
-    \hline
-    \texttt{hospital\_personnel}\allowbreak\texttt{\_address} & Address & Alamat IOTA personel penerima akses. \\
-    \hline
-    \texttt{hospital\_personnel}\allowbreak\texttt{\_metadata} & String & Metadata publik personel yang digunakan untuk ditampilkan pada log akses. \\
-    \hline
-    \texttt{index} & Integer & Indeks log akses pada akun pasien. \\
-    \hline
-    \texttt{is\_revoked} & Boolean & Status pencabutan akses dari sudut pandang log pasien. \\
-    \hline
-\end{styledxltabular}
-\endgroup
-
-Ketika pasien memberikan \textit{capability}, \textit{client} pasien terlebih dahulu memverifikasi identitas personel dari kode QR dan metadata publik personel di IOTA\@.
-Setelah pasien menyetujui pemberian akses, \textit{client} dan PRE menyiapkan material akses, seperti token baca atau tulis, kunci turunan untuk PRE, \textit{kfrag}, dan metadata akses.
-Metadata akses kemudian dienkripsi menggunakan kunci publik PRE milik personel fasyankes sehingga hanya personel tersebut yang dapat membukanya.
-Transaksi \texttt{create\_access} menyimpan \textit{capability} ke tabel akses personel pada IOTA dan menambahkan entri log pada akun pasien.
-Apabila sebelumnya sudah ada akses dengan pasangan pasien dan personel yang sama pada tipe akses tersebut, \textit{state} akses lama digantikan oleh akses baru.
-
-Ketika personel menggunakan akses tersebut, \textit{smart contract} memeriksa bahwa \textit{capability} masih ada pada \textit{state} terbaru, jenis datanya sesuai dengan operasi yang diminta, dan waktu kedaluwarsanya belum terlewati.
-Untuk operasi tulis atau edit data klinis, DecMed juga menggunakan \texttt{medical\_metadata\_index} untuk membatasi entri klinis yang dapat dibuat atau diperbarui dari akses tersebut.
-Proxy memvalidasi token dan menggunakan material PRE yang tersedia, namun keputusan apakah akses masih berlaku tetap mengacu pada \textit{state capability} di IOTA\@.
-Pencabutan \textit{capability} dilakukan melalui transaksi \texttt{revoke\_access}.
-Transaksi ini mengubah log pasien dengan menandai \texttt{is\_revoked} menjadi \texttt{true} dan menghapus akses yang sesuai dari tabel akses baca atau tulis milik personel.
-Riwayat transaksi pemberian maupun pencabutan tetap tercatat pada \textit{ledger}, tetapi operasi berikutnya hanya membaca \textit{state} terbaru.
-Karena itu, setelah akses dicabut, personel tidak lagi memiliki \textit{capability} aktif untuk memperoleh data pasien melalui alur DecMed.
-
-\subsection{Mekanisme Pemberian Akses Baca dan Tulis Rekam Medis ke Tenaga Kesehatan}\label{mekanisme-pemberian-akses}
+Terdapat beberapa proses utama pada sistem rekam medis DecMed, yaitu pemberian akses terhadap data pasien, pengaksesan data pasien oleh tenaga kesehatan, penambahan data rekam medis pasien oleh tenaga kesehatan, dan mekanisme pencabutan akses terhadap data pasien.
 
 Tenaga kesehatan memerlukan pemberian akses dari pasien untuk mengakses dan melakukan penambahan data klinis rekam medis \parencite{Hari_2025}.
 Alur pemberian akses dimulai ketika pasien memindai kode QR milik tenaga kesehatan untuk memperoleh dan memverifikasi identitasnya dari jaringan IOTA\@.
 Setelah pasien menyetujui, \textit{client} pasien dan PRE menyiapkan kunci turunan khusus akses tenaga kesehatan (\texttt{med\_pre\_key}), \textit{kfrag} untuk mekanisme PRE, dan dua \textit{access token} JWT (baca dan tulis) yang dibangkitkan oleh proxy \parencite{Hari_2025,Purnama_2026}.
 Material PRE disimpan sementara di Redis dengan TTL 2 jam, sedangkan \textit{capability} (metadata akses terenkripsi dengan kunci publik tenaga kesehatan) disimpan di \textit{ledger} IOTA \parencite{Hari_2025}.
 
-\subsection{Mekanisme Akses Rekam Medis oleh Tenaga Kesehatan}
-
 Tenaga kesehatan dapat mengakses data administratif dan data klinis pasien setelah pasien memberikan \textit{capability} bertipe baca \parencite{Hari_2025}.
 Setelah membersihkan entri akses kedaluwarsa dari IOTA, \textit{client} tenaga kesehatan mengambil dan mendekripsi seluruh \textit{capability} baca yang dimilikinya menggunakan kunci privatnya sendiri.
 Selanjutnya, proxy memvalidasi \textit{access token}, mengambil metadata rekam medis dari IOTA, melakukan proses \textit{re-encryption} menggunakan \textit{kfrag} dari Redis, dan mengambil data klinis terenkripsi dari IPFS\@.
 Hasilnya dikirim ke \textit{client} agar dapat didekripsi sepenuhnya di sisi tenaga kesehatan tanpa \textit{private key} pasien pernah terbuka \parencite{Hari_2025,Purnama_2026}.
 
-\subsection{Mekanisme Penambahan Rekam Medis oleh Tenaga Kesehatan}\label{penambahan-rekam-medis}
-
 Penambahan entri rekam medis baru hanya dapat dilakukan oleh tenaga kesehatan yang memiliki \textit{access token} bertipe \texttt{Update} yang masih berlaku, dan dibatasi maksimal satu kali untuk setiap \textit{grant} akses \texttt{Update} yang diberikan \parencite{Hari_2025}.
 Tenaga kesehatan mengisi data klinis pada \textit{client}, yang kemudian mengenkripsinya menggunakan AES-GCM dengan kunci baru yang dibungkus menggunakan kunci publik PRE pasien, sehingga kontrol kriptografis atas entri baru tetap berada pada domain pasien \parencite{Hari_2025,Purnama_2026}.
 Data klinis terenkripsi dikirim ke proxy untuk disimpan ke IPFS, sementara metadata klinisnya (CID, artefak PRE, dan \textit{timestamp}) dicatat pada \textit{ledger} IOTA melalui transaksi \texttt{createmedicalrecord} yang divalidasi oleh \textit{smart contract} \parencite{Hari_2025}.
 
-\subsection{Mekanisme Pencabutan Akses terhadap Data RME}\label{studi-decmed-revoke}
-
-DecMed menyediakan mekanisme bagi pasien untuk mencabut akses yang telah diberikan kepada personel fasyankes, baik akses baca maupun akses tulis, sesuai dengan prinsip CapBAC yang diusung DecMed \parencite{Hari_2025,Purnama_2026}.
+DecMed juga menyediakan mekanisme bagi pasien untuk mencabut akses yang telah diberikan kepada personel fasyankes, baik akses baca maupun akses tulis, sesuai dengan prinsip CapBAC yang diusung DecMed \parencite{Hari_2025,Purnama_2026}.
 Pasien memilih entri akses pada halaman log akses, kemudian \textit{client} menginisiasi transaksi \texttt{revoke\_access} yang akan menghapus \textit{capability} dari \textit{state} terkini di IOTA dan menandai log akses pasien sebagai dicabut \parencite{Hari_2025}.
 Riwayat transaksi pemberian dan pencabutan akses tetap tercatat secara permanen pada \textit{ledger}, namun operasi berikutnya hanya membaca \textit{state} terbaru sehingga setelah akses dicabut, personel tidak lagi dapat memperoleh data pasien melalui alur DecMed \parencite{Hari_2025,Purnama_2026}.

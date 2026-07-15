@@ -3,15 +3,6 @@
 Berdasarkan pemilihan solusi untuk menjamin kerahasiaan, integritas, dan ketersediaan pada Subbab~\ref{alternatif-analisis-solusi-cia}, subbab ini merancang mekanisme teknis untuk memverifikasi ketiga aspek tersebut.
 Mekanisme ini juga menyimpan metadata \textit{provenance} agar tenaga kesehatan dapat mengetahui asal-usul data yang dibuka.
 
-\subsubsection{Validitas Masukan dan \textit{Provenance}}
-
-Sebelum \textit{record} dimasukkan ke basis data lokal atau digabungkan menjadi \textit{batch}, \textit{client} pasien memvalidasi kelengkapan \textit{field}, tipe data, rentang nilai, format waktu, identitas jenis sumber yang direkam, dan batas ukuran masukan.
-\textit{Input} yang berasal dari eksternal (misalnya input manual user) disanitasi sebelum digunakan pada \textit{payload} atau metadata.
-
-Setiap \textit{record} atau \textit{batch} mempertahankan konteks yang diperlukan untuk interpretasi, meliputi waktu pengukuran, jenis sumber atau aplikasi, metode perolehan, dan satuan.
-Informasi tersebut ditempatkan di dalam \textit{payload} terenkripsi dan dilindungi oleh \texttt{h\_cipher} serta \textit{signature} setelah enkripsi.
-Dengan demikian, perubahan terhadap nilai maupun konteks setelah pembentukan \textit{batch} terdeteksi oleh mekanisme integritas, sedangkan tenaga kesehatan dapat menilai \textit{provenance} setelah data berhasil didekripsi.
-
 \subsubsection{Kerahasiaan (\textit{Confidentiality})}
 
 Untuk menjamin kerahasiaan PGHD, sistem menggunakan enkripsi ketika data dikirim dari sisi \textit{client}.
@@ -71,27 +62,6 @@ Verifikasi integritas dilakukan pada dua titik.
 Pertama, PRE menghitung ulang \texttt{h\_cipher} dan memverifikasi \texttt{signature} sebelum menyimpan \textit{ciphertext} ke penyimpanan \textit{off-chain} dan mencatat metadata ke IOTA\@.
 Kedua, ketika tenaga kesehatan membuka PGHD, \textit{client} tenaga kesehatan kembali memverifikasi \texttt{h\_cipher} dan \texttt{signature} sebelum melakukan dekripsi AES-GCM\@.
 Jika salah satu verifikasi gagal, data tidak ditampilkan sebagai data valid dan entri PGHD dapat diinvalidasi.
-
-\subsubsection{Persetujuan, Hak Akses, dan Status PGHD}
-
-Untuk menangani perubahan tidak sah terhadap persetujuan dan status data, \textit{capability} pada IOTA menjadi sumber validasi keputusan akses.
-Mekanisme pemeriksaannya sebagai berikut.
-
-\begin{enumerate}
-	\item Pasien membuat \textit{capability} bertipe \texttt{READ\_PGHD} untuk alamat IOTA personel yang dipilih.
-	      \textit{Capability} memuat relasi pemilik dan penerima, tipe akses, masa berlaku, serta metadata terenkripsi yang diperlukan untuk membuka akses.
-
-	\item Sebelum daftar atau detail PGHD diberikan, \textit{smart contract} dan PRE memeriksa bahwa \textit{capability} dimiliki oleh pasangan pasien~-~personel yang benar, bertipe \texttt{READ\_PGHD}, belum kedaluwarsa, dan belum dicabut.
-
-	\item Pencabutan akses dilakukan melalui transaksi yang memperbarui \textit{state capability}.
-	      Operasi berikutnya membaca \textit{state} terbaru sehingga \textit{capability} yang telah dicabut tidak dapat digunakan kembali.
-
-	\item Status validitas PGHD disimpan pada metadata IOTA\@.
-	      Jika verifikasi integritas gagal, transaksi invalidasi memperbarui \texttt{status} dan \texttt{failure\_reason}.
-	      Transaksi pencatatan sebelumnya tidak dihapus, tetapi aplikasi hanya memperlakukan entri dengan state terkini yang valid sebagai data yang dapat digunakan.
-\end{enumerate}
-
-Rancangan ini membuat perubahan persetujuan, hak akses, dan status PGHD harus melalui fungsi \textit{smart contract} yang sesuai, sekaligus mempertahankan histori transaksi pada \textit{ledger} sehingga tidak dapat dimanipulasi.
 
 \subsubsection{Ketersediaan (Availability)}
 
@@ -164,9 +134,6 @@ Metadata tambahan diserialisasi dan dipisahkan dari \textit{field} utama metadat
 Pada rancangan ini, \textit{field} utama pada struktur \texttt{PatientPghdMetadata} merupakan metadata yang perlu diakses langsung oleh \textit{smart contract}.
 \textit{Fields} seperti \texttt{index}, \texttt{cid}, \texttt{h\_cipher}, \texttt{status}, \texttt{failure\_reason}, dan \texttt{timestamp} disimpan sebagai \textit{field} langsung karena digunakan untuk pencarian entri PGHD, penentuan status validasi, dan proses invalidasi.
 Sebaliknya, \textit{field} \texttt{metadata} merupakan metadata yang disimpan sebagai string terserialisasi (dianggap sebagai \textit{object} saja), sehingga tidak di-\textit{parsing} dan dijadikan \textit{field} dengan struktur \textit{rigid} yang harus sesuai dengan skema \textit{smart contract}.
-Isi \textit{serialized} metadata digunakan oleh PRE dan \textit{client}, misalnya untuk menyimpan \texttt{batch\_id}, \texttt{patient\_\allowbreak{}iota\_\allowbreak{}address}, \texttt{enc\_aes\_key\_nonce}, \texttt{capsule}, \texttt{signature}, dan informasi pembuatan metadata.
-Informasi tersebut dibatasi pada kebutuhan operasional pengambilan, PRE, verifikasi, dan relasi akun.
-\textit{Provenance} yang lebih detail seperti nilai pengukuran, jenis sumber, dan metode perolehan disimpan di dalam \textit{payload} PGHD terenkripsi di IPFS\@.
 
 \begingroup
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
@@ -203,12 +170,3 @@ Informasi tersebut dibatasi pada kebutuhan operasional pengambilan, PRE, verifik
 	\hline
 \end{styledxltabular}
 \endgroup
-
-Pemisahan ini dilakukan untuk menjaga stabilitas skema \textit{smart contract}.
-Apabila seluruh informasi seperti \texttt{batch\_id}, \texttt{signature}, artefak PRE, dan informasi \textit{provenance} dijadikan \textit{field} langsung pada struktur Move, maka setiap perubahan format metadata PGHD dapat memerlukan perubahan struktur \textit{smart contract}, \textit{republish} paket, dan penyesuaian komponen lain.
-Dengan metadata ter-serialisasi, perubahan format metadata yang hanya dibutuhkan oleh PRE atau \textit{client} dapat dilakukan tanpa mengubah struktur utama objek \textit{on-chain}, selama \textit{field} utama seperti \texttt{cid}, \texttt{h\_cipher}, dan \texttt{status} tetap sama.
-
-Mekanisme invalidasi atau pengubahan status PGHD juga mengikuti model \textit{state} pada IOTA Move.
-Riwayat transaksi pada \textit{ledger} bersifat \textit{immutable}, jadi transaksi pencatatan PGHD yang telah terjadi tidak diubah ataupun dihapus.
-Ketika suatu entri PGHD diinvalidasi atau statusnya diubah, \textit{smart contract} membuat transaksi baru yang memperbarui \textit{state} terkini dari objek metadata PGHD, misalnya dengan mengubah \texttt{status} menjadi \textit{invalid} dan mengisi \texttt{failure\_reason}.
-Dengan demikian, riwayat pencatatan dan riwayat invalidasi tetap dapat ditelusuri sebagai transaksi yang berbeda, sementara aplikasi membaca \textit{state} terbaru objek \texttt{PatientPghdMetadata} untuk menentukan apakah suatu entri PGHD masih valid atau sudah invalid.

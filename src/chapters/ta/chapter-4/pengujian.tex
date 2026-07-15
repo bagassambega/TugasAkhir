@@ -17,10 +17,10 @@ Pengujian pada tugas akhir ini dibatasi pada tiga jenis, yaitu pengujian fungsio
 Cakupan ini dipilih karena tujuan tugas akhir adalah merancang dan mengimplementasikan \textit{pipeline} integrasi PGHD pada DecMed serta membuktikan bahwa kebutuhan utama yang diturunkan dari analisis permasalahan telah terpenuhi. 
 Dengan demikian, pengujian harus menunjukkan bahwa fungsi utama sistem berjalan, logika \textit{smart contract} sebagai sumber kebenaran akses dan metadata bekerja benar, serta risiko kerahasiaan, integritas dan ketersediaan yang telah diidentifikasi melalui \textit{threat modeling} dapat diuji.
 
-Pengujian fungsional dipilih karena kebutuhan F01--F10 berhubungan langsung dengan alur pengguna, mulai dari pengumpulan PGHD di klien pasien, penyimpanan lokal, pembentukan \textit{batch}, pengiriman ke DecMed, pemberian akses, pembacaan oleh tenaga kesehatan, deteksi data rusak, dan pencabutan akses. 
-Pengujian \textit{smart contract} dipisahkan karena kontrak menjadi \textit{source of truth} yang deterministik untuk otorisasi, status metadata, dan invalidasi data. 
-Selain itu, berbeda dari komponen lain, logika \textit{smart contract} bersifat \textit{immutable} setelah di-\textit{deploy} ke \textit{ledger}, sehingga kesalahan logika tidak dapat diperbaiki tanpa publikasi ulang kontrak.
-Pengujian non-fungsional memverifikasi NF01--NF06 yang diturunkan dari ancaman terpilih.
+% Pengujian fungsional dipilih karena kebutuhan F01--F10 berhubungan langsung dengan alur pengguna, mulai dari pengumpulan PGHD di klien pasien, penyimpanan lokal, pembentukan \textit{batch}, pengiriman ke DecMed, pemberian akses, pembacaan oleh tenaga kesehatan, deteksi data rusak, dan pencabutan akses. 
+% Pengujian \textit{smart contract} dipisahkan karena kontrak menjadi \textit{source of truth} yang deterministik untuk otorisasi, status metadata, dan invalidasi data. 
+% Selain itu, berbeda dari komponen lain, logika \textit{smart contract} bersifat \textit{immutable} setelah di-\textit{deploy} ke \textit{ledger}, sehingga kesalahan logika tidak dapat diperbaiki tanpa publikasi ulang kontrak.
+% Pengujian non-fungsional memverifikasi NF01--NF06 yang diturunkan dari ancaman terpilih.
 
 % Dasar pemilihan cakupan pengujian ini selaras dengan proses \textit{threat modelling}. OWASP menjelaskan bahwa proses tersebut perlu menghasilkan daftar ancaman, kontrol, dan penilaian apakah kontrol telah diterapkan atau masih menyisakan risiko \parencite{owaspThreatModelingProcess}. STRIDE digunakan untuk mengidentifikasi ancaman berbasis DFD, sedangkan DREAD digunakan untuk memprioritaskan ancaman yang perlu diuji \parencite{openStack_StrideDREAD}. Oleh karena itu, skenario non-fungsional diturunkan dari ancaman prioritas yang berdampak pada CIA.
 

@@ -13,19 +13,6 @@ Warna merah digunakan untuk merepresentasikan komponen yang diubah dari rancanga
 
 Perubahan arsitektur yang dilakukan adalah mengganti \textit{client} pasien untuk mendukung pengumpulan, pengolahan, dan pengiriman PGHD, menambah fungsionalitas akses, baca, dan invalidasi PGHD pada \textit{client} tenaga kesehatan, dan penyesuaian PRE, \textit{smart contract}, dan data yang disimpan pada IOTA dan IPFS untuk mendukung penyimpanan, validasi dan pengambilan PGHD\@.
 
-\subsubsection{Pengumpulan Data dari Sumber PGHD}
-
-\textit{Client} pasien mengumpulkan PGHD dari beberapa sumber data seperti yang sudah dipilih pada Subbab~\ref{alternatif-sumber-data}. 
-Sumber pertama adalah API sistem operasi untuk data \textit{wellness}, \textit{fitness}, dan \textit{activity}. 
-API ini digunakan sebagai lapisan interoperabilitas antara aplikasi pasien, aplikasi kesehatan eksternal, dan perangkat \textit{wearable}. 
-Sumber kedua adalah sensor internal perangkat pasien. 
-Sumber ketiga adalah input manual yang diberikan langsung oleh pasien melalui antarmuka aplikasi.
-
-Data dari seluruh sumber tersebut disimpan sementara pada penyimpanan lokal seperti dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
-Ketika data akan dikirim, \textit{record} lokal dibentuk menjadi \textit{batch} sesuai struktur pada Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
-
-% Implementasi Android saat ini menggunakan Health Connect sebagai API OS untuk wellness/fitness/activity. Data wearable Mi Smart Band 9 Active dikumpulkan melalui Mi Fitness yang menulis data ke Health Connect.
-
 \subsubsection{Penyimpanan Lokal}
 
 \textit{Client} pasien menyimpan PGHD pada penyimpanan lokal sebelum data dikirim ke sistem. 

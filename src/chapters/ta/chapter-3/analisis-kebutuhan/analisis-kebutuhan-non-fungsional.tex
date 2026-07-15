@@ -1,7 +1,6 @@
 \subsection{Kebutuhan Non-Fungsional}
 
-Kebutuhan non-fungsional pada Tabel~\ref{tab:kebutuhan-non-fungsional-pghd} diturunkan dari ancaman pada Tabel~\ref{tab:stride-threat-analysis-decmed-pghd} dan kebutuhan penjaminan \textit{data provenance}. 
-Kebutuhan menyatakan properti yang harus dapat diamati pada sistem.
+Kebutuhan non-fungsional pada Tabel~\ref{tab:kebutuhan-non-fungsional-pghd} diturunkan dari ancaman pada Tabel~\ref{tab:stride-threat-analysis-decmed-pghd} dan kebutuhan penjaminan \textit{data provenance}.
 
 \begingroup
 \footnotesize
@@ -30,9 +29,9 @@ NF02 & Kerahasiaan & T-I01, T-I02 & Sistem harus menjaga agar isi PGHD dan infor
 \hline
 NF03 & Integritas & T-T01, T-T02 & Sistem harus mampu mendeteksi perubahan tidak sah terhadap isi PGHD, metadata konteks, informasi persetujuan, dan status data sebelum informasi tersebut diterima atau digunakan. Data yang gagal diperiksa tidak boleh diperlakukan sebagai data valid. \\
 \hline
-NF04 & \textit{Provenance} dan keterlacakan status & T-T01, T-T02 & Sistem harus mempertahankan informasi yang memungkinkan penelusuran pemilik data, waktu pengukuran, sumber dan cara perolehan, riwayat pemrosesan yang relevan, serta status validitas PGHD tanpa menjadikan metadata sensitif tersedia dalam bentuk plaintext secara berlebihan. \\
+NF04 & \textit{Provenance} dan keterlacakan status & T-T01, T-T02 & Sistem harus mempertahankan informasi yang memungkinkan penelusuran pemilik data, waktu pengukuran, sumber dan cara perolehan, riwayat dan status validitas PGHD\@. \\
 \hline
-NF05 & Ketersediaan & T-D01 & Sistem harus mampu menerima dan memproses volume serta frekuensi PGHD pada beban uji yang ditentukan tanpa kehilangan data, kegagalan aplikasi, atau peningkatan operasi eksternal yang tidak terkendali. \\
+NF05 & Ketersediaan & T-D01 & Sistem harus mampu menerima dan memproses volume serta frekuensi PGHD pada beban uji yang ditentukan tanpa kehilangan data atau menyebabkan kegagalan layanan. \\
 \hline
 NF06 & Ketersediaan & T-D02 & Ketika konektivitas atau layanan gagal sementara, sistem harus mempertahankan data sah yang belum selesai diproses, menyediakan status kegagalan yang dapat ditelusuri, dan dapat melanjutkan proses setelah kondisi pendukung pulih tanpa kehilangan data. \\
 \hline

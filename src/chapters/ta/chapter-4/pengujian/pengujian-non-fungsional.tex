@@ -5,39 +5,39 @@
 
 Pengujian non-fungsional memverifikasi properti NF01--NF06 yang diturunkan dari analisis ancaman dan kebutuhan \textit{provenance}.
 
-\subsubsection{Matriks \textit{Traceability}}
+% \subsubsection{Matriks \textit{Traceability}}
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{\textit{Traceability} Ancaman, Kebutuhan, dan Pengujian}\label{tab:traceability-threat-nfr-test} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
-    \hline
-    \endhead
-    \hline
-    \endfoot
-    \hline
-    \endlastfoot
-    T-NF01 & T-T02, T-I01 & NF01 & Tindakan hanya dapat dilakukan oleh pihak dengan kewenangan yang sesuai. & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. \\
-    \hline
-    T-NF02 & T-I01, T-I02 & NF02 & Pihak atau komponen tanpa kewenangan tidak memperoleh representasi PGHD yang dapat dipahami maupun informasi pembuka akses. & \textit{Inspect} komunikasi, penyimpanan eksternal, respons gagal, dan \textit{log} tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. \\
-    \hline
-    T-NF03 & T-T01, T-T02 & NF03 & Perubahan isi, \textit{metadata}, persetujuan, atau status dapat dideteksi sebelum digunakan. & Setiap variasi manipulasi ditolak dan ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. \\
-    \hline
-    T-NF04 & T-T01, T-T02 & NF04 & Informasi asal-usul dan status validitas dapat ditelusuri. & \textit{Field provenance} dan status yang diwajibkan tersedia serta konsisten dengan skenario. \\
-    \hline
-    T-NF05 & T-D01 & NF05 & Sistem tetap memproses PGHD pada beban uji yang ditetapkan tanpa kehilangan data atau operasi eksternal tidak terkendali. & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak \textit{crash}, dan operasi eksternal mengikuti strategi rancangan. \\
-    \hline
-    T-NF06 & T-D02 & NF06 & Proses dapat pulih dari gangguan sementara tanpa kehilangan data. & Data yang belum selesai tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. \\
-    \hline
-\end{styledxltabular}
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{\textit{Traceability} Ancaman, Kebutuhan, dan Pengujian}\label{tab:traceability-threat-nfr-test} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     T-NF01 & T-T02, T-I01 & NF01 & Tindakan hanya dapat dilakukan oleh pihak dengan kewenangan yang sesuai. & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. \\
+%     \hline
+%     T-NF02 & T-I01, T-I02 & NF02 & Pihak atau komponen tanpa kewenangan tidak memperoleh representasi PGHD yang dapat dipahami maupun informasi pembuka akses. & \textit{Inspect} komunikasi, penyimpanan eksternal, respons gagal, dan \textit{log} tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. \\
+%     \hline
+%     T-NF03 & T-T01, T-T02 & NF03 & Perubahan isi, \textit{metadata}, persetujuan, atau status dapat dideteksi sebelum digunakan. & Setiap variasi manipulasi ditolak dan ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. \\
+%     \hline
+%     T-NF04 & T-T01, T-T02 & NF04 & Informasi asal-usul dan status validitas dapat ditelusuri. & \textit{Field provenance} dan status yang diwajibkan tersedia serta konsisten dengan skenario. \\
+%     \hline
+%     T-NF05 & T-D01 & NF05 & Sistem tetap memproses PGHD pada beban uji yang ditetapkan tanpa kehilangan data atau operasi eksternal tidak terkendali. & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak \textit{crash}, dan operasi eksternal mengikuti strategi rancangan. \\
+%     \hline
+%     T-NF06 & T-D02 & NF06 & Proses dapat pulih dari gangguan sementara tanpa kehilangan data. & Data yang belum selesai tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. \\
+%     \hline
+% \end{styledxltabular}
 
 \subsubsection{Skenario T-NF01: Akses PGHD Tanpa Izin}
 
@@ -90,7 +90,7 @@ Tindakan pemberian akses, pencabutan akses, pengiriman, dan invalidasi juga dipe
 
 \subsubsection{Skenario T-NF05: Kapasitas Pengolahan dan Pengiriman PGHD}
 
-Pengujian menghasilkan 151.200 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengolahan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
+Pengujian menghasilkan 151.200 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengumpulan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
 Beban tersebut dihitung dari konfigurasi interval pengumpulan \textit{default} satu menit pada \textit{client} Android, sehingga satu \textit{stream} sensor menghasilkan \(24 \times 60 = 1.440\) \textit{record} per hari.
 Rata-rata jumlah sensor pada perangkat \textit{mobile} adalah 15 sensor \parencite{fortunebusinessinsightsSensorsSmartphones}.
 Skenario uji memakai asumsi \textit{backlog} tujuh hari dan 15 data \textit{stream} PGHD yang dihasilkan oleh 15 buah sensor, sehingga jumlah \textit{record} yang diuji adalah \(1.440 \times 7 \times 15 = 151.200\).

@@ -13,13 +13,13 @@ PRE menggunakan Redis untuk menyimpan material akses sementara, seperti token ak
 Material tersebut memiliki waktu kedaluwarsa sehingga akses yang diberikan pasien tidak dapat digunakan di luar periode yang ditentukan. 
 PRE juga menggunakan IOTA Gas Station ketika perlu membuat transaksi IOTA bersponsor.
 
-Diagram kelas pada PRE dapat dilihat pada Gambar~\ref{fig:diagram-modul-pre-pghd}.
+% Diagram kelas pada PRE dapat dilihat pada Gambar~\ref{fig:diagram-modul-pre-pghd}.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-pre-pghd.png}
-    \caption{Diagram Kelas PRE PGHD}\label{fig:diagram-modul-pre-pghd}
-\end{figure}
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-pre-pghd.png}
+%     \caption{Diagram Kelas PRE PGHD}\label{fig:diagram-modul-pre-pghd}
+% \end{figure}
 
 
 \subsubsection{\textit{Endpoint} \texttt{GET /health}}\label{subsubsec:pre-endpoint-health}
@@ -28,37 +28,37 @@ Diagram kelas pada PRE dapat dilihat pada Gambar~\ref{fig:diagram-modul-pre-pghd
 \textit{Endpoint} ini tidak membutuhkan autentikasi dan digunakan sebagai \textit{health check} oleh pengujian maupun proses operasional. 
 Jika \textit{service} aktif, PRE mengembalikan teks \texttt{OK}.
 
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
-    \hiderowcolors
-    \caption{Spesifikasi \textit{Endpoint} GET /health pada PRE}\label{tab:pre-endpoint-health} \\
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Komponen} & \textbf{Nilai} \\
-    \hline
-    \showrowcolors
-    \endfirsthead
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Komponen} & \textbf{Nilai} \\
-    \hline
-    \endhead
-    \hline
-    \endfoot
-    \hline
-    \endlastfoot
-    \textit{Auth header} & - \\
-    \hline
-    \textit{Query params} & - \\
-    \hline
-    \textit{Request body} & - \\
-    \hline
-    \textit{\textit{Response} body success} & Tipe: \texttt{text/plain},
-\begingroup\ttfamily\small
-\setlength{\parindent}{0pt}
-OK
-\endgroup \\
-    \hline
-\end{styledxltabular}
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{Spesifikasi \textit{Endpoint} GET /health pada PRE}\label{tab:pre-endpoint-health} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Komponen} & \textbf{Nilai} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Komponen} & \textbf{Nilai} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     \textit{Auth header} & - \\
+%     \hline
+%     \textit{Query params} & - \\
+%     \hline
+%     \textit{Request body} & - \\
+%     \hline
+%     \textit{\textit{Response} body success} & Tipe: \texttt{text/plain},
+% \begingroup\ttfamily\small
+% \setlength{\parindent}{0pt}
+% OK
+% \endgroup \\
+%     \hline
+% \end{styledxltabular}
 
 
 \subsubsection{\textit{Endpoint} \texttt{POST /nonce}}\label{subsubsec:pre-endpoint-nonce}

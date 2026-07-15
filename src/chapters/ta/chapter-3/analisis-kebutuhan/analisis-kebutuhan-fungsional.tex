@@ -1,8 +1,6 @@
 \subsection{Kebutuhan Fungsional}
 
 Kebutuhan fungsional diturunkan dari Gap 1--Gap 5 pada Tabel~\ref{tab:rangkuman-gap-pghd}. 
-Kebutuhan dibatasi pada fungsi baru integrasi PGHD\@.
-Fungsi akun, identitas, CapBAC, dan PRE yang telah tersedia pada DecMed diperlakukan sebagai fungsi dasar yang digunakan kembali.
 
 \begingroup
 \footnotesize
@@ -27,23 +25,23 @@ Fungsi akun, identitas, CapBAC, dan PRE yang telah tersedia pada DecMed diperlak
 
 F01 & Gap 1 & Pasien dapat mengumpulkan PGHD secara otomatis dari perangkat dan menambahkan PGHD secara manual. \\
 \hline
-F02 & Gap 2 & Klien pasien menyimpan \textit{record} PGHD secara lokal agar data tetap tersedia ketika perangkat luring atau aplikasi ditutup. \\
+F02 & Gap 2 & Sistem menyimpan PGHD secara lokal pada perangkat pasien. \\
 \hline
-F03 & Gap 2, Gap 3 & Sistem secara otomatis mengirimkan data PGHD yang sudah terkumpul ke server DecMed ketika koneksi internet tersedia dengan mekanisme \textit{batch}. \\
+F03 & Gap 2, Gap 3 & Sistem mengirimkan PGHD yang telah terkumpul ke DecMed secara otomatis. \\
 \hline
-F04 & Gap 1--Gap 3 & Pasien dapat melihat \textit{record}, \textit{batch}, sumber data, waktu, dan status pengiriman PGHD miliknya. \\
+F04 & Gap 1--Gap 3 & Pasien dapat melihat PGHD miliknya dan status pengirimannya. \\
 \hline
-F05 & Gap 4 & Sistem menyertakan metadata pada PGHD, meliputi identitas pasien, waktu pengukuran, sumber, perangkat/aplikasi, metode pencatatan, dan status validasi yang tersedia. \\
+F05 & Gap 4 & Sistem menyertakan metadata asal-usul dan status validasi pada PGHD\@. \\
 \hline
-F06 & Gap 5 & Pasien dapat memberikan izin akses baca PGHD kepada tenaga kesehatan untuk kunjungan tertentu melalui mekanisme kontrol akses yang terintegrasi dengan DecMed. \\
+F06 & Gap 5 & Pasien dapat memberikan izin akses baca PGHD kepada tenaga kesehatan melalui sistem DecMed. \\
 \hline
-F07 & Gap 5 & Tenaga kesehatan yang memiliki akses aktif dapat melihat daftar entri PGHD yang milik pasien yang sesuai. \\
+F07 & Gap 5 & Tenaga kesehatan yang memiliki izin dapat melihat daftar entri PGHD pasien. \\
 \hline
-F08 & Gap 5 & Tenaga kesehatan dapat membuka dan melihat isi detail dari entri PGHD pasien yang dipilih, termasuk metadata asal-usul data (waktu, perangkat, dan jenis sumber). \\
+F08 & Gap 5 & Tenaga kesehatan dapat membuka dan melihat detail isi serta metadata entri PGHD pasien yang dipilih. \\
 \hline
-F09 & Gap 5 & Sistem menolak atau menandai PGHD yang gagal verifikasi integritas dan menampilkan peringatan agar data tidak digunakan sebagai data valid. \\
+F09 & Gap 5 & Sistem menolak atau menandai PGHD yang gagal diverifikasi. \\
 \hline
-F10 & Gap 5 & Pasien dapat mencabut izin akses terhadap data PGHD yang dimilikinya kapan saja, sehingga permintaan baca berikutnya dari tenaga kesehatan tersebut ditolak. \\
+F10 & Gap 5 & Pasien dapat mencabut izin akses baca PGHD dari tenaga kesehatan. \\
 \hline
 \end{styledxltabular}
 \endgroup

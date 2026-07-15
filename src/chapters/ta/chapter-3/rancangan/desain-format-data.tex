@@ -86,6 +86,12 @@ Tabel~\ref{tab:field-datagroup-json-pghd} menjelaskan \textit{fields} pada tingk
     \hline
     \texttt{device\_source} & String & Tidak & Informasi sumber perangkat atau metode derivasi, misalnya perangkat wearable, sensor telepon, atau data dari sensor yang sudah diolah. \\
     \hline
+    \texttt{statistics} & Array & Ya & Ringkasan statistik per \textit{field} numerik yang terdiri atas jumlah data, minimum, maksimum, rata-rata, median, modus, dan persentil. Struktur elemen dijelaskan pada Tabel~\ref{tab:field-statistics-json-pghd}. \\
+    \hline
+    \texttt{clinical\_thresholds} & Array & Ya & Salinan rentang klinis yang dipakai klien pasien saat membentuk \textit{batch}, termasuk satuan, konteks populasi, nama referensi, dan URL referensi. Tipe data tanpa rentang klinis umum menggunakan array kosong. \\
+    \hline
+    \texttt{anomaly\_count} & Integer & Ya & Jumlah seluruh penanda anomali pada \textit{data group}. \\
+    \hline
     \texttt{data\_points} & Array & Ya & Daftar nilai pengukuran aktual yang dijelaskan pada Tabel~\ref{tab:field-datapoints-json-pghd}. \\
     \hline
 \end{styledxltabular}
@@ -122,6 +128,76 @@ Tabel~\ref{tab:field-datapoints-json-pghd} berisi skema data untuk level \textit
     \texttt{value} & Number / Objek & Ya & Nilai pengukuran. Untuk pengukuran skalar diisi sebagai bilangan. Untuk pengukuran komposit diisi sebagai objek. \\
     \hline
     \texttt{unit} & String & Ya & Satuan pengukuran. \\
+    \hline
+    \texttt{anomalies} & Array & Ya & Daftar penanda untuk setiap \textit{field} yang berada di bawah atau di atas rentang klinis. Array kosong menandakan tidak ada anomali yang ditemukan atau tipe data tidak memiliki rentang umum yang dikonfigurasi. \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.23\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur Elemen \texttt{statistics} PGHD}\label{tab:field-statistics-json-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \endhead
+    \texttt{field} & String & Nama komponen numerik yang diringkas. \\
+    \hline
+    \texttt{count} & Integer & Jumlah nilai numerik. \\
+    \hline
+    \texttt{minimum}, \texttt{maximum} & Number & Nilai terkecil dan terbesar. \\
+    \hline
+    \texttt{mean}, \texttt{median} & Number & Nilai rata-rata dan median. \\
+    \hline
+    \texttt{mode} & Array Number & Seluruh nilai dengan frekuensi tertinggi; kosong apabila tidak ada nilai berulang. \\
+    \hline
+    \texttt{percentiles} & Objek & Nilai \texttt{p5}, \texttt{p25}, \texttt{p50}, \texttt{p75}, dan \texttt{p95}. \\
+    \hline
+    \texttt{unit} & String & Satuan statistik. \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}p{0.17\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur Rentang Klinis dan Penanda Anomali PGHD}\label{tab:field-threshold-anomaly-json-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Struktur/Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Struktur/Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \endhead
+    \texttt{clinical\_\allowbreak{}thresholds.\allowbreak{}field} & String & \textit{Field} numerik yang dievaluasi. \\
+    \hline
+    \texttt{minimum}, \texttt{maximum} & Number & Batas bawah dan atas rentang. \\
+    \hline
+    \texttt{minimum\_inclusive}, \texttt{maximum\_inclusive} & Boolean & Menentukan apakah nilai tepat pada batas masih termasuk rentang. \\
+    \hline
+    \texttt{unit}, \texttt{label}, \texttt{population} & String & Satuan, nama rentang, serta populasi atau konteks penerapan. \\
+    \hline
+    \texttt{reference}, \texttt{reference\_url} & String & Identitas dan alamat sumber rentang yang ikut dikirim kepada tenaga kesehatan. \\
+    \hline
+    \texttt{anomalies.field}, \texttt{anomalies.value} & String, Number & Komponen yang menyimpang dan nilai aslinya. \\
+    \hline
+    \texttt{anomalies.direction} & String & \texttt{below\_range} atau \texttt{above\_range}. \\
+    \hline
+    \texttt{normal\_minimum}, \texttt{normal\_maximum} & Number & Batas yang menyebabkan penanda tersebut terbentuk. \\
     \hline
 \end{styledxltabular}
 \endgroup

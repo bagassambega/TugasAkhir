@@ -1,9 +1,5 @@
 \subsubsection{Mekanisme Pengaksesan PGHD oleh Tenaga Kesehatan}\label{subsubsec:akses-pghd}
 
-Pengaksesan PGHD oleh tenaga kesehatan dilakukan melalui \textit{client} tenaga kesehatan dan server PRE\@.
-PRE tidak mengembalikan \textit{plaintext} PGHD\@.
-PRE hanya mengembalikan \textit{ciphertext}, metadata, dan artefak \textit{proxy re-encryption} yang diperlukan agar \textit{client} tenaga kesehatan yang memiliki akses aktif dapat melakukan dekripsi di sisi client.
-Metadata yang digunakan pada proses ini mengikuti struktur pada Tabel~\ref{tab:iota-pghd-metadata} dan Tabel~\ref{tab:iota-pghd-serialized-metadata}, sedangkan \textit{plaintext} hasil dekripsi mengikuti struktur \textit{batch} pada Tabel~\ref{tab:field-batch-json-pghd}.
 Mekanisme pengaksesan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengaksesan}.
 
 \begin{figure}[htbp]
@@ -62,13 +58,12 @@ Mekanisme pengaksesan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-ranca
 	\item \textbf{Verifikasi dan dekripsi di \textit{client} tenaga kesehatan.}
 	      \textit{Client} tenaga kesehatan kembali menghitung \texttt{h\_cipher} dari \texttt{enc\_pghd} dan memverifikasi \texttt{signature}.
 	      Setelah itu, \textit{client} menggunakan artefak PRE untuk membuka kunci simetris dan mendekripsi \texttt{enc\_pghd}.
-	      Setelah \textit{plaintext} terbuka, \textit{client} memperoleh \textit{payload batch} PGHD sesuai Tabel~\ref{tab:field-batch-json-pghd}, \textit{data group} sesuai Tabel~\ref{tab:field-datagroup-json-pghd}, dan \textit{data point} sesuai Tabel~\ref{tab:field-datapoints-json-pghd}.
+	      Setelah \textit{plaintext} terbuka, \textit{client} memperoleh \textit{payload batch} PGHD sesuai Tabel~\ref{tab:field-batch-json-pghd}, \textit{data group} sesuai Tabel~\ref{tab:field-datagroup-json-pghd}, statistik sesuai Tabel~\ref{tab:field-statistics-json-pghd}, rentang klinis dan penanda anomali sesuai Tabel~\ref{tab:field-threshold-anomaly-json-pghd}, serta \textit{data point} sesuai Tabel~\ref{tab:field-datapoints-json-pghd}.
 
 	\item \textbf{Invalidasi PGHD.}
 	      Invalidasi PGHD dapat terjadi ketika hash \textit{ciphertext} tidak cocok, \textit{signature} gagal diverifikasi, dekripsi AES-GCM gagal, atau tenaga kesehatan melakukan invalidasi manual melalui antarmuka.
 	      Ketika \textit{client} tenaga kesehatan mendeteksi kegagalan integritas, data tidak langsung ditampilkan sebagai data valid.
 	      \textit{Client} menampilkan peringatan bahwa data rusak atau tidak sah, kemudian setelah beberapa saat menampilkan dialog konfirmasi kepada tenaga kesehatan untuk menginvalidasi entri tersebut.
-	      Dialog tersebut memuat alasan teknis, misalnya \texttt{OUTER\_HASH\_MISMATCH}, \texttt{SIGNATURE\_INVALID}, atau \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA}.
 
 	      Pada proses invalidasi, \textit{client} tenaga kesehatan mengirim CID, alasan kegagalan, identitas pasien, dan token akses PGHD ke PRE\@.
 	      PRE memvalidasi token, material akses, dan hak akses baca PGHD melalui \textit{smart contract}.
@@ -77,8 +72,4 @@ Mekanisme pengaksesan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-ranca
 
 	    %   PRE juga mencoba melakukan \textit{unpin} objek IPFS terkait CID tersebut dari node IPFS yang dikelola sistem.
 	      Setelah status invalid tercatat di IOTA, entri PGHD tidak lagi dikembalikan sebagai data valid pada daftar PGHD dan tidak dapat dibuka sebagai data valid.
-
-	\item \textbf{Efek pencabutan akses.}
-	      Jika pasien mencabut akses PGHD, material akses PRE dihapus dan catatan akses pada \textit{smart contract} ditandai tidak aktif.
-	      Setelah itu, tenaga kesehatan tidak dapat mengambil daftar maupun membuka detail PGHD karena validasi di PRE atau \textit{smart contract} akan gagal.
 \end{enumerate}

@@ -25,56 +25,6 @@ IOTA Rebased mengganti Tangle dengan DAG Mysticeti dan memperkenalkan model \tex
 Objek dalam \textit{ledger} IOTA Rebased merepresentasikan aset atau \textit{state} yang dikelola melalui \textit{smart contract} \parencite{IOTA_Docs_2025}.
 IOTA Rebased menggunakan mekanisme konsensus \textit{Delegated Proof-of-Stake} (DPoS) melalui protokol Mysticeti untuk mencapai \textit{throughput} tinggi dan finalitas dalam hitungan subdetik \parencite{FromTangleToRebased_2025}.
 
-\subsubsection{Arsitektur IOTA}
-
-% L1: original IOTA, mainnet, devnet, private/local network
-% L2: IOTA memakai ethereum, di EVM Virtual Machine
-Arsitektur IOTA Rebased dapat dilihat melalui ilustrasi di Gambar~\ref{fig:iota-rebased-architecture}.
-IOTA Rebased menggunakan arsitektur dua tingkat pemrograman/level.
-\textit{Layer 1} (L1) merupakan lapisan inti jaringan IOTA itu sendiri, yaitu DAG Mysticeti yang terdesentralisasi dengan slot validator \textit{permissionless} berbasis DPoS \parencite{IOTA_Docs_2025}.
-Pada L1, \textit{smart contract} dieksekusi langsung di atas \textit{ledger} menggunakan MoveVM, sehingga performa \textit{native} karena tidak membutuhkan \textit{bridge} atau lapisan tambahan untuk eksekusinya \parencite{IOTA_Docs_2025}.
-
-\textit{Layer 2} (L2) adalah lapisan yang berjalan di atas L1 dan menyediakan kompatibilitas dengan Ethereum Virtual Machine (EVM) serta bahasa Solidity sehingga memungkinkan migrasi proyek berbasis Ethereum ke ekosistem IOTA \parencite{IOTA_Docs_2025}.
-L2 menawarkan fleksibilitas yang lebih tinggi untuk pengembangan aplikasi terdesentralisasi (dApp) yang memerlukan ekosistem \textit{tooling} Ethereum yang sudah matang, namun memiliki level kepercayaan yang lebih rendah dari L1 karena bergantung pada operator L2 tambahan \parencite{IOTA_Docs_2025}.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{resources/chapter-2/iota-rebased-architecture.jpg}
-  \caption{Arsitektur IOTA Rebased \parencite{FromTangleToRebased_2025}.}\label{fig:iota-rebased-architecture}
-\end{figure}
-
-\subsubsection{Konsensus IOTA}
-
-Proses transaksi pada IOTA Rebased berawal dari sisi klien (\textit{client-side}). 
-Klien membuat sebuah transaksi yang berisi \textit{payload} (contohnya instruksi  untuk menjalankan \textit{smart contract}) dan metadata yang dibutuhkan. 
-Transaksi ini  kemudian ditandatangani secara kriptografis menggunakan kunci privat klien sebelum dikirim ke \textit{node} di dalam jaringan \parencite{IOTA_Docs_TransactionLifecycle}.
-
-Setelah transaksi diterima, \textit{node} akan melakukan pengecekan awal (\textit{stateless validation}). 
-Tujuan dari proses ini adalah untuk memastikan bahwa \textit{signature} valid, saldo akun cukup untuk membayar biaya transaksi, izin aksesnya sesuai, dan struktur transaksi tidak melanggar aturan dasar protokol \parencite{IOTA_Docs_TransactionLifecycle}. 
-Jika lolos pengecekan ini, transaksi akan dimasukkan ke dalam \textit{mempool} lokal untuk mengantre sebelum diproses pada tahap konsensus global.
-
-Semua transaksi yang ada di \textit{mempool} harus diurutkan secara global (\textit{total ordering}) sebelum dieksekusi pada \textit{ledger} agar tidak terjadi konflik data \parencite{IOTA_Docs_Architecture}. 
-Untuk melakukan ini, IOTA Rebased menggunakan mekanisme konsensus \textit{Delegated Proof-of-Stake} (DPoS) \parencite{IOTA_Docs_Consensus, IOTA_Docs_PoS}. 
-
-Dalam sistem DPoS, pemegang token mendelegasikan hak suara (\textit{voting power}) mereka kepada validator. 
-Total \textit{stake} yang terkumpul akan menentukan seberapa besar bobot suara validator tersebut di dalam konsensus. 
-Jaringan berjalan dalam periode waktu yang disebut \textit{epoch}. 
-Pada awal setiap \textit{epoch}, komite validator dibentuk berdasarkan jumlah distribusi \textit{stake} tersebut \parencite{IOTA_Docs_ValidatorCommittee}.
-
-Komite validator ini bertugas menjalankan protokol konsensus \textit{Byzantine Fault-Tolerant} (BFT) berbasis DAG (\textit{Directed Acyclic Graph}) yang bernama Mysticeti \parencite{IOTA_Docs_Consensus}. 
-Setiap validator secara rutin mengambil sekumpulan transaksi dari \textit{mempool}, menjadikannya satu blok, lalu menambahkannya ke struktur DAG mereka. 
-Blok ini kemudian disebarkan ke validator lain \parencite{IOTA_Docs_Sequencing}. 
-Protokol Mysticeti memiliki aturan pasti untuk menentukan urutan blok dan transaksi yang sama di semua validator. 
-Struktur DAG digunakan karena memungkinkan pemrosesan blok secara paralel, sehingga lebih cepat dan mengurangi antrean komunikasi antar-validator.
-
-Ketika protokol Mysticeti sudah menetapkan urutan eksekusi dan bloknya memenuhi syarat \textit{commit}, blok tersebut dianggap final \parencite{IOTA_Docs_Sequencing}. 
-Pada tahap ini, urutan transaksi sudah permanen dan tidak bisa dibatalkan lagi, asalkan jumlah persentase validator yang tidak sesuai tidak melebihi sepertiga dari total \textit{stake} jaringan \parencite{IOTA_Docs_Architecture}.
-Setelah urutannya pasti, MoveVM (\textit{Move Virtual Machine}) akan mengeksekusi transaksi secara berurutan untuk memperbarui data di \textit{ledger} \parencite{IOTA_Docs_Architecture}. 
-
-Agar validator tetap jujur dan berpartisipasi aktif, IOTA Rebased memberikan insentif berupa \textit{staking rewards} yang dibagikan pada akhir setiap \textit{epoch} \parencite{IOTA_Docs_ValidatorsStaking}.
-Setiap validator memiliki \textit{staking pool} untuk mencatat kontribusi dari para delegator. 
-Protokol akan menghitung total \textit{reward} yang didapat, lalu membagikannya ke setiap \textit{pool} sesuai dengan proporsi \textit{stake} yang dikelola, setelah dikurangi potongan biaya operasional validator \parencite{IOTA_Docs_PoS}.
-
 \subsection{InterPlanetary File System (IPFS)}
 
 \textit{InterPlanetary File System} (IPFS) adalah protokol dan jaringan \textit{peer-to-peer} untuk penyimpanan dan distribusi konten secara terdistribusi dengan mekanisme \textit{content-addressed} alih-alih berbasis lokasi seperti HTTP \parencite{Benet_2014_ipfs}.
@@ -89,7 +39,3 @@ BitSwap bekerja sebagai \textit{marketplace} di mana \textit{node} saling bertuk
 Mekanisme \textit{marketplace} ini secara tidak langsung melakukan replikasi data di dalam jaringan. 
 Walaupun begitu, IPFS tidak menyalin data ke seluruh jaringan secara otomatis. 
 Agar sebuah data dipastikan tetap ada dan bertahan di jaringan, sebuah \textit{node} harus melakukan \textit{pinning} pada objek tersebut, yang memaksa objek itu untuk terus tersimpan secara permanen di penyimpanan lokal \textit{node} yang bersangkutan \parencite{Benet_2014_ipfs}.
-
-IPFS sendiri tidak menyediakan konsensus global seperti pada DLT, melainkan berfungsi sebagai lapisan penyimpanan terdistribusi yang dapat dikombinasikan dengan DLT atau \textit{blockchain} untuk menyimpan \textit{hash} atau CID sebagai \textit{anchor} yang tidak dapat diubah pada \textit{ledger} \parencite{Benet_2014_ipfs}.
-Pola integrasi yang umum adalah menyimpan data berukuran besar atau bersifat sensitif di IPFS (dengan atau tanpa enkripsi), sementara \textit{ledger} hanya menyimpan \textit{pointer} berupa CID dan metadata penting lain, sehingga biaya dan ukuran \textit{ledger} dapat ditekan dan mempertahankan integritas dan jejak audit \parencite{Benet_2014_ipfs}.
-Dalam berbagai arsitektur yang menggabungkan DLT dengan IPFS, DLT biasanya dimanfaatkan sebagai \textit{control plane} untuk manajemen identitas, kontrol akses, dan pencatatan transaksi, sedangkan IPFS berperan sebagai \textit{data plane} untuk penyimpanan dan distribusi konten berukuran besar \parencite{Benet_2014_ipfs}.

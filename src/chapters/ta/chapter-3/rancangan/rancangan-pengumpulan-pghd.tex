@@ -1,8 +1,5 @@
 \subsubsection{Mekanisme Pengumpulan PGHD pada Klien Pasien}\label{mekanisme-pengumpulan-pghd}
 
-Mekanisme pengumpulan PGHD dirancang agar data kesehatan yang berasal dari perangkat pasien dapat dikumpulkan, dinormalisasi, dan disimpan terlebih dahulu pada perangkat sebelum dikirim ke sistem. 
-Data yang dikumpulkan disimpan ke penyimpanan lokal (\textit{local} DB) sebagai data sementara sebelum dibentuk menjadi \textit{batch}. 
-Ketika data telah memenuhi kondisi pembentukan \textit{batch}, data lokal tersebut disusun menjadi payload PGHD sesuai Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
 Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengumpulan}.
 
 \begin{figure}[htbp]
@@ -50,10 +47,14 @@ Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{f
     Ketika salah satu pemicu tersebut terjadi, \textit{client} mengambil data lokal yang belum memiliki \texttt{batch\_id}, mengelompokkannya ke dalam \texttt{data\_group}, dan menyusun \textit{data point} sesuai skema pada Tabel~\ref{tab:field-datagroup-json-pghd} dan Tabel~\ref{tab:field-datapoints-json-pghd}.
     % Implementasi Android saat ini menggunakan pemicu periodik 15 menit, ambang ukuran 10 MB, dan tombol Send Now untuk pengiriman manual.
 
+    \item \textbf{Perhitungan statistik per tipe data.}
+    Sebelum enkripsi, \textit{client} mengekstrak setiap \textit{field} numerik dari satu \textit{data group}. Untuk setiap \textit{field}, \textit{client} mengurutkan nilai dan menghitung jumlah data, minimum, maksimum, rata-rata, median, modus, serta persentil P5, P25, P50, P75, dan P95. Pengukuran komposit, misalnya tekanan darah, dihitung secara terpisah untuk komponen sistolik dan diastolik. Ringkasan disimpan pada \texttt{statistics} tanpa mengganti \texttt{data\_points} asli.
+
+    \item \textbf{Evaluasi rentang klinis dan pembentukan penanda anomali.}
+    \textit{Client} membaca konfigurasi rentang klinis dari \texttt{.env}, kemudian memilih aturan yang cocok dengan \texttt{measurement\_type} dan \texttt{field}. Setiap nilai dibandingkan dengan batas bawah dan batas atas dengan memperhatikan sifat inklusif atau eksklusif batas. Nilai di luar rentang memperoleh penanda \texttt{below\_range} atau \texttt{above\_range}. Salinan aturan, konteks populasi, dan referensi yang digunakan dimasukkan ke \texttt{clinical\_thresholds}; jumlah penanda disimpan pada \texttt{anomaly\_count}. Tipe data tanpa rentang klinis umum tetap dimasukkan secara utuh, tetapi tidak diklasifikasikan sebagai normal atau anomali.
+
     \item \textbf{Pembentukan \textit{batch} lokal.}
-    \textit{Batch} yang terbentuk mengikuti skema JSON PGHD pada Subbab~\ref{rancangan-format-data-pghd}. 
-    Setelah dienkripsi, \textit{client} menyimpan \textit{batch} tersebut pada penyimpanan lokal bersama metadata operasional seperti status pengiriman dan jumlah percobaan ulang. 
-    Status awal \textit{batch} menunjukkan apakah \textit{batch} masih menunggu pemicu pengiriman atau sudah masuk proses pengiriman.
+    \textit{Batch} yang terbentuk mengikuti skema JSON PGHD versi 1.1 pada Subbab~\ref{rancangan-format-data-pghd}. \textit{Payload} memuat data mentah, ringkasan statistik, rentang klinis, dan penanda anomali dalam satu kesatuan. Setelah seluruh proses tersebut selesai, \textit{client} mengenkripsi \textit{payload} dan menyimpan \textit{batch} pada penyimpanan lokal bersama metadata operasional seperti status pengiriman dan jumlah percobaan ulang. Dengan urutan ini, statistik dan rentang klinis ikut dilindungi oleh enkripsi dan mekanisme integritas yang sama dengan data asli.
 
     \item \textbf{Status \textit{batch} lokal.}
     \textit{Client} membedakan status \textit{batch} menjadi \texttt{waiting\_for\_trigger}, \texttt{pending}, \texttt{sent}, dan \texttt{failed}. 
@@ -66,8 +67,4 @@ Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{f
     Sistem tidak menghapus data yang belum terkirim. 
     Ketika koneksi tersedia kembali, \textit{client} menjadwalkan pengiriman \textit{batch} yang masih menunggu atau gagal karena koneksi. 
     Apabila kegagalan terjadi karena sebab lain, pasien tetap dapat memicu pengiriman manual.
-
-    \item \textbf{Penyimpaanan permanen data lokal.}
-    Data PGHD yang telah dikumpulkan tidak dihapus otomatis setelah berhasil dikirim. 
-    Data yang belum terkirim, gagal terkirim, maupun sudah terkirim tetap dipertahankan untuk mendukung riwayat pasien, evaluasi pengiriman, dan kebutuhan audit pada \textit{client} dan bisa dikirim ulang ketika internet tersedia atau dikirim manual oleh pasien jika disebabkan oleh \textit{error} lain.
 \end{enumerate}
