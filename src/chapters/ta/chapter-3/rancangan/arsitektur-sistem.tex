@@ -13,7 +13,6 @@ Warna merah digunakan untuk merepresentasikan komponen yang diubah dari rancanga
 
 Perubahan arsitektur yang dilakukan adalah mengganti \textit{client} pasien untuk mendukung pengumpulan, pengolahan, dan pengiriman PGHD, menambah fungsionalitas akses, baca, dan invalidasi PGHD pada \textit{client} tenaga kesehatan, dan penyesuaian PRE, \textit{smart contract}, dan data yang disimpan pada IOTA dan IPFS untuk mendukung penyimpanan, validasi dan pengambilan PGHD\@.
 
-\subsubsection{Penyimpanan Lokal}
 
 \textit{Client} pasien menyimpan PGHD pada penyimpanan lokal sebelum data dikirim ke sistem. 
 Penyimpanan lokal terdiri atas \textit{record} PGHD yang belum masuk \textit{batch}, \textit{envelope batch} PGHD terenkripsi, dan \textit{data point batch}. 
@@ -21,11 +20,20 @@ Penyimpanan lokal terdiri atas \textit{record} PGHD yang belum masuk \textit{bat
 Struktur data lokal dijelaskan pada Subbab~\ref{rancangan-solusi-format-data-lokal}. 
 Mekanisme ini memastikan data tidak hilang ketika perangkat pasien berada dalam kondisi \textit{offline}.
 
-\subsubsection{\textit{Proxy Layer} dan \textit{Smart Contract}}
-
 \textit{Proxy Layer} berperan sebagai \textit{middleware} yang memproses permintaan dari \textit{client} pasien dan \textit{client} tenaga kesehatan. 
 Untuk PGHD, \textit{proxy} menerima \textit{batch} terenkripsi, memverifikasi \texttt{h\_cipher} (hash PGHD yang terenkripsi) dan \texttt{signature} (\textit{digital signature}), menyimpan \textit{ciphertext} \texttt{enc\_pghd} ke penyimpanan \textit{off-chain}, mencatat metadata ke \textit{smart contract}, serta menyediakan artefak \textit{proxy re-encryption} untuk tenaga kesehatan yang memiliki akses aktif untuk mendekripsi PGHD nantinya.
 
 \textit{Smart contract} di IOTA menyimpan metadata PGHD untuk setiap entri. 
 Metadata tambahan seperti \textit{identifier batch}, \textit{key} dan \textit{nonce} terenkripsi, \texttt{capsule}, dan \texttt{signature} (\textit{digital signature}) diserialisasi mengikuti Tabel~\ref{tab:iota-pghd-serialized-metadata}. 
 \textit{Smart contract} juga menyimpan informasi akses PGHD dan status validasi data.
+
+Perubahan juga dilakukan dengan menambah peran PGHD pada pasien dan tenaga kesehatan.
+Pasien berperan dalam membuat dan mengirim data PGHD, juga mengontrol akses baca terhadap PGHD dan mencabut akses PGHD dari tenaga kesehatan.
+Tenaga kesehatan dapat mengakses data PGHD setelah diberikan akses oleh pasien, dan tenaga kesehatan tidak dapat menambah atau memodifikasi data PGHD karena PGHD berasal dan dibuat oleh pasien.
+Diagram \textit{use-case} DecMed yang sudah ditambah dengan PGHD dapat dilihat pada Gambar~\ref{fig:use-case-pghd}.
+
+\begin{figure}[htbp]
+    \centering
+	\includegraphics[width=1.1\textwidth]{resources/chapter-2/use-case-pghd.png}
+	\caption{Diagram \textit{Use Case} DecMed-PGHD}\label{fig:use-case-pghd}
+\end{figure}

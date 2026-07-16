@@ -64,7 +64,7 @@ public struct PatientPghdMetadata has copy, drop, store {
 Setiap pasien memiliki objek \texttt{PatientPghdStore} yang berisi daftar \texttt{PatientPghdMetadata}.
 Daftar objek IOTA yang berkaitan dengan PGHD, akses, dan pasien dapat dilihat pada Tabel~\ref{tab:lampiran-object-iota-pghd}.
 
-\begin{lstlisting}[caption={Struktur penyimpanan metadata PGHD per pasien pada smart contract}, label={lst:patient-pghd-store-struct}, float=htb]
+\begin{lstlisting}[caption={Struktur penyimpanan metadata PGHD per pasien pada \textit{smart contract}}, label={lst:patient-pghd-store-struct}, float=htb]
 public struct PatientPghdStore has key {
     id: UID,
     patient_id: String,

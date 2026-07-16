@@ -24,11 +24,7 @@ Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancan
     Kedua artefak tersebut disimpan sebagai bagian metadata \textit{batch} lokal dan metadata pengiriman.
 
     \item \textbf{Pembentukan hash \textit{ciphertext} dan \textit{signature}.}
-    \textit{Client} menghitung hash \textit{ciphertext}:
-    \[
-        h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}).
-    \]
-    Nilai tersebut ditandatangani menggunakan kunci privat PGHD pasien sehingga menghasilkan \texttt{signature}. 
+    \textit{Client} menghitung hash \textit{ciphertext}, dan nilai tersebut ditandatangani menggunakan kunci privat PGHD pasien sehingga menghasilkan \texttt{signature}. 
     \textit{Signature} ini digunakan PRE dan \textit{client} tenaga kesehatan untuk memverifikasi integritas \textit{ciphertext}.
 
     \item \textbf{Pengiriman \textit{envelope} PGHD ke PRE.}
