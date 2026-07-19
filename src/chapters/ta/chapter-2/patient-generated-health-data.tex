@@ -1,0 +1,129 @@
+\section{Patient-Generated Health Data (PGHD)}\label{studi-pghd}
+
+\subsection{Definisi dan Karakteristik PGHD}
+
+\textit{Patient-generated health data} (PGHD) adalah data terkait kesehatan yang dibuat, dicatat, atau dikumpulkan oleh pasien, keluarga, atau pengasuh di luar lingkungan klinis untuk membantu mengatasi suatu \textit{health concern}, termasuk riwayat kesehatan, riwayat terapi, data biometrik, gejala, dan gaya hidup \parencite{Mars_Scott_2022_PGHD_Healthcare,Abdolkhani_2019_PGHD_Quality_Challenges}.
+PGHD dibedakan dari data klinis karena pasien, bukan tenaga kesehatan, memegang tanggung jawab untuk merekam data tersebut, dan pasien pula yang menentukan bagaimana data tersebut dibagikan kepada penyedia layanan kesehatan atau pihak lain \parencite{Mars_Scott_2022_PGHD_Healthcare,Abdolkhani_2019_PGHD_Quality_Challenges}.
+
+Sumber PGHD meliputi \textit{wearable} dan sensor (misalnya aktivitas fisik, detak jantung, pola tidur), perangkat pemantauan di rumah (misalnya tekanan darah, glukosa darah, saturasi oksigen, berat badan), aplikasi seluler untuk pencatatan diet, gejala, dan \textit{mood}, dan \textit{observations of daily living} (ODLs) yang merefleksikan pola dan aktivitas kehidupan sehari-hari \parencite{Mars_Scott_2022_PGHD_Healthcare}.
+
+Meskipun PGHD memiliki nilai informasi yang dapat digunakan tenaga kesehatan, terdapat perbedaan antara PGHD dan data klinis dalam hal tingkat kepercayaan dan konteks penggunaannya.
+Data klinis dikumpulkan oleh tenaga kesehatan menggunakan metode dan peralatan yang telah divalidasi dalam konteks pelayanan klinis, sehingga memiliki tingkat akurasi dan reliabilitas yang lebih tinggi \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Sebaliknya, kualitas PGHD bervariasi bergantung pada akurasi perangkat yang digunakan dan kemampuan pasien dalam merekam data \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+%  Clinical data are typically considered more reliable because they are collected by professionals using standardized methods and equipment (Khatiwada)
+Oleh karena itu, PGHD tidak dipandang sebagai pengganti data klinis, melainkan sebagai data pelengkap (\textit{supplementary data}) yang memperluas gambaran kondisi kesehatan pasien di luar konteks klinis \parencite{ahima_fountain_2014_using_pghd_provenance}.
+
+\subsection{Sumber dan Tipe Data PGHD}\label{studi-sumber-tipe-pghd}
+
+PGHD berbeda dengan data klinis karena PGHD tidak dikumpulkan oleh tenaga kesehatan ataupun memakai alat medis yang tersertifikasi dan terverifikasi \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+% PGHD is patient-directed and patient-informed and is not collected through clinic tools but through a range of readily available commercial off-the-shelf tools such as mobile phone apps and wearable activity trackers (Cohen)
+Merujuk pada \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}, sumber-sumber data yang dapat digunakan untuk mengumpulkan data PGHD secara garis besar terbagi menjadi lima kategori pada Tabel~\ref{tab:pghd-data-sources}.
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Sumber Data PGHD dan Karakteristiknya \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}}\label{tab:pghd-data-sources}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Sumber Data} & \textbf{Contoh Perangkat/Platform} & \textbf{Karakteristik Data} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Sumber Data PGHD dan Karakteristiknya \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding} (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Sumber Data} & \textbf{Contoh Perangkat/Platform} & \textbf{Karakteristik Data} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    Perangkat \textit{wearable} dan sensor & Smartwatch, \textit{fitness tracker} (Fitbit, Apple Watch, Mi Watch) & \textit{Time-series} kontinu, frekuensi tinggi, otomatis \\
+    \hline
+    Perangkat pemantauan di rumah dan lingkungan & Tensimeter digital, monitor glukosa darah, pulse oximeter, sensor udara & Periodik, semi-otomatis, memerlukan tindakan aktif pasien \\
+    \hline
+    Perangkat \textit{mobile} dan aplikasi & Aplikasi kesehatan (Google Health Connect, Apple HealthKit), aplikasi pencatatan diet dan gejala & Campuran otomatis dan manual, bergantung pada partisipasi pasien \\
+    \hline
+    Perangkat medis terhubung & CGM (\textit{continuous glucose monitor}), alat EKG portable, spirometer digital & Frekuensi tinggi untuk kondisi spesifik, memerlukan peresepan atau rekomendasi klinis \\
+    \hline
+    Laporan mandiri pasien & Kuesioner digital, buku harian gejala, platform \textit{patient-reported outcomes} (PRO) & Data terstruktur dari input aktif pasien, frekuensi rendah hingga harian \\
+    \hline
+    \textit{Lifestyle} dan media sosial & \textit{Posts} di media sosial & Tergantung pada aktivitas sosial media dan kehidupan sosial \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+Dari seluruh sumber data PGHD yang ada, perangkat dan aplikasi mobile juga \textit{wearable} mendominasi penghasil data PGHD terbesar karena ketersediaan dan penggunaannya yang luas \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+% The use of PGHD has rapidly increased with the widespread availability of smart phone mobile health applications (mHealth apps) and wearable devices. Currently, the vast majority of PGHD is generated via the use of mHealth apps and wearables like “Fitbit” or medical devices such as a continuous glucose monitoring device.
+
+Adapun tipe data yang dapat dikumpulkan dari berbagai sumber PGHD tersebut dapat diklasifikasikan menjadi tiga kategori: data fisiologis (\textit{physiological data}), data aktivitas dan perilaku (\textit{behavioral and activity data}), dan data yang dilaporkan secara mandiri oleh pasien (\textit{patient-reported data}) \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% PGHD collected through a range of different types of smart devices and other new technologies can provide patients with innovative ways to actively manage their health, improving patient self-knowledge, and management of health concerns, including diabetes, physical activity, and behavioral health triggers such as anxiety (Cohen)
+% Patients are generating PGHD through the use of wearable devices and mobile health apps that allow them to track metrics such as physical activity, heart rate, blood pressure, weight, sleep, and more. This type of data is often used by patients for their own health monitoring and management, or is shared with healthcare providers to facilitate data-driven care. Other sources of PGHD include patient portals and electronic health records, which allow patients to directly submit information like food/symptom logs, mood ratings, and customized health data to their providers. (Khatiwada)
+Data fisiologis misalnya detak jantung, saturasi oksigen, tekanan darah, dan suhu tubuh yang umumnya dikumpulkan secara otomatis oleh sensor wearable.
+Data aktivitas dan perilaku misalnya adalah jumlah langkah, kalori terbakar, jarak tempuh, durasi dan kualitas tidur, serta pola aktivitas fisik lainnya.
+Data yang dilaporkan pasien contohnya seperti gejala subjektif, nyeri, dan mood yang dimasukkan secara manual \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+
+\subsection{Pengolahan dan Pengelolaan PGHD}\label{studi-pengolahan-pengelolaan-pghd}
+
+Terdapat beberapa mekanisme yang dapat digunakan untuk mengelola data PGHD, di antaranya \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding},
+
+\begin{enumerate}
+    \item Pengumpulan data melalui agregasi pada \textit{smartphone}.
+    Saat ini sudah banyak sistem operasi pada smartphone yang mengintegrasikan data dari berbagai sumber data dan aplikasi sehingga data dapat dikumpulkan melalui satu platform dan informasi data yang sama.
+    % Integration with Health Platforms: Operating systems like Apple’s iOS have integrated health platforms (e.g., Apple Health) that aggregate data from various health and fitness apps, creating a comprehensive health profile.
+    \item Integrasi data langsung ke sistem rekam medis.
+    Data bisa langsung dikirim dan diintegrasikan ke sistem rekam medis.
+    % Telehealth Integration: PGHD can be seamlessly integrated into telehealth platforms, allowing clinicians to provide remote care based on actual patient-generated metrics.
+    % Real-Time Data Sharing: Devices can instantly upload data to the cloud, allowing real-time sharing with healthcare providers or integration with electronic health records (EHRs)
+    \item Integrasi dengan komponen eksternal untuk melakukan agregasi dan analitik data.
+    Data PGHD dapat dikirim terlebih dahulu ke komponen tambahan (misalnya platform analitik atau AI) untuk mengolah data PGHD terlebih dahulu.
+    % Predictive Analysis: With a large amount of PGHD being generated, advanced analytics and AI can identify patterns, predict potential health problems, and offer personalized health recommendations.
+\end{enumerate}
+
+Karena PGHD berasal dari pemantauan dan pengumpulan data dari sensor \textit{wearabke}, sebagian besar data yang dihasilkan akan merekam data sehari-hari yang bersifat normal. 
+Sebagian besar titik data dalam deret waktu tersebut merepresentasikan pola fisiologis yang dianggap normal dan membentuk \textit{baseline} individu, sedangkan anomali didefinisikan sebagai pola atau nilai yang secara signifikan berbeda dari data lainnya \parencite{sunny2022anomaly}. 
+Informasi penting dari PGHD biasanya terletak pada anomali yang terdeteksi dari data yang dikumpulkan, karena hal itu bisa menjadi indikator berbagai kondisi penyakit \parencite{sunny2022anomaly,shenvi2023visualization}.
+
+Salah satu pendekatan yang dapat digunakan untuk mengidentifikasi anomali adalah deteksi berbasis \textit{threshold} klinis, yaitu membandingkan nilai pengukuran dengan rentang nilai normal yang telah ditetapkan secara klinis untuk setiap tipe parameter. 
+Pendekatan ini termasuk dalam kategori metode statistik \textit{unsupervised anomaly detection} yang menggunakan \textit{user-defined threshold values} \parencite{sunny2022anomaly}.
+
+Selain mekanisme deteksi anomali, agregasi statistik dapat digunakan untuk mengurangi beban kognitif tenaga kesehatan tanpa menghilangkan data asli. 
+Shenvi et al.\ menemukan bahwa preferensi tenaga kesehatan adalah data disajikan dengan \textit{statistical summaries and clinical interpretations} \parencite{shenvi2023visualization}. 
+Pendekatan agregasi statistik meliputi nilai minimum, maksimum, rata-rata, dan persentil dari setiap tipe pengukuran dalam suatu periode waktu.
+Selain itu, untuk memudahkan pengaksesan dan pengolahan PGHD, visualisasi PGHD juga penting untuk digunakan dengan konsep \textit{overview first, zoom and filter, then details-on-demand} \parencite{shenvi2023visualization}. 
+
+Selain mekanisme pengolahan dan pengambilan data di atas, mekanisme pengiriman data juga berbeda-beda.
+Pada sistem yang menggunakan sensor dan perangkat IoT seperti PGHD, pola pengiriman data umumnya diklasifikasikan menjadi tiga kategori, yaitu mekanisme \textit{periodic} (\textit{time-driven}), \textit{event-driven}, dan \textit{query-driven} (\textit{on-demand}) \parencite{Akyildiz_Vuran_2010_WSN_Algorithms}.
+% There are three types of applications for WSNs and each has its corresponding data communication modes: event-driven, periodic, and on-demand reporting. In the event-driven mode, sensors report the sensing data to the sink once a specified event (e.g., fire) has been detected. In the periodic reporting (or time-driven) mode, sensor nodes gather information from the environment at predetermined times and periodically send the data to the sink. In the on-demand (or query-driven) mode, users decide when to gather data.
+
+\begin{itemize}
+    \item \textbf{\textit{Periodic (time-driven)}.}
+    Pada mekanisme ini, perangkat mengumpulkan dan mengirimkan data pada interval waktu yang tetap, misalnya setiap beberapa menit atau jam, tanpa memperhatikan ada tidaknya perubahan atau kejadian khusus pada data.
+    Pengiriman berbasis \textit{time-driven} perilaku dan konsumsi daya lebih \textit{predictable} karena pengiriman data stabil \parencite{Albert2004_Event_Time_Triggered_Comparison}.
+    % Within a time-triggered communication the permission to access the bus is controlled by predefined time windows (TDMA, time division multiple access), leading to the advantage of a quasideterministic behavior during regular operation.
+    % Therefore, time-triggered concepts potentially provide a higher dependability, since e.g. missing messages are immediately detected
+
+    \item \textbf{\textit{Event-driven}.}
+    Pada mekanisme \textit{event-driven}, pengiriman data dipicu oleh suatu peristiwa tertentu yang telah didefinisikan sebelumnya.
+    Misalnya sensor hanya melaporkan data ketika sebuah \textit{event} terdeteksi, misalnya perubahan besar atau nilai yang melampaui ambang tertentu \parencite{Akyildiz_Vuran_2010_WSN_Algorithms}.
+    \textit{Event-driven} membuat data dapat tersedia secara cepat terhadap suatu kejadian, karena pengiriman dapat dilakukan segera setelah \textit{event} terdeteksi tanpa harus menunggu interval waktu berikutnya.
+    Namun \textit{event-driven} sangat bergantung pada volume dan frekuensi data yang dikirim karena lonjakan pengiriman data ketika \textit{event} muncul secara terus menerus dapat membuat pengiriman data terjadi terus menerus.
+    % The main advantage of event-triggered systems is their ability to fastly react to asynchronous external events which are not known in advance. Thus, they show a better real-time performance in comparison with time-triggered systems. In addition, event-triggered systems possess a higher flexibility and allow in many cases the adaptation to the actual demand without a redesign of the complete system.
+    % It can be summarized that event-triggered bus concepts are more efficient for small bus loads, since they generate lower latencies and less jitter when reacting to asynchronous events. But as has been shown a bus load or a load on the micro controller arbitrarily worsen the behavior of the CAN bus
+
+    \item \textbf{\textit{Query-driven (on-demand)}.}
+    Pada mekanisme \textit{query-driven}, pengiriman data dipicu oleh permintaan eksplisit dari server atau pengguna.
+    Pengirim tidak mengirim data secara rutin, tetapi hanya ketika ada permintaan yang mendeskripsikan jenis dan ruang lingkup data yang dibutuhkan \parencite{Akyildiz_Vuran_2010_WSN_Algorithms}.
+    % Dalam konteks PGHD, pola ini dekat dengan model \textit{access-at-visit}, di mana tenaga kesehatan meminta atau menarik data PGHD ketika diperlukan untuk mendukung suatu episode perawatan (misalnya menjelang atau saat kunjungan), sementara di luar episode tersebut data tidak diakses secara aktif \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+\end{itemize}
+
+Karena PGHD berasal dari pasien dan didapatkan ketika pasien tidak sedang berkunjung ke fasyankes, mekanisme pengaksesan PGHD memungkinkan PGHD untuk diakses secara \textit{remote} dan \textit{real-time}, atau tetap diberikan/diakses ketika kunjungan ke fasyankes berlangsung \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% The continuous nature of this data collection ensures real-time monitoring, facilitating prompt interventions should anomalies arise. In a more significant manner, the utilization of PGHD has effectively encouraged patients to assume a major role in shaping their health narratives, thus promoting increased participation and compliance with medical treatment plans (Khatiwada).
+% They found that PGHD provides valuable insights between visits and reveals patient problems that may be missed during appointments.
+Pasien menganggap bahwa pemberian PGHD ketika kunjungan ke fasyankes memberatkan karena waktu kunjungan yang singkat dan perlu mengidentifikasi data apa saja yang perlu dipersiapkan \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% Sharing PGHD during clinical visits is perceived by some patients as burdensome. They have to select what is most relevant to share, given a limited visit time (Khatiwada).
+Sementara itu, tenaga kesehatan lebih memilih mekanisme pemberian dan pengaksesan PGHD ketika kunjungan karena akses data PGHD secara \textit{real-time} membuat \textit{workflow} tenaga kesehatan terpecah dan memerlukan konteks medis yang didapatkan ketika kunjungan saja \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding,Bruckner2025_Healthcare_PGHD_Attitudes}.
+% For remote access to PGHD, HCPs emphasised the need for clear protocols and responsibilities for dealing with incoming data and suggested building on existing workflow strategies (Bruckner)
+% Epilepsy care professionals were less supportive of real-time alarm systems, preferring to use PGHD for assessing seizure events before or during consultations rather than for real-time monitoring (Bruckner)

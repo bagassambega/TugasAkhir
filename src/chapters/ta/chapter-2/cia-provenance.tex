@@ -1,0 +1,240 @@
+% chktex-file 8
+
+\section{Kerahasiaan, Integritas, Ketersediaan dan \textit{Data Provenance}}\label{studi-cia-provenance}
+
+\subsection{Kerahasiaan (\textit{Confidentiality})}\label{studi-confidentiality}
+Kerahasiaan (\textit{confidentiality}) adalah properti keamanan yang memastikan bahwa informasi hanya dapat diakses oleh pihak yang memiliki otorisasi, serta mencegah pengungkapan data kepada individu atau sistem yang tidak berwenang \parencite{tripathi2025cia}. 
+Mekanisme utama untuk mendapatkan kerahasiaan adalah enkripsi, di mana data diubah ke bentuk \textit{ciphertext} yang hanya dapat dibaca oleh pihak yang memiliki kunci dekripsi yang sah \parencite{gowthamani_edgecrypto_2025}.
+Selain enkripsi, mekanisme lain yang dapat digunakan untuk menjamin kerahasiaan adalah kontrol akses yang memastikan hanya entitas yang berwenang dapat mengakses data, autentikasi, dan protokol komunikasi yang aman \parencite{tripathi2025cia}. %table 7 & 8 khatiwada, 
+
+% 3.1 Data acquisition from IoT medical devices
+% In smart healthcare IoT systems, patient information such as vital signs and medication details is collected through interconnected devices, including wearable sensors, physiological monitors, and intelligent medical equipment. These devices continuously monitor parameters like heart rate, blood pressure, or oxygen saturation, transmitting the data securely over wireless networks. 
+% To ensure confidentiality and safeguard patient privacy, the data is encrypted at the source using robust cryptographic algorithms before being transmitted to edge servers or cloud platforms. 
+% These platforms handle real-time processing, secure storage, and advanced analytics while maintaining end-to-end privacy throughout the data acquisition and transfer processes. (gowthamani empowering)
+
+Dalam konteks PGHD, kerahasiaan menjadi parameter penting karena data tersebut mengandung informasi sensitif pasien.
+Setiap data yang dihasilkan harus dijamin keamanannya melalui mekanisme enkripsi \textit{end-to-end}, baik ketika pengiriman data maupun penyimpanan data \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}. 
+Selain itu, hanya pihak yang telah memperoleh persetujuan dari pasien yang boleh diberikan kemampuan teknis untuk mengakses PGHD \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% Utilize end-to-end encryption methods to secure the transmission of PGHD from patients’ devices to healthcare systems. This ensures that data remains confidential and is protected against interception or unauthorized access during transmission. (Khatiwada)
+
+\subsection{Integritas (\textit{Integrity})}\label{studi-integrity}
+Integritas adalah properti keamanan yang menjamin bahwa data tidak mengalami modifikasi, penghapusan, atau pemalsuan yang tidak sah. 
+Dua mekanisme kriptografi utama yang digunakan untuk menjamin integritas adalah fungsi \textit{hash} kriptografis dan tanda tangan digital (\textit{digital signature}) \parencite{tripathi2025cia}. 
+% A key strategy to preserve integrity is the use of hashing and checksums. Similarly, digital signatures combine hashing with cryptography to not only detect changes but also to verify the source of the data, ensuring authenticity along with integrity. For instance, software updates are often signed by the vendor; your system will verify the signature before installing to confirm that the update indeed comes from the legitimate source and hasn’t been tampered with in transit. Insecure software update mechanisms that lack these checks have been exploited in the past by attackers to distribute malware (a notable example being certain supply chain attacks where attackers compromised an update server to push out malicious updates). Such incidents highlight why integrity checks are vital. (tripathi)
+Fungsi \textit{hash} menghasilkan nilai ringkasan berukuran tetap dari data masukan, di mana perubahan sekecil apapun pada data akan menghasilkan nilai \textit{hash} yang sepenuhnya berbeda sehingga modifikasi dapat langsung dideteksi \parencite{NIST_FIPS186-5}. 
+Fungsi \textit{hash} saja dapat mendeteksi perubahan data, namun tidak memiliki mekanisme untuk menjamin apakah baik data maupun hash dimodifikasi atau tidak \parencite{NIST_FIPS186-5}. 
+% In other words, signatures are designed so that they cannot be forged (NIST)
+
+Variasi lain yang menggunakan hash adalah MAC (\textit{Message Authentication Code}) yang menggabungkan fungsi hash dengan kriptografi kunci simetri yang sama untuk mengenkripsi dan mendekripsi \parencite{nistMessageAuthentication}.
+MAC membuktikan integritas dan memungkinkan modifikasi data dan hash dapat dideteksi, namun memerlukan kunci simetris yang dibagikan.
+Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa menggunakan kunci privat itu untuk menghasilkan hash yang valid dari data dan hash yang sudah dimodifikasi \parencite{NIST_FIPS186-5}.
+% In order to prevent other entities from claiming to be the key pair owner and using the private key to generate fraudulent signatures, the private key must remain secret. (NIST)
+
+Tanda tangan digital menggabungkan fungsi \textit{hash} dengan kriptografi kunci privat untuk memverifikasi integritas sekaligus mengautentikasi identitas pengirim \parencite{NIST_FIPS186-5}.
+\textit{Digital signature} menggabungkan deteksi modifikasi dengan autentikasi identitas pengirim tanpa memerlukan pengiriman atau pembagian kunci enkripsi yang sama, karena \textit{digital signature} dienkripsi memakai kunci privat dan diverifikasi memakai kunci publik yang aman untuk dibagikan \parencite{NIST_FIPS186-5}.
+\textit{Digital signature} dihasilkan dengan menghitung hash dari data yang kemudian ditandatangani sebelum dikirim.
+Kemudian untuk memverifikasi \textit{digital signature}, penerima kembali menghitung hash data yang diterima, dan memverifikasinya menggunakan operasi kriptografis memakai \textit{public key} pengirim dan \textit{digital signature} yang diterima.
+Mekanisme \textit{digital signature} dapat dilihat pada Gambar~\ref{fig:digital-signature-mechanism}.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{resources/chapter-2/digital-signature.png}
+	\caption{Algoritma \textit{Digital Signature} \parencite{NIST_FIPS186-5}}\label{fig:digital-signature-mechanism}
+\end{figure}
+
+\subsection{Ketersediaan (\textit{Availability})}\label{studi-availability}
+Ketersediaan (\textit{availability}) memastikan bahwa sistem dan data dapat diakses secara tepat waktu dan andal oleh pengguna yang berwenang setiap kali dibutuhkan \parencite{tripathi2025cia}.
+Dalam konteks PGHD, karakteristik data yang dikumpulkan sensor perangkat seluler dan wearable bertipe \textit{time-series} dengan laju pengiriman data tinggi berpotensi membebani jaringan blockchain dan menyebabkan degradasi \textit{throughput}.
+Terdapat beberapa mekanisme untuk menjamin ketersediaan data pada sistem berbasis DLT dan penyimpanan terdistribusi,
+\begin{enumerate}
+    \item \textbf{\textit{Sharding/batching}}: pengelompokan data dan pemecahan data untuk mengurangi frekuensi transaksi dan mencegah lonjakan yang dapat menyebabkan penurunan \textit{throughput} \parencite{Haque_2024_Performance_Blockchain}
+    % IoT network layer: This network architecture establishes connections between multiple global blockchain instances, enhancing the scalability, resilience, and accessibility of the blockchain ecosystem. User shards are discrete segments within a blockchain responsible for grouping specific users and their associated data
+    % Furthermore, our sharding technique partitions the blockchain into smaller groups (shards), which reduces the likelihood of a single malicious entity gaining control over the entire system. (wen haque performance)
+
+    \item \textbf{Penyimpanan terdistribusi}: Penyimpanan terdistribusi seperti IPFS menggunakan mekanisme \textit{content-addressed} dan replikasi antar node, sehingga dampak dari kegagalan sebuah node tunggal bisa dikurangi (\textit{single point of failure}) \parencite{Haque_2024_Performance_Blockchain} 
+    % The utilization of IPFS has the potential to reduce the cost burden on blockchain nodes by decreasing the amount of data they store and process
+    
+    \item \textbf{Redundansi}: penyimpanan salinan data di beberapa lokasi fisik atau \textit{logic} yang berbeda \parencite{tripathi2025cia}
+    % Ensuring availability therefore involves both preventative measures and redundancy (tripathi)
+    
+    \item \textbf{\textit{Rate limiting/throttling}}: pembatasan laju pengiriman data untuk mencegah kondisi \textit{Denial of Service} \parencite{tripathi2025cia}.    
+    % Threats to availability are perhaps the most visibly disruptive types of cyber incidents because they can cause immediate loss of service. The most notorious are Denial-of-Service (DoS) attacks, including Distributed Denial-of-Service (DDoS) attacks. In a DDoS attack, an attacker harnesses a large number of compromised machines (a botnet) or otherwise uses techniques to flood a target server or network with traffic, overwhelming its capacity and rendering it unable to respond to legitimate users (tripath rate limit)
+    \textit{Rate limit} bekerja dengan melakukan identifikasi IP address yang mengirimkan \textit{request} per satuan waktu.
+    Ketika terlalu banyak \textit{request} dikirimkan dalam jangka waktu tertentu, rate limit akan memberhentikan beberapa \textit{requests} sehingga \textit{requests} tidak akan diproses oleh sistem \parencite{Cloudflare_Rate_Limit}.
+    % A rate limiting solution measures the amount of time between each request from each IP address, and also measures the number of requests within a specified timeframe. If there are too many requests from a single IP within the given timeframe, the rate limiting solution will not fulfill the IP address's requests for a certain amount of time. (Cloudflare)
+\end{enumerate}
+
+\subsection{Threat Model}\label{threat-model-studi}
+\textit{Threat modelling} adalah mekanisme untuk mengidentifikasi, memahami, dan memitigasi \textit{threats} (ancaman) untuk melindungi aset \parencite{owaspThreatModeling}.
+Ancaman (\textit{threat}) adalah segala sesuatu atau segala kejadian yang memiliki potensi berdampak negatif terhadap operasional, aset, ataupun informasi melalui akses yang tidak sah, penghancuran, pengambilan data tidak sah, modifikasi informasi ataupun penolakan layanan \parencite{Dodson2021_Threat}.
+
+Proses \textit{threat modelling} dapat dilakukan dalam empat tahap \parencite{owaspThreatModelingProcess}.
+
+\begin{enumerate}
+    \item Tahap pertama adalah analisis sistem, yaitu memahami sistem yang dianalisis melalui pengumpulan informasi, penggambaran \textit{Data Flow Diagram} (DFD), identifikasi \textit{entry point} dan \textit{exit point} sebagai titik interaksi penyerang dengan sistem, identifikasi aset yang perlu dilindungi, identifikasi aktor dan penetapan \textit{trust levels} yang merepresentasikan hak akses yang diberikan sistem kepada entitas sistem.
+    \item Tahap kedua adalah identifikasi ancaman, yaitu mengidentifikasi ancaman-ancaman yang berpotensi terjadi terhadap komponen dan aliran data pada sistem, misalnya memakai model STRIDE\@.
+    \item Tahap ketiga adalah perencanaan langkah mitigasi dan penanganan, yaitu mengidentifikasi langkah-langkah mitigasi untuk setiap ancaman yang telah ditemukan.
+    \item Tahap keempat adalah \textit{assess the work}, yaitu mengevaluasi apakah seluruh tahapan telah dilaksanakan dengan benar.
+\end{enumerate}
+% Pada penelitian ini, keempat tahapan tersebut akan diterapkan pada analisis permasalahan di Subbab~\ref{analisis-permasalahan}, dimulai dari identifikasi aset, penggambaran DFD, penetapan \textit{trust boundary} dan aktor beserta privilegenya, analisis siklus hidup data PGHD, hingga analisis ancaman menggunakan STRIDE\@.
+
+Untuk mengidentifikasi ancaman yang mungkin muncul terhadap suatu sistem atau informasi, dapat digunakan \textit{threat model} seperti STRIDE \parencite{owaspThreatModelingProcess}.
+STRIDE merupakan \textit{threat model} yang mengidentifikasi ancaman-ancaman yang sering dilakukan oleh \textit{attacker}.
+Daftar \textit{threat} yang diidentifikasi oleh STRIDE dan \textit{security control} yang berkaitan dapat dilihat melalui Tabel~\ref{tab:stride-threats} \parencite{owaspThreatModelingProcess}.
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{0.25\textwidth}|}
+    \hiderowcolors
+    \caption{Daftar Ancaman STRIDE dan Parameter Keamanannya}\label{tab:stride-threats}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Ancaman} & \textbf{Penjelasan} & \textbf{Parameter Keamanan} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Daftar Ancaman STRIDE dan Parameter Keamanannya (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Ancaman} & \textbf{Penjelasan} & \textbf{Parameter Keamanan} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \textit{Spoofing} & Peniruan identitas entitas sah. & Autentikasi \\
+    \hline
+    \textit{Tampering} & Modifikasi data tanpa otorisasi. & Integritas \\
+    \hline
+    \textit{Repudiation} & Penyangkalan tindakan yang sebenarnya dilakukan. & Nir-sangkalan \\
+    \hline
+    \textit{Information Disclosure} & Pengungkapan data kepada pihak tanpa hak akses. & Kerahasiaan \\
+    \hline
+    \textit{Denial of Service} & Eksploitasi sumber daya hingga layanan lumpuh. & Ketersediaan \\
+    \hline
+    \textit{Elevation of Privilege} & Upaya untuk mendapatkan hak akses lebih tinggi. & Otorisasi \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+% Setelah ancaman diidentifikasi menggunakan STRIDE, diperlukan mekanisme prioritisasi agar mitigasi difokuskan pada ancaman yang paling berdampak. 
+% DREAD adalah sistem penilaian risiko yang mengevaluasi ancaman berdasarkan lima parameter, yaitu \textit{Damage}, \textit{Reproducibility}, \textit{Exploitability}, \textit{Affected Users}, dan \textit{Discoverability} \parencite{openStack_StrideDREAD}. 
+% Kelima parameter tersebut adalah,
+
+% \begin{enumerate}
+%     \item \textbf{\textit{Damage}}: tingkat kerusakan atau dampak jika ancaman berhasil dieksploitasi.
+%     \item \textbf{\textit{Reproducibility}}: kemudahan serangan diulang.
+%     \item \textbf{\textit{Exploitability}}: tingkat kemudahan serangan dilakukan oleh penyerang.
+%     \item \textbf{\textit{Affected Users}}: jumlah atau proporsi pengguna yang terdampak.
+%     \item \textbf{\textit{Discoverability}}: kemudahan penyerang menemukan kelemahan yang dapat dieksploitasi.
+% \end{enumerate}
+
+% DREAD dapat menggunakan skala numerik, misalnya 1--10 untuk setiap parameter, lalu nilai total dihitung sebagai jumlah dari lima parameter tersebut. 
+% Semakin tinggi nilai total, semakin tinggi prioritas ancaman untuk dimitigasi. 
+% Pada penelitian ini digunakan ambang prioritas \textit{High} untuk total \(\geq 35\), \textit{Medium} untuk total 20--34, dan \textit{Low} untuk total \(< 20\). 
+% Nilai DREAD bersifat kontekstual dan digunakan sebagai alat prioritisasi pada lingkungan prototipe, bukan sebagai ukuran probabilitas absolut atau jaminan tingkat risiko pada lingkungan produksi.
+
+
+% Ancaman STRIDE terhadap data PGHD yang berasal dari IoT sensor dan dihasilkan oleh perangkat pasien dapat dipetakan menjadi daftar ancaman pada Tabel~\ref{tab:stride-pghd-studi} \parencite{Nadifi_2025_STRIDE_IoT}.
+
+% \begin{table}[htbp]
+%     \centering
+%     \caption{Daftar Ancaman Keamanan PGHD Berdasarkan Kategori STRIDE \parencite{Nadifi_2025_STRIDE_IoT}}\label{tab:stride-pghd-studi}
+%     \begin{styledtable}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}X}
+        
+%         \textbf{Jenis STRIDE} & \textbf{Parameter Keamanan} & \textbf{Ancaman} \\
+        
+%         \rowcolor{rowOdd}
+%         \Block{4-1}{\textit{Tampering}} & \Block{4-1}{Integritas} & Data yang diberikan sensor ke \textit{mobile app} dapat dimodifikasi, baik melalui interaksi manusia langsung atau perubahan pengaturan sensor. \\
+%         \rowcolor{rowOdd}
+%         & & \textit{Data flow} melalui jaringan dapat dirusak oleh penyerang. \\
+%         \rowcolor{rowOdd}
+%         & & \textit{Mobile app} dapat menjadi sasaran serangan \textit{cross-site scripting} jika tidak membersihkan \textit{input} yang tidak tepercaya. \\
+%         \rowcolor{rowOdd}
+%         & & Serangan \textit{SQL injection} terjadi ketika kode berbahaya dimasukkan ke dalam string yang diteruskan ke server SQL\@. \\
+        
+%         \rowcolor{rowEven}
+%         \Block{3-1}{\textit{Information Disclosure}} & \Block{3-1}{Kerahasiaan} & Perlindungan data yang tidak tepat pada ponsel pasien atau \textit{server storage} dapat memungkinkan penyerang membaca informasi yang hanya bisa diakses oleh \textit{authorized party}. \\
+%         \rowcolor{rowEven}
+%         & & \textit{Data flow} melalui jaringan dapat disadap oleh penyerang, yang dapat digunakan untuk menyerang bagian lain dari sistem atau mengakibatkan pelanggaran akses. \\
+%         \rowcolor{rowEven}
+%         & & Kredensial yang dikirim melalui jaringan sering menjadi sasaran penyadapan oleh penyerang. \\
+        
+%         \rowcolor{rowOdd}
+%         \Block{2-1}{\textit{Denial of Service}} & \Block{2-1}{Ketersediaan} & \textit{Mobile app} dapat berhenti, berjalan lambat, atau melanggar metrik ketersediaan. \\
+%         \rowcolor{rowOdd}
+%         & & Server data analitik IoT atau \textit{cloud storage} dapat menjadi korban serangan terhadap konsumsi \textit{resources} jika mengalami \textit{deadlock} alih-alih \textit{timeout}. \\
+        
+%     \end{styledtable}
+% \end{table}
+
+
+\subsection{\textit{Data Provenance}}\label{studi-data-provenance}
+
+\textit{Data provenance} didefinisikan sebagai pencatatan asal-usul data serta riwayat pembuatan dan pemrosesan data tersebut sepanjang siklus hidupnya \parencite{Ahmed_2023_Data_Provenance}.
+Dalam sistem layanan kesehatan, \textit{provenance} memungkinkan pelacakan sumber dan alasan di balik setiap perubahan atau masalah pada data \parencite{Ahmed_2023_Data_Provenance}. 
+
+\textit{Data provenance} sendiri perlu menjamin empat hal berikut \parencite{Johns2023_Data_Provenance},
+
+\begin{enumerate}
+    \item Dari mana data berasal,
+    \item Bagaimana data dihasilkan,
+    \item Siapa yang memiliki/menghasilkan data, dan
+    \item Mengapa data dibuat/bagaimana data diolah
+\end{enumerate}
+
+% Provenance aspects
+% Where provenance	The contribution addresses the aspect of where the data originated from
+% How provenance	The contribution addresses the aspect of how a specific result was produced (ie, the preceding processing steps)
+% Who provenance	The contribution addresses the aspect of who (or which entity, such as organization, software, or device) was responsible or claimed ownership for the data or data processing
+% Why provenance	The contribution addresses the aspect of why a certain result or data point was produced, which requires capturing all preceding processing steps and data sources (Johan)
+
+Terdapat empat teknologi untuk mencapai \textit{data provenance} \parencite{Ahmed_2023_Data_Provenance}:
+\begin{enumerate}
+    \item \textbf{\textit{Logging-based provenance}}: mencatat riwayat akses dan modifikasi data dalam berkas log. 
+    \item \textbf{\textit{Cryptography-based provenance}}: memanfaatkan mekanisme kriptografis seperti tanda tangan digital dan fungsi \textit{hash} untuk membuktikan asal-usul dan integritas data secara matematis. 
+    \item \textbf{\textit{Blockchain-based provenance}}: menyimpan catatan \textit{provenance} pada \textit{distributed ledger} yang bersifat \textit{immutable} dan dapat diaudit oleh semua pihak.
+    \item \textbf{\textit{Ontology-based provenance}}: menggunakan format data untuk merepresentasikan struktur, konteks dan hubungan antara entitas data, aktor dan aktivitas. 
+    Contoh ontologi dapat dilihat melalui Kode~\ref{lst:prov-o-example} \parencite{w3PROVOPROV}.
+\end{enumerate}
+
+\begin{lstlisting}[caption={Contoh Implementasi Data Provenance Berdasarkan W3C PROV-O}, label={lst:prov-o-example}, float=htb]
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix :     <http://example.org#> .
+
+# 1. Mendefinisikan Agen (Siapa yang melakukan?)
+:derek a prov:Agent ;
+    prov:actedOnBehalfOf :national_newspaper_inc .
+
+# 2. Mendefinisikan Entitas Sumber (Data awal sebelum diproses)
+:crimeData a prov:Entity ;
+    prov:wasAttributedTo :government .
+
+# 3. Mendefinisikan Aktivitas (Proses pengolahan data)
+:aggregationActivity a prov:Activity ;
+    prov:startedAtTime "2011-07-14T01:01:01Z"^^xsd:dateTime ;
+    prov:endedAtTime "2011-07-14T02:02:02Z"^^xsd:dateTime ;
+    prov:wasAssociatedWith :derek ;
+    prov:used :crimeData .
+
+# 4. Mendefinisikan Entitas Baru (Hasil data setelah diagregasi)
+:aggregatedByRegions a prov:Entity ;
+    prov:wasGeneratedBy :aggregationActivity ;
+    prov:wasAttributedTo :derek ;
+    prov:wasDerivedFrom :crimeData .
+\end{lstlisting}
+
+Terdapat tujuh parameter yang perlu dipertimbangkan dalam pemakaian teknologi untuk menjamin \textit{data provenance} \parencite{Ahmed_2023_Data_Provenance}:
+% The essential requirements of data provenance are provenance security, 5.1. compliance, Taxonomy storage, unforgeability, overhead, revocability, and metadata protection.
+
+\begin{enumerate}
+    \item \textbf{\textit{Provenance Security}}: \textit{data provenance} terlindungi dari manipulasi.
+    \item \textbf{\textit{Compliance}}: mendukung \textit{audit trail} atau mekanisme untuk membuktikan keberadaan dan asal-usul data.
+    \item \textbf{\textit{Storage/Taxonomy}}: pendefinisian dan penyimpanan kategori/tipe data secara eksplisit.
+    \item \textbf{\textit{Unforgeability}}: tidak dapat dibuat atau dimodifikasi tanpa terdeteksi.
+    \item \textbf{\textit{Overhead}}: biaya komputasi dan penyimpanan.
+    \item \textbf{\textit{Revocability}}: akses terhadap \textit{metadata record} bisa dicabut.
+    \item \textbf{\textit{Metadata Protection}}: metadata \textit{provenance} terlindungi dari akses tidak sah.
+\end{enumerate}

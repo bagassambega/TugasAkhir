@@ -1,0 +1,10 @@
+\subsection{Rancangan Penyimpanan Lokal untuk Mekanisme \textit{Offline}}\label{rancangan-solusi-format-data-lokal}
+
+Skema data PGHD yang menjadi format pertukaran dan penyimpanan \textit{off-chain} telah dijelaskan pada Subbab~\ref{rancangan-format-data-pghd}. 
+Struktur \textit{batch}, \textit{data group}, dan \textit{data point} yang digunakan ketika data dikirim tetap mengikuti Tabel~\ref{tab:field-batch-json-pghd}, Tabel~\ref{tab:field-datagroup-json-pghd}, dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+
+Penyimpanan lokal pada \textit{client} pasien hanya berfungsi sebagai mekanisme pendukung agar data PGHD tidak hilang ketika perangkat belum dapat mengirim data ke DecMed, misalnya karena tidak ada koneksi internet atau layanan tujuan sedang tidak tersedia.
+Data yang tersimpan lokal berada dalam dua tahap.
+Pertama, data mentah atau data sementara sebelum dibentuk menjadi \textit{batch}.
+Kedua, \textit{batch} PGHD yang sudah dibentuk, dienkripsi, dan menunggu proses pengiriman atau pengiriman ulang.
+Ketika koneksi tersedia, \textit{client} mengambil \textit{batch} yang masih berstatus menunggu pengiriman, mengirimkan \texttt{enc\_pghd} beserta metadata kriptografisnya, lalu memperbarui status lokal berdasarkan hasil pengiriman.

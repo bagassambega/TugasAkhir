@@ -1,0 +1,67 @@
+\subsection{Evaluasi Pengujian Non-Fungsional}
+
+Hasil pengujian non-fungsional menunjukkan seluruh skenario berhasil memenuhi kriteria keberhasilan.
+Total terdapat enam skenario yang dijalankan, dengan hasil enam skenario berhasil dan tidak ada yang gagal.
+Hasil pengujian dapat dilihat pada Tabel~\ref{tab:hasil-non-fungsional}.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.10\textwidth}|}
+    \hiderowcolors
+    \caption{Hasil Pengujian Non-Fungsional Sistem DecMed-PGHD}\label{tab:hasil-non-fungsional} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Kriteria Keberhasilan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Kode} & \textbf{Kriteria Keberhasilan} & \textbf{Hasil yang Diperoleh} & \textbf{Status} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    T-NF01 & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. & Seluruh permintaan dari tenaga kesehatan tanpa token, dengan token tidak valid, dan tanpa akses \texttt{READ\_PGHD} aktif ditolak oleh PRE sebelum \texttt{enc\_pghd}, \texttt{c\_frag}, maupun \texttt{enc\_aes\_key\_nonce} dikembalikan. & Sukses \\
+    \hline
+    T-NF02 & \textit{Inspect}, penyimpanan eksternal, respons gagal, dan \textit{log} tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. & \textit{Inspect} terhadap \textit{payload} menuju PRE, objek IPFS, \textit{metadata} IOTA, dan respons \textit{endpoint} yang ditolak tidak menemukan nilai PGHD dalam bentuk yang dapat dipahami. & Sukses \\
+    \hline
+    T-NF03 & Setiap variasi manipulasi ditolak dan ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. & Seluruh variasi perubahan pada \texttt{enc\_pghd}, \texttt{h\_cipher}, \texttt{signature}, referensi CID, \textit{metadata} IOTA, dan status validitas berhasil dideteksi dan ditolak sebelum data digunakan. & Sukses \\
+    \hline
+    T-NF04 & \textit{Field provenance} dan status yang diwajibkan tersedia dan sesuai dengan skenario. & Seluruh \textit{field provenance} (identitas pasien, waktu pengukuran, kategori sumber, perangkat/aplikasi asal, metode pencatatan, riwayat pemrosesan, dan status validasi) tersedia dan konsisten pada PGHD dari setiap kategori sumber yang diuji. & Sukses \\
+    \hline
+    T-NF05 & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak \textit{crash} saat menerima pengiriman PGHD dalam jumlah banyak/frekuen. & 151.200 \textit{record} berhasil diproses tanpa kehilangan data dan aplikasi tidak \textit{crash}. 20 \textit{batch} dari 20 pasien berbeda berhasil diterima secara konkuren tanpa ada yang hilang. & Sukses \\
+    \hline
+    T-NF06 & Data yang belum selesai dikirim/diolah tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. & Data yang belum terkirim tetap tersimpan dengan status kegagalan yang dapat ditelusuri. Setelah layanan pulih, seluruh unit data diselesaikan tepat satu kali tanpa duplikasi. & Sukses \\
+    \hline
+\end{styledxltabular}
+
+Keberhasilan seluruh enam skenario mengonfirmasi bahwa sistem DecMed-PGHD memenuhi properti kerahasiaan, integritas, \textit{provenance} dan ketersediaan.
+Analisis keberhasilan setiap skenario dijabarkan sebagai berikut.
+
+\textbf{T-NF01} berhasil karena otorisasi akses PGHD menggunakan validasi JWT di PRE dan konfirmasi status \textit{capability} di \textit{smart contract} IOTA\@.
+Seluruh jalur akses ke daftar dan detail PGHD memiliki pemeriksaan \textit{access token} dan \textit{capability} yang dimilikinya, baik terhadap token dan IOTA sebelum \texttt{enc\_pghd}, \texttt{c\_frag}, maupun \texttt{enc\_aes\_key\_nonce} dikembalikan.
+Hal ini membuktikan bahwa manipulasi akses (T-T02) dan akses informasi tanpa izin yang sah (T-I01) berhasil dicegah.
+
+\textbf{T-NF02} berhasil karena enkripsi dilakukan sepenuhnya di sisi \textit{client} pasien sebelum data meninggalkan perangkat.
+Tidak ada bagian dari infrastruktur PRE, Redis, IPFS, dan IOTA yang menerima atau menyimpan \textit{plaintext} PGHD\@.
+Data juga baru dapat didekripsi di sisi klien tenaga kesehatan, ketika akses kontrol menemukan bahwa tenaga kesehatan yang berkaitan memiliki \textit{capability} dan akses untuk mendekripsi data tersebut.
+\textit{Inspect} terhadap seluruh titik transit dan penyimpanan tidak menemukan nilai PGHD dalam bentuk yang dapat dipahami sehingga ancaman pengungkapan informasi (T-I01, T-I02) berhasil dimitigasi melalui rancangan enkripsi \textit{client-side} dan akses kontrol.
+
+\textbf{T-NF03} berhasil karena perlindungan integritas dilakukan dengan mengimplementasikan \textit{hash} yang di-\textit{sign} menjadi \textit{digital signature}.
+PRE memverifikasi hash SHA-256 \textit{ciphertext} terhadap \texttt{h\_cipher} yang dikirim saat \textit{submit} untuk mendeteksi manipulasi \textit{in-transit}, kemudian memverifikasi tanda tangan terhadap hash tersebut menggunakan \textit{public key} pasien dari IOTA untuk mendeteksi pemalsuan sumber.
+\textit{Hospital client} mengulang pemeriksaan hash saat mengambil \textit{ciphertext} dari IPFS untuk mendeteksi substitusi objek, dan tag autentikasi AES-GCM mendeteksi manipulasi pada \textit{ciphertext} maupun \textit{nonce} saat dekripsi.
+Hal ini memastikan integritas data digunakan ataupun saat data transit/disimpan sehingga membuktikan ancaman \textit{tampering} (T-T01, T-T02) berhasil dimitigasi.
+
+\textbf{T-NF04} berhasil karena metadata \textit{provenance} disimpan baik untuk \textit{field provenance} struktural yang disimpan di dalam \textit{payload} terenkripsi di IPFS, sedangkan metadata otorisasi dan status validitas disimpan di \textit{smart contract} IOTA sebagai \textit{source of truth} yang tidak dapat dimanipulasi secara sepihak.
+Seluruh \textit{field} yang diwajibkan tersedia dan sesuai untuk PGHD dari setiap kategori sumber yang diuji.
+
+\textbf{T-NF05} berhasil diuji dari segi \textit{client} maupun \textit{server}.
+Pada sisi \textit{client}, pengujian dengan 151.200 \textit{record} sintetis yang di-\textit{generate} pada laju 600 \textit{record} per detik membuktikan bahwa strategi \textit{batching} dan \textit{offline-first} menyerap volume data yang besar tanpa kehilangan \textit{record} atau menyebabkan \textit{crash}.
+Pada sisi server, pengiriman 20 \textit{batch} secara konkuren dari 20 pasien berbeda berhasil diterima seluruhnya dengan \textit{failed} = 0, yang dimungkinkan karena setiap pasien menulis ke objek \texttt{PatientPghdStore} miliknya sendiri sehingga setiap transaksi bersifat \textit{stateless} dan \textit{atomicity}-nya terjamin.
+Pengujian ini membuktikan ancaman ketersediaan akibat volume dan frekuensi data PGHD yang besar bisa ditangani (T-D01).
+
+\textbf{T-NF06} berhasil karena tiga komponen implementasi bekerja bersama untuk memastikan pengiriman selesai tepat satu kali meskipun terjadi gangguan.
+Status \textit{batch} lokal (\texttt{pending}, \texttt{failed}, \texttt{sent}) mencatat kondisi pengiriman. 
+Implementasi mencegah pembuatan \textit{batch} berulang dengan \textit{mapping} dan memberikan penanda apakah \textit{record} sudah masuk \textit{batch} yang sudah ada, dan \texttt{WorkManager} menjadwalkan ulang pengiriman secara otomatis setelah gangguan teratasi.
+Implementasi ini memitigasi kasus kehilangan data akibat gangguan konektivitas (T-D02) dengan mekanisme pengiriman \textit{at least once}.

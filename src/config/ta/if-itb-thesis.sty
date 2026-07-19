@@ -21,10 +21,12 @@
 
 % 4th Sectioning
 \usepackage{titlesec}
+\newcommand{\ThesisChapterTitleFont}{\fontsize{14pt}{16.8pt}\selectfont}
+\newcommand{\ThesisSectionTitleFont}{\fontsize{12pt}{14.4pt}\selectfont}
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
 
 \titleformat{\subsubsubsection}
-{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+{\normalfont\ThesisSectionTitleFont\bfseries}{\theparagraph}{1em}{}
 \titlespacing*{\subsubsubsection}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
@@ -36,10 +38,10 @@
 \usepackage[style=apa,backend=biber]{biblatex}
 \usepackage{longtable}
 \usepackage{graphicx}
+\usepackage{float}
 \usepackage{subfig}
 \usepackage{titling}
 \usepackage{booktabs}
-\usepackage{tabularx}
 \usepackage{blindtext}
 \usepackage{sectsty}
 \usepackage{chngcntr}
@@ -53,9 +55,133 @@
 \usepackage{parskip}
 \usepackage{afterpage}
 \usepackage{relsize}
-\usepackage{xcolor, colortbl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % Tambahkan baris ini
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+
+\usepackage{xcolor}
+\usepackage{nicematrix}
+
+% Definisi Warna Sesuai Spesifikasi
+\definecolor{rowOdd}{HTML}{FFFFFF} % Putih
+\definecolor{rowEven}{HTML}{F2F2F2} % Abu-abu muda
+\definecolor{headerBg}{HTML}{BEBEBE} % Abu-abu gelap
+
+% Pembaruan Environment styledtable
+\newenvironment{styledtable}[1]{%
+    \renewcommand{\arraystretch}{1.25}
+    % NiceTabularX secara otomatis menggantikan tabularx
+    % hvlines: Otomatis menggambar SEMUA garis vertikal dan horizontal
+    \NiceTabularX{\textwidth}{#1}[
+        hvlines,
+        cell-space-limits = 4pt, % Memberikan padding antar teks dan border
+        code-before = {
+            % Baris 1 (Header) diwarnai abu gelap
+            \rowcolor{headerBg}{1}
+            % Baris 2 ke bawah diberi warna selang-seling (Even, lalu Odd)
+            \rowcolors{2}{rowEven}{rowOdd}
+        }
+    ]
+}{%
+    \endNiceTabularX
+}
+
+\usepackage{xltabular}
+\usepackage{colortbl}
+
+% Environment untuk tabel panjang yang dapat terpotong antar halaman
+\newenvironment{styledxltabular}[1]{%
+    \renewcommand{\arraystretch}{1.25}%
+    \rowcolors{2}{rowEven}{rowOdd}%
+    \xltabular{\textwidth}{#1}%
+}{%
+    \endxltabular%
+}
+
 \usepackage{setspace}
+\usepackage{pifont}
 \usepackage{listings}
+\lstdefinelanguage{Kotlin}{
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  keywordstyle=\bfseries\color{blue},
+  keywords={abstract, actual, as, break, by, catch, class, companion, continue, crossinline, data, do, dynamic, else, enum, expect, false, final, finally, for, fun, get, if, import, in, interface, internal, is, null, object, open, operator, out, override, package, private, public, return, set, super, suspend, tailrec, this, throw, true, try, typealias, typeof, val, var, vararg, when, where, while},
+  morestring=[b]",
+  sensitive=true
+}
+\lstdefinelanguage{Swift}{
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  keywordstyle=\bfseries\color{blue},
+  keywords={associatedtype, class, deinit, enum, extension, func, import, init, inout, let, operator, precedencegroup, protocol, struct, subscript, typealias, var, fileprivate, internal, private, public, open, defer, if, guard, do, catch, else, for, in, while, repeat, break, continue, fallthrough, return, as, throw, throws, rethrows, try, self, super, Any, AnyObject, AnyClass, nil, true, false},
+  morestring=[b]",
+  sensitive=true
+}
+\lstdefinelanguage{json}{
+  basicstyle=\normalfont\ttfamily\small,
+  showstringspaces=false,
+  breaklines=true,
+  string=[s]{"}{"},
+  stringstyle=\color{blue},
+  comment=[l]{:},
+  commentstyle=\color{black},
+}
+\lstset{basicstyle=\ttfamily\small,breaklines=true}
+\usepackage{amsmath}
+
+% --- Pengaturan Warna dan Gaya Kode ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{turtleStyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    morecomment=[l]{\#}, % Mengatur tanda pagar (#) sebagai komentar
+    morekeywords={@prefix, a} % Menambahkan keyword khusus Turtle
+}
+\lstset{style=turtleStyle,numberbychapter=true}
+
+% Daftar kode program dan rumus
+\renewcommand{\lstlistingname}{Kode}
+\renewcommand{\lstlistlistingname}{DAFTAR KODE}
+
+\newcommand{\listofcodes}{%
+	\lstlistoflistings
+	\addcontentsline{toc}{chapter}{\lstlistlistingname}
+}
+
+\newcommand*{\listformulaname}{DAFTAR RUMUS}
+\makeatletter
+\newcommand{\listofformulas}{%
+	\cleardoublepage
+	\chapter*{\listformulaname}
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listformulaname}
+	\@starttoc{loe}
+}
+\newcommand{\formulaentry}[1]{%
+	\addcontentsline{loe}{formula}{\protect\numberline{\theequation}#1}
+}
+\makeatother
 
 \graphicspath{{resources/}}   % letak direktori penyimpanan gambar
 
@@ -90,15 +216,19 @@
 	{\hfill\contentspage}
 
 	\titleformat{\chapter}[block]
-	{\bfseries}
+	{\ThesisChapterTitleFont\bfseries}
 	{\chaptertitlename\ \thechapter.\quad}{0pt}
-	{\bfseries}
+	{\ThesisChapterTitleFont\bfseries}
 }
 
 % Hilangkan titik pada toc
 \makeatletter
 \renewcommand{\@dotsep}{1}
 \makeatother
+
+\definecolor{WarnaBaris}{HTML}{F2F4F7}
+\definecolor{WarnaHeader}{HTML}{DDEBF7}
+\definecolor{WarnaBarisGanjil}{HTML}{F2F2F2}
 
 % Setel title pada chapter-chapter di toc, lof, lot
 \titlecontents{chapter}
@@ -119,6 +249,17 @@
 {Tabel \thecontentslabel.\quad}
 {}
 {\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
+\DeclareTOCStyleEntry[
+	indent=0pt,
+	numwidth=4.8em
+]{tocline}{lstlisting}
+\contentsuse{formula}{loe}
+\titlecontents{formula}
+[0pt]
+{}
+{Rumus \thecontentslabel.\quad}
+{}
+{\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
 
 % Masukin Daftar Pustaka ke toc
 \let\originalprintbibliography\printbibliography
@@ -133,14 +274,19 @@
 \renewcommand{\baselinestretch}{1.5}
 
 % Setting judul
-\chapterfont{\centering \large}
+% Judul utama menggunakan 14 pt, sedangkan subbab mengikuti ukuran teks 12 pt.
+\chapterfont{\centering\ThesisChapterTitleFont}
 \titleformat{\chapter}[display]
-{\Large\centering\bfseries}
+{\ThesisChapterTitleFont\centering\bfseries}
 {\chaptertitlename\ \thechapter}{0pt}
-{\Large\bfseries\uppercase}
+{\ThesisChapterTitleFont\bfseries\MakeUppercase}
+\titleformat*{\section}{\normalfont\ThesisSectionTitleFont\bfseries}
+\titleformat*{\subsection}{\normalfont\ThesisSectionTitleFont\bfseries}
+\titleformat*{\subsubsection}{\normalfont\ThesisSectionTitleFont\bfseries}
 
 % Setting nomor pada subbsubsubbab
 \setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
 
 \makeatletter
 

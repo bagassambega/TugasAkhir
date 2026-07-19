@@ -1,53 +1,21 @@
+\section{Metodologi}\label{sec:metodologi}
 
-\section{Metodologi}
-
-Metodologi yang digunakan dalam Tugas Akhir ini terdiri dari beberapa tahapan utama yang dipecah menjadi sub-tahapan deskriptif sebagai berikut:
-
-% Pada tahapan ini, dilakukan eksplorasi dan pengumpulan informasi terkait perkembangan sistem rekam medis elektronik yang sudah
-%     ada dan mengidentifikasi kelemahannya. Permasalahan-permasalahan yang ditemukan kemudian diidentifikasi dan diolah
-%     menjadi kebutuhan-kebutuhan yang perlu diselesaikan.
-    
-%     \item \textbf{Perancangan Arsitektur dan Desain Sistem} \newline
-%     Berdasarkan kebutuhan-kebutuhan yang sudah didefinisikan, dilakukan analisis dan perancangan sistem yang dapat
-%     menjawab kebutuhan-kebutuhan tersebut.
-    
-%     \item \textbf{Pengembangan Prototipe Sistem} \newline
-%     Sistem yang sudah dirancang pada tahap sebelulnya diimplementasikan dengan menggunakan teknologi yang sesuai dengan 
-%     kebutuhan dan hasil rancangan.
-    
-%     \item \textbf{Pengujian dan Evaluasi} \newline
-%     Hasil implementasi prototipe sistem diuji untuk memastikan kesesuaian tujuan dengan implementasi dan seluruh kebutuhan
-%     sudah berhasil terpenuhi.
-
-% \end{enumerate}
-
-% kurang spesifik, bikin poin2 untuk menjelaskan langkah detail
-
+Metodologi yang digunakan dalam Tugas Akhir ini terdiri dari empat tahap sebagai berikut:
 
 \begin{enumerate}
-    \item \textbf{Studi Literatur dan Analisis Sistem Saat Ini}
-    \begin{enumerate}
-        \item \textbf{Analisis Sistem DecMed}: Pada tahapan ini, dilakukan eksplorasi dan pengumpulan informasi terkait DecMed, termasuk arsitektur, mekanisme akses kontrol, alur pemberian dan pencabutan akses, dan \textit{tech-stack} yang digunakan oleh sistem DecMed saat ini.
-        \item \textbf{Analisis Authorization Framework}: Melakukan studi literatur dan analisis mengenai \textit{authorization framework} secara umum, termasuk prinsip kerja, komponen utama (autentikasi, otorisasi, \textit{consent management}), serta penerapannya di sistem rekam medis elektronik dan sistem terdistribusi lainnya.
-    \end{enumerate}
+  \item \textbf{Tahap Studi Literatur dan Analisis Sistem Berjalan}
+        Tahap ini mencakup kajian terhadap sistem DecMed yang sudah ada, dasar integrasi PGHD ke sistem DecMed, kebutuhan kelengkapan data PGHD untuk mendukung \textit{data provenance}, serta mekanisme untuk menjamin kerahasiaan, integritas dan ketersediaan data. 
+        Selain itu, dilakukan analisis kesenjangan (\textit{gap analysis}) antara kapabilitas DecMed saat ini dan kebutuhan untuk mengintegrasikan data PGHD\@. 
+        Tahap ini menjadi dasar perumusan kebutuhan yang menjawab seluruh rumusan masalah.
 
-    \item \textbf{Perancangan Arsitektur dan Desain Sistem}
-    \begin{enumerate}
-        \item \textbf{Perumusan Spesifikasi Kebutuhan}: Menyusun spesifikasi kebutuhan sistem berdasarkan hasil identifikasi masalah dan tujuan penelitian.
-        \item \textbf{Desain Arsitektur Sistem}: Mendesain arsitektur sistem rekam medis elektronik terdesentralisasi yang mengintegrasikan \textit{authorization framework} dan \textit{consent portal}.
-        \item \textbf{Pembuatan Model Alur Otorisasi dan Consent}: Menyusun model alur otorisasi, pemberian dan pencabutan akses, serta pengelolaan persetujuan pasien secara granular dan asinkronus.
-    \end{enumerate}
+  \item \textbf{Tahap Perancangan Arsitektur dan Desain Sistem.}
+        Berdasarkan analisis kesenjangan dan kebutuhan yang dirumuskan pada tahap sebelumnya, dilakukan perancangan arsitektur \textit{pipeline} integrasi PGHD, kebutuhan kelengkapan data PGHD untuk menjamin \textit{data provenance}, dan mekanisme verifikasi kerahasiaan, integritas dan ketersediaan data\@.
 
-    \item \textbf{Pengembangan Prototipe Sistem}
-    \begin{enumerate}
-        \item \textbf{Implementasi Prototipe}: Mengimplementasikan prototipe sistem sesuai desain yang telah dirumuskan menggunakan teknologi yang sesuai.
-        \item \textbf{Integrasi Komponen}: Melakukan integrasi antara komponen \textit{authorization framework} dan \textit{consent portal} dengan sistem DecMed.
-        \item \textbf{Penyusunan Skenario Pengujian}: Menyusun skenario penggunaan dan pengujian untuk memastikan seluruh fitur berjalan sesuai kebutuhan.
-    \end{enumerate}
+  \item \textbf{Tahap Implementasi.}
+        Rancangan arsitektur diimplementasikan ke dalam bentuk kode dan implementasi aplikasi. 
+        Tahap ini mencakup implementasi aplikasi, \textit{services} dan \textit{business logic} dari sistem.
 
-    \item \textbf{Pengujian dan Evaluasi}
-    \begin{enumerate}
-        \item \textbf{Pengujian Fungsionalitas}: Melakukan pengujian fungsionalitas sistem, termasuk pemberian dan pencabutan akses, pengelolaan persetujuan, dan keamanan data.
-        \item \textbf{Analisis Hasil Evaluasi}: Menganalisis hasil pengujian dan evaluasi untuk menilai pencapaian tujuan dan ukuran keberhasilan yang telah ditetapkan.
-    \end{enumerate}
+  \item \textbf{Pengujian dan Evaluasi.} 
+        Prototipe diuji melalui serangkaian skenario pengujian fungsional dan non-fungsional baik pada komponen dan sistem secara keseluruhan. 
+        Pengujian berfokus untuk memastikan indikator keberhasilan, kebutuhan fungsional dan non-fungsional dapat tercapai.
 \end{enumerate}

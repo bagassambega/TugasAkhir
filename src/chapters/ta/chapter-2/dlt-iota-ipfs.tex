@@ -1,0 +1,41 @@
+\section{IOTA dan IPFS}\label{subsec:studi-literatur-dlt-iota-ipfs}
+
+\subsection{\textit{Distributed \textit{Ledger} Technology} (DLT)}
+
+\textit{Distributed \textit{ledger} Technology} (DLT) merupakan paradigma komputasi terdistribusi yang menyimpan catatan transaksi pada sebuah \textit{ledger} yang direplikasi di banyak \textit{node} dan diperbarui melalui mekanisme konsensus, sehingga tidak terdapat satu otoritas pusat yang mengendalikan keseluruhan sistem \parencite{Savadatti_2025_dlt_overview}.
+DLT memanfaatkan kriptografi seperti fungsi \textit{hash} dan \textit{digital signature} untuk menjamin integritas data, sehingga setiap upaya modifikasi terhadap catatan transaksi dapat dideteksi oleh jaringan \parencite{Savadatti_2025_dlt_overview}.
+Arsitektur yang terdistribusi menghilangkan \textit{single point of failure} yang muncul pada sistem terpusat dan meningkatkan toleransi gangguan, karena setiap \textit{node} menyimpan salinan \textit{ledger} dan berpartisipasi dalam proses validasi \parencite{Savadatti_2025_dlt_overview}.
+
+DLT menggunakan berbagai mekanisme konsensus yang telah dikembangkan dengan karakteristik dan \textit{trade-off} berbeda, mulai dari Proof-of-Work (PoW) yang memberikan tingkat keamanan tinggi namun boros energi, hingga alternatif seperti Proof-of-Stake (PoS), Practical Byzantine Fault Tolerance (PBFT), Delegated Proof-of-Stake (DPoS), dan Proof-of-Authority (PoA) yang berupaya lebih efisien dan \textit{throughput} tinggi tapi dengan asumsi kepercayaan tertentu \parencite{Savadatti_2025_dlt_overview}.
+Selain pendekatan berbasis rantai blok linear seperti pada blockchain, terdapat pula struktur DLT lain seperti \textit{Directed Acyclic Graph} (DAG) yang digunakan oleh IOTA, yang dirancang untuk meningkatkan paralelisme dan kapasitas pemrosesan transaksi, khususnya pada skenario IoT berskala besar \parencite{Savadatti_2025_dlt_overview}.
+Di berbagai domain seperti keuangan, rantai pasok, energi, administrasi publik, dan kesehatan, DLT dimanfaatkan untuk meningkatkan keamanan data, transparansi, serta ketertelusuran, dengan tingkat kesesuaian yang bergantung pada karakteristik konsensus, skalabilitas, serta kebutuhan privasi di setiap domain \parencite{Savadatti_2025_dlt_overview}.
+
+\subsection{IOTA}
+
+IOTA dikembangkan sebagai platform DLT yang secara khusus ditujukan untuk ekosistem IoT, dengan tujuan mendukung transaksi mikro \textit{machine-to-machine} yang aman, \textit{scalable}, dan bebas biaya transaksi \parencite{FromTangleToRebased_2025}.
+Versi awal IOTA menggunakan struktur DAG yang disebut Tangle, di mana setiap transaksi baru (\textit{tip}) harus mereferensikan dan memvalidasi sedikitnya dua transaksi sebelumnya sebelum transaksi baru tersebut dapat ditambahkan ke \textit{ledger} \parencite{TheTangle_Popov_2017,FromTangleToRebased_2025}.
+
+Meskipun demikian, Tangle generasi awal masih menghadapi beberapa keterbatasan.
+Untuk menjamin finalitas (menjamin transaksi sudah final, disimpan permanen dan tidak dapat diubah atau dibatalkan) dan mencegah serangan, IOTA menggunakan komponen terpusat bernama Coordinator yang menerbitkan blok khusus (\textit{milestones}) sebagai sumber kebenaran transaksi \parencite{FromTangleToRebased_2025,Anceaume2020_Finality_Blockchain}.
+Keberadaan Coordinator ini membantu meningkatkan keamanan pada tahap awal, tetapi menimbulkan \textit{single
+point of failure} dan mengurangi tingkat desentralisasi yang menjadi tujuan utama DLT \parencite{FromTangleToRebased_2025}.
+
+Sebagai respons terhadap keterbatasan tersebut dan ketidakberhasilan IOTA 2.0 direalisasikan di lingkungan produksi, fondasi protokol beralih ke arsitektur baru bernama IOTA Rebased \parencite{FromTangleToRebased_2025}.
+IOTA Rebased mengganti Tangle dengan DAG Mysticeti dan memperkenalkan model \textit{ledger} berorientasi objek yang dioperasikan melalui \textit{smart contract} berbasis Move Virtual Machine (MoveVM) \parencite{FromTangleToRebased_2025}. 
+Objek dalam \textit{ledger} IOTA Rebased merepresentasikan aset atau \textit{state} yang dikelola melalui \textit{smart contract} \parencite{IOTA_Docs_2025}.
+IOTA Rebased menggunakan mekanisme konsensus \textit{Delegated Proof-of-Stake} (DPoS) melalui protokol Mysticeti untuk mencapai \textit{throughput} tinggi dan finalitas dalam hitungan subdetik \parencite{FromTangleToRebased_2025}.
+
+\subsection{InterPlanetary File System (IPFS)}
+
+\textit{InterPlanetary File System} (IPFS) adalah protokol dan jaringan \textit{peer-to-peer} untuk penyimpanan dan distribusi konten secara terdistribusi dengan mekanisme \textit{content-addressed} alih-alih berbasis lokasi seperti HTTP \parencite{Benet_2014_ipfs}.
+Pada IPFS, setiap objek atau berkas diidentifikasi dengan \textit{content identifier} (CID) yang diperoleh dengan menerapkan fungsi \textit{hash} terhadap isi berkas, sehingga setiap perubahan terhadap isi berkas akan menghasilkan CID yang berbeda dan memberikan jaminan integritas konten \parencite{Benet_2014_ipfs}.
+Karena berkas diidentifikasi berdasarkan hash isinya (CID), bukan lokasi penyimpanannya, berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari \textit{node} mana pun yang tersedia \parencite{Benet_2014_ipfs}.
+Objek-objek di IPFS disusun dalam bentuk DAG yang menghubungkan blok-blok data dan referensinya, sedangkan distribusi konten antar \textit{node} dilakukan dengan kombinasi protokol \textit{gossip} dan \textit{distributed hash table} (DHT) \parencite{Benet_2014_ipfs}.
+
+Sebagai sistem penyimpanan terdistribusi, jaringan IPFS tidak memiliki \textit{single point of failure}, dan \textit{node} di dalamnya tidak perlu saling percaya. 
+Setiap \textit{node} menyimpan objek data secara mandiri di dalam penyimpanan lokalnya. 
+Untuk mendistribusikan data, IPFS menggunakan protokol pertukaran blok bernama BitSwap. 
+BitSwap bekerja sebagai \textit{marketplace} di mana \textit{node} saling bertukar blok data yang mereka butuhkan. 
+Mekanisme \textit{marketplace} ini secara tidak langsung melakukan replikasi data di dalam jaringan. 
+Walaupun begitu, IPFS tidak menyalin data ke seluruh jaringan secara otomatis. 
+Agar sebuah data dipastikan tetap ada dan bertahan di jaringan, sebuah \textit{node} harus melakukan \textit{pinning} pada objek tersebut, yang memaksa objek itu untuk terus tersimpan secara permanen di penyimpanan lokal \textit{node} yang bersangkutan \parencite{Benet_2014_ipfs}.

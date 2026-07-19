@@ -1,0 +1,67 @@
+\subsubsection{Rancangan Pencabutan Akses Baca PGHD}
+
+Mekanisme pencabutan akses baca PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pencabutan-akses}.
+
+\begin{figure}[htbp]
+    \centering
+	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-pencabutan-akses.png}
+	\caption{\textit{Sequence Diagram} Mekanisme Pencabutan Akses Baca PGHD}\label{fig:seq-diagram-rancangan-pencabutan-akses}
+\end{figure}
+
+% \subsubsection{Data Masukan Pencabutan Akses}
+
+% Data utama yang digunakan untuk pencabutan akses adalah sebagai berikut.
+
+% \begin{longtable}{|p{0.30\textwidth}|p{0.56\textwidth}|}
+%     \caption{Data masukan mekanisme pencabutan akses PGHD}
+%     \label{tab:data-pencabutan-akses-pghd} \\
+%     \hline
+%     \textbf{Data} & \textbf{Keterangan} \\
+%     \hline
+%     \endfirsthead
+%     \hline
+%     \textbf{Data} & \textbf{Keterangan} \\
+%     \hline
+%     \endhead
+%     \texttt{hospital\_personnel\_iota\_address} & Alamat IOTA tenaga kesehatan yang aksesnya akan dicabut. \\
+%     \hline
+%     \texttt{patient\_iota\_address} & Alamat IOTA pasien pemilik data. \\
+%     \hline
+%     \texttt{patient\_iota\_key\_pair} & Kunci IOTA pasien untuk menandatangani nonce dan transaksi pencabutan. \\
+%     \hline
+%     \texttt{purpose} & Tujuan akses yang dicabut, misalnya \texttt{ReadPghd}. \\
+%     \hline
+%     \texttt{access\_log\_index} & Indeks log akses pada smart contract. Nilai ini disimpan oleh \textit{client} pasien saat akses dibuat sehingga pasien tidak perlu memasukkan indeks secara manual. \\
+%     \hline
+% \end{longtable}
+
+
+\begin{enumerate}
+    \item Pasien membuka daftar akses aktif pada \textit{client} pasien.
+    Daftar ini berasal dari log di IOTA \textit{grant} akses yang pernah dibuat oleh pasien.
+
+    \item \textit{Client} membaca informasi \textit{grant}, seperti \texttt{hospital\_personnel\_iota\_address}, jenis akses atau \texttt{purpose}, waktu pemberian akses, dan \texttt{access\_log\_index} dari IOTA\@.
+
+    \item Pasien memilih akses yang ingin dicabut dan menekan tombol \textit{Revoke Access}.
+
+    \item \textit{Client} meminta \texttt{nonce} ke PRE menggunakan \texttt{patient\_iota\_address}.
+
+    \item \textit{Client} menandatangani \texttt{nonce} menggunakan \texttt{patient\_iota\_key\_pair}.
+    Tanda tangan ini membuktikan bahwa pasien menguasai kunci privat IOTA dari alamat pasien tanpa mengirimkan kunci privat tersebut ke PRE\@.
+
+    \item \textit{Client} memanggil \textit{endpoint} pencabutan material akses pada PRE\@.
+    \textit{Payload} memuat \texttt{patient\_iota\_address}, \texttt{hospital\_personnel\_iota\_address}, \texttt{purpose}, dan \texttt{signature}. 
+    PRE menggunakan \texttt{patient\_iota\_address} untuk menemukan \texttt{nonce} yang sebelumnya dibuat, lalu memvalidasi tanda tangan pasien.
+
+    \item PRE menghapus material akses sementara yang sesuai dari Redis.
+    Material yang dihapus mencakup material PRE untuk tujuan akses tersebut, seperti \texttt{k\_frag}, \texttt{data\_pre\_public\_key}, \texttt{enc\_data\_pre\_secret\_key\_seed}, dan artefak terkait. 
+    Setelah material ini dihapus, PRE tidak lagi dapat menghasilkan \texttt{cfrag} untuk akses tersebut, sehingga proses dekripsi akan menghasilkan \textit{error} dan pengambilan data PGHD tidak akan diizinkan.
+
+    \item \textit{Client} memanggil \textit{smart contract} \texttt{revokePghdAccess} menggunakan \texttt{access\_log\_index}.
+
+    \item \textit{Smart contract} menandai log akses sebagai dicabut dan menghapus \textit{capability} aktif dari tabel akses personel.
+
+    \item \textit{Client} menampilkan notifikasi bahwa akses berhasil dicabut.
+\end{enumerate}
+
+Setelah pencabutan berhasil, tenaga kesehatan tidak lagi dapat membuka PGHD pasien. 

@@ -1,0 +1,120 @@
+% chktex-file 8
+% chktex-file 44
+% chktex-file 1
+
+\subsection{Analisis Solusi Kerahasiaan, Integritas, dan Ketersediaan}\label{alternatif-analisis-solusi-cia}
+
+Pemilihan solusi keamanan mengacu pada ancaman terpilih pada Tabel~\ref{tab:stride-threat-analysis-decmed-pghd}.
+
+\subsubsection{Analisis Solusi Kerahasiaan (\textit{Confidentiality})}
+
+Berdasarkan pengertian dan mekanisme penjaminan kerahasiaan data pada Subbab~\ref{studi-confidentiality}, mekanisme yang digunakan untuk menjamin kerahasiaan PGHD yaitu enkripsi, akses kontrol, autentikasi, dan protokol komunikasi yang aman. 
+Berdasarkan kondisi DecMed saat ini (Subbab~\ref{studi-decmed}) dan analisis permasalahan pada Subbab~\ref{analisis-permasalahan}, DecMed sudah mengimplementasikan akses kontrol berbasis CapBac, mekanisme enkripsi data baik saat pengiriman, penyimpanan maupun pengaksesan data, dan autentikasi menggunakan manajemen akun, kunci dan \textit{address} IOTA\@.
+Namun seluruh mekanisme tersebut baru diimplementasikan pada rekam medis elektronik yang ditambahkan oleh tenaga kesehatan saja.
+
+Untuk menjaga kerahasiaan data PGHD, keseluruhan mekanisme yang sudah ada di DecMed akan digunakan juga untuk data PGHD\@.
+Data PGHD akan dienkripsi di sisi klien pasien dan baru dapat didekripsi dan diakses oleh tenaga kesehatan yang resmi dan sudah diverifikasi oleh pasien ketika pasien memberikan izin.
+Selain izin oleh pihak lain, pasien juga perlu memastikan sudah memberikan izin kepada sistem DecMed untuk mengumpulkan dan mengambil data PGHD dengan menyetujui ketentuan penggunaan sistem DecMed-PGHD\@.
+Mekanisme ini menjamin data terenkripsi dan dapat dijamin kerahasiaannya baik dari segi komunikasi pertukaran data, dan hanya bisa diakses oleh personel yang terautentikasi dan diizinkan oleh akses kontrol, dan menyelesaikan masalah ancaman terkait kerahasiaan data saat penyimpanan dan pengiriman data (T-I01).
+Selain itu, mekanisme \textit{proxy reencryption} dan CapBac yang sudah diterapkan oleh DecMed juga memungkinkan pertukaran data dan informasi tanpa perlu memberikan kredensial apapun melalui jaringan, seperti \textit{private key}, PIN, ataupun kredensial lainnya, sehingga menyelesaikan masalah ancaman kebocoran data (T-I02).
+
+Hal ini bersesuaian dengan kebutuhan penjaminan keamanan pada PGHD yang membutuhkan mekanisme \textit{end-to-end encryption}, akses kontrol, pengamanan protokol komunikasi, dan autentikasi seperti dijelaskan di Subbab~\ref{studi-confidentiality} yang seluruhnya sudah didukung di DecMed.
+
+
+\subsubsection{Analisis Solusi Integritas (\textit{Integrity})}
+
+Terdapat tiga mekanisme yang dapat dipertimbangkan untuk menjamin integritas PGHD berdasarkan penjelasan mengenai integritas data pada Subbab~\ref{studi-integrity}\@:
+\begin{enumerate}
+    \item Fungsi \textit{hash} kriptografis saja, 
+    \item \textit{Message Authentication Code}, menggabungkan hash dengan enkripsi berbasis kunci simetris, dan 
+    \item Tanda tangan digital/\textit{digital signature}, menggabungkan hash dengan enkripsi berbasis kunci asimetris. 
+\end{enumerate}
+
+Fungsi \textit{hash} saja dapat mendeteksi perubahan data, namun tidak memiliki mekanisme untuk menjamin apakah baik data maupun hash dimodifikasi atau tidak. 
+MAC membuktikan integritas dan memungkinkan modifikasi data dan hash dapat dideteksi, namun memerlukan kunci simetris yang dibagikan.
+Pembagian kunci privat juga bisa disalahgunakan sehingga penyerang bisa menggunakan kunci privat itu untuk menghasilkan hash yang valid dari data dan hash yang sudah dimodifikasi.
+Selain itu, pembagian kunci privat juga tidak sesuai dengan DecMed yang menggunakan prinsip untuk tidak pernah membagikan kunci privat/enkripsi menggunakan \textit{proxy reencryption}. 
+
+Untuk menjamin integritas data sehingga baik data maupun bukti hash tidak dimodifikasi, dan menyesuaikan kondisi DecMed yang tidak membagikan kunci privat, mekanisme yang dipilih untuk menjaga integritas adalah menggunakan \textit{digital signature} untuk data PGHD\@.
+Data yang gagal verifikasi tidak diperlakukan sebagai PGHD valid. 
+
+Mekanisme ini menjamin integritas data terjamin sepanjang pertukaran, pengiriman dan penyimpanan data, dan bukti \textit{tampering} data dapat dideteksi untuk mencegah ancaman terkait integritas terhadap manipulasi atau perubahan data PGHD (T-T01) pada Tabel~\ref{tab:stride-threat-analysis-decmed-pghd}.
+
+T-T02 ditangani dengan menjadikan \textit{state capability} pada IOTA sebagai sumber kebenaran persetujuan. 
+Pembuatan, pemeriksaan, pencabutan, masa berlaku, tipe akses, dan perubahan status hanya dilakukan melalui fungsi \textit{smart contract} yang memeriksa alamat pengirim serta relasi pasien--tenaga kesehatan. 
+Status PGHD yang tidak valid tidak menghapus riwayat transaksi lama, tetapi diperbarui melalui transaksi baru sehingga aplikasi selalu menggunakan \textit{state} terkini.
+
+\subsubsection{Analisis Solusi Ketersediaan (\textit{Availability})}
+
+Seperti sudah dijelaskan pada pembahasan mengenai ketersediaan pada Subbab~\ref{studi-availability}, terdapat empat mekanisme penjaminan ketersediaan data PGHD yang dipertimbangkan, yaitu,
+
+\begin{enumerate}
+    \item \textit{Sharding/batching}, yaitu pengelompokan data dan pemecahan data
+    
+    \item Penyimpanan terdistribusi
+    
+    \item Redundansi, penyimpanan salinan data di beberapa lokasi fisik atau logis yang berbeda
+    
+    \item \textit{Rate limiting/throttling}
+\end{enumerate}
+
+Berdasarkan kondisi DecMed saat ini, DecMed sudah mengimplementasikan penyimpanan terdistribusi berbasis IPFS\@.
+IPFS menyelesaikan kebutuhan redundansi dan \textit{sharding} melalui mekanisme \textit{content-addressing}.
+Setiap berkas diidentifikasi berdasarkan hash isinya (CID) sehingga berkas yang sama dapat disimpan di beberapa node sekaligus dan sistem dapat mengambilnya dari node mana pun yang tersedia.
+
+Solusi mekanisme lain yang akan diimplementasikan adalah \textit{rate limiting} dan \textit{batching}.
+Berdasarkan analisis permasalahan pada Subbab~\ref{analisis-permasalahan} dan mekanisme penjaminan ketersediaan pada Subbab~\ref{studi-availability}, data PGHD umumnya dari sensor yang bersifat \textit{time-series} dan bervolume tinggi, sehingga pengiriman secara terus menerus dapat membebani kerja sistem DecMed dan berpotensi menyebabkan Denial of Service.
+\textit{Rate limit} tidak diterapkan pada sisi server ataupun DecMed karena berpotensi melakukan \textit{drop request} untuk data rekam medis atau PGHD yang valid, sehingga mengurangi kontinuitas dan menghilangkan data yang seharusnya didapatkan oleh tenaga kesehatan.
+Untuk itu data akan dikumpulkan (\textit{grouping}) dalam waktu tertentu di sisi klien sebelum dikirimkan dalam satuan waktu tetap untuk menghindari frekuensi pengiriman data yang terlalu sering.
+
+Mekanisme \textit{batching} dapat mengurangi frekuensi pengiriman data yang terlalu sering sehingga \textit{client} pasien tidak \textit{overwhelmed} dan penggunaan IPFS memungkinkan data disimpan di beberapa node sehingga akses tidak hanya terbatas pada satu node saja (T-D01).
+
+Selain itu, ancaman lainnya adalah gangguan konektivitas/layanan (T-D02).
+Solusi yang dipilih sama dengan alternatif \textit{pipeline}, yaitu mekanisme \textit{offline first}, di mana data tetap disimpan secara lokal sampai jaringan atau layanan tersedia.
+Data yang dikirimkan mempertahankan status menunggu, tertunda, gagal, atau terkirim sehingga kegagalan tidak langsung menghapus data lokal. 
+Ketika layanan pulih, \textit{batch} data dapat dikirim ulang. 
+Mekanisme ini mengurangi frekuensi transaksi dan mencegah kehilangan data akibat gangguan sementara.
+
+Dari sisi server, mekanisme penjaminan ketersediaan pada arsitektur DecMed-PGHD diselesaikan dengan solusi berikut. 
+Pertama, \textit{batching} di sisi klien mengurangi frekuensi pengiriman ke komponen server menjadi jumlah pengiriman dengan interval yang terkontrol, sehingga beban yang diterima server bukan merupakan aliran data kontinu melainkan \textit{request} dalam jumlah yang dapat diprediksi. 
+Kedua, penyimpanan \textit{ciphertext} PGHD didelegasikan ke IPFS sebagai lapisan penyimpanan \textit{off-chain} yang terdistribusi, sehingga tidak terdapat titik penyimpanan terpusat yang dapat menjadi \textit{bottleneck} saat banyak \textit{batch} masuk secara bersamaan. 
+Selain itu, server \textit{proxy reencryption} juga dapat di-\textit{deploy} dalam \textit{node} jumlah banyak karena PRE bersifat \textit{stateless}.
+% Kalau mau bikin node baru untuk PRE, harus daftarkan iota address client node itu supaya punya ProxyCap
+Ketiga, penulisan metadata dikontrol oleh IOTA sehingga server sistem tidak terbebani untuk mengolah metadata terlebih dahulu.
+
+% \subsubsection{Keterlacakan Ancaman dan Solusi Terpilih}
+
+% Keterlacakan setiap ancaman terhadap solusi, kebutuhan non-fungsional, dan rancangan dirangkum pada Tabel~\ref{tab:traceability-cia-solution}.
+
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.09\textwidth}|>{\raggedright\arraybackslash}p{0.34\textwidth}|>{\raggedright\arraybackslash}p{0.15\textwidth}|>{\raggedright\arraybackslash}X|}
+% \hiderowcolors
+% \caption{Keterlacakan Ancaman CIA dan Solusi Terpilih}\label{tab:traceability-cia-solution}\\
+% \hline
+% \rowcolor{headerBg}
+% \textbf{Threat} & \textbf{Mekanisme terpilih} & \textbf{Kebutuhan} & \textbf{Rancangan} \\
+% \hline
+% \showrowcolors
+% \endfirsthead
+
+% \hiderowcolors
+% \caption[]{Keterlacakan Ancaman CIA dan Solusi Terpilih (lanjutan)}\\
+% \hline
+% \rowcolor{headerBg}
+% \textbf{Threat} & \textbf{Mekanisme terpilih} & \textbf{Kebutuhan} & \textbf{Rancangan} \\
+% \hline
+% \showrowcolors
+% \endhead
+
+% T-T01 & Hash \textit{plaintext}, hash \textit{ciphertext}, tanda tangan digital, verifikasi pada PRE dan client tenaga kesehatan. & NF03, NF04 & Mekanisme verifikasi integritas berlapis. \\
+% \hline
+% T-T02 & Capability IOTA, pemeriksaan cakupan dan kedaluwarsa, pencabutan akses, serta transaksi invalidasi. & NF01, NF03, NF04 & Pemeriksaan \texttt{READ\_PGHD} dan state metadata terkini. \\
+% \hline
+% T-I01 & CapBAC, PRE, dan dekripsi hanya pada client penerima yang memiliki akses aktif. & NF01, NF02 & Alur pemberian akses dan pembukaan PGHD melalui PRE\@. \\
+% \hline
+% T-I02 & Enkripsi pada client sebelum pengiriman; IPFS dan IOTA tidak menerima plaintext PGHD\@. & NF02 & AES-GCM, pembungkusan kunci PRE, dan penyimpanan ciphertext. \\
+% \hline
+% T-D01 & Penyimpanan lokal, batching, ambang ukuran, dan satu pengiriman untuk setiap batch. & NF05 & Mekanisme batching dan penyimpanan off-chain. \\
+% \hline
+% T-D02 & Status sinkronisasi, antrean lokal, persyaratan koneksi, serta pengiriman ulang yang idempoten. & NF06 & Penyimpanan lokal dan penjadwalan ulang pengiriman. \\
+% \hline
+% \end{styledxltabular}

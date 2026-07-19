@@ -1,0 +1,86 @@
+\subsubsection{Rancangan \textit{Register} dan \textit{Login} Pasien PGHD}
+
+Mekanisme \textit{register} dan \textit{login} pasien PGHD menggunakan pembangkitan identitas dan \textit{key} secara deterministik dari kombinasi \textit{seed words} dan NIK pasien.
+Mekanisme ini sama dengan implementasi pada sistem DecMed asli.
+Mekanisme ini membuat pasien dapat memulihkan identitas yang sama pada proses \textit{login} ulang selama \textit{seed words}, NIK, dan PIN yang dimasukkan sesuai.
+
+Pada setiap \textit{login}, pasien harus menggunakan \textit{seed words}, NIK, dan PIN yang sama agar \textit{client} dapat membangkitkan alamat IOTA dan kunci kriptografi yang sama. 
+
+\begin{figure}[htb]
+    \centering
+	\includegraphics[width=\textwidth]{resources/chapter-3/Alur Data Login Register.png}
+	\caption{Alur Pembentukan Variabel dan \textit{Keys} pada \textit{Login} dan \textit{Register} Pasien}\label{fig:data-login-register}
+\end{figure}
+
+Pada proses \textit{register} maupun \textit{login}, \textit{client} pasien membangkitkan beberapa variabel.
+Alur pembentukan variabel-variabel dapat dilihat pada Diagram~\ref{fig:data-login-register}.
+Penjelasan setiap variabel dapat dilihat pada Tabel~\ref{tab:variabel-register-login-pghd}.
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.36\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Variabel Identitas dan Kriptografi Pasien PGHD}\label{tab:variabel-register-login-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Variabel} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Variabel Identitas dan Kriptografi Pasien PGHD (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Variabel} & \textbf{Fungsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{mnemonic} atau \textit{seed words} & Frasa pemulihan 12 kata yang menjadi sumber pembangkitan identitas pasien. \\
+    \hline
+    \texttt{patient\_id} dan \texttt{patient\_id\_hash} & Identitas pasien dan bentuk hash dari identitas tersebut yang digunakan untuk pencatatan tanpa membuka NIK mentah. \\
+    \hline
+    \texttt{iota\_address} & Alamat akun IOTA pasien yang digunakan untuk interaksi dengan \textit{smart contract}. \\
+    \hline
+    \texttt{iota\_key\_pair} & Pasangan kunci IOTA pasien untuk menandatangani transaksi dan pesan autentikasi. \\
+    \hline
+    \texttt{pghd\_public\_key} dan \texttt{pghd\_secret\_key} & Pasangan kunci ECDSA pasien untuk tanda tangan digital data \textit{PGHD}. \texttt{pghd\_public\_key} disimpan pada \textit{smart contract} dan digunakan untuk verifikasi tanda tangan. \\
+    \hline
+    \texttt{pghd\_pre\_public\_key} dan \texttt{pghd\_pre\_secret\_key} & Pasangan kunci PRE khusus \textit{PGHD}. Kunci ini digunakan dalam enkripsi kunci AES dan mekanisme re-enkripsi akses \textit{PGHD}. \texttt{pghd\_pre\_public\_key} tidak disimpan sebagai \textit{field on-chain} \textit{PGHD}. \\
+    \hline
+    \texttt{medical\_pre\_public\_key} dan \texttt{medical\_pre\_secret\_key} & Pasangan kunci PRE untuk mekanisme akses rekam medis normal. Kunci ini dipisahkan dari kunci PRE \textit{PGHD}. \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+\paragraph{Alur \textit{Register} Pasien PGHD}
+
+Alur \textit{register} pasien PGHD adalah sebagai berikut.
+
+\begin{enumerate}
+    \item Pasien membangkitkan atau memasukkan \textit{seed words} sebanyak 12 kata.
+    \item Pasien memasukkan NIK dan PIN\@.
+    \item \textit{Client} membentuk \textit{seed} deterministik dari \textit{seed words} dan NIK\@.
+    \item \textit{Client} membangkitkan \texttt{iota\_address} dan \texttt{iota\_key\_pair}.
+    \item \textit{Client} membangkitkan \texttt{pghd\_public\_key}, \texttt{pghd\_secret\_key}, \texttt{pghd\_pre\_public\_key}, \texttt{pghd\_pre\_secret\_key}, \texttt{medical\_pre\_public\_key}, dan \texttt{medical\_pre\_secret\_key}.
+    \item \textit{Client} melakukan registrasi akun pasien dan publikasi \texttt{pghd\_public\_key} ke \textit{smart contract} IOTA\@.
+    \item \textit{Client} menyimpan profil pasien dan kunci terkait ke penyimpanan lokal aman.
+    \item Status sesi diubah menjadi \texttt{unlocked} sehingga pasien masuk ke aplikasi.
+\end{enumerate}
+
+% Implementasi Android saat ini menggunakan JNI untuk memanggil library Rust serta DataStore/secure storage lokal untuk menyimpan state akun.
+
+\paragraph{Alur \textit{Login} Pasien PGHD}
+
+Alur \textit{login} pasien PGHD adalah sebagai berikut.
+
+\begin{enumerate}
+    \item Pasien memasukkan \textit{seed words}, NIK, dan PIN\@.
+    \item \textit{Client} membangkitkan ulang seluruh identitas dan kunci deterministik dari kombinasi \textit{seed words} dan NIK\@.
+    \item \textit{Client} memastikan akun pasien telah terdaftar pada \textit{smart contract} IOTA\@.
+    \item \textit{Client} menyimpan kembali profil pasien ke penyimpanan lokal dan mengubah status sesi menjadi \texttt{unlocked}.
+\end{enumerate}
+
+Dengan mekanisme ini, kunci pasien tidak dibangkitkan secara acak pada setiap \textit{login}. 
+Kunci yang sama akan dibentuk ulang dari material pemulihan yang sama.

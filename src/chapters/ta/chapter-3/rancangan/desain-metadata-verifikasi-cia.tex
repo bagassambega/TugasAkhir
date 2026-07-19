@@ -1,0 +1,172 @@
+\subsection{Mekanisme Verifikasi Kerahasiaan, Integritas, Ketersediaan dan \textit{Provenance} PGHD}\label{mekanisme-verifikasi-cia}
+
+Berdasarkan pemilihan solusi untuk menjamin kerahasiaan, integritas, dan ketersediaan pada Subbab~\ref{alternatif-analisis-solusi-cia}, subbab ini merancang mekanisme teknis untuk memverifikasi ketiga aspek tersebut.
+Mekanisme ini juga menyimpan metadata \textit{provenance} agar tenaga kesehatan dapat mengetahui asal-usul data yang dibuka.
+
+\subsubsection{Kerahasiaan (\textit{Confidentiality})}
+
+Untuk menjamin kerahasiaan PGHD, sistem menggunakan enkripsi ketika data dikirim dari sisi \textit{client}.
+Mekanisme yang digunakan sebagai berikut,
+
+\begin{itemize}
+	\item \textbf{\textit{Payload} data dienkripsi di \textit{client} sebelum dikirim}.
+	      Setelah \textit{batch} PGHD terbentuk dalam bentuk \textit{plaintext} sesuai Tabel~\ref{tab:field-batch-json-pghd}, \textit{client} mengenkripsi data menggunakan AES-GCM dengan kunci simetris acak \texttt{aes\_key} dan \texttt{aes\_nonce}.
+	      AES-GCM dipilih karena menyediakan kerahasiaan dan autentikasi \textit{ciphertext} dalam satu operasi, sehingga perubahan terhadap \textit{ciphertext} atau \textit{authentication tag} menyebabkan dekripsi gagal.
+	      Dengan demikian, data telah berbentuk \textit{ciphertext} sebelum keluar dari perangkat pasien.
+
+	\item \textbf{Pembungkusan kunci dengan PRE}.
+	      \texttt{aes\_key} dan \texttt{aes\_nonce} dienkripsi menggunakan \texttt{pghd\_pre\_public\_key} pasien sehingga menghasilkan \texttt{enc\_aes\_key\_nonce} dan \texttt{capsule}.
+	      Kunci PRE PGHD ini dipisahkan dari kunci PRE untuk \textit{medical record}.
+
+	\item \textbf{Penyimpanan \textit{ciphertext} PGHD}.
+	      Data PGHD yang terenkripsi (\texttt{enc\_pghd}) disimpan pada penyimpanan \textit{off-chain} IPFS\@.
+	      Metadata yang disimpan \textit{on-chain} hanya memuat rujukan, hash, status validasi, dan metadata kriptografis yang diperlukan untuk \textit{proxy reencryption} dan validasi data seperti hash \textit{ciphertext} PGHD dan \textit{public key} pasien untuk validasi \textit{digital signature}.
+
+	\item \textbf{Akses melalui PRE}.
+	      Ketika tenaga kesehatan diberikan akses oleh pasien, PRE menggunakan material \textit{re-encryption} yang tersimpan sementara (izin akses dari pasien) di Redis untuk nantinya bisa mendapatkan kunci dekripsi AES-GCM\@.
+	      \textit{Client} tenaga kesehatan menggunakan artefak tersebut untuk memperoleh \texttt{aes\_key} dan \texttt{aes\_nonce}, lalu mendekripsi \texttt{enc\_pghd} di sisi \textit{client}.
+
+	\item \textbf{Perlindungan material lokal pada \textit{client}}.
+	      PGHD \textit{plaintext}, kunci hasil dekripsi, token akses, CID personel, \textit{activation key}, serta material sesi lain hanya dipertahankan selama diperlukan oleh sesi aktif (saat akses PGHD tenaga kesehatan aktif).
+	      Material kunci yang harus berada pada penyimpanan lokal selama sesi disimpan dalam bentuk terenkripsi.
+	      Ketika pengguna keluar, \textit{client} menghapus material sesi dan kredensial yang dimasukkan agar tidak dapat digunakan oleh pengguna berikutnya pada perangkat yang sama.
+
+	\item \textbf{Kerahasiaan metadata}.
+	      Nilai pengukuran, rincian sumber atau perangkat, dan konteks ditempatkan di dalam \texttt{enc\_pghd}.
+	      Metadata \textit{plaintext} pada IOTA dibatasi pada rujukan data, hash, status, waktu pencatatan, alamat yang diperlukan untuk relasi akun, dan artefak kriptografis yang dibutuhkan oleh PRE atau verifikasi agar tidak dapat diakses oleh pihak yang tidak diizinkan.
+\end{itemize}
+
+Mekanisme ini menjamin bahwa data tidak dapat dibaca oleh pihak yang tidak memiliki otorisasi aktif, termasuk PRE, penyimpanan \textit{off-chain}, maupun validator IOTA\@.
+Pasien juga tidak perlu membagikan \textit{private key} kepada tenaga kesehatan.
+
+\subsubsection{Integritas (\textit{Integrity})}
+
+Untuk menjamin integritas PGHD, sistem menggunakan hash dan \textit{digital signature} terhadap \textit{ciphertext} PGHD\@.
+
+\textit{Payload} batch PGHD dienkripsi menjadi \texttt{enc\_pghd}. 
+\textit{Client} kemudian menghitung hash \textit{ciphertext} seperti yang didefinisikan pada Persamaan~\ref{eq:h_cipher}.
+\begin{equation}
+	h_{\text{cipher}} = \mathrm{SHA256}(\texttt{enc\_pghd}), \label{eq:h_cipher}
+\end{equation}
+\formulaentry{Perhitungan hash \textit{ciphertext} PGHD}
+lalu menandatangani nilai \texttt{h\_cipher} menggunakan kunci privat tanda tangan PGHD pasien sehingga menghasilkan \texttt{signature}.
+Mekanisme ini mengikuti pola umum \textit{Digital Signature Standard} (DSS), yaitu pesan terlebih dahulu di-hash, kemudian hash tersebut ditandatangani menggunakan kunci privat, dan diverifikasi menggunakan kunci publik.
+Pada sistem ini pesan yang dilindungi adalah \texttt{enc\_pghd}.
+Oleh karena itu verifikasi dilakukan dengan menghitung ulang \texttt{h\_cipher} dari \textit{ciphertext}, kemudian memverifikasi \texttt{signature} terhadap \texttt{h\_cipher} menggunakan kunci publik PGHD pasien.
+
+Algoritma tanda tangan yang digunakan adalah ECDSA dengan kurva P-256.
+ECDSA dipilih karena ukuran kunci dan tanda tangan lebih kecil dibandingkan RSA untuk tingkat keamanan yang sebanding, sehingga lebih sesuai untuk \textit{payload} \textit{mobile} dan metadata PGHD yang sering dikirim.
+Selain itu, ECDSA P-256 juga sesuai dengan ekosistem kriptografi yang digunakan pada \textit{client} dan PRE saat ini\@.
+
+Verifikasi integritas dilakukan pada dua titik.
+Pertama, PRE menghitung ulang \texttt{h\_cipher} dan memverifikasi \texttt{signature} sebelum menyimpan \textit{ciphertext} ke penyimpanan \textit{off-chain} dan mencatat metadata ke IOTA\@.
+Kedua, ketika tenaga kesehatan membuka PGHD, \textit{client} tenaga kesehatan kembali memverifikasi \texttt{h\_cipher} dan \texttt{signature} sebelum melakukan dekripsi AES-GCM\@.
+Jika salah satu verifikasi gagal, data tidak ditampilkan sebagai data valid dan entri PGHD dapat diinvalidasi.
+
+\subsubsection{Ketersediaan (Availability)}
+
+Untuk menjamin ketersediaan data PGHD, sistem menggunakan tiga mekanisme berikut.
+
+\begin{enumerate}
+	\item \textbf{\textit{Batching}}.
+	      Data \textit{time-series} dikumpulkan menjadi \textit{batch} sebelum dikirim.
+	      Dengan demikian, sistem tidak membuat transaksi atau \textit{request} untuk setiap data sensor individual.
+
+	\item \textbf{Penyimpanan off-chain}.
+	      \textit{Ciphertext} PGHD disimpan pada penyimpanan \textit{off-chain}, sedangkan IOTA hanya menyimpan rujukan dan metadata verifikasi.
+	      Desain ini mengurangi beban penyimpanan \textit{on-chain}.
+
+	\item \textbf{Penyimpanan lokal dan pengiriman saat koneksi tersedia}.
+	      \textit{Batch} PGHD disimpan pada basis data lokal sebelum dikirim.
+	      Jika perangkat tidak memiliki koneksi internet atau pengiriman gagal karena layanan pada sistem DecMed \textit{down}, data tetap berada pada perangkat pasien.
+	      Ketika koneksi tersedia kembali, \textit{client} menjadwalkan pengiriman ulang sehingga tercapai data terkirim \textit{at least once}.
+	      Jika kegagalan terjadi bukan karena koneksi, pasien harus memicu pengiriman \textit{manual} untuk menghindari pengulangan pengiriman terus menerus.
+\end{enumerate}
+
+% Implementasi Android saat ini menggunakan WorkManager periodik minimum 15 menit, trigger ukuran 10 MB, dan pengiriman ulang berbasis NetworkType.CONNECTED.
+
+\subsubsection{Struktur Metadata \textit{Provenance} PGHD pada \textit{Ledger} IOTA}
+
+Setiap entri PGHD yang berhasil diverifikasi akan dicatat pada \textit{ledger} IOTA dalam struktur metadata PGHD\@.
+Struktur yang disimpan oleh \textit{smart contract} dapat dilihat pada Tabel~\ref{tab:iota-pghd-metadata}.
+
+Metadata PGHD tersebut ditempatkan pada objek \texttt{PatientPghdStore} yang dibuat untuk masing-masing pasien.
+Objek \texttt{PatientIdAccount} berperan sebagai \textit{registry} akun pasien dan menyimpan \texttt{pghd\_store\_id}.
+Rancangan ini dipilih agar penulisan metadata PGHD dari pasien dapat menangani \textit{request} konkuren dalam jumlah banyak tanpa memerlukan \textit{shared object reference}.
+
+\begingroup
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
+	\hiderowcolors
+	\caption{Struktur Metadata PGHD pada \textit{Ledger} IOTA}\label{tab:iota-pghd-metadata}\\
+	\hline
+	\rowcolor{headerBg}
+	\textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+	\hline
+	\showrowcolors
+	\endfirsthead
+
+	\hiderowcolors
+	\hline
+	\rowcolor{headerBg}
+	\textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+	\hline
+	\showrowcolors
+	\endhead
+
+	\texttt{index} & Integer & Indeks metadata PGHD pasien. \\
+	\hline
+	\texttt{cid} & String & \textit{Content Identifier} yang merujuk pada \texttt{enc\_pghd} (data PGHD yang terenkripsi). \\
+	\hline
+	\texttt{h\_cipher} & String & Hash SHA-256 dari \texttt{enc\_pghd}. \\
+	\hline
+	\texttt{metadata} & String & Metadata tambahan yang diserialisasi, berisi artefak kriptografi dan informasi \textit{batch} seperti pada Tabel~\ref{tab:iota-pghd-serialized-metadata}. \\
+	\hline
+	\texttt{status} & Byte & Status entri PGHD\@: \texttt{0} berarti valid dan \texttt{1} berarti invalid. \\
+	\hline
+	\texttt{failure\_reason} & String & Alasan kegagalan jika status bernilai invalid. \\
+	\hline
+	\texttt{timestamp} & Unix timestamp & Waktu pencatatan metadata ke sistem. \\
+	\hline
+\end{styledxltabular}
+\endgroup
+
+Metadata tambahan diserialisasi dan dipisahkan dari \textit{field} utama metadata \textit{on-chain} supaya jika struktur metadata PGHD berubah, \textit{ledger} yang sebelumnya masih menggunakan format metadata lama masih valid.
+Pada rancangan ini, \textit{field} utama pada struktur \texttt{PatientPghdMetadata} merupakan metadata yang perlu diakses langsung oleh \textit{smart contract}.
+\textit{Fields} seperti \texttt{index}, \texttt{cid}, \texttt{h\_cipher}, \texttt{status}, \texttt{failure\_reason}, dan \texttt{timestamp} disimpan sebagai \textit{field} langsung karena digunakan untuk pencarian entri PGHD, penentuan status validasi, dan proses invalidasi.
+Sebaliknya, \textit{field} \texttt{metadata} merupakan metadata yang disimpan sebagai string terserialisasi (dianggap sebagai \textit{object} saja), sehingga tidak di-\textit{parsing} dan dijadikan \textit{field} dengan struktur \textit{rigid} yang harus sesuai dengan skema \textit{smart contract}.
+
+\begingroup
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.30\textwidth}|>{\raggedright\arraybackslash}p{0.20\textwidth}|>{\raggedright\arraybackslash}X|}
+	\hiderowcolors
+	\caption{Isi Metadata Tambahan PGHD yang Diserialisasi}\label{tab:iota-pghd-serialized-metadata}\\
+	\hline
+	\rowcolor{headerBg}
+	\textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+	\hline
+	\showrowcolors
+	\endfirsthead
+
+	\hiderowcolors
+	\hline
+	\rowcolor{headerBg}
+	\textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+	\hline
+	\showrowcolors
+	\endhead
+
+	\texttt{batch\_id} & UUID & Identitas batch PGHD\@. \\
+	\hline
+	\texttt{patient\_\allowbreak{}iota\_\allowbreak{}address} & String & Alamat IOTA pasien pemilik data. \\
+	\hline
+	\texttt{enc\_aes\_key\_nonce} & String & Kunci AES dan \textit{nonce} yang telah dienkripsi menggunakan kunci PRE PGHD pasien. \\
+	\hline
+	\texttt{capsule} & String & Artefak PRE yang digunakan untuk proses \textit{re-encryption}. \\
+	\hline
+	\texttt{signature} & String & Tanda tangan digital atas \texttt{h\_cipher}. \\
+	\hline
+	\texttt{created\_at} & String & Waktu metadata dibuat oleh PRE\@. \\
+	\hline
+	\texttt{verified\_by\_proxy} & Boolean & Penanda bahwa PRE telah memverifikasi \texttt{h\_cipher} dan \texttt{signature} sebelum pencatatan. \\
+	\hline
+\end{styledxltabular}
+\endgroup

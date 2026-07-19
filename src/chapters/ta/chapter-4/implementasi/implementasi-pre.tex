@@ -1,0 +1,539 @@
+% chktex-file 44
+% chktex-file 1
+% chktex-file 8
+% chktex-file 18
+
+\subsection{Implementasi \textit{Proxy Re-encryption Server}}
+
+\textit{Proxy re-encryption server} atau PRE diimplementasikan menggunakan bahasa pemrograman Rust dengan Axum sebagai \textit{framework} HTTP\@. 
+PRE berperan sebagai komponen penghubung antara \textit{client} pasien, \textit{client} tenaga kesehatan, IPFS, Redis, dan \textit{smart contract} IOTA\@. 
+Komponen ini menerima \textit{payload} PGHD terenkripsi, melakukan verifikasi, menyimpan \textit{ciphertext} ke IPFS, mencatat metadata ke \textit{smart contract}, dan menyediakan material \textit{re-encryption} ketika tenaga kesehatan yang berwenang membuka data PGHD\@.
+
+PRE menggunakan Redis untuk menyimpan material akses sementara, seperti token akses dan material \textit{re-encryption}.
+Material tersebut memiliki waktu kedaluwarsa sehingga akses yang diberikan pasien tidak dapat digunakan di luar periode yang ditentukan. 
+PRE juga menggunakan IOTA Gas Station ketika perlu membuat transaksi IOTA bersponsor.
+
+% Diagram kelas pada PRE dapat dilihat pada Gambar~\ref{fig:diagram-modul-pre-pghd}.
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=\textwidth]{resources/chapter-4/diagram-modul-pre-pghd.png}
+%     \caption{Diagram Kelas PRE PGHD}\label{fig:diagram-modul-pre-pghd}
+% \end{figure}
+
+
+\subsubsection{\textit{Endpoint} \texttt{GET /health}}\label{subsubsec:pre-endpoint-health}
+
+\textit{Endpoint} ini berfungsi untuk memeriksa apakah \textit{service} PRE dapat menerima \textit{request}. 
+\textit{Endpoint} ini tidak membutuhkan autentikasi dan digunakan sebagai \textit{health check} oleh pengujian maupun proses operasional. 
+Jika \textit{service} aktif, PRE mengembalikan teks \texttt{OK}.
+
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{Spesifikasi \textit{Endpoint} GET /health pada PRE}\label{tab:pre-endpoint-health} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Komponen} & \textbf{Nilai} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Komponen} & \textbf{Nilai} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     \textit{Auth header} & - \\
+%     \hline
+%     \textit{Query params} & - \\
+%     \hline
+%     \textit{Request body} & - \\
+%     \hline
+%     \textit{\textit{Response} body success} & Tipe: \texttt{text/plain},
+% \begingroup\ttfamily\small
+% \setlength{\parindent}{0pt}
+% OK
+% \endgroup \\
+%     \hline
+% \end{styledxltabular}
+
+
+\subsubsection{\textit{Endpoint} \texttt{POST /nonce}}\label{subsubsec:pre-endpoint-nonce}
+
+\textit{Endpoint} ini berfungsi untuk membuat \textit{nonce} yang digunakan dalam proses autentikasi pasien. 
+Pertama, PRE memvalidasi \texttt{iota\_address} pada \textit{request body} dan memastikan alamat tersebut merupakan alamat pasien yang telah terdaftar pada \textit{smart contract}. 
+Setelah validasi berhasil, PRE membangkitkan \textit{nonce} acak 64 byte dalam format heksadesimal. 
+\textit{Nonce} tersebut disimpan pada Redis dengan key \texttt{nonce:\{patient\_iota\_address\}} dan memiliki \textit{time to live}. 
+\textit{Nonce} ini kemudian dikembalikan ke \textit{client} pasien dan harus ditandatangani oleh pasien pada \textit{request} berikutnya seperti \textit{endpoint} \texttt{POST /keys} pada Subbab~\ref{subsubsec:pre-endpoint-keys} atau \textit{endpoint} \texttt{POST /keys/revoke} pada Subbab~\ref{subsubsec:pre-endpoint-keys-revoke}.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Spesifikasi \textit{Endpoint} POST /nonce pada PRE}\label{tab:pre-endpoint-nonce} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textit{Auth header} & - \\
+    \hline
+    \textit{Query params} & - \\
+    \hline
+    \textit{Request body} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"iota\_address": "0x\ldots"\par
+\}
+\endgroup \\
+    \hline
+    \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"data": "nonce",\par
+\hspace*{1.0em}"status\_code": 200\par
+\}
+\endgroup \\
+    \hline
+\end{styledxltabular}
+
+\subsubsection{\textit{Endpoint} \texttt{POST /keys}}\label{subsubsec:pre-endpoint-keys}
+
+\textit{Endpoint} ini berfungsi untuk menyimpan material yang digunakan dalam proses \textit{proxy re-encryption} dan akses data RME maupun PGHD oleh personel fasyankes. 
+Selain itu, \textit{endpoint} ini juga membuat \textit{access token} dalam format JWT yang digunakan oleh personel fasyankes untuk melakukan \textit{request} ke proxy. 
+Pertama, proxy memvalidasi \textit{request body} yang diberikan, termasuk alamat IOTA pasien, alamat IOTA personel fasyankes, \textit{signature}, dan material PRE seperti \textit{kfrag}, \textit{public key}, \textit{capsule}, dan \textit{ciphertext} \textit{seed}. 
+Setelah \textit{request body} valid, proxy mengambil \textit{nonce} pasien dari Redis dan memvalidasi \textit{signature} pasien terhadap \textit{nonce} tersebut. 
+\textit{Signature} ini memastikan \textit{request} benar-benar berasal dari pasien yang sebelumnya memperoleh \textit{nonce} melalui \textit{endpoint} \texttt{POST /nonce} pada Subbab~\ref{subsubsec:pre-endpoint-nonce}. 
+Setelah \textit{signature} terverifikasi, \textit{nonce} dihapus dari Redis agar tidak dapat digunakan ulang.
+
+Proxy kemudian melakukan \textit{move call} ke jaringan IOTA dengan memanggil method \texttt{get\_hospital\_personnel\_role} pada \textit{smart contract}. 
+Hasil \textit{role} tersebut digunakan untuk menentukan \textit{role} JWT dan durasi penyimpanan material akses. 
+Untuk akses administratif atau medis biasa, proxy membuat token baca dan, khusus personel medis, token update. 
+Untuk akses PGHD, \textit{payload} mengirim \texttt{purpose} bernilai \texttt{ReadPghd}, sehingga proxy membuat token dengan purpose \texttt{ReadPghd} dan menyimpan material akses pada Redis dengan key \texttt{keys:read\_pghd:\{hospital\_personnel\}@\{patient\}}. 
+Material akses yang disimpan meliputi \textit{kfrag}, \textit{public key} pasien, \textit{public key} data, \textit{public key} penanda tangan, \textit{capsule} seed data, dan \textit{ciphertext} seed data. 
+\textit{Response} berisi token baca PGHD untuk permintaan akses baca PGHD\@.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Spesifikasi \textit{Endpoint} POST /keys pada PRE}\label{tab:pre-endpoint-keys} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textit{Auth header} & - \\
+    \hline
+    \textit{Query params} & - \\
+    \hline
+    \textit{Request body} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"enc\_data\_pre\_secret\_key\_seed": "\ldots",\par
+\hspace*{1.0em}"hospital\_personnel\_iota\_address": "0x\ldots",\par
+\hspace*{1.0em}"k\_frag": "\ldots",\par
+\hspace*{1.0em}"data\_pre\_public\_key": "\ldots",\par
+\hspace*{1.0em}"data\_pre\_secret\_key\_seed\_capsule": "\ldots",\par
+\hspace*{1.0em}"patient\_iota\_address": "0x\ldots",\par
+\hspace*{1.0em}"patient\_pre\_public\_key": "\ldots",\par
+\hspace*{1.0em}"purpose": "ReadPghd",\par
+\hspace*{1.0em}"signature": "\ldots",\par
+\hspace*{1.0em}"signer\_pre\_public\_key": "\ldots"\par
+\}
+\endgroup \\
+    \hline
+    \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"data": \{\par
+\hspace*{2.0em}"access\_token\_read": "\ldots",\par
+\hspace*{2.0em}"access\_token\_read\_pghd": "\ldots",\par
+\hspace*{2.0em}"access\_token\_update": null\par
+\hspace*{1.0em}\},\par
+\hspace*{1.0em}"status\_code": 200\par
+\}
+\endgroup \\
+    \hline
+\end{styledxltabular}
+
+
+\subsubsection{\textit{Endpoint} \texttt{POST /keys/revoke}}\label{subsubsec:pre-endpoint-keys-revoke}
+
+\textit{Endpoint} ini berfungsi untuk menghapus material \textit{re-encryption} dari Redis ketika pasien mencabut akses. 
+Alur autentikasinya sama dengan \textit{endpoint} \texttt{POST /keys} pada Subbab~\ref{subsubsec:pre-endpoint-keys}. 
+Pasien terlebih dahulu meminta \textit{nonce}, menandatangani \textit{nonce} tersebut, lalu mengirim \textit{signature} pada \textit{request} \textit{revoke}. 
+PRE memvalidasi alamat pasien dan personel fasyankes, mengambil \textit{nonce} dari Redis, memverifikasi \textit{signature} pasien, lalu menghapus \textit{nonce} tersebut. 
+Setelah itu PRE membentuk \textit{key} Redis berdasarkan \textit{purpose} yang diberikan. 
+Jika \textit{purpose} bernilai \texttt{ReadPghd}, hanya \textit{key} \texttt{read\_pghd} yang dihapus. 
+\textit{Response} mengembalikan daftar \textit{key} Redis yang berhasil dicabut.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Spesifikasi \textit{Endpoint} POST /keys/revoke pada PRE}\label{tab:pre-endpoint-keys-revoke} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textit{Auth header} & - \\
+    \hline
+    \textit{Query params} & - \\
+    \hline
+    \textit{Request body} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"hospital\_personnel\_iota\_address": "0x\ldots",\par
+\hspace*{1.0em}"patient\_iota\_address": "0x\ldots",\par
+\hspace*{1.0em}"purpose": "ReadPghd",\par
+\hspace*{1.0em}"signature": "\ldots"\par
+\}
+\endgroup \\
+    \hline
+    \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"data": \{\par
+\hspace*{2.0em}"revoked\_keys": ["keys:read\_pghd:0x\ldots@0x\ldots"]\par
+\hspace*{1.0em}\},\par
+\hspace*{1.0em}"status\_code": 200\par
+\}
+\endgroup \\
+    \hline
+\end{styledxltabular}
+
+
+% \subsubsection{\textit{Endpoint} \texttt{POST /pghd/patient}}\label{subsubsec:pre-endpoint-pghd-patient}
+
+% \textit{Endpoint} ini berfungsi untuk menyimpan \textit{public key} PGHD pasien pada PRE sebagai \textit{cache} agar \textit{client} tenaga kesehatan bisa memvalidasi \textit{signature} dari PGHD yang akan diakses. 
+% PRE memvalidasi alamat IOTA pasien, lalu menyimpan \texttt{pghd\_public\_key} pada Redis dengan \textit{key} \texttt{pghd\_public\_key:\{patient\}}. 
+% \textit{Cache} ini membantu PRE memverifikasi \textit{signature} PGHD pada proses \textit{submit} atau baca PGHD ketika \textit{public key} perlu diakses. 
+% \textit{Endpoint} ini tidak mengembalikan data selain status berhasil.
+
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{Spesifikasi \textit{Endpoint} POST /pghd/patient pada PRE}\label{tab:pre-endpoint-pghd-patient} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Komponen} & \textbf{Nilai} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Komponen} & \textbf{Nilai} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     \textit{Auth header} & - \\
+%     \hline
+%     \textit{Query params} & - \\
+%     \hline
+%     \textit{Request body} & Tipe: \texttt{application/json},
+% \begingroup\ttfamily\small
+% \setlength{\parindent}{0pt}
+% \{\par
+% \hspace*{1.0em}"patient\_iota\_address": "0x\ldots",\par
+% \hspace*{1.0em}"pghd\_public\_key": "\ldots",\par
+% \hspace*{1.0em}"pre\_public\_key": "\ldots",\par
+% \hspace*{1.0em}"pghd\_pre\_public\_key": "\ldots"\par
+% \}
+% \endgroup \\
+%     \hline
+%     \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+% \begingroup\ttfamily\small
+% \setlength{\parindent}{0pt}
+% \{\par
+% \hspace*{1.0em}"data": null,\par
+% \hspace*{1.0em}"status\_code": 200\par
+% \}
+% \endgroup \\
+%     \hline
+% \end{styledxltabular}
+
+
+\subsubsection{\textit{Endpoint} \texttt{POST /pghd/submit}}\label{subsubsec:pre-endpoint-pghd-submit}
+
+\textit{Endpoint} ini menerima \textit{batch} PGHD terenkripsi dari \textit{client} Android. 
+PRE memvalidasi alamat pasien, melakukan \textit{decode} \texttt{enc\_pghd} dari Base64, lalu menghitung hash SHA-256 dari \textit{ciphertext}. 
+Hash tersebut dibandingkan dengan \texttt{h\_cipher} yang dikirim \textit{client}. 
+Jika hash berbeda, \textit{request} ditolak karena \textit{ciphertext} tidak sama dengan \textit{ciphertext} yang ditandatangani pasien. 
+Setelah hash valid, PRE mengambil \textit{public key} PGHD pasien dari \textit{smart contract} dan memverifikasi \texttt{signature} atas \texttt{h\_cipher}.
+Jika \textit{signature} valid, PRE menyimpan \textit{ciphertext} ke IPFS, memperoleh CID, membentuk metadata PGHD yang berisi \textit{batch} ID, capsule, CID, hash, \textit{signature}, dan metadata waktu, lalu mencatat metadata tersebut ke \textit{smart contract} melalui fungsi \texttt{submit\_pghd}. \textit{Response} mengembalikan \texttt{batch\_id} dan CID IPFS\@.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Spesifikasi \textit{Endpoint} POST /pghd/submit pada PRE}\label{tab:pre-endpoint-pghd-submit} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textit{Auth header} & - \\
+    \hline
+    \textit{Query params} & - \\
+    \hline
+    \textit{Request body} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"batch\_id": "\ldots",\par
+\hspace*{1.0em}"patient\_iota\_address": "0x\ldots",\par
+\hspace*{1.0em}"enc\_pghd": "\ldots",\par
+\hspace*{1.0em}"h\_cipher": "\ldots",\par
+\hspace*{1.0em}"enc\_aes\_key\_nonce": "\ldots",\par
+\hspace*{1.0em}"capsule": "\ldots",\par
+\hspace*{1.0em}"signature": "\ldots"\par
+\}
+\endgroup \\
+    \hline
+    \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"data": \{\par
+\hspace*{2.0em}"batch\_id": "\ldots",\par
+\hspace*{2.0em}"cid": "\ldots"\par
+\hspace*{1.0em}\},\par
+\hspace*{1.0em}"status\_code": 201\par
+\}
+\endgroup \\
+    \hline
+\end{styledxltabular}
+
+
+\subsubsection{\textit{Endpoint} \texttt{GET /pghd}}\label{subsubsec:pre-endpoint-pghd-list}
+
+\textit{Endpoint} ini digunakan oleh \textit{client} tenaga kesehatan untuk mengambil daftar PGHD pasien. 
+\textit{Request} harus memiliki \textit{header} \texttt{Authorization: Bearer <token>} dengan token JWT ber-\textit{purpose} \texttt{ReadPghd}. 
+PRE memvalidasi token, memeriksa log akses ke IOTA, memastikan material \textit{re-encryption} untuk pasangan pasien dan tenaga kesehatan masih tersedia pada Redis, lalu memanggil \textit{smart contract} untuk mengambil daftar metadata PGHD yang valid. 
+Metadata yang memiliki CID yang tidak cocok akan diinvalidasi, status validasi gagal tidak akan dikembalikan ke tenaga kesehatan.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Spesifikasi \textit{Endpoint} GET /pghd pada PRE}\label{tab:pre-endpoint-pghd-list} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textit{Auth header} & \texttt{Authorization: Bearer <READ\_PGHD\_JWT>} \\
+    \hline
+    \textit{Query params} & \texttt{patient\_iota\_address=0x\ldots} \\
+    \hline
+    \textit{Request body} & - \\
+    \hline
+    \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"data": [\par
+\hspace*{2.0em}\{\par
+\hspace*{3.0em}"index": 0,\par
+\hspace*{3.0em}"cid": "\ldots",\par
+\hspace*{3.0em}"h\_cipher": "\ldots",\par
+\hspace*{3.0em}"status": 0,\par
+\hspace*{3.0em}"metadata": \{ \}\par
+\hspace*{2.0em}\}\par
+\hspace*{1.0em}],\par
+\hspace*{1.0em}"status\_code": 200\par
+\}
+\endgroup \\
+    \hline
+\end{styledxltabular}
+
+
+\subsubsection{\textit{Endpoint} \texttt{GET /pghd/\{index\}}}\label{subsubsec:pre-endpoint-pghd-detail}
+
+\textit{Endpoint} ini digunakan oleh \textit{client} tenaga kesehatan untuk membuka detail satu \textit{batch} PGHD\@.
+\textit{Request} harus menggunakan token \texttt{ReadPghd} dan \textit{query} \texttt{patient\_iota\_address}. 
+PRE memvalidasi akses, mengambil metadata PGHD dari \textit{smart contract} berdasarkan index, lalu mengambil \textit{ciphertext} dari IPFS berdasarkan CID\@. 
+PRE menghitung ulang hash \textit{ciphertext} dan membandingkannya dengan hash \textit{on-chain}. 
+PRE juga memverifikasi \textit{signature} PGHD pasien atas \texttt{h\_cipher}. 
+Jika hash atau \textit{signature} tidak valid, PRE menginvalidasi entri tersebut pada \textit{smart contract} dan mengembalikan error. 
+Jika validasi berhasil, PRE mengambil \textit{kfrag} dari Redis, membuat \textit{cfrag}, lalu mengembalikan \textit{ciphertext}, capsule, \textit{cfrag}, \textit{public key} yang diperlukan, dan metadata untuk proses dekripsi akhir pada \textit{client} tenaga kesehatan.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Spesifikasi \textit{Endpoint} GET /pghd/\{index\} pada PRE}\label{tab:pre-endpoint-pghd-detail} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textit{Auth header} & \texttt{Authorization: Bearer <READ\_PGHD\_JWT>} \\
+    \hline
+    \textit{Query params} & \texttt{patient\_iota\_address=0x\ldots} \\
+    \hline
+    \textit{Request body} & - \\
+    \hline
+    \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"data": \{\par
+\hspace*{2.0em}"enc\_pghd": "\ldots",\par
+\hspace*{2.0em}"enc\_aes\_key\_nonce": "\ldots",\par
+\hspace*{2.0em}"capsule": "\ldots",\par
+\hspace*{2.0em}"cfrag": "\ldots",\par
+\hspace*{2.0em}"pghd\_public\_key": "\ldots",\par
+\hspace*{2.0em}"metadata": \{ \}\par
+\hspace*{1.0em}\},\par
+\hspace*{1.0em}"status\_code": 200\par
+\}
+\endgroup \\
+    \hline
+\end{styledxltabular}
+
+
+\subsubsection{\textit{Endpoint} \texttt{POST /pghd/invalidate}}\label{subsubsec:pre-endpoint-pghd-invalidate}
+
+\textit{Endpoint} ini digunakan untuk mengubah status metadata PGHD menjadi invalid pada \textit{smart contract}. 
+\textit{Endpoint} dipanggil ketika \textit{client} tenaga kesehatan atau PRE menemukan data yang rusak, misalnya hash \textit{ciphertext} tidak sesuai, atau \textit{signature} tidak valid. 
+\textit{Request} harus menggunakan token \texttt{ReadPghd}. 
+PRE memastikan tenaga kesehatan masih memiliki akses PGHD untuk pasien tersebut, lalu memanggil \textit{smart contract} \texttt{invalidate\_pghd\_entry} dengan CID dan alasan invalidasi. 
+Setelah invalidasi, PRE mengembalikan daftar metadata PGHD terbaru yang masih valid.
+
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Spesifikasi \textit{Endpoint} POST /pghd/invalidate pada PRE}\label{tab:pre-endpoint-pghd-invalidate} \\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Komponen} & \textbf{Nilai} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textit{Auth header} & \texttt{Authorization: Bearer <READ\_PGHD\_JWT>} \\
+    \hline
+    \textit{Query params} & - \\
+    \hline
+    \textit{Request body} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"cid": "\ldots",\par
+\hspace*{1.0em}"failure\_reason": "SIGNATURE\_INVALID",\par
+\hspace*{1.0em}"patient\_iota\_address": "0x\ldots"\par
+\}
+\endgroup \\
+    \hline
+    \textit{\textit{Response} body success} & Tipe: \texttt{application/json},
+\begingroup\ttfamily\small
+\setlength{\parindent}{0pt}
+\{\par
+\hspace*{1.0em}"data": [ ],\par
+\hspace*{1.0em}"status\_code": 200\par
+\}
+\endgroup \\
+    \hline
+\end{styledxltabular}
+
+
+% \subsubsection{Alur \textit{Submit} PGHD}
+
+% \textit{Endpoint} \textit{submit} PGHD yang dijelaskan pada Subbab~\ref{subsubsec:pre-endpoint-pghd-submit} menerima \textit{batch} PGHD dari \textit{client} Android. 
+% PRE terlebih dahulu memvalidasi alamat IOTA pasien dan melakukan \textit{decode} \textit{ciphertext} PGHD dari format Base64. 
+% Setelah itu, PRE menghitung hash SHA-256 dari \textit{ciphertext} dan membandingkannya dengan \texttt{h\_cipher} yang dikirim \textit{client}. 
+% Jika hash tidak sesuai, \textit{request} ditolak.
+
+% Jika hash sesuai, PRE mengambil \textit{public key} PGHD pasien dari \textit{smart contract} atau \textit{cache} Redis. 
+% \textit{Public key} tersebut digunakan untuk memverifikasi \texttt{signature} PGHD atas \texttt{h\_cipher}. 
+% Verifikasi ini memastikan bahwa \textit{ciphertext} PGHD benar-benar dibuat oleh pasien pemilik key PGHD\@. Setelah \textit{signature} valid, PRE menyimpan \textit{ciphertext} ke IPFS dan memperoleh CID\@. CID, hash, \textit{signature}, capsule, dan metadata \textit{batch} kemudian dikemas sebagai metadata PGHD dan dicatat ke \textit{smart contract} melalui fungsi \texttt{submit\_pghd}.
+
+% \subsubsection{Alur Baca PGHD}
+
+% \textit{Endpoint} daftar PGHD pada Subbab~\ref{subsubsec:pre-endpoint-pghd-list} dan \textit{endpoint} detail PGHD pada Subbab~\ref{subsubsec:pre-endpoint-pghd-detail} hanya dapat dipanggil dengan token akses yang memiliki \textit{purpose} \texttt{ReadPghd}. 
+% Saat tenaga kesehatan meminta daftar PGHD, PRE memeriksa token akses dan memastikan material \textit{re-encryption} untuk pasangan pasien dan tenaga kesehatan masih tersedia pada Redis. 
+% Setelah itu, PRE memanggil \textit{smart contract} untuk mengambil daftar metadata PGHD yang masih berstatus valid. 
+% Metadata lama yang tidak memiliki \texttt{signature} diinvalidasi otomatis dengan alasan \texttt{LEGACY\_PGHD\_SIGNATURE\_SCHEMA} dan tidak dikembalikan sebagai data valid.
+
+% Saat tenaga kesehatan membuka satu entri PGHD, PRE mengambil \textit{ciphertext} dari IPFS berdasarkan CID yang tercatat di IOTA\@. 
+% PRE kemudian menghitung hash \textit{ciphertext} dan membandingkannya dengan hash \textit{on-chain}. 
+% PRE juga memverifikasi \texttt{signature} atas \texttt{h\_cipher}. 
+% Jika hash atau \textit{signature} tidak cocok, PRE menginvalidasi entri PGHD tersebut dan mengembalikan error kepada \textit{client} tenaga kesehatan. 
+% Jika verifikasi berhasil, PRE membuat \textit{cfrag} dari \textit{kfrag} yang tersimpan pada Redis dan mengembalikannya kepada \textit{client} tenaga kesehatan. 
+% \textit{Client} tenaga kesehatan kemudian melakukan dekripsi akhir menggunakan AES-GCM\@.
+
+% \subsubsection{\textit{Capability} Akses PGHD}
+
+% Material akses sementara disimpan pada Redis dengan \textit{key} yang mengandung tujuan akses, alamat tenaga kesehatan, dan alamat pasien. 
+% Untuk akses PGHD, \textit{key} tersebut menggunakan purpose \texttt{read\_pghd}. 
+% Material yang disimpan meliputi \textit{kfrag}, \textit{public key} pasien, \textit{public key} data, \textit{public key} penanda tangan, dan \textit{ciphertext} seed data yang diperlukan untuk membuka \textit{payload}. 
+% Jika akses dicabut atau TTL habis, material tersebut tidak lagi tersedia sehingga tenaga kesehatan tidak dapat melakukan dekripsi PGHD meskipun masih memiliki \textit{ciphertext}.

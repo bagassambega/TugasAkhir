@@ -1,0 +1,158 @@
+% chktex-file 44
+% chktex-file 1
+
+\subsection{Pengujian Non-Fungsional}\label{pengujian-non-fungsional}
+
+Pengujian non-fungsional memverifikasi properti NF01--NF06 yang diturunkan dari analisis ancaman dan kebutuhan \textit{provenance}.
+
+% \subsubsection{Matriks \textit{Traceability}}
+
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.08\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+%     \hiderowcolors
+%     \caption{\textit{Traceability} Ancaman, Kebutuhan, dan Pengujian}\label{tab:traceability-threat-nfr-test} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Uji} & \textbf{Ancaman} & \textbf{Kebutuhan} & \textbf{Properti yang Diuji} & \textbf{Kriteria Keberhasilan} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     T-NF01 & T-T02, T-I01 & NF01 & Tindakan hanya dapat dilakukan oleh pihak dengan kewenangan yang sesuai. & Kasus tanpa persetujuan, salah pemilik/penerima, salah cakupan, kedaluwarsa, atau dicabut ditolak. \\
+%     \hline
+%     T-NF02 & T-I01, T-I02 & NF02 & Pihak atau komponen tanpa kewenangan tidak memperoleh representasi PGHD yang dapat dipahami maupun informasi pembuka akses. & \textit{Inspect} komunikasi, penyimpanan eksternal, respons gagal, dan \textit{log} tidak menemukan isi PGHD terbaca pada lokasi yang tidak berwenang. \\
+%     \hline
+%     T-NF03 & T-T01, T-T02 & NF03 & Perubahan isi, \textit{metadata}, persetujuan, atau status dapat dideteksi sebelum digunakan. & Setiap variasi manipulasi ditolak dan ditandai tidak valid dan tidak ditampilkan sebagai PGHD sah. \\
+%     \hline
+%     T-NF04 & T-T01, T-T02 & NF04 & Informasi asal-usul dan status validitas dapat ditelusuri. & \textit{Field provenance} dan status yang diwajibkan tersedia serta konsisten dengan skenario. \\
+%     \hline
+%     T-NF05 & T-D01 & NF05 & Sistem tetap memproses PGHD pada beban uji yang ditetapkan tanpa kehilangan data atau operasi eksternal tidak terkendali. & Jumlah data masuk sama dengan jumlah data yang tersimpan/terproses, aplikasi tidak \textit{crash}, dan operasi eksternal mengikuti strategi rancangan. \\
+%     \hline
+%     T-NF06 & T-D02 & NF06 & Proses dapat pulih dari gangguan sementara tanpa kehilangan data. & Data yang belum selesai tetap ada, status kegagalan terlihat, dan setelah pemulihan setiap unit data selesai tepat satu kali. \\
+%     \hline
+% \end{styledxltabular}
+
+\subsubsection{Skenario T-NF01: Akses PGHD Tanpa Izin}
+
+Pengujian menggunakan satu pasien, kasus ketika tenaga kesehatan yang memperoleh persetujuan sesuai skenario, dan kasus ketika tenaga kesehatan tidak memiliki persetujuan yang sesuai.
+Sistem harus menolak seluruh permintaan yang diminta oleh tenaga kesehatan tanpa akses PGHD sebelum PGHD atau informasi sensitif untuk mengakses PGHD dikembalikan.
+Pada jalur PGHD, titik serang yang diuji adalah permintaan \textit{client} tenaga kesehatan ke PRE untuk daftar dan detail PGHD tanpa token, dengan token tidak valid, serta dengan token milik tenaga kesehatan yang tidak memiliki akses \texttt{READ\_PGHD} aktif.
+Respons gagal tidak boleh memuat \texttt{enc\_pghd}, \texttt{c\_frag}, \texttt{enc\_aes\_key\_nonce}, maupun material kunci PRE yang dapat digunakan untuk membuka objek PGHD dari IPFS\@.
+
+% \begin{lstlisting}[caption={Pengujian autentikasi dan otorisasi PGHD}, label={lst:nf01-confidentiality}, float=htb]
+% PRE_BASE_URL=http://127.0.0.1:4100 \
+% PATIENT_IOTA_ADDRESS=0x... \
+% AUTHORIZED_ACCESS_TOKEN_READ_PGHD=eyJ... \
+% UNAUTHORIZED_ACCESS_TOKEN_READ_PGHD=eyJ... \
+% ./scripts/non-functional/nf01_confidentiality.sh
+% \end{lstlisting}
+
+\subsubsection{Skenario T-NF02: Kerahasiaan PGHD}
+
+Penguji menggunakan satu PGHD valid, kemudian memeriksa representasi data pada titik setelah data meninggalkan konteks penggunaan yang berwenang: \textit{payload} komunikasi, objek penyimpanan eksternal, \textit{metadata} publik, respons akses yang ditolak, dan \textit{log} aplikasi yang relevan.
+Skenario berhasil apabila nilai asli PGHD dan isi klinis tidak ditemukan dalam bentuk yang dapat dipahami pada titik tersebut serta respons tidak sah tidak memuat informasi yang memungkinkan data dibuka.
+Pada implementasi terpilih, pemeriksaan dilakukan terhadap \textit{payload} menuju PRE, objek pada IPFS, \textit{metadata} pada IOTA, dan respons \textit{endpoint} PGHD\@.
+Titik yang diuji mencakup pengiriman dari \textit{client} pasien ke PRE, penyimpanan \textit{ciphertext} oleh PRE ke IPFS, pencatatan metadata oleh PRE ke IOTA, dan pengambilan \textit{ciphertext} dari IPFS saat tenaga kesehatan membuka PGHD\@.
+
+\subsubsection{Skenario T-NF03: Deteksi Manipulasi Data dan Status}
+
+PGHD valid digunakan sebagai acuan, kemudian dibuat variasi dengan perubahan pada \texttt{enc\_pghd}, \texttt{h\_cipher}, \texttt{signature}, referensi CID IPFS, metadata pada IOTA, dan status validitas.
+Pada titik \textit{client} pasien ke PRE, PRE harus menolak \textit{payload} yang \textit{ciphertext}, hash, atau tanda tangannya berubah sebelum data disimpan ke IPFS maupun dicatat ke IOTA\@.
+Pada titik IPFS ke \textit{client} tenaga kesehatan, objek IPFS rusak disimulasikan dengan membuat objek \textit{ciphertext} baru yang tidak sesuai dengan \texttt{h\_cipher} pada metadata.
+Sistem harus menolak data tersebut ketika dibuka dan menginvalidasi metadata terkait.
+Selain itu, dilakukan percobaan perubahan persetujuan dan \textit{metadata} oleh aktor yang tidak memiliki kewenangan.
+Sistem harus mendeteksi perbedaan sebelum data digunakan, menolak data dan operasi terkait, dan tidak menampilkan data yang gagal sebagai PGHD valid.
+
+% \begin{lstlisting}[caption={Pengujian integritas PGHD}, label={lst:nf02-integrity}, float=htb]
+% PGHD_VALID_SUBMIT_PAYLOAD=tmp/pghd-valid-submit.json \
+% PRE_BASE_URL=http://127.0.0.1:4100 \
+% ./scripts/non-functional/nf02_integrity.sh
+% \end{lstlisting}
+
+\subsubsection{Skenario T-NF04: Kelengkapan \textit{Provenance} dan Status}
+
+PGHD dari setiap kategori sumber yang dipilih pada Subbab~\ref{alternatif-sumber-data} dikumpulkan dan diakses oleh tenaga kesehatan.
+Penguji memeriksa identitas pasien, waktu pengukuran, kategori sumber, perangkat atau aplikasi asal bila tersedia, metode pencatatan, riwayat pemrosesan yang didefinisikan rancangan, dan status validasi.
+Tindakan pemberian akses, pencabutan akses, pengiriman, dan invalidasi juga diperiksa agar dapat ditelusuri kepada aktor serta waktunya.
+\textit{Provenance} membuktikan keterlacakan informasi yang dicatat, bukan akurasi klinis perangkat.
+
+% \begin{lstlisting}[caption={Pengujian provenance PGHD}, label={lst:nf05-provenance}, float=htb]
+% PGHD_JSON=/path/to/exported-pghd.json \
+% ./scripts/non-functional/nf05_provenance.sh
+% \end{lstlisting}
+
+\subsubsection{Skenario T-NF05: Kapasitas Pengolahan dan Pengiriman PGHD}
+
+Pengujian menghasilkan 151.200 \textit{record} sintetis dengan struktur dan distribusi ukuran yang valid, lalu menjalankan alur pengumpulan sampai unit pengiriman sesuai strategi yang dipilih pada Subbab~\ref{alternatif-pengumpulan-pghd} dan Subbab~\ref{alternatif-trigger-pengiriman-pghd}.
+Beban tersebut dihitung dari konfigurasi interval pengumpulan \textit{default} satu menit pada \textit{client} Android, sehingga satu \textit{stream} sensor menghasilkan \(24 \times 60 = 1.440\) \textit{record} per hari.
+Rata-rata jumlah sensor pada perangkat \textit{mobile} adalah 15 sensor \parencite{fortunebusinessinsightsSensorsSmartphones}.
+Skenario uji memakai asumsi \textit{backlog} tujuh hari dan 15 data \textit{stream} PGHD yang dihasilkan oleh 15 buah sensor, sehingga jumlah \textit{record} yang diuji adalah \(1.440 \times 7 \times 15 = 151.200\).
+Asumsi tujuh hari digunakan sebagai skenario keterlambatan sinkronisasi mingguan yang lebih berat dari operasi harian.
+Dalam pengujian unit, 151.200 \textit{record} tersebut di-\textit{generate} dalam jumlah 600 \textit{records} per detik.
+Pemilihan 600 \textit{records} per detik ini didasarkan pada jumlah sumber data 15 buah sensor dikalikan dengan menghasilkan 40 data per detiknya.
+Jumlah 40 data per detik didasarkan pada \textit{worst case condition}, di mana normalnya sebuah sensor hanya akan menghasilkan satu buah \textit{record} per \textit{generation}.
+Skenario berhasil apabila tidak ada \textit{record} hilang, aplikasi tidak \textit{crash}, jumlah operasi eksternal sesuai strategi pengelolaan volume yang telah dirancang, dan server dapat menerima seluruh \textit{requests} pengiriman PGHD dari pasien.
+
+Skenario kedua adalah pengujian kapabilitas sistem DecMed dalam menerima data PGHD\@.
+Pengujian dilakukan dengan mengirimkan 20 \textit{batch} PGHD secara konkuren dari 20 pasien berbeda.
+Pemilihan 20 pasien secara konkuren ini didasarkan pada rata-rata jumlah pasien di rumah sakit di Amerika Serikat setiap harinya (33.553.725 data masuk dari 5.121 rumah sakit setiap tahun, berarti 18 pasien per rumah sakit per hari dibulatkan ke atas).
+Skenario berhasil apabila tidak ada data \textit{batch} yang hilang, dan semua diterima di sistem DecMed dan tersimpan.
+
+Pada implementasi \textit{smart contract} yang digunakan untuk pengujian ini, metadata PGHD dipartisi ke dalam objek \texttt{PatientPghdStore} per pasien.
+Objek \texttt{PatientIdAccount} tetap dipakai sebagai registry akun dan referensi \texttt{pghd\_store\_id}, tetapi bukan lagi objek utama yang dimutasi setiap kali PRE mencatat metadata PGHD\@.
+Pemisahan ini penting untuk skenario konkuren karena setiap pasien uji menulis ke objek metadata PGHD miliknya sendiri.
+Dengan demikian, kegagalan akibat konflik versi objek global dapat dikurangi tanpa mengubah kontrak keamanan akses PGHD\@.
+
+
+% \begin{lstlisting}[caption={Pengujian kapasitas PGHD}, label={lst:nf04-availability}, float=htb]
+% ./scripts/non-functional/nf04_availability.sh
+% \end{lstlisting}
+
+\subsubsection{Skenario T-NF06: Pemulihan dari Gangguan Sementara}
+
+Gangguan disimulasikan pada dua kondisi: konektivitas tidak tersedia sebelum data selesai dikirim dan salah satu layanan pendukung tidak tersedia ketika pengiriman atau pembacaan berlangsung.
+Sebelum gangguan dibuat, penguji mencatat identitas serta jumlah unit data yang belum selesai.
+Selama gangguan, sistem harus mempertahankan data dan menunjukkan status kegagalan.
+Setelah kondisi pulih, proses dijalankan kembali.
+Skenario berhasil apabila seluruh unit data awal akhirnya selesai diproses tepat satu kali, tidak ada data hilang atau duplikat, dan kegagalan dapat ditelusuri melalui status atau pesan yang tersedia.
+
+% \subsubsection{Status Bukti Pengujian}
+
+% \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.10\textwidth}|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{0.16\textwidth}|}
+%     \hiderowcolors
+%     \caption{Status Bukti Pengujian Non-Fungsional}\label{tab:hasil-non-fungsional} \\
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Kode} & \textbf{Bukti Utama} & \textbf{Batas Interpretasi} & \textbf{Status} \\
+%     \hline
+%     \showrowcolors
+%     \endfirsthead
+%     \hline
+%     \rowcolor{headerBg}
+%     \textbf{Kode} & \textbf{Bukti Utama} & \textbf{Batas Interpretasi} & \textbf{Status} \\
+%     \hline
+%     \endhead
+%     \hline
+%     \endfoot
+%     \hline
+%     \endlastfoot
+%     T-NF01 & Skrip HTTP dan \textit{unit test} akses negatif/positif. & Kasus dengan token aktor nyata memerlukan konfigurasi lingkungan pengujian. & Terverifikasi sebagian \\
+%     \hline
+%     T-NF02 & Rencana inspeksi \textit{payload}, penyimpanan eksternal, \textit{metadata}, respons gagal, dan \textit{log}. & Memerlukan satu pengujian \textit{end-to-end} dengan nilai penanda PGHD\@. & Perlu diuji \\
+%     \hline
+%     T-NF03 & \textit{Unit test} verifikasi dan status \textit{invalid}. & Variasi \textit{submit} dan objek penyimpanan termodifikasi memerlukan \textit{fixture} PGHD valid. & Terverifikasi sebagian \\
+%     \hline
+%     T-NF04 & Pemeriksaan \textit{field provenance} pada kode sumber. & \textit{Payload} ekspor dan status data masih perlu diperiksa \textit{end-to-end}. & Terverifikasi sebagian \\
+%     \hline
+%     T-NF05 & \textit{Stress test} 151.200 \textit{record} pada client dan 20 submit konkuren ke PRE. & Tidak menghasilkan klaim SLA produksi. & Terverifikasi \\
+%     \hline
+%     T-NF06 & Rencana rekonsiliasi data sebelum dan setelah gangguan sementara. & Belum tersedia bukti pemulihan \textit{end-to-end} dan tepat-satu-kali. & Perlu diuji \\
+%     \hline
+% \end{styledxltabular}

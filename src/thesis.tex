@@ -24,13 +24,13 @@
 
 \begin{document}
 
-\title{Implementasi User Managed Access Consent Portal pada Rekam Data Medis Berbasis Blockchain}
+\title{Pengembangan Modul Patient-Generated Health Data pada Sistem Rekam Medis DecMed}
 \date{}
 \author{
 	Bagas Sambega Rosyada \\
 	NIM: 13522071
 }
-\newcommand\tanggalpengesahan{24 Desember 2025}
+\newcommand\tanggalpengesahan{17 Juli 2026}
 
 \pagenumbering{roman}
 \setcounter{page}{1}
@@ -38,15 +38,16 @@
 \input{chapters/ta/cover}
 \input{chapters/ta/approval-1}
 \input{chapters/ta/statement}
+\input{chapters/ta/ai-agreement.tex}
 
 \pagestyle{plain}
 
 \input{chapters/ta/abstract-id}
-\input{chapters/ta/abstract-en}
+% \input{chapters/ta/abstract-en}
 
 \input{chapters/ta/forewords}
 
-\titleformat*{\section}{\centering\bfseries\Large\MakeUpperCase}
+\titleformat*{\section}{\centering\bfseries\ThesisChapterTitleFont\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{0pt}{4pt}
 
 % Setting judul toc, lot, lof, bib
@@ -55,15 +56,17 @@
 \renewcommand{\listtablename}{DAFTAR TABEL}
 \renewcommand{\bibname}{DAFTAR PUSTAKA}
 
-% daftar isi, lampiran, gambar, table
+% daftar isi, lampiran, gambar, tabel, kode, dan rumus
 \tableofcontents
 \listofappendices
 \listoffigures
 \listoftables
+\listofcodes
+\listofformulas
 
 \newpage
 
-\titleformat*{\section}{\bfseries\large}
+\titleformat*{\section}{\normalfont\ThesisSectionTitleFont\bfseries}
 \pagenumbering{arabic}
 
 %----------------------------------------------------------------%
@@ -96,7 +99,7 @@
 \titlespacing*{\section}{0pt}{0pt}{*1}
 
 % Setting judul anak lampiran
-\titleformat*{\section}{\bfseries}
+\titleformat*{\section}{\normalfont\ThesisSectionTitleFont\bfseries}
 
 \input{chapters/ta/appendix/appendix.tex}
 

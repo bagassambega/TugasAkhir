@@ -1,7 +1,38 @@
-\chapter{Penutup}
+\chapter{Kesimpulan dan Saran}
 
 \section{Kesimpulan}
-\blindtext
+
+Pada Tugas Akhir ini, telah dirancang dan diimplementasikan modul integrasi Patient-Generated Health Data (PGHD) ke dalam sistem rekam medis terdesentralisasi DecMed. 
+Pipeline pengumpulan, penyimpanan lokal, pengelompokan ke dalam \textit{batch}, dan pengiriman PGHD dirancang dengan mekanisme \textit{offline-first} sehingga mampu menangani karakteristik data \textit{time-series} berfrekuensi tinggi dan kondisi perangkat yang sering tidak terhubung jaringan. 
+Data PGHD dikumpulkan pada \textit{client} Android pasien, disimpan sementara pada basis data lokal, kemudian dikirimkan dalam bentuk \textit{batch} dengan pencatatan status pengiriman serta penjadwalan ulang otomatis menggunakan ketika koneksi kembali tersedia. 
+Pengujian menunjukkan bahwa sistem mampu memproses 151.200 \textit{record} sintetis, serta menerima 20 \textit{batch} konkuren dari 20 pasien berbeda tanpa kehilangan data maupun \textit{crash} pada aplikasi. 
+
+Kebutuhan \textit{data provenance} PGHD dipenuhi melalui pencatatan metadata yang terstruktur untuk setiap entri, mencakup identitas pasien, waktu pengukuran, kategori sumber, perangkat atau aplikasi asal, metode pencatatan, riwayat pemrosesan, dan status validasi. 
+Hasil pengujian non-fungsional menunjukkan bahwa seluruh \textit{field provenance} yang diwajibkan tersedia dan konsisten pada setiap skenario sumber PGHD yang diuji, sehingga kebutuhan \textit{data provenance} PGHD terhadap sistem DecMed terpenuhi. 
+
+Kerahasiaan, integritas, dan ketersediaan data PGHD yang terintegrasi dengan DecMed dijamin melalui rangkaian mekanisme keamanan. 
+Kerahasiaan dijaga dengan enkripsi \textit{end-to-end} menggunakan AES-GCM di sisi \textit{client} pasien dan delegasi akses menggunakan Proxy Re-Encryption sehingga tidak ada komponen infrastruktur yang menyimpan \textit{plaintext} PGHD dan tenaga kesehatan hanya dapat membaca data setelah memperoleh persetujuan aktif pasien dalam batas waktu tertentu. 
+Integritas dijamin dengan kombinasi fungsi hash SHA-256 dan tanda tangan digital ECDSA yang memungkinkan sistem mendeteksi dan menolak seluruh variasi manipulasi terhadap \textit{ciphertext}, nilai hash, tanda tangan, referensi CID, maupun metadata IOTA sebelum data digunakan. 
+Ketersediaan data diwujudkan melalui strategi \textit{offline-first} dan mekanisme \textit{at least once delivery}, sehingga setiap unit data yang belum berhasil dikirim tetap tercatat statusnya dan diselesaikan setelah gangguan konektivitas teratasi. 
+Rangkaian pengujian non-fungsional mengonfirmasi bahwa sistem DecMed-PGHD memenuhi properti kerahasiaan, integritas, \textit{provenance}, dan ketersediaan yang dibutuhkan untuk pemanfaatan PGHD dalam ekosistem DecMed. 
 
 \section{Saran}
-\blindtext
+
+Berdasarkan keterbatasan yang ditemukan selama pengerjaan tugas akhir ini,
+terdapat beberapa aspek yang dapat dieksplorasi maupun dikembangkan lebih lanjut
+sebagai topik penelitian selanjutnya.
+
+\begin{enumerate}
+    \item Mendukung mekanisme pengumpulan dan pengiriman data yang lebih adaptif.
+    Misalnya, menyesuaikan frekuensi sinkronisasi data secara otomatis berdasarkan
+    kondisi perangkat pasien seperti status baterai dan kualitas koneksi jaringan.
+
+    \item Merancang mekanisme pemulihan kredensial atau identitas pasien yang lebih
+    mudah digunakan pengguna agar data kesehatan tidak hilang secara permanen
+    apabila pasien kehilangan akses ke perangkat utamanya.
+
+    \item Mengembangkan mekanisme penanganan konkurensi tinggi di sisi server untuk
+    skenario produksi dengan banyak pasien, misalnya dengan mekanisme
+    \emph{async submission}, \emph{job queue}, atau mekanisme \emph{retry} yang
+    dapat mendukung \emph{exactly once}.
+\end{enumerate}

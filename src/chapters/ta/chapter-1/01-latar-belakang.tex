@@ -1,32 +1,43 @@
-\section{Latar Belakang}\label{subsec:latar-belakang}
+\section{Latar Belakang}\label{sec:latar-belakang}
 
 \sloppy
 
-Kesehatan merupakan salah satu aspek fundamental dalam hak asasi manusia 
-\parencite{standarnormanomor4kesehatankomnasham}. Hal ini dijamin oleh negara melalui penyelenggaraan kesehatan dan diatur melalui perundang-undangan yang menyatakan 
-bahwa negara menjamin hak setiap warga negara untuk mewujudkan kehidupan yang baik, sehat, serta sejahtera lahir dan batin \parencite{uunomor17tahun2023}.
+DecMed merupakan sebuah kerangka kerja manajemen rekam medis elektronik (RME) terdesentralisasi yang dibangun di atas \textit{Distributed Ledger Technology} (DLT) berbasis IOTA \parencite{Purnama_2026}.
+Sistem ini dirancang untuk mengatasi keterbatasan sistem RME konvensional yang masih terfragmentasi antar fasyankes dan belum memiliki mekanisme interoperabilitas yang menjaga kedaulatan data pasien secara penuh \parencite{Purnama_2026}.
+Dengan memanfaatkan DLT, DecMed berupaya mengatasi permasalahan tersebut melalui arsitektur yang terdesentralisasi dan bersifat \textit{trustless}.
 
-Penyelenggaraan pelayanan kesehatan di suatu wilayah atau suatu negara memerlukan mekanisme pencatatan pelayanan kesehatan dan informasi medis pasien yang disebut sebagai rekam medis. 
-Penyelenggaraan pelayanan kesehatan yang dinamis dan membutuhkan kolaborasi antar-fasilitas pelayanan kesehatan mendorong terciptanya sistem 
-rekam medis berbasis digital atau biasa disebut Rekam Medis Elektronik (RME).
-Untuk memenuhi kebutuhan tersebut, Pemerintah Republik Indonesia sudah membangun sistem rekam medis elektronik terintegrasi yang dinamakan SatuSehat, dan diatur melalui Peraturan 
-Menteri Kesehatan Nomor 24 Tahun 2022.
+Meskipun demikian, implementasi DecMed saat ini masih bersifat \textit{provider-centric}.
+Data kesehatan pasien hanya terbatas didapatkan oleh sistem DecMed ketika terjadi interaksi dengan fasyankes, yaitu ketika kunjungan klinis dan pencatatan oleh tenaga medis.
+% Padahal, banyak kondisi kesehatan memerlukan ketersediaan data yang mencerminkan kondisi pasien di antara kunjungan klinis (\textit{between-visit data}) untuk mendukung pengambilan keputusan yang lebih akurat ketika tenaga kesehatan melakukan evaluasi pada kunjungan berikutnya \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+% Omoloja: Treatment plans are important in identifying patient treatment or goal barriers and to gain a better understanding of a patient’s health between ambulatory visits
+Padahal, pasien saat ini mampu menghasilkan sendiri berbagai parameter kesehatan secara mandiri melalui perangkat \textit{wearable} dan sensor bawaan \textit{smartphone}, seperti detak jantung, tekanan darah, saturasi oksigen, kualitas tidur, dan tingkat aktivitas fisik harian, yang seluruhnya belum dapat ditampung oleh arsitektur DecMed saat ini \parencite{Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}. 
+Data semacam ini tidak dapat diperoleh dari rekam medis berbasis kunjungan saja, karena kunjungan klinis hanya merekam kondisi sesaat pada waktu pemeriksaan, bukan gambaran kondisi pasien secara keseluruhan \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+% Cohen: Health care professionals and PHD study team members reported that PGHD fostered a deeper and more accurate understanding of a patient’s illness through tracking of key symptoms and reported having better informed visits with patients who collected PGHD
 
-Sistem rekam medis elektronik memerlukan sistem keamanan dan akses kontrol yang komprehensif karena berkaitan dengan data dan privasi pasien. Berdasarkan Peraturan 
-Menteri Kesehatan Nomor 24 Tahun 2022, isi rekam medis adalah milik pasien dan harus dijaga kerahasiaannya \parencite{permenkes2022rekammedis}. Berbagai penelitian dan pengembangan 
-sudah dilakukan untuk melindungi kerahasiaan dan integritas sistem rekam medis elektronik, salah satunya dengan teknologi \textit{Distributed Ledger Technology} (DLT).
+Untuk mengatasi keterbatasan tersebut, diperlukan integrasi \textit{Patient-Generated Health Data} (PGHD) ke dalam ekosistem DecMed.
+PGHD merupakan data kesehatan yang dicatat dan dihasilkan secara mandiri oleh pasien, baik melalui input manual maupun melalui perangkat \textit{wearable} dan perangkat seluler (\textit{mobile}) \parencite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR}.
+% Patient-generated health data (PGHD) are “data created, recorded, and gathered by and from patients”
+% PGHD is patient-directed and patient-informed and is not collected through clinic tools but through a range of readily available commercial off-the-shelf tools such as mobile phone apps and wearable activity trackers (Cohen)
 
-Salah satu sistem rekam medis elektronik yang sudah mengimplementasikan teknologi DLT dalam sistemnya adalah MedRec yang dikembangkan oleh MIT.\@ Sistem ini mengimplementasikan 
-teknologi \textit{blockchain} dan \textit{capability based access control} (CapBAC) yang disimpan sebagai smart contract untuk mengatur pihak-pihak yang dapat mengakses rekam medis \parencite{medrec}. 
-Namun implementasi \textit{blockchain} pada sistem rekam medis elektronik memberikan tantangan baru berupa tambahan \textit{latency} saat mengakses data karena menggunakan konsensus 
-\textit{Proof-of-Work}, sehingga rata-rata dibutuhkan waktu hingga 10 detik untuk menetapkan menetapkan kontrak baru dan merespons.
+Secara klinis, PGHD dapat meningkatkan kualitas pengambilan keputusan dengan menyediakan data kondisi pasien di antara kunjungan klinis, sehingga memberikan gambaran yang lebih luas mengenai penyakit, respon terhadap pengobatan dan kondisi pasien di luar kunjungan klinis \parencite{Nazi2024_Unleashing_PGHD}.
+% Patient-generated health data (PGHD) is data created, captured, or recorded by patients in between healthcare appointments, and is an important supplement to data generated during periodic clinical encounters. PGHD has potential to improve diagnosis and management of chronic conditions, improve health outcomes, and facilitate more “connected health” between patients and their care teams. (Nazi)
+Bagi pasien, kemampuan untuk mencatat, memantau, dan membagikan data kesehatan secara mandiri juga mendorong keterlibatan pasien dalam pengelolaan kesehatan dan pengambilan keputusan bersama dengan tenaga kesehatan \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% Patient Engagement: PGHD tools can foster better communication between patients and providers, improving adherence to care plans. (Khatiwada)
+Untuk merealisasikan manfaat tersebut, pasien perlu memberikan persetujuan eksplisit atas pengumpulan dan penggunaan datanya sebagai prasyarat sebelum data dapat diintegrasikan ke dalam sistem \parencite{Nazi2024_Unleashing_PGHD}.
+% VHA OCC, in partnership with other VHA stakeholders, has adopted a broad definition of PGHD, based on a minor adaptation of the 2018 definition provided by the Department of Health and Human Services Office of the National Coordinator for Health Information Technology (ONC):1 PGHD is health-related data created, recorded, or gathered by or for patients (or family members or other caregivers) to promote health and wellness or to help address a health concern. PGHD may include remote device-generated consumer collected clinical data, health history, treatment history, biometric data, symptoms, and other types of patient-reported outcomes (PROs), perceived quality of life data, and patient goals, values and lifestyle choices. Healthrelated PGHD are distinct from data generated in clinical settings. Patients are primarily responsible for capturing and/or recording these data, and patients explicitly decide to share these data through some form of authorization or consent process, or by voluntarily sending or transmitting their data.
 
-Solusi lainnya yang diberikan adalah DecMed, implementasi sistem rekam medis elektronik berbasis IOTA yang dikembangkan oleh I Putu Bakta Hari Sudewa, mahasiswa S1 Teknik Informatika 
-Institut Teknologi Bandung angkatan 2021. Penggunaan IOTA memberikan penyelesaian permasalahan sistem rekam medis elektronik berbasis \textit{blockcchain} yang memiliki komputasi mahal.
-Implementasi DecMed sendiri menggunakan mekanisme akses kontrol \textit{capability based access control} (CapBAC) yang dikombinasikan dengan \textit{proxy re-encryption} dan 
-\textit{revoke time}.
+Namun, integrasi PGHD ke dalam arsitektur DecMed memberikan sejumlah tantangan.
+Tantangan pertama adalah kebutuhan akan arsitektur \textit{offline-first}, mengingat perangkat pasien tidak selalu terhubung ke jaringan secara stabil \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+%  Infrastructural Limitations: Inconsistent access to the high-speed internet and advanced medical technology can limit the integration of PGHD.
+Tantangan kedua adalah karakteristik data PGHD yang berasal dari sensor perangkat bersifat \textit{time-series} dengan frekuensi tinggi yang tidak efisien jika terus menerus dikirim \parencite{Haque_2024_Performance_Blockchain}.
+% IoT systems typically require significant computational ability in order to handle data from sensor devices with low latency, which is necessary to maintain time-critical services in transit and intelligent health care.
+Selain itu, diperlukan juga mekanisme aliran data dari sisi pasien hingga ke konsumsi klinis oleh tenaga kesehatan, seperti mekanisme pengumpulan dari sumber data, pengolahan, standardisasi, dan penyimpanan data, juga pengiriman hingga penggunaan data oleh tenaga kesehatan \parencite{Zeng2022-Standardized-PGD}. 
+% This viewpoint paper formulates the integration of PGD into clinical systems and workflow as a PGD integration pipeline and reviews the functional components of such a pipeline. A PGD integration pipeline includes PGD acquisition, aggregation, and consumption (Zeng Standardized)
 
-Implementasi DecMed juga masih menyisakan kelemahan dalam sistemnya, di antaranya manajemen pemulihan aksea yang rumit karena pasien akan diberikan 12 frasa pemulihan dan harus menyimpan
-keseluruhan frasa, dan juga waktu pencabutan akses yang statis dan tidak bisa diganti oleh pasien setelah ditetapkan. Untuk mengatasi kedua masalah ini, diusulkan penggunaan 
-User Managed Access (UMA) sebagai mekanisme \textit{authorization} dan juga implementasi \textit{consent portal} bagi pasien yang dapat memberikan kemudahan bagi pengguna untuk melakukan
-manajemen akses rekam medisnya kepada pihak lain.
+Selain karakteristik dan volume datanya, integrasi PGHD juga memunculkan tantangan dari sisi keamanan dan kepercayaan data.
+Data kesehatan yang dihasilkan pasien bersifat sensitif dan memerlukan perlindungan dari segi kerahasiaan (\textit{confidentiality}), integritas (\textit{integrity}), dan ketersediaan (\textit{availability}) \parencite{Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+% Additionally, the development of lightweight secure algorithms is crucial for resource-constrained implantable and wearable devices to prevent attacks that compromise confidentiality, integrity, and availability
+
+Di samping aspek kerahasiaan, integritas, dan ketersediaan, kebutuhan akan \textit{data provenance} menjadi hal yang penting dalam konteks PGHD\@. 
+Tanpa \textit{provenance}, tenaga kesehatan tidak dapat memverifikasi apakah suatu data PGHD benar-benar berasal dari pasien yang bersangkutan, kapan diukur, menggunakan perangkat apa, dan apakah telah mengalami transformasi selama pengiriman \parencite{Ahmed_2023_Data_Provenance}. 
+% In healthcare, data provenance is one of the essential processes that make it possible to track the sources and reasons behind any problem with a user’s data. (Ahmed)

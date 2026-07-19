@@ -1,0 +1,121 @@
+\subsection{Alternatif Pipeline PGHD-DecMed}\label{alternatif-arsitektur-pipeline-pghd}
+
+Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan}, terdapat beberapa komponen dari arsitektur \textit{pipeline} integrasi PGHD yang perlu dipertimbangkan, yaitu sumber data, pengumpulan dan pengolahan data, pengiriman data, dan pengaksesan data.
+
+\subsubsection{Sumber Data PGHD}\label{alternatif-sumber-data}
+
+Mengacu pada Subbab~\ref{studi-sumber-tipe-pghd} mengenai sumber data PGHD, terdapat beberapa sumber data yang dapat dipertimbangkan, yaitu,
+
+\begin{enumerate}
+    \item Perangkat sensor dan \textit{wearable},
+    \item Perangkat pemantauan di rumah dan lingkungan sekitar,
+    \item Perangkat \textit{mobile} dan aplikasi,
+    \item Perangkat medis,
+    \item Laporan mandiri pasien, dan
+    \item Data eksternal lainnya seperti media sosial
+\end{enumerate}
+
+Pada integrasi DecMed dan PGHD, sumber data yang dipilih dibatasi pada:
+\begin{enumerate}
+  \item Perangkat sensor dan \textit{wearable},
+  \item Perangkat \textit{mobile} dan aplikasi, dan
+  \item Laporan mandiri pasien.
+\end{enumerate}
+
+Perangkat medis, perangkat pemantauan dan sensor rumahan maupun lingkungan tidak dipertimbangkan karena memerlukan mekanisme validasi medis.
+Data eksternal seperti data yang berasal dari media sosial tidak dipertimbangkan karena memerlukan mekanisme tambahan untuk memfilter data yang merupakan data PGHD ataupun bukan.
+
+Selain itu, perkembangan, jumlah dan ketersediaan perangkat \textit{mobile}, aplikasi \textit{mobile} dan \textit{wearable} yang masif dan menjadi penghasil data PGHD terbanyak saat ini juga menjadi pertimbangan pemilihan.
+Laporan mandiri pasien tetap dipertimbangkan karena menjadi salah satu tipe data PGHD yang memerlukan intervensi dan masukan dari pasien dan tidak dapat dipenuhi oleh perangkat mobile maupun sensor dari \textit{wearable} saja.
+
+\subsubsection{Pengumpulan Data PGHD}\label{alternatif-pengumpulan-pghd}
+
+Mengacu pada Subbab~\ref{studi-pengolahan-pengelolaan-pghd}, terdapat beberapa mekanisme yang dapat digunakan untuk mengelola PGHD, yaitu dengan mengumpulkan data melalui agregasi pada \textit{smartphone}, mengirim data langsung ke sistem rekam medis, atau mengirimnya ke komponen eksternal seperti platform analitik dan AI\@. 
+Jika dikaitkan dengan kebutuhan integrasi DecMed dan PGHD, mekanisme pengumpulan dan pengolahan data pada sisi pasien dapat disederhanakan menjadi tiga alternatif berikut.
+
+\begin{enumerate}
+  \item Data \textit{raw} dikirim langsung dari perangkat \textit{wearable} dan aplikasi ke DecMed tanpa disimpan atau diolah terlebih dahulu.
+  \item Data dikumpulkan di \textit{smartphone} dan diolah terlebih dahulu sebelum dikirim ke DecMed.
+\end{enumerate}
+
+Pada alternatif pertama, data selalu bergantung pada koneksi jaringan yang tersedia dan frekuensi pengiriman data akan sangat bergantung pada deteksi/pengambilan data oleh sensor, karena ketika data langsung dikirim tanpa disimpan dan kondisi internet tidak \textit{reliable}, \textit{request} bisa di-\textit{drop} atau tidak sampai ke server DecMed. 
+Alternatif kedua memanfaatkan fungsi agregasi di \textit{smartphone} untuk mengurangi ukuran data yang dikirim, tetapi berisiko menghilangkan detail dari data asli yang mungkin dibutuhkan untuk analisis atau penilaian klinis di kemudian hari. 
+
+Pada integrasi DecMed dan PGHD ini, mekanisme yang dipilih adalah kombinasi alternatif pertama dan kedua, yaitu mengumpulkan dan menyimpan data \textit{raw} terlebih dahulu di penyimpanan lokal \textit{smartphone}, kemudian dibuatkan agregasi data sebagai visualisasi data yang akan ditampilkan kepada tenaga kesehatan.
+Jadi data asli akan dipertahankan dan agregasi data akan tetap dibuat, sehingga tidak ada detail informasi yang hilang dari data PGHD yang dikumpulkan, namun tenaga kesehatan dapat mendapatkan informasi kritis dan penting dari PGHD yang dikirim juga.
+
+\subsubsection{Pengolahan Data PGHD}\label{alternatif-pengolahan-pghd}
+
+Pengolahan data dilakukan agar tenaga kesehatan dapat mendapatkan informasi penting dari PGHD\@.
+Terdapat tiga alternatif mekanisme yang dipertimbangkan.
+
+\begin{enumerate}
+    \item \textbf{Tampilan daftar entri PGHD tanpa reduksi.} 
+    Seluruh entri \textit{batch} ditampilkan kepada tenaga kesehatan dalam bentuk daftar kronologis tanpa mekanisme prioritisasi atau pengolahan tambahan. 
+    Tenaga kesehatan harus membuka setiap entri secara manual untuk mengetahui isinya. 
+    Alternatif ini tidak menyediakan mekanisme apapun untuk membantu tenaga kesehatan mengidentifikasi entri yang bermakna klinis, sehingga beban penelusuran data sepenuhnya dibebankan kepada tenaga kesehatan.
+
+    \item \textbf{Filter anomali sebelum pengiriman batch.} 
+    Klien pasien melakukan deteksi anomali berbasis \textit{threshold} klinis sebelum pembentukan \textit{batch} dan hanya \textit{record} yang terdeteksi anomali yang dikemas ke dalam \textit{batch}. 
+    Data normal disimpan secara lokal tetapi tidak dikirimkan ke DecMed. 
+    Kelemahan alternatif ini adalah tenaga kesehatan tidak dapat membedakan antara \textit{batch} yang tidak terkirim karena tidak ada anomali dengan \textit{batch} yang tidak terkirim karena kegagalan teknis, sehingga menyulitkan interpretasi klinis. 
+    Selain itu, deteksi anomali memiliki risiko \textit{false positive}.
+
+    \item \textbf{Agregasi statistik dengan penanda anomali berbasis \textit{threshold}.} 
+    Seluruh data PGHD tetap dikirim dan disimpan di sistem DecMed. 
+    Pada saat pembentukan \textit{batch}, sebelum enkripsi dilakukan, klien pasien menghitung ringkasan statistik agregat, yaitu nilai minimum, maksimum, persentil, modus, median dan rata-rata untuk setiap tipe data dalam \textit{batch}, serta membandingkan nilai-nilai tersebut dengan \textit{threshold} klinis yang telah dikonfigurasi. 
+    Tipe data yang memiliki nilai di luar rentang \textit{threshold} dicatat sebagai penanda anomali. 
+    Di klien tenaga kesehatan, klien akan membangun grafik untuk menunjukkan tren data pasien.
+\end{enumerate}
+
+Pada integrasi DecMed dan PGHD ini, mekanisme yang dipilih adalah alternatif ketiga. 
+Ringkasan statistik dan penanda anomali ditampilkan langsung kepada tenaga kesehatan, tapi data asli tetap tersimpan utuh dan dapat dilihat secara detail oleh tenaga kesehatan. 
+
+\subsubsection{Pengiriman Data PGHD}\label{alternatif-trigger-pengiriman-pghd}
+
+Pada Subbab~\ref{studi-pengolahan-pengelolaan-pghd} dijelaskan bahwa pada sistem yang menggunakan sensor dan perangkat IoT seperti PGHD, mekanisme pengiriman data umumnya dibagi menjadi tiga kategori, yaitu \textit{periodic} (\textit{time-driven}), \textit{event-driven}, dan \textit{query-driven} (\textit{on-demand}). 
+Jika difokuskan pada pengiriman data dari \textit{smartphone} pasien ke DecMed, alternatif yang relevan adalah mekanisme \textit{periodic}, \textit{event-driven}, dan kombinasi keduanya.
+
+Secara garis besar, alternatif mekanisme pengiriman yang dipertimbangkan adalah:
+
+\begin{enumerate}
+  \item \textbf{Pengiriman murni periodik.} 
+  Data dikirim dalam bentuk \textit{batch} pada interval waktu yang tetap, misalnya setiap beberapa menit atau jam, tanpa pengiriman di luar jadwal tersebut. 
+  Mekanisme ini membuat beban jaringan dan konsumsi daya lebih mudah diprediksi karena pola pengiriman stabil.
+
+  \item \textbf{Pengiriman murni \textit{event-driven}.}
+  Data dikirim hanya ketika terjadi suatu \textit{event} tertentu, misalnya ketika nilai sensor melewati ambang batas atau ketika sistem lokal mendeteksi perubahan yang besar. 
+  Mekanisme ini bisa sangat efisien jika \textit{event} jarang terjadi, tetapi pola pengiriman menjadi sulit diprediksi dan bergantung penuh pada frekuensi \textit{event}.
+
+  \item \textbf{Pengiriman \textit{hybrid} periodik dan \textit{event-driven}.}
+  Data tetap dikirim secara periodik, tetapi ada tambahan pengiriman ketika kondisi tertentu tercapai, sehingga sistem tidak hanya bergantung pada satu jenis mekanisme saja.
+\end{enumerate}  
+
+Pengiriman murni periodik cocok ketika yang dibutuhkan adalah aliran data yang stabil dan dapat diprediksi, tetapi kurang fleksibel ketika volume data yang dikumpulkan sangat bervariasi. 
+Sebaliknya, pengiriman murni \textit{event-driven} dapat mengurangi jumlah pengiriman pada kondisi normal, tetapi bisa menghasilkan lonjakan pengiriman data ketika \textit{event} sering terjadi dan sulit dikendalikan beban jaringan maupun konsumsi daya. 
+\textit{Query-driven} tidak dipertimbangkan karena justru menjadi beban bagi pasien karena permintaan data tidak terjadwal atau tidak dapat diprediksi oleh pasien dan dapat menyebabkan volume/frekuensi pengiriman data tidak terprediksi.
+
+Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah kombinasi antara pengiriman periodik dan \textit{event-driven}. 
+Pengiriman dilakukan secara periodik sehingga akan terbentuk \textit{batch}, sehingga pola pengiriman tetap stabil dan deret waktu PGHD dapat dibentuk dengan baik.
+Selain itu, klien pasien memantau ukuran data yang terkumpul, dan jika ukuran \textit{batch} melebihi batas tertentu sebelum interval waktu berikutnya, klien dapat memicu pengiriman lebih awal (\textit{early trigger}) berbasis ukuran data.
+
+Dengan cara ini, data asli dari perangkat tetap terjaga dan tidak akan hilang meskipun ketika \textit{offline} dan tidak terus menerus dikirim dalam frekuensi tinggi, sekaligus tetap mendukung skenario ketika perangkat pasien sementara tidak memiliki koneksi internet karena data masih tersimpan aman di sisi klien.
+\subsubsection{Pengaksesan Data PGHD}\label{alternatif-pengaksesan-pghd}
+
+Pada Subbab~\ref{studi-pghd} dijelaskan bahwa PGHD dapat dimanfaatkan baik secara \textit{remote} maupun ketika kunjungan. 
+Pasien menganggap pemberian PGHD saat kunjungan dapat memberatkan, sementara tenaga kesehatan khawatir jika PGHD tersedia secara \textit{real-time} tanpa konteks klinis yang jelas akan membuat \textit{workflow} menjadi terpecah dan beban kerja bertambah.
+Berdasarkan studi tersebut, mekanisme pengaksesan PGHD yang dipertimbangkan adalah:
+
+\begin{enumerate}
+  \item Akses PGHD secara \textit{real-time} di luar kunjungan.
+  \item Akses PGHD secara bebas (\textit{on-demand}) oleh tenaga kesehatan kapan pun dibutuhkan.
+  \item Akses PGHD berbasis kunjungan (\textit{visit-based}), di mana PGHD hanya diakses ketika ada kunjungan dan pasien memberikan izin akses untuk kunjungan tersebut.
+\end{enumerate}
+
+Akses \textit{real-time} di luar kunjungan memberikan visibilitas penuh terhadap kondisi pasien, tetapi menuntut adanya protokol yang jelas untuk menangani data yang terus menerus dikirim dan dapat mengganggu alur kerja jika tidak dikelola dengan baik.
+Akses \textit{on-demand} memberi fleksibilitas bagi tenaga kesehatan, tetapi tetap menyisakan pertanyaan kapan dan dalam konteks apa data tersebut seharusnya diakses dan justru menjadi beban bagi pasien karena permintaan data tidak terjadwal atau tidak dapat diprediksi oleh pasien.
+
+Pada integrasi DecMed dan PGHD, mekanisme yang dipilih adalah akses berbasis kunjungan yang juga menerapkan akses \textit{on-demand} ketika tenaga kesehatan meminta izin untuk mengakses data pasien.
+PGHD dikumpulkan oleh pasien di antara kunjungan, tetapi hanya dapat diakses oleh tenaga kesehatan ketika pasien melakukan kunjungan dan memberikan izin akses untuk kunjungan tersebut. 
+Pendekatan ini sesuai dengan pola pemanfaatan PGHD sebagai data pelengkap yang digunakan untuk mendukung keputusan klinis dalam konteks konsultasi, bukan sebagai aliran data yang harus dimonitor terus-menerus, karena akses data PGHD secara terus menerus juga dapat memecah fokus tenaga kesehatan.
+Selain itu, mekanisme ini juga sesuai dengan desain DecMed yang mengatur akses data berdasarkan kunjungan dan memanfaatkan CapBAC sebagai mekanisme kontrol akses, sehingga integrasi PGHD tidak akan merusak mekanisme sistem DecMed yang sudah ada.

@@ -1,22 +1,10 @@
 {
   "latex-workshop.view.pdf.viewer": "tab",
-  "latex-workshop.latex.recipe.default": "lastUsed",
+  "latex-workshop.latex.recipe.default": "first",
   "latex-workshop.latex.recipes": [
-    {
-      "name": "latex_itb_ta Proposal",
-      "tools": ["latex_itb_make_proposal", "latex_itb_move_proposal"]
-    },
     {
       "name": "latex_itb_ta Thesis",
       "tools": ["latex_itb_make_thesis", "latex_itb_move_thesis"]
-    },
-    {
-      "name": "latex_itb_ta Yudisium",
-      "tools": ["latex_itb_make_yudisium", "latex_itb_move_yudisium"]
-    },
-    {
-      "name": "latex_itb_ta Paper",
-      "tools": ["latex_itb_make_paper", "latex_itb_move_paper"]
     }
   ],
   "latex-workshop.latex.tools": [
@@ -108,5 +96,13 @@
   "latex-workshop.synctex.afterBuild.enabled": true,
   "latex-workshop.latex.outDir": "%DIR%/../build",
   "latex-workshop.latex.autoBuild.run": "onSave",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "latex-workshop.linting.chktex.exec.args": [
+    "-wall",
+    "-n22",
+    "-n30",
+    "-n8",
+    "-e16",
+    "-q"
+  ]
 }

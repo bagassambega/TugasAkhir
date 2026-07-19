@@ -1,0 +1,70 @@
+\subsubsection{Mekanisme Pengumpulan PGHD pada Klien Pasien}\label{mekanisme-pengumpulan-pghd}
+
+Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengumpulan}.
+
+\begin{figure}[htbp]
+    \centering
+	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-mekanisme-pengumpulan-pghd.png}
+	\caption{\textit{Sequence Diagram} Mekanisme Pengumpulan dan Pengolahan PGHD}\label{fig:seq-diagram-rancangan-pengumpulan}
+\end{figure}
+
+\begin{enumerate}
+    \item \textbf{Inisialisasi dan permintaan \textit{permissions} pengumpulan data.}
+    Setelah pasien berhasil masuk ke akun DecMed PGHD, \textit{client} pasien memeriksa \textit{permissions} yang dibutuhkan untuk mengakses sumber data kesehatan. 
+    Sumber data tersebut meliputi API sistem operasi untuk data \textit{wellness}, \textit{fitness}, dan \textit{activity}, sensor perangkat, dan input manual dari pasien. 
+    Jika \textit{permissions} belum lengkap, \textit{client} menampilkan penjelasan mengenai jenis data yang akan dikumpulkan dan meminta pasien memberikan \textit{permissions} yang diperlukan.
+    % Implementasi Android saat ini menggunakan \textit{permissions} Health Connect, ACTIVITY_RECOGNITION, BODY_SENSORS apabila tersedia, dan \textit{permissions} kamera untuk pemindaian QR.
+
+    \item \textbf{Aktivasi periode pengumpulan data.}
+    Ketika pasien mengaktifkan pengumpulan PGHD, \textit{client} menyimpan status pengumpulan sebagai aktif dan mencatat waktu mulai periode pengumpulan. 
+    Periode ini digunakan untuk menampilkan dan menghitung data yang sedang dikumpulkan, jumlah data yang masuk \textit{batch}, dan estimasi ukuran data.
+
+    \item \textbf{Pengambilan data dari API sistem operasi (OS).}
+    \textit{Client} mengambil data kesehatan dari API OS secara periodik. 
+    Data yang diperoleh dari API tersebut dapat berasal dari aplikasi kesehatan, perangkat \textit{wearable}, atau layanan sistem lain yang telah mendapat \textit{permissions} dari pasien. 
+    \textit{Client} hanya mengambil data sejak \textit{timestamp} sinkronisasi terakhir agar data yang sama tidak dikumpulkan ulang. 
+    Setiap data kemudian disimpan sebagai data sementara pada penyimpanan lokal sebelum masuk proses pembentukan \textit{batch}.
+    % Implementasi Android saat ini menggunakan Health Connect sebagai API OS. Data Mi Smart Band 9 Active masuk melalui Mi Fitness yang menulis data ke Health Connect. Sinkronisasi Health Connect dijalankan menggunakan WorkManager periodik minimum 15 menit.
+
+    \item \textbf{Pengambilan data dari sensor perangkat.}
+    Selain melalui API OS, \textit{client} dapat mengambil data dari sensor perangkat secara periodik. 
+    Data sensor diproses menjadi tipe data PGHD, misalnya data aktivitas atau data kesehatan lain yang dapat diturunkan dari sensor yang tersedia. 
+    Hasil pemrosesan tetap disimpan sebagai data sementara pada penyimpanan lokal sebelum masuk proses pembentukan \textit{batch}.
+    % Implementasi Android saat ini menggunakan interval sensor default 60 detik dan menyimpan hasil transformasi dengan label sumber Phone Sensor.
+
+    \item \textbf{Input manual PGHD.}
+    Pasien juga dapat memasukkan PGHD secara manual melalui UI aplikasi. 
+    Input manual divalidasi terlebih dahulu, kemudian disimpan sebagai \textit{record} lokal dengan sumber data manual. 
+    Dengan demikian, data yang berasal dari input manual memiliki struktur yang sama dengan data yang berasal dari API sistem operasi maupun sensor perangkat.
+
+    \item \textbf{Penyimpanan lokal data PGHD.}
+    Data yang telah dikumpulkan disimpan sebagai \textit{record} lokal sebelum masuk \textit{batch}. 
+    Selama \texttt{batch\_id} masih kosong, data dianggap belum menjadi bagian dari \textit{batch} pengiriman. 
+    Mekanisme ini membuat data PGHD tetap tersedia walaupun aplikasi ditutup, perangkat sedang \textit{offline}, atau proses pengiriman belum dapat dilakukan.
+
+    \item \textbf{Pemicu pembentukan \textit{batch}.}
+    Pembentukan \textit{batch} PGHD dapat dipicu oleh pengiriman periodik, ukuran data yang telah mencapai suatu \textit{threshold} tertentu, atau aksi pengiriman manual dari pasien. 
+    Ketika salah satu pemicu tersebut terjadi, \textit{client} mengambil data lokal yang belum memiliki \texttt{batch\_id}, mengelompokkannya ke dalam \texttt{data\_group}, dan menyusun \textit{data point} sesuai skema pada Tabel~\ref{tab:field-datagroup-json-pghd} dan Tabel~\ref{tab:field-datapoints-json-pghd}.
+    % Implementasi Android saat ini menggunakan pemicu periodik 15 menit, ambang ukuran 10 MB, dan tombol Send Now untuk pengiriman manual.
+
+    \item \textbf{Perhitungan statistik per tipe data.}
+    Sebelum enkripsi, \textit{client} mengekstrak setiap \textit{field} numerik dari satu \textit{data group}. Untuk setiap \textit{field}, \textit{client} mengurutkan nilai dan menghitung jumlah data, minimum, maksimum, rata-rata, median, modus, serta persentil P5, P25, P50, P75, dan P95. Pengukuran komposit, misalnya tekanan darah, dihitung secara terpisah untuk komponen sistolik dan diastolik. Ringkasan disimpan pada \texttt{statistics} tanpa mengganti \texttt{data\_points} asli.
+
+    \item \textbf{Evaluasi rentang klinis dan pembentukan penanda anomali.}
+    \textit{Client} membaca konfigurasi rentang klinis dari \texttt{.env}, kemudian memilih aturan yang cocok dengan \texttt{measurement\_type} dan \texttt{field}. Setiap nilai dibandingkan dengan batas bawah dan batas atas dengan memperhatikan sifat inklusif atau eksklusif batas. Nilai di luar rentang memperoleh penanda \texttt{below\_range} atau \texttt{above\_range}. Salinan aturan, konteks populasi, dan referensi yang digunakan dimasukkan ke \texttt{clinical\_thresholds}; jumlah penanda disimpan pada \texttt{anomaly\_count}. Tipe data tanpa rentang klinis umum tetap dimasukkan secara utuh, tetapi tidak diklasifikasikan sebagai normal atau anomali.
+
+    \item \textbf{Pembentukan \textit{batch} lokal.}
+    \textit{Batch} yang terbentuk mengikuti skema JSON PGHD versi 1.1 pada Subbab~\ref{rancangan-format-data-pghd}. \textit{Payload} memuat data mentah, ringkasan statistik, rentang klinis, dan penanda anomali dalam satu kesatuan. Setelah seluruh proses tersebut selesai, \textit{client} mengenkripsi \textit{payload} dan menyimpan \textit{batch} pada penyimpanan lokal bersama metadata operasional seperti status pengiriman dan jumlah percobaan ulang. Dengan urutan ini, statistik dan rentang klinis ikut dilindungi oleh enkripsi dan mekanisme integritas yang sama dengan data asli.
+
+    \item \textbf{Status \textit{batch} lokal.}
+    \textit{Client} membedakan status \textit{batch} menjadi \texttt{waiting\_for\_trigger}, \texttt{pending}, \texttt{sent}, dan \texttt{failed}. 
+    Status \texttt{waiting\_for\_trigger} digunakan ketika data belum dikirim dan masih menunggu pemicu. 
+    Status \texttt{pending} digunakan ketika \textit{batch} sedang dikirim dan belum menerima respons akhir. 
+    Status \texttt{sent} digunakan ketika pengiriman berhasil, sedangkan \texttt{failed} digunakan ketika pengiriman gagal karena sebab selain koneksi.
+
+    \item \textbf{Penanganan perangkat \textit{offline}.}
+    Jika perangkat tidak memiliki koneksi internet, data PGHD dan \textit{batch} tetap tersimpan di perangkat pasien. 
+    Sistem tidak menghapus data yang belum terkirim. 
+    Ketika koneksi tersedia kembali, \textit{client} menjadwalkan pengiriman \textit{batch} yang masih menunggu atau gagal karena koneksi. 
+    Apabila kegagalan terjadi karena sebab lain, pasien tetap dapat memicu pengiriman manual.
+\end{enumerate}

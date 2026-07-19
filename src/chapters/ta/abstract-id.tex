@@ -2,24 +2,25 @@
 \chapter*{ABSTRAK}
 \addcontentsline{toc}{chapter}{ABSTRAK}
 \begin{center}
-	\center
-	\begin{singlespace}
-		\large\bfseries\MakeUppercase{\thetitle}
+    \center
+    \begin{singlespace}
+        \large\bfseries\MakeUppercase{\thetitle}
 
-		\normalfont\normalsize
-		Oleh:
+        \normalfont\normalsize
+        Oleh:
 
-		\bfseries \theauthor
-	\end{singlespace}
+        \bfseries \theauthor
+    \end{singlespace}
 \end{center}
 
 \begin{singlespace}
-	\small
-	Lorem ipsum dolor sit amet . Operator grafis dan tipografi mengetahui hal ini dengan baik, pada kenyataannya semua profesi yang berhubungan dengan alam semesta komunikasi memiliki hubungan yang stabil dengan kata-kata ini, tetapi apa itu? Lorem ipsum adalah teks dummy tanpa arti. Ini adalah urutan kata Latin yang, sebagaimana posisinya, tidak membentuk kalimat dengan pengertian yang utuh, tetapi memberikan kehidupan pada teks uji yang berguna untuk mengisi ruang-ruang yang selanjutnya akan ditempati dari teks ad hoc yang disusun oleh para profesional komunikasi.
+\small
+Sistem Rekam Medis Elektronik (RME) konvensional menyimpan data kesehatan secara tersebar pada setiap fasilitas pelayanan kesehatan sehingga dokter sulit memperoleh gambaran kondisi pasien secara utuh. DecMed (Decentralized Medical Record Management System) telah dikembangkan dengan pendekatan \textit{patient-centric} untuk mengintegrasikan data tersebut dan memberikan kendali data kepada pasien. Namun, sumber data DecMed masih bersifat \textit{provider-centric} karena hanya mengakomodasi data dari tenaga kesehatan melalui kunjungan klinis, belum mencakup \textit{Patient-Generated Health Data} (PGHD) yang dihasilkan pasien secara mandiri melalui perangkat \textit{wearable}, sensor kesehatan, perangkat pintar, maupun pencatatan manual. Data tersebut dapat melengkapi gambaran kondisi pasien di antara kunjungan klinis dan mendukung pengambilan keputusan klinis, sehingga diperlukan modul integrasi PGHD pada DecMed.
 
-	Ini tentu saja yang paling terkenal teks placeholder bahkan jika ada versi berbeda yang dapat dibedakan dari urutan pengulangan kata-kata Latin. Lorem ipsum berisi tipografi yang lebih banyak digunakan, sebuah aspek yang memungkinkan Anda untuk memiliki gambaran umum tentang rendering teks dalam hal pilihan font dan d ukuran font. Jika mengacu pada Lorem ipsum, ekspresi yang digunakan berbeda, yaitu fill text , fiktif text , blind text atau placeholder text : singkatnya, artinya juga bisa nol, tetapi kegunaannya sangat jelas untuk bertahan selama berabad-abad dan menolak versi ironis dan modern yang datang dengan kedatangan web.
+Penelitian ini mengembangkan modul integrasi PGHD yang mampu mengumpulkan dan mengirimkan data \emph{time-series} secara \emph{offline-first}, mempertahankan data saat perangkat luring, melakukan sinkronisasi setelah koneksi tersedia, serta mencatat \emph{data provenance} dan menjaga kerahasiaan serta integritas data. Modul dibangun melalui arsitektur \emph{client} Android pasien, \emph{Proxy Re-Encryption} Server, \emph{smart contract} IOTA, dan IPFS dengan enkripsi \emph{end-to-end}, fungsi hash, dan tanda tangan digital sebagai mekanisme pendukung.
 
-	\textbf{\textit{Kata kunci: Lorem, Ipsum, Lorem Ipsum }}
+Pengujian menunjukkan sistem berhasil memproses 151.200 \textit{record} PGHD sintetis pada laju 600 \textit{record} per detik tanpa kehilangan data maupun \textit{crash}, serta menerima 20 \textit{batch} secara konkuren dari 20 pasien tanpa kegagalan. Variasi manipulasi terhadap \textit{ciphertext}, nilai hash, tanda tangan digital, referensi CID, dan metadata yang diuji berhasil dideteksi dan ditolak, \textit{plaintext} tidak ditemukan pada titik transit dan penyimpanan yang diperiksa, dan permintaan akses tanpa persetujuan sah berhasil ditolak. Data tetap tersimpan saat perangkat luring, pengiriman dijadwalkan ulang, dan data berhasil diproses setelah koneksi tersedia tanpa kehilangan, sehingga modul terbukti mampu mengintegrasikan PGHD ke DecMed dalam skenario pengujian yang dilakukan.
 
+\textbf{\textit{Kata kunci: \textit{Data Provenance}, DecMed, Integritas, Kerahasiaan, Ketersediaan, \textit{Patient-Generated Health Data}, Rekam Medis Elektronik}}
 \end{singlespace}
 \clearpage

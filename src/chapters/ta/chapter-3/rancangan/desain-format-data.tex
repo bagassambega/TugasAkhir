@@ -1,0 +1,203 @@
+\subsection{Rancangan Format dan Skema PGHD}\label{rancangan-format-data-pghd}
+
+Berdasarkan pemilihan solusi pada Subbab~\ref{alternatif-provenance} dan landasan teori pada Subbab~\ref{studi-cia-provenance}, bagian ini merancang format data yang digunakan PGHD untuk mendukung \textit{data provenance}.
+\textit{Payload} PGHD yang disimpan di penyimpanan \textit{off-chain} terdiri atas tingkat \textit{batch}, tingkat \textit{data group}, dan tingkat \textit{data point}.
+Tingkat \textit{batch} merepresentasikan satu paket pengiriman PGHD\@.
+Tingkat \textit{data group} mengelompokkan data berdasarkan jenis pengukuran dan sumber data.
+Tingkat \textit{data point} merepresentasikan nilai pengukuran individual.
+Tabel~\ref{tab:field-batch-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{batch}.
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}p{0.15\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Deskripsi \textit{Field} Tingkat \textit{Batch} pada Skema JSON untuk PGHD}\label{tab:field-batch-json-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Deskripsi \textit{Field} Tingkat \textit{Batch} pada Skema JSON untuk PGHD (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{schema\_version} & String & Ya & Versi skema JSON PGHD yang digunakan. \\
+    \hline
+    \texttt{batch\_id} & UUID & Ya & Identitas unik \textit{batch}. \\
+    \hline
+    \texttt{patient\_id} & String & Ya & Identitas pasien pada sistem DecMed, diisi dengan alamat IOTA akun pasien. \\
+    \hline
+    \texttt{source\_device} & Objek & Ya & Metadata perangkat pengirim \textit{batch}, meliputi \texttt{type}, \texttt{platform}, \texttt{app\_version}, \texttt{device\_manufacturer}, dan \texttt{device\_model}. \\
+    \hline
+    \texttt{batch\_period} & Objek & Ya & Rentang waktu yang dicakup oleh \textit{batch}, terdiri atas \texttt{start\_timestamp} dan \texttt{end\_timestamp} dalam format Unix \textit{timestamp}. \\
+    \hline
+    \texttt{trigger\_reason} & String & Tidak & Alasan pembentukan atau pengiriman \textit{batch}, misalnya pengiriman periodik, ambang ukuran data, pengiriman manual, atau koneksi tersedia kembali. \\
+    \hline
+    \texttt{data\_group} & Array & Ya & Daftar grup data PGHD yang dijelaskan pada Tabel~\ref{tab:field-datagroup-json-pghd}. \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+% Implementasi Android saat ini menggunakan nilai trigger time_based, size_threshold, manual_submit, dan network_available.
+
+Sebuah \textit{batch} terdiri dari kumpulan \texttt{data\_group}.
+Setiap elemen di dalam \texttt{data\_group} mengelompokkan data berdasarkan tipe pengukuran dan asal data.
+Tabel~\ref{tab:field-datagroup-json-pghd} menjelaskan \textit{fields} pada tingkat \textit{data group}.
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}p{0.15\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Deskripsi \textit{Field} Tingkat \textit{Data Group} pada Skema JSON untuk PGHD}\label{tab:field-datagroup-json-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Deskripsi \textit{field} tingkat \textit{data group} pada skema JSON untuk PGHD (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{measurement\_type} & String & Ya & Jenis pengukuran dalam format \textit{snake\_case}, misalnya \texttt{heart\_rate}, \texttt{steps}, atau tipe pengukuran kesehatan lain yang didukung sistem. \\
+    \hline
+    \texttt{device\_type} & String & Ya & Tipe perangkat atau sumber penghasil pengukuran, misalnya \textit{mobile}, perangkat \textit{wearable}, atau input manual. \\
+    \hline
+    \texttt{recording\_method} & String & Tidak & Cara data direkam, misalnya otomatis oleh perangkat, sesi aktif, input manual, atau hasil transformasi dari data sensor. \\
+    \hline
+    \texttt{source} & String & Ya & Kategori sumber data, misalnya API OS untuk wellness/fitness/activity, sensor perangkat, atau input manual. \\
+    \hline
+    \texttt{source\_label} & String & Tidak & Label sumber yang lebih mudah dibaca pengguna atau tenaga kesehatan. \\
+    \hline
+    \texttt{source\_package\_name} & String & Tidak & Identitas aplikasi atau paket sumber data apabila tersedia dari API OS\@. \\
+    \hline
+    \texttt{device\_source} & String & Tidak & Informasi sumber perangkat atau metode derivasi, misalnya perangkat wearable, sensor telepon, atau data dari sensor yang sudah diolah. \\
+    \hline
+    \texttt{statistics} & Array & Ya & Ringkasan statistik per \textit{field} numerik yang terdiri atas jumlah data, minimum, maksimum, rata-rata, median, modus, dan persentil. Struktur elemen dijelaskan pada Tabel~\ref{tab:field-statistics-json-pghd}. \\
+    \hline
+    \texttt{clinical\_thresholds} & Array & Ya & Salinan rentang klinis yang dipakai klien pasien saat membentuk \textit{batch}, termasuk satuan, konteks populasi, nama referensi, dan URL referensi. Tipe data tanpa rentang klinis umum menggunakan array kosong. \\
+    \hline
+    \texttt{anomaly\_count} & Integer & Ya & Jumlah seluruh penanda anomali pada \textit{data group}. \\
+    \hline
+    \texttt{data\_points} & Array & Ya & Daftar nilai pengukuran aktual yang dijelaskan pada Tabel~\ref{tab:field-datapoints-json-pghd}. \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+% Implementasi Android saat ini menggunakan label sumber Health Connect, Phone Sensor, dan Manual Input. Nama API spesifik tersebut dijelaskan pada Bab IV.
+
+\textit{Data group} berisi kumpulan \textit{data points} individual yang merupakan hasil pengukuran untuk setiap satuan waktu atau setiap periode pengukuran.
+Tabel~\ref{tab:field-datapoints-json-pghd} berisi skema data untuk level \textit{data points}.
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|>{\raggedright\arraybackslash}p{0.15\textwidth}|>{\raggedright\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Deskripsi \textit{Field} Tingkat \textit{Data Points} pada Skema JSON untuk PGHD}\label{tab:field-datapoints-json-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+
+    \hiderowcolors
+    \caption[]{Deskripsi \textit{field} tingkat \textit{data points} pada skema JSON untuk PGHD (lanjutan)}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Wajib} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endhead
+
+    \texttt{timestamp} & Unix timestamp & Ya & Waktu pengukuran atau waktu akhir periode pengukuran. \\
+    \hline
+    \texttt{value} & Number / Objek & Ya & Nilai pengukuran. Untuk pengukuran skalar diisi sebagai bilangan. Untuk pengukuran komposit diisi sebagai objek. \\
+    \hline
+    \texttt{unit} & String & Ya & Satuan pengukuran. \\
+    \hline
+    \texttt{anomalies} & Array & Ya & Daftar penanda untuk setiap \textit{field} yang berada di bawah atau di atas rentang klinis. Array kosong menandakan tidak ada anomali yang ditemukan atau tipe data tidak memiliki rentang umum yang dikonfigurasi. \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.23\textwidth}|>{\raggedright\arraybackslash}p{0.18\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur Elemen \texttt{statistics} PGHD}\label{tab:field-statistics-json-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \endhead
+    \texttt{field} & String & Nama komponen numerik yang diringkas. \\
+    \hline
+    \texttt{count} & Integer & Jumlah nilai numerik. \\
+    \hline
+    \texttt{minimum}, \texttt{maximum} & Number & Nilai terkecil dan terbesar. \\
+    \hline
+    \texttt{mean}, \texttt{median} & Number & Nilai rata-rata dan median. \\
+    \hline
+    \texttt{mode} & Array Number & Seluruh nilai dengan frekuensi tertinggi; kosong apabila tidak ada nilai berulang. \\
+    \hline
+    \texttt{percentiles} & Objek & Nilai \texttt{p5}, \texttt{p25}, \texttt{p50}, \texttt{p75}, dan \texttt{p95}. \\
+    \hline
+    \texttt{unit} & String & Satuan statistik. \\
+    \hline
+\end{styledxltabular}
+\endgroup
+
+\begingroup
+\footnotesize
+\begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.25\textwidth}|>{\raggedright\arraybackslash}p{0.17\textwidth}|>{\raggedright\arraybackslash}X|}
+    \hiderowcolors
+    \caption{Struktur Rentang Klinis dan Penanda Anomali PGHD}\label{tab:field-threshold-anomaly-json-pghd}\\
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Struktur/Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \showrowcolors
+    \endfirsthead
+    \hline
+    \rowcolor{headerBg}
+    \textbf{Struktur/Field} & \textbf{Tipe} & \textbf{Deskripsi} \\
+    \hline
+    \endhead
+    \texttt{clinical\_\allowbreak{}thresholds.\allowbreak{}field} & String & \textit{Field} numerik yang dievaluasi. \\
+    \hline
+    \texttt{minimum}, \texttt{maximum} & Number & Batas bawah dan atas rentang. \\
+    \hline
+    \texttt{minimum\_inclusive}, \texttt{maximum\_inclusive} & Boolean & Menentukan apakah nilai tepat pada batas masih termasuk rentang. \\
+    \hline
+    \texttt{unit}, \texttt{label}, \texttt{population} & String & Satuan, nama rentang, serta populasi atau konteks penerapan. \\
+    \hline
+    \texttt{reference}, \texttt{reference\_url} & String & Identitas dan alamat sumber rentang yang ikut dikirim kepada tenaga kesehatan. \\
+    \hline
+    \texttt{anomalies.field}, \texttt{anomalies.value} & String, Number & Komponen yang menyimpang dan nilai aslinya. \\
+    \hline
+    \texttt{anomalies.direction} & String & \texttt{below\_range} atau \texttt{above\_range}. \\
+    \hline
+    \texttt{normal\_minimum}, \texttt{normal\_maximum} & Number & Batas yang menyebabkan penanda tersebut terbentuk. \\
+    \hline
+\end{styledxltabular}
+\endgroup
