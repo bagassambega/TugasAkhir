@@ -2,11 +2,14 @@
 
 Alur mekanisme pengumpulan dan pengolahan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengumpulan}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
 	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-mekanisme-pengumpulan-pghd.png}
 	\caption{\textit{Sequence Diagram} Mekanisme Pengumpulan dan Pengolahan PGHD}\label{fig:seq-diagram-rancangan-pengumpulan}
 \end{figure}
+
+Diagram tersebut merangkum alur sejak pemberian izin sumber data, pengumpulan dan validasi \textit{record}, pengelompokan data, analisis lokal, hingga pembentukan \textit{payload} terenkripsi untuk antrean pengiriman.
+Rincian setiap tahap dijelaskan sebagai berikut.
 
 \begin{enumerate}
     \item \textbf{Inisialisasi dan permintaan \textit{permissions} pengumpulan data.}

@@ -2,11 +2,14 @@
 
 Mekanisme pengaksesan PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengaksesan}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-pengaksesan.png}
 	\caption{\textit{Sequence Diagram} Mekanisme Pengaksesan PGHD}\label{fig:seq-diagram-rancangan-pengaksesan}
 \end{figure}
+
+Diagram tersebut merangkum pemeriksaan akses aktif, pengambilan metadata dan \textit{ciphertext}, verifikasi integritas, dekripsi PGHD, serta penyajian data kepada tenaga kesehatan.
+Rincian setiap tahap dijelaskan sebagai berikut.
 
 \begin{enumerate}
 	\item \textbf{Prasyarat akses baca PGHD.}

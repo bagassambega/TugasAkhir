@@ -35,6 +35,7 @@
 
 % Format citation
 \usepackage[utf8]{inputenc}
+\usepackage[autostyle=false,style=american]{csquotes}
 \usepackage[style=apa,backend=biber]{biblatex}
 \usepackage{longtable}
 \usepackage{graphicx}
@@ -249,10 +250,13 @@
 {Tabel \thecontentslabel.\quad}
 {}
 {\mdseries\titlerule*[0.35em]{.}\bfseries\contentspage}
-\DeclareTOCStyleEntry[
-	indent=0pt,
-	numwidth=4.8em
-]{tocline}{lstlisting}
+\AtBeginDocument{%
+	\DeclareTOCStyleEntry[
+		level=1,
+		indent=0pt,
+		numwidth=4.8em
+	]{tocline}{lstlisting}%
+}
 \contentsuse{formula}{loe}
 \titlecontents{formula}
 [0pt]
@@ -266,7 +270,10 @@
 \renewcommand\printbibliography{%
 	\phantomsection
 	\cleardoublepage
+	\begingroup
+	\singlespacing
 	\originalprintbibliography
+	\endgroup
 	\addcontentsline{toc}{chapter}{\bibname}
 }
 

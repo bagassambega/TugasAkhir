@@ -1,9 +1,7 @@
 \clearpage
-% \newgeometry{top=1.2cm,bottom=1.2cm,left=3cm,right=2cm}
-% \thispagestyle{plain}
-% \singlespacing
-% \footnotesize
-
+\begingroup
+\setstretch{1.15}
+\titlespacing*{\chapter}{0pt}{0pt}{1em}
 \chapter*{SURAT PERNYATAAN PENGGUNAAN AI}
 
 Dengan ini, saya:
@@ -17,16 +15,18 @@ Dengan ini, saya:
     Judul            & \thetitle \\
 \end{tabularx}
 
-\vspace{0.5em}
+\vspace{0.4em}
 
 \noindent
 Menyatakan bahwa saya menggunakan AI dalam pengerjaan maupun penyusunan luaran tugas pada mata kuliah yang tertulis di atas. Alat AI/kecerdasan buatan yang digunakan adalah:
 
-% \vspace{0.5em}
+\vspace{0.35em}
 
 \begingroup
 \footnotesize
-\begin{styledxltabular}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{0.12\textwidth}|>{\raggedright\arraybackslash}p{0.15\textwidth}|}
+\renewcommand{\arraystretch}{1.25}
+\rowcolors{2}{rowEven}{rowOdd}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.17\textwidth}|}
     \hiderowcolors
     \hline
     \rowcolor{headerBg}
@@ -34,15 +34,6 @@ Menyatakan bahwa saya menggunakan AI dalam pengerjaan maupun penyusunan luaran t
     \textbf{Lingkup Pekerjaan} & \textbf{Digunakan?} & \textbf{Tingkat Penggunaan} \\
     \hline
     \showrowcolors
-    \endfirsthead
-
-    \hiderowcolors
-    \hline
-    \rowcolor{headerBg}
-    \textbf{Lingkup Pekerjaan} & \textbf{Digunakan?} & \textbf{Tingkat Penggunaan} \\
-    \hline
-    \showrowcolors
-    \endhead
 
     Pemeriksaan Ejaan & Tidak & 0\% \\
     \hline
@@ -56,15 +47,15 @@ Menyatakan bahwa saya menggunakan AI dalam pengerjaan maupun penyusunan luaran t
     \hline
     \textit{Coding}: penggunaan tools ChatGPT & Ya & 40\% \\
     \hline
-\end{styledxltabular}
+\end{tabularx}
 \endgroup
 
-% \vspace{0.5em}
+\vspace{0.45em}
 
 \noindent
 Saya juga menyatakan bahwa setiap penggunaan AI/kecerdasan buatan yang dilakukan pada mata kuliah tersebut telah dinyatakan di dalam surat ini.
 
-\vspace{0.9em}
+\vspace{0.8em}
 
 \noindent\hfill
 \begin{minipage}{4.5cm}
@@ -76,4 +67,5 @@ Saya juga menyatakan bahwa setiap penggunaan AI/kecerdasan buatan yang dilakukan
 	Bagas Sambega Rosyada \\
 	13522071
 \end{minipage}
+\endgroup
 \clearpage

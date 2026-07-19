@@ -32,8 +32,11 @@ Pasien berperan dalam membuat dan mengirim data PGHD, juga mengontrol akses baca
 Tenaga kesehatan dapat mengakses data PGHD setelah diberikan akses oleh pasien, dan tenaga kesehatan tidak dapat menambah atau memodifikasi data PGHD karena PGHD berasal dan dibuat oleh pasien.
 Diagram \textit{use-case} DecMed yang sudah ditambah dengan PGHD dapat dilihat pada Gambar~\ref{fig:use-case-pghd}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-	\includegraphics[width=1.1\textwidth]{resources/chapter-2/use-case-pghd.png}
+	\includegraphics[width=\textwidth]{resources/chapter-2/use-case-pghd.png}
 	\caption{Diagram \textit{Use Case} DecMed-PGHD}\label{fig:use-case-pghd}
 \end{figure}
+
+Diagram tersebut memperlihatkan penambahan aktivitas pembuatan dan pengiriman PGHD, pemberian dan pencabutan akses PGHD oleh pasien, serta pembacaan PGHD oleh tenaga kesehatan.
+Relasi antaraktor pada diagram menegaskan bahwa pasien tetap menjadi pengendali akses, sedangkan tenaga kesehatan hanya dapat membaca PGHD setelah memperoleh akses yang masih aktif.

@@ -1,42 +1,44 @@
 \section{DecMed}\label{studi-decmed}
 
-DecMed merupakan sebuah kerangka kerja manajemen rekam medis elektronik terdesentralisasi yang dibangun di atas platform \emph{Distributed Ledger Technology} (DLT) IOTA, dengan fokus utama pada perancangan mekanisme kontrol akses yang granular, dapat dicabut, dan menyediakan \textit{audit trail} \parencite{Purnama_2026,Hari_2025}.
-Berbeda dengan pendekatan sistem RME tradisional yang menempatkan kontrol akses sebagai komponen tambahan pada masing-masing institusi, DecMed memanfaatkan \textit{ledger} IOTA sebagai \emph{governance layer} yang menyimpan objek akses (\emph{\textit{capability}}), metadata, dan log akses secara terdistribusi sekaligus memisahkan penyimpanan data klinis besar ke penyimpanan \textit{off-chain} \parencite{Purnama_2026,Hari_2025}.
+DecMed merupakan sebuah kerangka kerja manajemen rekam medis elektronik terdesentralisasi yang dibangun di atas platform \emph{Distributed Ledger Technology} (DLT) IOTA, dengan fokus utama pada perancangan mekanisme kontrol akses yang granular, dapat dicabut, dan menyediakan \textit{audit trail} \parencite{Purnama_2026}.
+Berbeda dengan pendekatan sistem RME tradisional yang menempatkan kontrol akses sebagai komponen tambahan pada masing-masing institusi, DecMed memanfaatkan \textit{ledger} IOTA sebagai \emph{governance layer} yang menyimpan objek akses (\emph{\textit{capability}}), metadata, dan log akses secara terdistribusi sekaligus memisahkan penyimpanan data klinis besar ke penyimpanan \textit{off-chain} \parencite{Purnama_2026}.
 
 \subsection{Arsitektur DecMed}
 
-Secara teknis, arsitektur DecMed dibagi menjadi tiga lapis utama, yaitu \emph{\textit{Client} Layer}, \emph{Proxy Layer}, dan \emph{Storage Layer} \parencite{Purnama_2026,Hari_2025} seperti diilustrasikan dalam Gambar~\ref{fig:decmed-architecture}.
+Secara teknis, arsitektur DecMed dibagi menjadi tiga lapis utama, yaitu \emph{\textit{Client} Layer}, \emph{Proxy Layer}, dan \emph{Storage Layer} \parencite{Purnama_2026} seperti diilustrasikan dalam Gambar~\ref{fig:decmed-architecture}.
 Decmed sendiri mendefinisikan dua tipe data, data administratif (identitas pasien seperti NIK, nama, dan pekerjaan) dan data klinis.
 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\textwidth]{resources/chapter-2/decmed_archi.png}
-	\caption{Arsitektur DecMed \parencite{Hari_2025}}\label{fig:decmed-architecture}
+	\caption{Arsitektur DecMed \parencite{Purnama_2026}}\label{fig:decmed-architecture}
 \end{figure}
 
-\textit{\textit{Client} Layer} terdiri dari tiga jenis aplikasi: \textit{client} pasien berbasis \textit{mobile}, \textit{client} personel fasilitas pelayanan kesehatan (fasyankes) berbasis \textit{desktop}, dan \textit{client} untuk otoritas pengelola yang digunakan untuk registrasi fasilitas serta personel \parencite{Purnama_2026,Hari_2025}.
-\textit{Proxy Layer} berperan sebagai lapisan \textit{middleware} keamanan yang mengimplementasikan mekanisme PRE, validasi token akses, orkestrasi permintaan ke \textit{smart contract} di IOTA, dan interaksi dengan IPFS \parencite{Purnama_2026,Hari_2025}.
-Mekanisme akses kontrol dan proxy reencryption menjamin pertukaran data tanpa perlu mempertukarkan kredensial, sehingga informasi kredensial dapat tetap tersimpan aman di perangkat masing-masing dan tidak dikirimkan ke manapun \parencite{Purnama_2026,Hari_2025}.
+\textit{\textit{Client} Layer} terdiri dari tiga jenis aplikasi: \textit{client} pasien berbasis \textit{mobile}, \textit{client} personel fasilitas pelayanan kesehatan (fasyankes) berbasis \textit{desktop}, dan \textit{client} untuk otoritas pengelola yang digunakan untuk registrasi fasilitas serta personel \parencite{Purnama_2026}.
+\textit{Proxy Layer} berperan sebagai lapisan \textit{middleware} keamanan yang mengimplementasikan mekanisme PRE, validasi token akses, orkestrasi permintaan ke \textit{smart contract} di IOTA, dan interaksi dengan IPFS \parencite{Purnama_2026}.
+Mekanisme akses kontrol dan proxy reencryption menjamin pertukaran data tanpa perlu mempertukarkan kredensial, sehingga informasi kredensial dapat tetap tersimpan aman di perangkat masing-masing dan tidak dikirimkan ke manapun \parencite{Purnama_2026}.
 
-\textit{Storage Layer} dibagi menjadi penyimpanan \textit{on-chain} dan \textit{off-chain} \parencite{Purnama_2026,Hari_2025}. 
-Penyimpanan \textit{on-chain} merujuk pada \textit{ledger} IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026,Hari_2025}.
-Penyimpanan \textit{off-chain} terdiri atas kluster IPFS untuk menyimpan bagian klinis RME yang telah dienkripsi dan Redis untuk menyimpan data sementara terkait PRE seperti \textit{nonce}, kfrag, dan metadata kriptografis lainnya \parencite{Purnama_2026,Hari_2025}.
+\textit{Storage Layer} dibagi menjadi penyimpanan \textit{on-chain} dan \textit{off-chain} \parencite{Purnama_2026}. 
+Penyimpanan \textit{on-chain} merujuk pada \textit{ledger} IOTA, yang menyimpan bagian administratif RME, data administratif personel fasyankes, metadata klinis (termasuk kunci enkripsi yang telah dienkripsi dan Content Identifier/CID IPFS), serta entri capability untuk akses yang diberikan \parencite{Purnama_2026}.
+Penyimpanan \textit{off-chain} terdiri atas kluster IPFS untuk menyimpan bagian klinis RME yang telah dienkripsi dan Redis untuk menyimpan data sementara terkait PRE seperti \textit{nonce}, kfrag, dan metadata kriptografis lainnya \parencite{Purnama_2026}.
 
 Aktor dalam sistem DecMed secara garis besar dibagi menjadi pasien, tenaga rekam medis, tenaga kesehatan, dan kementerian kesehatan.
 Diagram \textit{use case} DecMed dapat dilihat pada Gambar~\ref{fig:use-case-original}.
-Pembagian aktivitas dan aksi yang dapat dilakukan oleh masing-masing aktor tercantum dalam Tabel~\ref{decmed-actor-privileges}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
 	\includegraphics[width=\textwidth]{resources/chapter-2/use-case-original.png}
-	\caption{Diagram \textit{Use Case} DecMed \parencite{Hari_2025}}\label{fig:use-case-original}
+	\caption{Diagram \textit{Use Case} DecMed \parencite{Purnama_2026}}\label{fig:use-case-original}
 \end{figure}
+
+Diagram tersebut menunjukkan keterlibatan setiap aktor dalam alur registrasi, autentikasi, pengelolaan akses, dan pengelolaan rekam medis pada DecMed.
+Pembagian aktivitas dan aksi yang dapat dilakukan oleh masing-masing aktor tercantum dalam Tabel~\ref{decmed-actor-privileges}.
 
 \begingroup
 \footnotesize
 \begin{styledxltabular}{|>{\raggedright\arraybackslash}p{0.24\textwidth}|>{\raggedright\arraybackslash}X|}
     \hiderowcolors
-    \caption{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025}}\label{decmed-actor-privileges}\\
+    \caption{Aktor dan \textit{privileges} yang dimiliki \parencite{Purnama_2026}}\label{decmed-actor-privileges}\\
     \hline
     \rowcolor{headerBg}
     \textbf{Aktor} & \textbf{\textit{Privileges}} \\
@@ -45,7 +47,7 @@ Pembagian aktivitas dan aksi yang dapat dilakukan oleh masing-masing aktor terca
     \endfirsthead
 
     \hiderowcolors
-    \caption[]{Aktor dan \textit{privileges} yang dimiliki \parencite{Hari_2025} (lanjutan)}\\
+    \caption[]{Aktor dan \textit{privileges} yang dimiliki \parencite{Purnama_2026} (lanjutan)}\\
     \hline
     \rowcolor{headerBg}
     \textbf{Aktor} & \textbf{\textit{Privileges}} \\
@@ -210,20 +212,20 @@ Data administratif terenkripsi berada di metadata akun pasien pada IOTA, sedangk
 
 Terdapat beberapa proses utama pada sistem rekam medis DecMed, yaitu pemberian akses terhadap data pasien, pengaksesan data pasien oleh tenaga kesehatan, penambahan data rekam medis pasien oleh tenaga kesehatan, dan mekanisme pencabutan akses terhadap data pasien.
 
-Tenaga kesehatan memerlukan pemberian akses dari pasien untuk mengakses dan melakukan penambahan data klinis rekam medis \parencite{Hari_2025}.
+Tenaga kesehatan memerlukan pemberian akses dari pasien untuk mengakses dan melakukan penambahan data klinis rekam medis \parencite{Purnama_2026}.
 Alur pemberian akses dimulai ketika pasien memindai kode QR milik tenaga kesehatan untuk memperoleh dan memverifikasi identitasnya dari jaringan IOTA\@.
-Setelah pasien menyetujui, \textit{client} pasien dan PRE menyiapkan kunci turunan khusus akses tenaga kesehatan (\texttt{med\_pre\_key}), \textit{kfrag} untuk mekanisme PRE, dan dua \textit{access token} JWT (baca dan tulis) yang dibangkitkan oleh proxy \parencite{Hari_2025,Purnama_2026}.
-Material PRE disimpan sementara di Redis dengan TTL 2 jam, sedangkan \textit{capability} (metadata akses terenkripsi dengan kunci publik tenaga kesehatan) disimpan di \textit{ledger} IOTA \parencite{Hari_2025}.
+Setelah pasien menyetujui, \textit{client} pasien dan PRE menyiapkan kunci turunan khusus akses tenaga kesehatan (\texttt{med\_pre\_key}), \textit{kfrag} untuk mekanisme PRE, dan dua \textit{access token} JWT (baca dan tulis) yang dibangkitkan oleh proxy \parencite{Purnama_2026}.
+Material PRE disimpan sementara di Redis dengan TTL 2 jam, sedangkan \textit{capability} (metadata akses terenkripsi dengan kunci publik tenaga kesehatan) disimpan di \textit{ledger} IOTA \parencite{Purnama_2026}.
 
-Tenaga kesehatan dapat mengakses data administratif dan data klinis pasien setelah pasien memberikan \textit{capability} bertipe baca \parencite{Hari_2025}.
+Tenaga kesehatan dapat mengakses data administratif dan data klinis pasien setelah pasien memberikan \textit{capability} bertipe baca \parencite{Purnama_2026}.
 Setelah membersihkan entri akses kedaluwarsa dari IOTA, \textit{client} tenaga kesehatan mengambil dan mendekripsi seluruh \textit{capability} baca yang dimilikinya menggunakan kunci privatnya sendiri.
 Selanjutnya, proxy memvalidasi \textit{access token}, mengambil metadata rekam medis dari IOTA, melakukan proses \textit{re-encryption} menggunakan \textit{kfrag} dari Redis, dan mengambil data klinis terenkripsi dari IPFS\@.
-Hasilnya dikirim ke \textit{client} agar dapat didekripsi sepenuhnya di sisi tenaga kesehatan tanpa \textit{private key} pasien pernah terbuka \parencite{Hari_2025,Purnama_2026}.
+Hasilnya dikirim ke \textit{client} agar dapat didekripsi sepenuhnya di sisi tenaga kesehatan tanpa \textit{private key} pasien pernah terbuka \parencite{Purnama_2026}.
 
-Penambahan entri rekam medis baru hanya dapat dilakukan oleh tenaga kesehatan yang memiliki \textit{access token} bertipe \texttt{Update} yang masih berlaku, dan dibatasi maksimal satu kali untuk setiap \textit{grant} akses \texttt{Update} yang diberikan \parencite{Hari_2025}.
-Tenaga kesehatan mengisi data klinis pada \textit{client}, yang kemudian mengenkripsinya menggunakan AES-GCM dengan kunci baru yang dibungkus menggunakan kunci publik PRE pasien, sehingga kontrol kriptografis atas entri baru tetap berada pada domain pasien \parencite{Hari_2025,Purnama_2026}.
-Data klinis terenkripsi dikirim ke proxy untuk disimpan ke IPFS, sementara metadata klinisnya (CID, artefak PRE, dan \textit{timestamp}) dicatat pada \textit{ledger} IOTA melalui transaksi \texttt{createmedicalrecord} yang divalidasi oleh \textit{smart contract} \parencite{Hari_2025}.
+Penambahan entri rekam medis baru hanya dapat dilakukan oleh tenaga kesehatan yang memiliki \textit{access token} bertipe \texttt{Update} yang masih berlaku, dan dibatasi maksimal satu kali untuk setiap \textit{grant} akses \texttt{Update} yang diberikan \parencite{Purnama_2026}.
+Tenaga kesehatan mengisi data klinis pada \textit{client}, yang kemudian mengenkripsinya menggunakan AES-GCM dengan kunci baru yang dibungkus menggunakan kunci publik PRE pasien, sehingga kontrol kriptografis atas entri baru tetap berada pada domain pasien \parencite{Purnama_2026}.
+Data klinis terenkripsi dikirim ke proxy untuk disimpan ke IPFS, sementara metadata klinisnya (CID, artefak PRE, dan \textit{timestamp}) dicatat pada \textit{ledger} IOTA melalui transaksi \texttt{createmedicalrecord} yang divalidasi oleh \textit{smart contract} \parencite{Purnama_2026}.
 
-DecMed juga menyediakan mekanisme bagi pasien untuk mencabut akses yang telah diberikan kepada personel fasyankes, baik akses baca maupun akses tulis, sesuai dengan prinsip CapBAC yang diusung DecMed \parencite{Hari_2025,Purnama_2026}.
-Pasien memilih entri akses pada halaman log akses, kemudian \textit{client} menginisiasi transaksi \texttt{revoke\_access} yang akan menghapus \textit{capability} dari \textit{state} terkini di IOTA dan menandai log akses pasien sebagai dicabut \parencite{Hari_2025}.
-Riwayat transaksi pemberian dan pencabutan akses tetap tercatat secara permanen pada \textit{ledger}, namun operasi berikutnya hanya membaca \textit{state} terbaru sehingga setelah akses dicabut, personel tidak lagi dapat memperoleh data pasien melalui alur DecMed \parencite{Hari_2025,Purnama_2026}.
+DecMed juga menyediakan mekanisme bagi pasien untuk mencabut akses yang telah diberikan kepada personel fasyankes, baik akses baca maupun akses tulis, sesuai dengan prinsip CapBAC yang diusung DecMed \parencite{Purnama_2026}.
+Pasien memilih entri akses pada halaman log akses, kemudian \textit{client} menginisiasi transaksi \texttt{revoke\_access} yang akan menghapus \textit{capability} dari \textit{state} terkini di IOTA dan menandai log akses pasien sebagai dicabut \parencite{Purnama_2026}.
+Riwayat transaksi pemberian dan pencabutan akses tetap tercatat secara permanen pada \textit{ledger}, namun operasi berikutnya hanya membaca \textit{state} terbaru sehingga setelah akses dicabut, personel tidak lagi dapat memperoleh data pasien melalui alur DecMed \parencite{Purnama_2026}.
