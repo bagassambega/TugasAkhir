@@ -2,14 +2,14 @@
 
 Berdasarkan analisis permasalahan pada subbab~\ref{analisis-permasalahan}, terdapat beberapa komponen dari arsitektur \textit{pipeline} integrasi PGHD yang perlu dipertimbangkan, yaitu sumber data, pengumpulan dan pengolahan data, pengiriman data, dan pengaksesan data.
 
-\subsubsection{Sumber Data}\label{alternatif-sumber-data}
+\subsubsection{Sumber Data PGHD}\label{alternatif-sumber-data}
 
 Mengacu pada Subbab~\ref{studi-sumber-tipe-pghd} mengenai sumber data PGHD, terdapat beberapa sumber data yang dapat dipertimbangkan, yaitu,
 
 \begin{enumerate}
     \item Perangkat sensor dan \textit{wearable},
     \item Perangkat pemantauan di rumah dan lingkungan sekitar,
-    \item Perangkat mobile dan aplikasi,
+    \item Perangkat \textit{mobile} dan aplikasi,
     \item Perangkat medis,
     \item Laporan mandiri pasien, dan
     \item Data eksternal lainnya seperti media sosial
@@ -18,7 +18,7 @@ Mengacu pada Subbab~\ref{studi-sumber-tipe-pghd} mengenai sumber data PGHD, terd
 Pada integrasi DecMed dan PGHD, sumber data yang dipilih dibatasi pada:
 \begin{enumerate}
   \item Perangkat sensor dan \textit{wearable},
-  \item Perangkat mobile dan aplikasi, dan
+  \item Perangkat \textit{mobile} dan aplikasi, dan
   \item Laporan mandiri pasien.
 \end{enumerate}
 
@@ -71,7 +71,7 @@ Terdapat tiga alternatif mekanisme yang dipertimbangkan.
 Pada integrasi DecMed dan PGHD ini, mekanisme yang dipilih adalah alternatif ketiga. 
 Ringkasan statistik dan penanda anomali ditampilkan langsung kepada tenaga kesehatan, tapi data asli tetap tersimpan utuh dan dapat dilihat secara detail oleh tenaga kesehatan. 
 
-\subsubsection{Pengiriman Data}\label{alternatif-trigger-pengiriman-pghd}
+\subsubsection{Pengiriman Data PGHD}\label{alternatif-trigger-pengiriman-pghd}
 
 Pada Subbab~\ref{studi-pengolahan-pengelolaan-pghd} dijelaskan bahwa pada sistem yang menggunakan sensor dan perangkat IoT seperti PGHD, mekanisme pengiriman data umumnya dibagi menjadi tiga kategori, yaitu \textit{periodic} (\textit{time-driven}), \textit{event-driven}, dan \textit{query-driven} (\textit{on-demand}). 
 Jika difokuskan pada pengiriman data dari \textit{smartphone} pasien ke DecMed, alternatif yang relevan adalah mekanisme \textit{periodic}, \textit{event-driven}, dan kombinasi keduanya.

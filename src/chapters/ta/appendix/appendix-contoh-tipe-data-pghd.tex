@@ -25,28 +25,28 @@
     \texttt{heart\_\allowbreak{}rate}, \texttt{resting\_\allowbreak{}heart\_\allowbreak{}rate} &
     \texttt{beats/\allowbreak{}min} &
     $[60,100]$ &
-    Mayoritas orang dewasa saat istirahat. AHA menyatakan detak jantung istirahat normal berada pada 60--100 detak per menit \parencite{AHA_Resting_Heart_Rate}. Data saat aktivitas harus ditafsirkan menggunakan konteks aktivitas. \\
+    Mayoritas orang dewasa saat istirahat \parencite{AHA_Resting_Heart_Rate}. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}HEART\_\allowbreak{}BEAT}; Health Connect &
     \texttt{heart\_\allowbreak{}beat}, \texttt{heart\_\allowbreak{}rate\_\allowbreak{}variability} &
     \texttt{event}, \texttt{ms} &
     Tidak dikonfigurasi &
-    Interval antar \textit{heartbeat} dapat digunakan sebagai estimasi HRV. Interpretasi HRV memerlukan \textit{baseline} individu, kondisi, dan metode pengukuran. \\
+    Interval antar \textit{heartbeat} digunakan sebagai estimasi HRV\@. \\
     \hline
 
     Health Connect; \textit{wearable}; input manual &
     \texttt{oxygen\_\allowbreak{}saturation} &
     \% &
     $[95,100]$ &
-    Mayoritas individu sehat. FDA menyebut saturasi oksigen tipikal berada pada 95--100\%, tetapi hasil perlu dibaca bersama gejala, kondisi, ketinggian, dan keterbatasan perangkat \parencite{FDA_Pulse_Oximeter_Basics}. \\
+    Mayoritas individu sehat \parencite{FDA_Pulse_Oximeter_Basics}. \\
     \hline
 
     Health Connect; input manual &
     \texttt{respiratory\_\allowbreak{}rate} &
     napas/\allowbreak{}menit &
     $[12,20]$ &
-    Rata-rata orang dewasa saat istirahat. Rentang percontohan mengacu pada laju napas dewasa 12--20 napas per menit \parencite{Sapra_Vital_Sign_Assessment}. \\
+    Rata-rata orang dewasa saat istirahat \parencite{Sapra_Vital_Sign_Assessment}. \\
     \hline
 
     Health Connect; input manual &
@@ -67,21 +67,21 @@
     \texttt{steps} &
     \texttt{count} &
     Tidak dikonfigurasi &
-    Jumlah langkah merupakan data aktivitas yang bergantung pada target dan kemampuan individual. \\
+    - \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}SIGNIFICANT\_\allowbreak{}MOTION}, \texttt{TYPE\_\allowbreak{}STATIONARY\_\allowbreak{}DETECT}, \texttt{TYPE\_\allowbreak{}MOTION\_\allowbreak{}DETECT} &
     \texttt{activity\_\allowbreak{}event} &
     \texttt{event} &
     Tidak dikonfigurasi &
-    Menunjukkan perubahan status aktivitas, bukan parameter klinis dengan rentang numerik umum. \\
+    - \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}PRESSURE} &
     \texttt{barometric\_\allowbreak{}pressure}, \texttt{elevation\_\allowbreak{}estimate}, \texttt{elevation\_\allowbreak{}gained}, \texttt{floors\_\allowbreak{}climbed} &
     \texttt{hPa}, \texttt{m}, \texttt{floors} &
     Tidak dikonfigurasi &
-    Tekanan barometrik dan turunannya digunakan sebagai konteks lingkungan atau aktivitas, bukan sebagai tekanan darah pasien. \\
+    Tekanan barometrik dan turunannya digunakan sebagai konteks lingkungan dan aktivitas. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}LIGHT} &
@@ -95,7 +95,7 @@
     \texttt{environmental\_\allowbreak{}temperature} &
     $^{\circ}$C &
     Tidak dikonfigurasi &
-    Mengukur suhu lingkungan dan tidak boleh dibandingkan dengan rentang suhu tubuh. \\
+    Mengukur suhu lingkungan. \\
     \hline
 
     \texttt{TYPE\_\allowbreak{}RELATIVE\_\allowbreak{}HUMIDITY} &
@@ -116,14 +116,14 @@
     \texttt{blood\_\allowbreak{}glucose}, kalori, jarak, dan tipe kontekstual lain &
     Sesuai tipe &
     Tidak dikonfigurasi &
-    Glukosa memerlukan konteks puasa atau waktu makan, sedangkan kalori dan jarak memerlukan target personal. Data tetap dikirim dan divisualisasikan tanpa klasifikasi bawaan. \\
+    Data tetap dikirim dan divisualisasikan tanpa klasifikasi bawaan. \\
     \hline
 
     Sensor lain tanpa pemetaan PGHD &
     Tidak dikonversi menjadi PGHD &
     \- &
     \- &
-    Sensor tetap dapat ditampilkan sebagai informasi perangkat, tetapi tidak dapat dipilih untuk pengumpulan PGHD. \\
+    Sensor tetap dapat ditampilkan sebagai informasi perangkat, tetapi tidak dapat dipilih untuk pengumpulan PGHD\@. \\
     \hline
 \end{styledxltabular}
 \endgroup

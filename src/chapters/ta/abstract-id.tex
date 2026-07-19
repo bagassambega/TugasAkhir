@@ -2,42 +2,25 @@
 \chapter*{ABSTRAK}
 \addcontentsline{toc}{chapter}{ABSTRAK}
 \begin{center}
-	\center
-	\begin{singlespace}
-		\large\bfseries\MakeUppercase{\thetitle}
+    \center
+    \begin{singlespace}
+        \large\bfseries\MakeUppercase{\thetitle}
 
-		\normalfont\normalsize
-		Oleh:
+        \normalfont\normalsize
+        Oleh:
 
-		\bfseries \theauthor
-	\end{singlespace}
+        \bfseries \theauthor
+    \end{singlespace}
 \end{center}
 
 \begin{singlespace}
-	\small
-	Sistem Rekam Medis Elektronik (RME) terdesentralisasi DecMed berbasis IOTA telah dikembangkan untuk mengatasi keterbatasan interoperabilitas dan keamanan data pada RME konvensional. 
-	Namun, DecMed masih bersifat \emph{provider-centric} karena seluruh entri data hanya berasal dari tenaga kesehatan melalui kunjungan klinis. 
-	Kondisi ini menciptakan kesenjangan informasi karena banyak kondisi medis memerlukan data \emph{between-visit} untuk mendukung pengambilan keputusan klinis yang akurat. 
-	Untuk menjembatani kesenjangan tersebut, diperlukan integrasi \emph{Patient-Generated Health Data} (PGHD) ke dalam ekosistem DecMed, yaitu data kesehatan yang dihasilkan secara mandiri oleh pasien melalui perangkat \emph{wearable}, sensor, maupun input manual.
-	Namun integrasi ini memunculkan tantangan dari sisi pengelolaan data \emph{time-series} bervolume tinggi, manajemen kondisi \emph{offline}, serta kebutuhan jaminan kerahasiaan, integritas, ketersediaan, dan \emph{data provenance}.
+\small
+Sistem Rekam Medis Elektronik (RME) konvensional menyimpan data kesehatan secara tersebar pada setiap fasilitas pelayanan kesehatan sehingga dokter sulit memperoleh gambaran kondisi pasien secara utuh. DecMed (Decentralized Medical Record Management System) telah dikembangkan dengan pendekatan \textit{patient-centric} untuk mengintegrasikan data tersebut dan memberikan kendali data kepada pasien. Namun, sumber data DecMed masih bersifat \textit{provider-centric} karena hanya mengakomodasi data dari tenaga kesehatan melalui kunjungan klinis, belum mencakup \textit{Patient-Generated Health Data} (PGHD) yang dihasilkan pasien secara mandiri melalui perangkat \textit{wearable}, sensor kesehatan, perangkat pintar, maupun pencatatan manual. Data tersebut dapat melengkapi gambaran kondisi pasien di antara kunjungan klinis dan mendukung pengambilan keputusan klinis, sehingga diperlukan modul integrasi PGHD pada DecMed.
 
-	Tugas akhir ini merancang dan mengimplementasikan \emph{integration pipeline}
-	PGHD ke dalam ekosistem DecMed. 
-	Pendekatan \emph{offline-first} dengan penyimpanan lokal dan mekanisme \emph{batching} diterapkan untuk mengelola volume data \emph{time-series} secara efisien. 
-	Arsitektur sistem mengintegrasikan komponen \emph{client} Android PGHD Pasien, \emph{Proxy Re-Encryption} (PRE) Server, \emph{smart contract} IOTA, dan penyimpanan terdesentralisasi IPFS\@. 
-	
-	Dari sisi implementasi, kerahasiaan data dijamin melalui enkripsi \emph{end-to-end} berbasis AES-GCM di sisi \emph{client} dan mekanisme Proxy Re-Encryption untuk delegasi akses. 
-	Integritas data dijamin melalui fungsi hash SHA-256 dan tanda tangan digital ECDSA, sementara \emph{data provenance} dicatat pada metadata \emph{smart contract} IOTA dan \emph{payload} IPFS\@. 
-	Ketersediaan data diwujudkan melalui mekanisme \emph{offline-first} dengan penjadwalan ulang otomatis. 
-	
-	Pengujian \emph{smart contract}, fungsional, dan non-fungsional menunjukkan
-	bahwa seluruh skenario berhasil. 
-	Sistem berhasil memproses \emph{record} sintetis dalam volume besar tanpa kehilangan data, mendeteksi dan menolak seluruh variasi manipulasi integritas dan kerahasiaan, memastikan kelengkapan \emph{field provenance} pada setiap entri PGHD, serta mempertahankan data saat perangkat dalam kondisi luring dan memulihkannya setelah koneksi kembali tersedia.
-	Hasil ini menunjukkan bahwa integrasi PGHD pada DecMed dapat terwujud dengan
-	jaminan keamanan dan kepercayaan data yang komprehensif.
-	
+Penelitian ini mengembangkan modul integrasi PGHD yang mampu mengumpulkan dan mengirimkan data \emph{time-series} secara \emph{offline-first}, mempertahankan data saat perangkat luring, melakukan sinkronisasi setelah koneksi tersedia, serta mencatat \emph{data provenance} dan menjaga kerahasiaan serta integritas data. Modul dibangun melalui arsitektur \emph{client} Android pasien, \emph{Proxy Re-Encryption} Server, \emph{smart contract} IOTA, dan IPFS dengan enkripsi \emph{end-to-end}, fungsi hash, dan tanda tangan digital sebagai mekanisme pendukung.
 
-	\textbf{\textit{Kata kunci: \textit{Data Provenance}, DecMed, Keamanan Data, \textit{Patient-Generated Health Data}, \textit{Proxy Re-Encryption}, Rekam Medis Elektronik }}
+Pengujian menunjukkan sistem berhasil memproses 151.200 \textit{record} PGHD sintetis pada laju 600 \textit{record} per detik tanpa kehilangan data maupun \textit{crash}, serta menerima 20 \textit{batch} secara konkuren dari 20 pasien tanpa kegagalan. Variasi manipulasi terhadap \textit{ciphertext}, nilai hash, tanda tangan digital, referensi CID, dan metadata yang diuji berhasil dideteksi dan ditolak, \textit{plaintext} tidak ditemukan pada titik transit dan penyimpanan yang diperiksa, dan permintaan akses tanpa persetujuan sah berhasil ditolak. Data tetap tersimpan saat perangkat luring, pengiriman dijadwalkan ulang, dan data berhasil diproses setelah koneksi tersedia tanpa kehilangan, sehingga modul terbukti mampu mengintegrasikan PGHD ke DecMed dalam skenario pengujian yang dilakukan.
 
+\textbf{\textit{Kata kunci: \textit{Data Provenance}, DecMed, Integritas, Kerahasiaan, Ketersediaan, \textit{Patient-Generated Health Data}, Rekam Medis Elektronik}}
 \end{singlespace}
 \clearpage
