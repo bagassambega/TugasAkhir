@@ -1,11 +1,148 @@
-\section{Ease of Use}
+\section{Proposed DecMed-PGHD Module}
 
-\subsection{Maintaining the Integrity of the Specifications}
+\subsection{Architecture and Trust Boundaries}
 
-The IEEEtran class file is used to format your paper and style the text. All margins,
-column widths, line spaces, and text fonts are prescribed; please do not
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement
-and others are deliberate, using specifications that anticipate your paper
-as one part of the entire proceedings, and not as an independent document.
-Please do not revise any of the current designations.
+Fig.~\ref{fig:architecture} shows the extended DecMed architecture.
+The red components are introduced or modified for PGHD.
+The patient environment contains the data sources, the Android client, and local storage.
+The backend contains the PRE service, Redis, IPFS, IOTA smart contracts, and an IOTA Gas Station.
+The healthcare environment contains the clinician client.
+The PRE service is treated as a semi-trusted coordinator: it may verify and route data, but it must never receive plaintext PGHD or the patient's private key.
+
+\begin{figure*}[t]
+	\centering
+	\begin{tikzpicture}[
+			>=Latex,
+			font=\scriptsize,
+			component/.style={
+					draw,
+					rounded corners=2pt,
+					align=center,
+					minimum height=10mm,
+					text width=30mm,
+					fill=black!4
+				},
+			store/.style={
+					draw,
+					align=center,
+					minimum height=8mm,
+					text width=22mm,
+					fill=black!10
+				},
+			flow/.style={->,thick},
+			control/.style={->,thick,dashed}
+		]
+		\node[component] (sources) {Wearable/Health Connect\\Device sensors\\Manual input};
+		\node[component, right=8mm of sources] (patient) {Patient Android client\\Room + WorkManager};
+		\node[component, right=12mm of patient] (pre) {PRE service\\Verification and delegation};
+		\node[component, right=12mm of pre] (clinician) {Clinician client\\Verification and decryption};
+		\node[store, below=12mm of patient] (iota) {IOTA\\Access, metadata, validity};
+		\node[store, below=12mm of pre] (ipfs) {IPFS\\Encrypted PGHD};
+		\node[store, below=12mm of clinician] (redis) {Redis\\Temporary access material};
+
+		\draw[flow] (sources) -- (patient);
+		\draw[flow] (patient) -- (pre);
+		\draw[<->,thick] (pre) -- (clinician);
+		\draw[control] (patient) -- node[left,align=right] {grant/revoke} (iota);
+		\draw[control] (pre) to[bend right=18] node[above,sloped] {metadata/status} (iota);
+		\draw[flow] (pre) -- node[right] {ciphertext} (ipfs);
+		\draw[control] (pre) to[bend left=18] node[above,sloped] {temporary material} (redis);
+	\end{tikzpicture}
+	\caption{End-to-end DecMed-PGHD architecture and data flow. Plaintext PGHD is confined to the patient and authorized clinician endpoints.}
+	\label{fig:architecture}
+\end{figure*}
+
+The design separates data according to sensitivity, volume, and mutability, as summarized in Table~\ref{tab:data-placement}.
+Bulk encrypted content is stored off-chain, while the ledger maintains compact metadata and access state.
+Redis stores only temporary access artifacts; it is not an authoritative PGHD repository.
+
+\begin{table}[t]
+	\caption{Data Placement in DecMed-PGHD}
+	\label{tab:data-placement}
+	\centering
+	\footnotesize
+	\begin{tabular}{@{}p{0.17\columnwidth}p{0.22\columnwidth}p{0.47\columnwidth}@{}}
+		\toprule
+		\textbf{Location} & \textbf{Representation} & \textbf{Purpose} \\
+		\midrule
+		Patient device & Records and encrypted batches & Offline retention, batching, retry state \\
+		IPFS & Encrypted PGHD payload & Content-addressed bulk storage \\
+		IOTA & CID, hash, validity, access, and cryptographic metadata & Audit, authorization, and integrity anchor \\
+		Redis & Short-lived token and re-encryption material & Temporary PRE coordination \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The main adversarial conditions considered are an unauthorized clinician, tampering during transit or storage, a semi-trusted infrastructure component attempting to inspect content, temporary network or service failure, and a workload burst.
+Compromise of the patient endpoint before encryption and clinical correctness of the source device are outside the present scope.
+
+\subsection{Offline-First Collection and Batching}
+
+The Android client acquires PGHD from three source categories: Health Connect records synchronized from applications or wearables, direct Android sensor readings, and manual patient input.
+Each record is immediately persisted in a local Room database with its measurement time, source category, source application or device when available, recording method, value, and unit.
+Collection therefore continues independently of network availability.
+
+Batch creation and synchronization are scheduled through WorkManager.
+A batch is triggered periodically, after a configured size threshold, manually, or when connectivity returns.
+Records are grouped by measurement type and source.
+Each group contains raw data points, summary statistics, configured clinical thresholds, and anomaly markers.
+The anomaly markers are aids for presentation and do not constitute a diagnosis.
+
+The client maintains explicit \texttt{pending}, \texttt{failed}, and \texttt{sent} states.
+Records already assigned to a batch are mapped to that batch so that a retry does not construct a second logical batch from the same records.
+Failed work remains in local storage and is rescheduled after the relevant constraint is satisfied.
+The transport consequently provides at-least-once retry behavior, with local identifiers and state transitions used to prevent duplicate logical completion in the tested workflow.
+
+\subsection{Protected Transmission and Access}
+
+Before a batch leaves the patient device, the client serializes the PGHD payload \(P\), generates an AES key \(k\) and nonce \(n\), and computes authenticated ciphertext
+
+\begin{equation}
+	c = \operatorname{AES\text{-}GCM.Enc}_{k,n}(P).
+	\label{eq:encrypt}
+\end{equation}
+
+The client then computes \(h=\operatorname{SHA\text{-}256}(c)\) and signs the hash with the patient's ECDSA private key:
+
+\begin{equation}
+	\sigma = \operatorname{Sign}_{sk_p}(h).
+	\label{eq:signature}
+\end{equation}
+
+Digital signatures provide integrity and source authentication when the corresponding public key is trusted \cite{NIST_FIPS186-5}.
+The key and nonce are wrapped using the patient's PGHD PRE public key, producing encrypted key material and a PRE capsule.
+The submission envelope contains the batch and patient identifiers, \(c\), \(h\), \(\sigma\), the wrapped key material, and the capsule.
+
+Upon submission, PRE retrieves the patient's public key from IOTA, recomputes the ciphertext hash, and verifies the signature before any external write occurs.
+Invalid envelopes are rejected.
+For valid envelopes, PRE stores \(c\) in IPFS and records its CID, \(h\), validity status, and serialized cryptographic metadata in the patient's IOTA PGHD store.
+Partitioning metadata into a separate \texttt{PatientPghdStore} per patient avoids forcing independent patients to mutate one global object during concurrent submissions.
+
+To grant access, the patient creates an IOTA capability for a clinician and a re-encryption key for the corresponding PGHD purpose.
+An authenticated clinician requests an entry through PRE.
+PRE first verifies the token, capability owner, recipient, scope, validity interval, and revocation state.
+Only then does it produce the re-encryption fragment required by the clinician.
+The clinician retrieves the ciphertext, checks its CID and hash, verifies the patient's signature, reconstructs the symmetric key locally, and performs AES-GCM decryption.
+Thus, plaintext is created only at an authorized endpoint.
+
+Revocation prevents subsequent requests from obtaining the required re-encryption material.
+It does not retroactively erase plaintext that an authorized clinician already accessed, which is an inherent limitation of data sharing rather than a property unique to PRE.
+
+\subsection{Provenance and Invalidity Handling}
+
+The encrypted payload uses three levels.
+The batch level records the schema version, batch identifier, patient identifier, source device, covered time interval, and trigger reason.
+The data-group level records the measurement type, source category, source package or device, recording method, statistics, thresholds, and anomaly count.
+The data-point level stores the timestamp, value, unit, and anomaly markers.
+
+This split limits public metadata while retaining clinically useful traceability for authorized readers.
+IOTA provides the authoritative CID, access capability, and validity state, whereas detailed device and processing provenance remains encrypted in IPFS.
+If PRE or the clinician detects a hash mismatch, invalid signature, incompatible schema, or inconsistent CID, the smart contract appends a new state transition that marks the entry invalid and records the failure reason.
+The historical ledger transaction remains unchanged.
+
+\subsection{Prototype Implementation}
+
+The patient client was implemented in Kotlin using Jetpack Compose, Health Connect, Room, and WorkManager.
+Rust shared libraries are accessed through the Java Native Interface for Umbral PRE operations and IOTA transaction construction, avoiding a second implementation of DecMed's cryptographic protocol.
+The clinician client uses Tauri, SvelteKit, TypeScript, and Rust.
+The PRE service uses Rust and Axum; Redis holds temporary access material; IPFS stores ciphertext; and IOTA Move smart contracts maintain accounts, capabilities, PGHD metadata, and validity state.

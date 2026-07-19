@@ -1,4 +1,53 @@
-
 \section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits.
+
+Electronic medical records (EMRs) are commonly organized around healthcare providers.
+Consequently, they primarily describe encounters that occur inside healthcare facilities and provide only intermittent snapshots of a patient's condition.
+Patient-generated health data (PGHD) complements these snapshots with measurements, symptoms, and observations captured by patients through mobile applications, wearable devices, or manual entry.
+Such data can improve clinicians' understanding of a patient's condition between visits and support more informed clinical encounters \cite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+
+Clinical integration of PGHD, however, is not merely an ingestion problem.
+Prior reviews identify heterogeneous sources, workflow integration, unstable connectivity, data quality, privacy, and security as recurring obstacles \cite{Tiase2020-PGHD_EHR_Integration,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
+Sensor-derived PGHD is also high-frequency time-series data, making one remote transaction per measurement inefficient \cite{Haque_2024_Performance_Blockchain}.
+A usable pipeline must therefore preserve measurements while a device is offline, control transmission volume, retain sufficient provenance, and prevent unauthorized parties from learning or modifying sensitive content.
+
+DecMed is a decentralized EMR framework built on IOTA and the InterPlanetary File System (IPFS).
+It provides patient-oriented identity and access-control mechanisms, but its original implementation remains provider-centric and has no path for continuous PGHD collection \cite{Purnama_2026}.
+Directly placing raw PGHD on a distributed ledger would expose sensitive data and impose excessive transaction overhead.
+Storing data only in a conventional backend, on the other hand, would weaken DecMed's decentralized audit and access-control model.
+
+This work extends DecMed with a secure PGHD integration pipeline.
+The main contributions are:
+
+\begin{enumerate}
+	\item an offline-first collection and batching mechanism for high-frequency PGHD from operating-system health APIs, device sensors, and manual input;
+	\item a hybrid on-chain/off-chain architecture that combines client-side authenticated encryption, IPFS storage, IOTA metadata, and proxy re-encryption (PRE) for delegated access; and
+	\item a provenance schema and an evaluation covering functional behavior, authorization, confidentiality, integrity, provenance completeness, workload capacity, and interruption recovery.
+\end{enumerate}
+
+The prototype is evaluated as an engineering proof of concept rather than a clinical system or production service-level benchmark.
+Its purpose is to determine whether the selected mechanisms can preserve and protect PGHD across DecMed's complete patient-to-clinician data path.
+
+\section{Background and Related Work}
+
+\subsection{PGHD Integration Pipelines}
+
+Zeng \textit{et al.} model PGHD integration as a pipeline containing acquisition, aggregation, and consumption functions \cite{Zeng2022-Standardized-PGD}.
+Tiase \textit{et al.} found that existing integrations use portals, middleware, and data standards, but often remain pilot implementations whose clinical utility depends on workflow and visualization design \cite{Tiase2020-PGHD_EHR_Integration}.
+These studies establish the functional stages required for PGHD integration, but they do not address DecMed's combination of decentralized identity, distributed metadata, and patient-controlled decryption.
+
+\subsection{Decentralized Health Records and Provenance}
+
+Akbulut and Tokdemir proposed an IOTA-based personal health record access-management system in which patients control access while the ledger supports integrity and traceability \cite{Akbulut_2020_iota_phr}.
+DecMed develops a broader IOTA-based EMR framework with hierarchical access control \cite{Purnama_2026}.
+Neither architecture originally provides an offline-first path for high-frequency PGHD.
+
+Provenance is important because a value alone does not reveal who produced it, when it was measured, which device or application supplied it, or what processing occurred.
+Healthcare provenance research consequently emphasizes traceable source and transformation information as a prerequisite for trustworthy reuse \cite{Ahmed_2023_Data_Provenance}.
+This work records clinical provenance inside the encrypted PGHD payload while anchoring authorization, content references, and validity state in IOTA.
+
+\subsection{Cryptographic Access Delegation}
+
+PRE allows a semi-trusted proxy to transform encrypted key material for an authorized delegate without learning the underlying plaintext or the delegator's private key \cite{nunez2017proxy}.
+This property is suitable for DecMed: a patient can grant a clinician time-bounded PGHD access without distributing the patient's private decryption key.
+IPFS complements this mechanism with content-addressed off-chain storage, where a content identifier (CID) refers to encrypted content \cite{Benet_2014_ipfs}.
+The proposed design combines these mechanisms instead of treating the ledger as bulk data storage.

@@ -31,7 +31,7 @@ yudisium:
 paper:
 	@mkdir -p output
 	@mkdir -p build
-	@latexmk -synctex=1 -interaction=nonstopmode -file-line-error -pdf -bibtex -outdir=../build -cd src/$(PAPER_INPUT)
+	@TEXINPUTS=.:config/paper: latexmk -synctex=1 -interaction=nonstopmode -file-line-error -pdf -bibtex -outdir=../build -cd src/$(PAPER_INPUT)
 	@cp build/$(PAPER_OUTPUT) output
 
 proposal:

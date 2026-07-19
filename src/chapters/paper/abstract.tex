@@ -1,17 +1,15 @@
 \begin{abstract}
-	Sistem rekam medis elektronik (RME) konvensional masih terfragmentasi dan bersifat \textit{provider-centric}. 
-	DecMed merupakan kerangka kerja RME terdesentralisasi berbasis Distributed Ledger Technology (DLT) IOTA dan InterPlanetary File System (IPFS). 
-	Saat ini, DecMed belum mengakomodasi \textit{Patient-Generated Health Data} (PGHD), yaitu data kesehatan yang dihasilkan secara mandiri oleh pasien melalui perangkat seluler atau \textit{wearable}. 
-	Integrasi PGHD diperlukan untuk mengisi kesenjangan informasi di antara kunjungan klinis pasien.
-	Tugas akhir ini merancang dan mengimplementasikan arsitektur pipeline PGHD pada DecMed. 
-	Pengumpulan data dilakukan menggunakan pendekatan \textit{offline-first} untuk memastikan ketersediaan data saat perangkat luring. 
-	Data \textit{time-series} berfrekuensi tinggi dikelola menggunakan mekanisme \textit{batching} untuk mengurangi beban transaksi pada sistem DecMed. 
-	Kerahasiaan data dijamin menggunakan kombinasi enkripsi dan Proxy Re-Encryption (PRE) yang mendelegasikan hak dekripsi tanpa membagikan kunci privat. 
-	Integritas dijamin menggunakan fungsi hash SHA-256 dan tanda tangan digital. 
-	Rantai asal usul data (\textit{data provenance}) dipastikan melalui penyertaan metadata pada \textit{smart contract} IOTA dan \textit{payload} IPFS\@. 
-	Hasil pengujian menyimpulkan bahwa sistem berhasil melakukan transmisi PGHD, memastikan ketersediaan data saat luring, serta mendeteksi dan menolak manipulasi atau akses tidak sah terhadap integritas data.
+	Conventional electronic medical records are predominantly provider-centric and therefore capture only a limited view of a patient's condition between clinical visits.
+	DecMed is a decentralized electronic medical record framework that uses IOTA and the InterPlanetary File System, but its original architecture does not support patient-generated health data (PGHD).
+	This paper presents the design, implementation, and evaluation of a PGHD module for DecMed.
+	The proposed pipeline collects time-series measurements from Health Connect, mobile-device sensors, and manual input; stores them locally using an offline-first strategy; and groups them into encrypted batches for transmission.
+	Confidentiality is enforced through client-side AES-GCM encryption and proxy re-encryption-based access delegation.
+	SHA-256 hashes, ECDSA signatures, IOTA metadata, and content-addressed IPFS storage provide integrity verification and provenance.
+	The prototype passed all ten functional and six non-functional test scenarios.
+	It processed 151,200 synthetic records without loss or application failure, accepted 20 concurrent batches from 20 distinct patients, rejected unauthorized access and all tested tampering variants, and resumed interrupted transfers without duplicate completion in the tested run.
+	These results demonstrate the feasibility of integrating secure, traceable, and intermittently connected PGHD collection into DecMed, while larger production-scale and longitudinal evaluations remain necessary.
 \end{abstract}
 
 \begin{IEEEkeywords}
-	DecMed, Integritas, Kerahasiaan, Ketersediaan, \textit{Patient Generated Health Data}, \textit{Pipeline}, \textit{Provenance}
+	decentralized electronic medical record, DecMed, IOTA, offline-first, patient-generated health data, proxy re-encryption, provenance
 \end{IEEEkeywords}

@@ -51,7 +51,7 @@ Data juga baru dapat didekripsi di sisi klien tenaga kesehatan, ketika akses kon
 \textbf{T-NF03} berhasil karena perlindungan integritas dilakukan dengan mengimplementasikan \textit{hash} yang di-\textit{sign} menjadi \textit{digital signature}.
 PRE memverifikasi hash SHA-256 \textit{ciphertext} terhadap \texttt{h\_cipher} yang dikirim saat \textit{submit} untuk mendeteksi manipulasi \textit{in-transit}, kemudian memverifikasi tanda tangan terhadap hash tersebut menggunakan \textit{public key} pasien dari IOTA untuk mendeteksi pemalsuan sumber.
 \textit{Hospital client} mengulang pemeriksaan hash saat mengambil \textit{ciphertext} dari IPFS untuk mendeteksi substitusi objek, dan tag autentikasi AES-GCM mendeteksi manipulasi pada \textit{ciphertext} maupun \textit{nonce} saat dekripsi.
-Hal ini memastikan integritas data digunakan ataupun saat data transit/disimpan sehingga membuktikan ancaman \textit{tampering} (T-T01, T-T02) berhasil dimitigasi.
+Rangkaian pemeriksaan tersebut memastikan integritas data sebelum digunakan oleh tenaga kesehatan, saat data berada dalam transit, dan saat data tersimpan sehingga membuktikan ancaman \textit{tampering} (T-T01, T-T02) berhasil dimitigasi.
 
 \textbf{T-NF04} berhasil karena metadata \textit{provenance} disimpan baik untuk \textit{field provenance} struktural yang disimpan di dalam \textit{payload} terenkripsi di IPFS, sedangkan metadata otorisasi dan status validitas disimpan di \textit{smart contract} IOTA sebagai \textit{source of truth} yang tidak dapat dimanipulasi secara sepihak.
 Seluruh \textit{field} yang diwajibkan tersedia dan sesuai untuk PGHD dari setiap kategori sumber yang diuji.
