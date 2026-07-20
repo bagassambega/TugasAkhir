@@ -2,12 +2,14 @@
 
 Mekanisme pengiriman PGHD dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pengiriman}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-mekanisme-pengiriman-pghd.png}
+	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-pengiriman-readable.png}
 	\caption{\textit{Sequence Diagram} Mekanisme Pengiriman PGHD}\label{fig:seq-diagram-rancangan-pengiriman}
 \end{figure}
 
+Diagram tersebut merangkum pembentukan \textit{batch}, enkripsi dan pembungkusan kunci, verifikasi oleh PRE, penyimpanan \textit{ciphertext} pada IPFS, serta pencatatan metadata pada IOTA.
+Rincian setiap tahap dijelaskan sebagai berikut.
 
 \begin{enumerate}
     \item \textbf{Pembentukan dan pengolahan \textit{plaintext} PGHD\@.}

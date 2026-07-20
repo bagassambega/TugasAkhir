@@ -93,13 +93,9 @@ The signed ciphertext hash lets both PRE and the clinician reject modifications,
 PRE supports patient-controlled delegation without disclosing the patient's private key.
 Finally, local persistence and batching decouple sensor collection from network and ledger availability.
 
-The design also introduces trade-offs.
-The patient device performs cryptography and retains unsent sensitive data, so endpoint security and credential recovery remain important.
 Batching reduces remote operations but delays availability until a trigger fires.
 Revocation blocks future key-material requests but cannot retract data already decrypted by a previously authorized clinician.
 Provenance proves what the system recorded about origin and processing; it does not prove that a consumer wearable is clinically accurate.
-
-\subsection{Limitations}
 
 The prototype was evaluated with one Android device, one wearable path, one PRE instance, a local IOTA/IPFS environment, and a desktop clinician client.
 The 20-patient concurrency test was chosen to expose shared-object contention, not to model hospital-scale peak traffic.

@@ -3,14 +3,14 @@
 Electronic medical records (EMRs) are commonly organized around healthcare providers.
 Consequently, they primarily describe encounters that occur inside healthcare facilities and provide only intermittent snapshots of a patient's condition.
 Patient-generated health data (PGHD) complements these snapshots with measurements, symptoms, and observations captured by patients through mobile applications, wearable devices, or manual entry.
-Such data can improve clinicians' understanding of a patient's condition between visits and support more informed clinical encounters \cite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
+Such data can improve clinicians understanding of a patient's condition between visits and support more informed clinical encounters \cite{Cohen_Keller_Hayes_Dorr_Ash_Sittig_2016_PGHD_Integration_EHR,Omoloja_Vundavalli_2021_PGHD_Benefits_Challenges}.
 
 Clinical integration of PGHD, however, is not merely an ingestion problem.
 Prior reviews identify heterogeneous sources, workflow integration, unstable connectivity, data quality, privacy, and security as recurring obstacles \cite{Tiase2020-PGHD_EHR_Integration,Khatiwada_Yang_Lin_Blobel_2024_PGHD_Understanding}.
 Sensor-derived PGHD is also high-frequency time-series data, making one remote transaction per measurement inefficient \cite{Haque_2024_Performance_Blockchain}.
 A usable pipeline must therefore preserve measurements while a device is offline, control transmission volume, retain sufficient provenance, and prevent unauthorized parties from learning or modifying sensitive content.
 
-DecMed is a decentralized EMR framework built on IOTA and the InterPlanetary File System (IPFS).
+DecMed is a decentralized EMR framework built on IOTA, CapBAC access control, proxy re-encryption and the InterPlanetary File System (IPFS).
 It provides patient-oriented identity and access-control mechanisms, but its original implementation remains provider-centric and has no path for continuous PGHD collection \cite{Purnama_2026}.
 Directly placing raw PGHD on a distributed ledger would expose sensitive data and impose excessive transaction overhead.
 Storing data only in a conventional backend, on the other hand, would weaken DecMed's decentralized audit and access-control model.

@@ -69,11 +69,14 @@ Entitas eksternal terdiri atas pasien beserta sumber PGHD, tenaga kesehatan, jar
 
 DFD Level 1 pada Gambar~\ref{fig:dfd-decmed-pghd-level-1} menguraikan proses pengumpulan dan pembentukan \textit{batch}, autentikasi dan kontrol akses, penyimpanan dan pengambilan PGHD, verifikasi dan pengaksesan PGHD\@.
 
-\begin{figure}[htbp]
+\clearpage
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{resources/chapter-3/Diagram Tugas Akhir-DFD Level 1.png}
+    \includegraphics[width=\textwidth,height=0.48\textheight,keepaspectratio]{resources/chapter-3/Diagram Tugas Akhir-DFD Level 1.png}
     \caption{DFD Level 1 Sistem DecMed-PGHD untuk \textit{Threat Modelling}}\label{fig:dfd-decmed-pghd-level-1}
 \end{figure}
+
+Tata letak DFD dirapatkan tanpa mengubah hubungan antarkomponen agar identitas proses, penyimpanan, batas kepercayaan, dan label aliran F1--F15 tetap terbaca.
 
 Berdasarkan DFD tersebut, \textit{trust boundary} dipetakan terhadap komponen DecMed-PGHD seperti ditunjukkan pada Tabel~\ref{tab:trust-boundary-decmed-pghd}.
 

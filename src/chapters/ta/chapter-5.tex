@@ -3,7 +3,7 @@
 \section{Kesimpulan}
 
 Pada Tugas Akhir ini, telah dirancang dan diimplementasikan modul integrasi Patient-Generated Health Data (PGHD) ke dalam sistem rekam medis terdesentralisasi DecMed. 
-Pipeline pengumpulan, penyimpanan lokal, pengelompokan ke dalam \textit{batch}, dan pengiriman PGHD dirancang dengan mekanisme \textit{offline-first} sehingga mampu menangani karakteristik data \textit{time-series} berfrekuensi tinggi dan kondisi perangkat yang sering tidak terhubung jaringan. 
+\textit{Pipeline} pengumpulan, penyimpanan lokal, pengelompokan ke dalam \textit{batch}, dan pengiriman PGHD dirancang dengan mekanisme \textit{offline-first} sehingga mampu menangani karakteristik data \textit{time-series} berfrekuensi tinggi dan kondisi perangkat yang sering tidak terhubung jaringan. 
 Data PGHD dikumpulkan pada \textit{client} Android pasien, disimpan sementara pada basis data lokal, kemudian dikirimkan dalam bentuk \textit{batch} dengan pencatatan status pengiriman serta penjadwalan ulang otomatis melalui \texttt{WorkManager} ketika koneksi kembali tersedia.
 Pengujian menunjukkan bahwa sistem mampu memproses 151.200 \textit{record} sintetis, serta menerima 20 \textit{batch} konkuren dari 20 pasien berbeda tanpa kehilangan data maupun \textit{crash} pada aplikasi. 
 

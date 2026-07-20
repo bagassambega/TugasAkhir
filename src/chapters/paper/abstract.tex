@@ -1,15 +1,15 @@
 \begin{abstract}
 	Conventional electronic medical records are predominantly provider-centric and therefore capture only a limited view of a patient's condition between clinical visits.
-	DecMed is a decentralized electronic medical record framework that uses IOTA and the InterPlanetary File System, but its original architecture does not support patient-generated health data (PGHD).
+	DecMed is a decentralized electronic medical record framework that uses IOTA and the CapBAC access control, but its original architecture does not support patient-generated health data (PGHD).
 	This paper presents the design, implementation, and evaluation of a PGHD module for DecMed.
-	The proposed pipeline collects time-series measurements from Health Connect, mobile-device sensors, and manual input; stores them locally using an offline-first strategy; and groups them into encrypted batches for transmission.
+	The proposed pipeline collects time-series measurements from Health Connect, mobile-device sensors, and manual input, and then stores them locally using an offline-first strategy, and groups them into encrypted batches for transmission.
 	Confidentiality is enforced through client-side AES-GCM encryption and proxy re-encryption-based access delegation.
 	SHA-256 hashes, ECDSA signatures, IOTA metadata, and content-addressed IPFS storage provide integrity verification and provenance.
 	The prototype passed all ten functional and six non-functional test scenarios.
-	It processed 151,200 synthetic records without loss or application failure, accepted 20 concurrent batches from 20 distinct patients, rejected unauthorized access and all tested tampering variants, and resumed interrupted transfers without duplicate completion in the tested run.
+	It processed 151,200 synthetic records without loss or application failure, accepted 20 concurrent batches from 20 distinct patients, rejected unauthorized access and all tested tampering variants.
 	These results demonstrate the feasibility of integrating secure, traceable, and intermittently connected PGHD collection into DecMed, while larger production-scale and longitudinal evaluations remain necessary.
 \end{abstract}
 
 \begin{IEEEkeywords}
-	decentralized electronic medical record, DecMed, IOTA, offline-first, patient-generated health data, proxy re-encryption, provenance
+	Availability, Confidentiality, DecMed, Integrity, Offline-first, Patient-generated health data, Proxy re-encryption, Provenance
 \end{IEEEkeywords}

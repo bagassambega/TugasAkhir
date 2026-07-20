@@ -2,11 +2,14 @@
 
 Mekanisme pemberian akses baca PGHD kepada tenaga kesehatan dapat dilihat pada Diagram~\ref{fig:seq-diagram-rancangan-pemberian-akses}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-diagram-rancangan-pemberian-akses.png}
+	\includegraphics[width=\textwidth]{resources/chapter-3/sequence-pemberian-akses-readable.png}
 	\caption{\textit{Sequence Diagram} Mekanisme Pemberian Akses Baca PGHD}\label{fig:seq-diagram-rancangan-pemberian-akses}
 \end{figure}
+
+Diagram tersebut merangkum pertukaran identitas melalui QR, autentikasi dengan \textit{nonce}, pembentukan material PRE, penyimpanan material akses sementara, dan pencatatan \textit{capability} pada IOTA.
+Rincian setiap tahap dijelaskan sebagai berikut.
 
 % \subsubsection{Data Masukan Pemberian Akses}
 

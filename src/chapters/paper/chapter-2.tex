@@ -2,8 +2,8 @@
 
 \subsection{Architecture and Trust Boundaries}
 
-Fig.~\ref{fig:architecture} shows the extended DecMed architecture.
-The red components are introduced or modified for PGHD.
+The complete DecMed-PGHD architecture is shown in Fig.~\ref{fig:architecture}.
+The red components are introduced or modified to support PGHD.
 The patient environment contains the data sources, the Android client, and local storage.
 The backend contains the PRE service, Redis, IPFS, IOTA smart contracts, and an IOTA Gas Station.
 The healthcare environment contains the clinician client.
@@ -11,44 +11,8 @@ The PRE service is treated as a semi-trusted coordinator: it may verify and rout
 
 \begin{figure*}[t]
 	\centering
-	\begin{tikzpicture}[
-			>=Latex,
-			font=\scriptsize,
-			component/.style={
-					draw,
-					rounded corners=2pt,
-					align=center,
-					minimum height=10mm,
-					text width=30mm,
-					fill=black!4
-				},
-			store/.style={
-					draw,
-					align=center,
-					minimum height=8mm,
-					text width=22mm,
-					fill=black!10
-				},
-			flow/.style={->,thick},
-			control/.style={->,thick,dashed}
-		]
-		\node[component] (sources) {Wearable/Health Connect\\Device sensors\\Manual input};
-		\node[component, right=8mm of sources] (patient) {Patient Android client\\Room + WorkManager};
-		\node[component, right=12mm of patient] (pre) {PRE service\\Verification and delegation};
-		\node[component, right=12mm of pre] (clinician) {Clinician client\\Verification and decryption};
-		\node[store, below=12mm of patient] (iota) {IOTA\\Access, metadata, validity};
-		\node[store, below=12mm of pre] (ipfs) {IPFS\\Encrypted PGHD};
-		\node[store, below=12mm of clinician] (redis) {Redis\\Temporary access material};
-
-		\draw[flow] (sources) -- (patient);
-		\draw[flow] (patient) -- (pre);
-		\draw[<->,thick] (pre) -- (clinician);
-		\draw[control] (patient) -- node[left,align=right] {grant/revoke} (iota);
-		\draw[control] (pre) to[bend right=18] node[above,sloped] {metadata/status} (iota);
-		\draw[flow] (pre) -- node[right] {ciphertext} (ipfs);
-		\draw[control] (pre) to[bend left=18] node[above,sloped] {temporary material} (redis);
-	\end{tikzpicture}
-	\caption{End-to-end DecMed-PGHD architecture and data flow. Plaintext PGHD is confined to the patient and authorized clinician endpoints.}
+	\includegraphics[width=\textwidth]{chapter-3/architecture-decmed-pghd-diff.drawio.png}
+	\caption{DecMed-PGHD system architecture. Red components are additions or modifications for PGHD collection, protected transmission, and authorized clinical access.}
 	\label{fig:architecture}
 \end{figure*}
 
